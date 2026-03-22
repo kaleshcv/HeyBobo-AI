@@ -1,0 +1,40 @@
+# Environment files (NEVER commit these)
+.env
+.env.local
+.env.production
+
+# Backend
+backend/node_modules/
+backend/dist/
+backend/uploads/
+backend/.env
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+npm-debug.log*
+backend/logs/
+
+# Docker
+docker-compose.override.yml
+
+# Vite cache
+.vite/
+frontend/.vite/
+
+# Lock files (optional - uncomment if you want to commit them)
+# backend/package-lock.json
+# frontend/package-lock.json
