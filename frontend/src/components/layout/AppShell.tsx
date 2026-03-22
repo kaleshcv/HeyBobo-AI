@@ -36,6 +36,7 @@ import RecommendIcon from '@mui/icons-material/Recommend';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import SpaIcon from '@mui/icons-material/Spa';
+import PsychologyIcon from '@mui/icons-material/Psychology';
 
 import { useAuth } from '@/hooks/useAuth';
 import { getInitials } from '@/lib/utils';
@@ -51,6 +52,7 @@ interface NavModule {
 }
 
 const modules: NavModule[] = [
+  { id: 'ai-brain', label: 'AI Brain', icon: <PsychologyIcon />, path: '/app/ai-brain' },
   { id: 'education', label: 'Education', icon: <SchoolIcon />, path: '/app/education' },
   { id: 'health', label: 'Health', icon: <MonitorHeartIcon />, path: '/app/health' },
   { id: 'fitness', label: 'Fitness', icon: <FitnessCenterIcon />, path: '/app/fitness' },
@@ -334,7 +336,7 @@ export default function AppShell() {
 
         {/* Sub-module links */}
         <List sx={{ py: 0.5 }}>
-          {(location.pathname.startsWith('/app/grooming') ? groomingSubModules : location.pathname.startsWith('/app/fitness') ? fitnessSubModules : location.pathname.startsWith('/app/health') ? healthSubModules : location.pathname.startsWith('/app/dietary') ? dietarySubModules : educationSubModules).map((mod) => (
+          {(location.pathname.startsWith('/app/ai-brain') ? [] : location.pathname.startsWith('/app/grooming') ? groomingSubModules : location.pathname.startsWith('/app/fitness') ? fitnessSubModules : location.pathname.startsWith('/app/health') ? healthSubModules : location.pathname.startsWith('/app/dietary') ? dietarySubModules : educationSubModules).map((mod) => (
             <Tooltip key={mod.id} title={rightExpanded ? '' : mod.label} placement="left">
               <ListItemButton
                 selected={isActive(mod.path)}

@@ -85,6 +85,7 @@ const GroomingPage = lazy(() => import('@/pages/app/GroomingPage'))
 const GroomingDashboardPage = lazy(() => import('@/pages/app/grooming/GroomingDashboardPage'))
 const GroomingRecommendationPage = lazy(() => import('@/pages/app/grooming/GroomingRecommendationPage'))
 const VisualAnalysisPage = lazy(() => import('@/pages/app/grooming/VisualAnalysisPage'))
+const AIBrainPage = lazy(() => import('@/pages/app/AIBrainPage'))
 
 const SuspenseWrapper = ({ children }: { children: React.ReactNode }) => (
   <Suspense fallback={<LoadingScreen />}>{children}</Suspense>
@@ -421,7 +422,15 @@ export const router = createBrowserRouter([
         index: true,
         element: (
           <SuspenseWrapper>
-            <EducationPage />
+            <AIBrainPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'ai-brain',
+        element: (
+          <SuspenseWrapper>
+            <AIBrainPage />
           </SuspenseWrapper>
         ),
       },
