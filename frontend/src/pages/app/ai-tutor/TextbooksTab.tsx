@@ -16,10 +16,8 @@ import toast from 'react-hot-toast';
 import * as pdfjsLib from 'pdfjs-dist';
 import { useAITutorStore, Textbook } from '@/store/aiTutorStore';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url,
-).toString();
+// Worker is copied to /pdf.worker.min.mjs at build time (stable URL, no hashing).
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
 async function extractPdfText(file: File): Promise<{ text: string; pageCount: number }> {
   const arrayBuffer = await file.arrayBuffer();
