@@ -105,6 +105,7 @@ export interface RevisionPlan {
 interface AITutorState {
   // Textbooks
   textbooks: Textbook[];
+  setTextbooks: (books: Textbook[]) => void;
   addTextbook: (book: Textbook) => void;
   removeTextbook: (id: string) => void;
 
@@ -143,6 +144,7 @@ export const useAITutorStore = create<AITutorState>()(
   persist(
     (set) => ({
       textbooks: [],
+      setTextbooks: (books) => set({ textbooks: books }),
       addTextbook: (book) => set((s) => ({ textbooks: [book, ...s.textbooks] })),
       removeTextbook: (id) =>
         set((s) => ({

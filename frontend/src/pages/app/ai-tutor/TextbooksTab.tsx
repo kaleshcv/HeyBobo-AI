@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -13,25 +13,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import toast from 'react-hot-toast';
-import * as pdfjsLib from 'pdfjs-dist';
+import { aiApi } from '@/lib/api';
 import { useAITutorStore, Textbook } from '@/store/aiTutorStore';
-
-// Worker is copied to /pdf.worker.min.mjs at build time (stable URL, no hashing).
-pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
-
-async function extractPdfText(file: File): Promise<{ text: string; pageCount: number }> {
-  const arrayBuffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-  const pageCount = pdf.numPages;
-  const textParts: string[] = [];
-  for (let i = 1; i <= pageCount; i++) {
-    const page = await pdf.getPage(i);
-    const content = await page.getTextContent();
-    const pageText = content.items.map((item: any) => ('str' in item ? item.str : '')).join(' ');
-    textParts.push(pageText);
-  }
-  return { text: textParts.join('\n\n'), pageCount };
-}
 
 interface Props {
   onSelectBook: (id: string) => void;
@@ -39,9 +22,27 @@ interface Props {
 }
 
 export default function TextbooksTab({ onSelectBook, selectedBookId }: Props) {
-  const { textbooks, addTextbook, removeTextbook } = useAITutorStore();
+  const { textbooks, setTextbooks, addTextbook, removeTextbook } = useAITutorStore();
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Load user's documents from server on mount and sync with store
+  useEffect(() => {
+    aiApi.getDocuments().then((res) => {
+      const docs = res.data?.data ?? [];
+      const mapped: Textbook[] = docs.map((d: any) => ({
+        id: String(d._id ?? d.id),
+        name: d.originalName ?? d.filename,
+        size: d.size,
+        pageCount: d.pageCount ?? 0,
+        extractedText: d.extractedText ?? '',
+        createdAt: d.createdAt ?? new Date().toISOString(),
+      }));
+      setTextbooks(mapped);
+    }).catch(() => {
+      // Silently fall back to local store if API call fails
+    });
+  }, []);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -56,24 +57,38 @@ export default function TextbooksTab({ onSelectBook, selectedBookId }: Props) {
     }
     setIsUploading(true);
     try {
-      const { text, pageCount } = await extractPdfText(file);
+      const res = await aiApi.uploadDocument(file);
+      const d = res.data?.data;
+      if (!d) throw new Error('Invalid server response');
       const book: Textbook = {
-        id: `book-${Date.now()}`,
-        name: file.name,
-        size: file.size,
-        pageCount,
-        extractedText: text,
-        createdAt: new Date().toISOString(),
+        id: String(d.id),
+        name: d.filename,
+        size: d.size ?? file.size,
+        pageCount: d.pageCount ?? 0,
+        extractedText: d.extractedText ?? '',
+        createdAt: d.createdAt ?? new Date().toISOString(),
       };
       addTextbook(book);
       onSelectBook(book.id);
-      toast.success(`"${file.name}" uploaded (${pageCount} pages)`);
+      toast.success(`"${book.name}" uploaded (${book.pageCount} pages)`);
     } catch (err: any) {
-      toast.error('Failed to process PDF: ' + (err?.message || 'Unknown error'));
+      toast.error('Failed to upload PDF: ' + (err?.response?.data?.message || err?.message || 'Unknown error'));
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
+  };
+
+  const handleDelete = async (bookId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      await aiApi.deleteDocument(bookId);
+    } catch {
+      // If server delete fails (e.g. old local-only book), still remove from store
+    }
+    removeTextbook(bookId);
+    if (selectedBookId === bookId) onSelectBook('');
+    toast.success('Textbook removed');
   };
 
   const formatSize = (bytes: number) => {
@@ -110,7 +125,7 @@ export default function TextbooksTab({ onSelectBook, selectedBookId }: Props) {
         {isUploading ? (
           <Box>
             <LinearProgress sx={{ mb: 1, borderRadius: 1 }} />
-            <Typography variant="body2" color="text.secondary">Processing PDF...</Typography>
+            <Typography variant="body2" color="text.secondary">Uploading & processing PDF...</Typography>
           </Box>
         ) : (
           <>
@@ -161,7 +176,7 @@ export default function TextbooksTab({ onSelectBook, selectedBookId }: Props) {
               <Tooltip title="Delete textbook">
                 <IconButton
                   size="small"
-                  onClick={(e) => { e.stopPropagation(); removeTextbook(book.id); toast.success('Textbook removed'); }}
+                  onClick={(e) => handleDelete(book.id, e)}
                   sx={{ color: 'text.secondary', opacity: 0.5, '&:hover': { opacity: 1, color: '#f44336' } }}
                 >
                   <DeleteIcon sx={{ fontSize: 18 }} />

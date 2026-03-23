@@ -48,6 +48,8 @@ export class AIController {
         filename: document.originalName,
         pageCount: document.pageCount,
         size: document.size,
+        extractedText: document.extractedText,
+        createdAt: (document as any).createdAt,
       },
     };
   }

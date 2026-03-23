@@ -265,7 +265,6 @@ Include:
   async getUserDocuments(studentId: string): Promise<AIDocument[]> {
     return this.documentModel
       .find({ studentId: new Types.ObjectId(studentId) })
-      .select('-extractedText')
       .sort({ createdAt: -1 });
   }
 

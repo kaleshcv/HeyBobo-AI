@@ -385,7 +385,7 @@ export const aiApi = {
   uploadDocument: (file: File) => {
     const formData = new FormData()
     formData.append('file', file)
-    return api.post<ApiResponse<{ id: string; filename: string; pageCount: number; size: number }>>(
+    return api.post<ApiResponse<{ id: string; filename: string; pageCount: number; size: number; extractedText: string; createdAt: string }>>(
       '/ai/documents/upload',
       formData,
       { headers: { 'Content-Type': 'multipart/form-data' } }
