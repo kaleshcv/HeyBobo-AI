@@ -1,0 +1,83 @@
+{
+  "expo": {
+    "name": "EduPlatform",
+    "slug": "eduplatform",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/images/icon.png",
+    "scheme": "eduplatform",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./src/assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#6366F1"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.eduplatform.app",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Used for live workout pose detection and grooming visual analysis",
+        "NSPhotoLibraryUsageDescription": "Used to upload profile photos and lesson resources",
+        "NSBluetoothAlwaysUsageDescription": "Used to connect to fitness wearable devices",
+        "NSBluetoothPeripheralUsageDescription": "Used to pair with heart rate monitors and fitness trackers",
+        "NSMotionUsageDescription": "Used to track steps and physical activity",
+        "NSMicrophoneUsageDescription": "Used for voice input in AI Tutor"
+      },
+      "associatedDomains": ["applinks:yourdomain.com"]
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/images/adaptive-icon.png",
+        "backgroundColor": "#6366F1"
+      },
+      "package": "com.eduplatform.app",
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.BLUETOOTH",
+        "android.permission.BLUETOOTH_ADMIN",
+        "android.permission.BLUETOOTH_SCAN",
+        "android.permission.BLUETOOTH_CONNECT",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACTIVITY_RECOGNITION",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.VIBRATE"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "yourdomain.com",
+              "pathPrefix": "/app"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
+    },
+    "web": {
+      "favicon": "./src/assets/images/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-secure-store",
+      ["expo-camera", { "cameraPermission": "Allow EduPlatform to access your camera" }],
+      ["expo-image-picker", { "photosPermission": "Allow EduPlatform to access your photos" }],
+      ["expo-notifications", { "icon": "./src/assets/images/notification-icon.png", "color": "#6366F1" }],
+      ["react-native-ble-plx", { "isBackgroundEnabled": false }],
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "your-eas-project-id"
+      }
+    }
+  }
+}

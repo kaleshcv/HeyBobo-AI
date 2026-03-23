@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { useNavigate, Link as RouterLink } from 'react-router-dom'
+import { useState } from 'react'
+import { Link as RouterLink, Navigate } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 
@@ -14,7 +14,6 @@ function getSaved() {
 }
 
 export default function HomePage() {
-  const navigate = useNavigate()
   const { login, isAuthenticated } = useAuth()
   const saved = getSaved()
   const [email, setEmail] = useState(saved?.email ?? '')
@@ -24,8 +23,7 @@ export default function HomePage() {
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
 
   if (isAuthenticated) {
-    navigate('/app', { replace: true })
-    return null
+    return <Navigate to="/app" replace />
   }
 
   const validate = () => {

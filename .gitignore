@@ -35,6 +35,17 @@ docker-compose.override.yml
 .vite/
 frontend/.vite/
 
+# Mobile
+mobile/node_modules/
+mobile/.expo/
+mobile/dist/
+mobile/web-build/
+mobile/.env
+mobile/.env.local
+mobile/android/
+mobile/ios/
+
 # Lock files (optional - uncomment if you want to commit them)
 # backend/package-lock.json
 # frontend/package-lock.json
+# mobile/package-lock.json

@@ -61,6 +61,7 @@ const CoursePlayerPage = lazy(() => import('@/pages/app/CoursePlayerPage'))
 const AITutorAppPage = lazy(() => import('@/pages/app/AITutorPage'))
 const CoursesListPage = lazy(() => import('@/pages/app/CoursesListPage'))
 const GroupsPage = lazy(() => import('@/pages/app/GroupsPage'))
+const GroupDetailPage = lazy(() => import('@/pages/app/GroupDetailPage'))
 const MeetingsPage = lazy(() => import('@/pages/app/MeetingsPage'))
 
 // Health pages (lazy loaded)
@@ -68,8 +69,10 @@ const HealthFitnessPage = lazy(() => import('@/pages/app/HealthFitnessPage'))
 const FitnessProfilePage = lazy(() => import('@/pages/app/FitnessProfilePage'))
 const ActivityTrackingPage = lazy(() => import('@/pages/app/ActivityTrackingPage'))
 const WearablesPage = lazy(() => import('@/pages/app/WearablesPage'))
+const InjuryPage = lazy(() => import('@/pages/app/InjuryPage'))
 
 // Fitness pages (lazy loaded)
+const FitnessDashboardPage = lazy(() => import('@/pages/app/FitnessDashboardPage'))
 const WorkoutsPage = lazy(() => import('@/pages/app/WorkoutsPage'))
 
 // Dietary pages (lazy loaded)
@@ -81,6 +84,11 @@ const DietaryProfilePage = lazy(() => import('@/pages/app/dietary/DietaryProfile
 const DietaryGoalsPage = lazy(() => import('@/pages/app/dietary/DietaryGoalsPage'))
 const MealPlannerPage = lazy(() => import('@/pages/app/dietary/MealPlannerPage'))
 const GroceryPage = lazy(() => import('@/pages/app/dietary/GroceryPage'))
+const ShoppingPage = lazy(() => import('@/pages/app/ShoppingPage'))
+const SmartShoppingListsPage = lazy(() => import('@/pages/app/shopping/SmartShoppingListsPage'))
+const CampusMarketplacePage = lazy(() => import('@/pages/app/shopping/CampusMarketplacePage'))
+const BudgetExpensesPage = lazy(() => import('@/pages/app/shopping/BudgetExpensesPage'))
+const OrdersReviewsPage = lazy(() => import('@/pages/app/shopping/OrdersReviewsPage'))
 const GroomingPage = lazy(() => import('@/pages/app/GroomingPage'))
 const GroomingDashboardPage = lazy(() => import('@/pages/app/grooming/GroomingDashboardPage'))
 const GroomingRecommendationPage = lazy(() => import('@/pages/app/grooming/GroomingRecommendationPage'))
@@ -475,6 +483,14 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: 'groups/:groupId',
+        element: (
+          <SuspenseWrapper>
+            <GroupDetailPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
         path: 'meetings',
         element: (
           <SuspenseWrapper>
@@ -515,6 +531,14 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: 'health/injury',
+        element: (
+          <SuspenseWrapper>
+            <InjuryPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
         path: 'health/workouts',
         element: (
           <SuspenseWrapper>
@@ -526,7 +550,7 @@ export const router = createBrowserRouter([
         path: 'fitness',
         element: (
           <SuspenseWrapper>
-            <HealthFitnessPage />
+            <FitnessDashboardPage />
           </SuspenseWrapper>
         ),
       },
@@ -599,6 +623,46 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <GroceryPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'shopping',
+        element: (
+          <SuspenseWrapper>
+            <ShoppingPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'shopping/lists',
+        element: (
+          <SuspenseWrapper>
+            <SmartShoppingListsPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'shopping/marketplace',
+        element: (
+          <SuspenseWrapper>
+            <CampusMarketplacePage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'shopping/budget',
+        element: (
+          <SuspenseWrapper>
+            <BudgetExpensesPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'shopping/orders',
+        element: (
+          <SuspenseWrapper>
+            <OrdersReviewsPage />
           </SuspenseWrapper>
         ),
       },

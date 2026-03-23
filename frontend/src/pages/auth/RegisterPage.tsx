@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, Navigate } from 'react-router-dom'
 import {
   Box,
   Paper,
@@ -20,7 +20,6 @@ import MenuBookIcon from '@mui/icons-material/MenuBook'
 import { useAuth } from '@/hooks/useAuth'
 
 export default function RegisterPage() {
-  const navigate = useNavigate()
   const { register: registerUser, isAuthenticated } = useAuth()
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -32,8 +31,7 @@ export default function RegisterPage() {
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   if (isAuthenticated) {
-    navigate('/app', { replace: true })
-    return null
+    return <Navigate to="/app" replace />
   }
 
   const validate = () => {

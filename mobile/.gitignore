@@ -1,0 +1,37 @@
+node_modules/
+.expo/
+dist/
+web-build/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Native build outputs
+android/
+ios/
+
+# Native signing credentials
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro bundler
+.metro-health-check*
+
+# Debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.orig.*
+
+# IDE
+.idea/
+*.iml
+.vscode/

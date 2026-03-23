@@ -1,0 +1,24 @@
+{
+  "cli": { "version": ">= 10.0.0" },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": { "APP_ENV": "development" }
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": { "APP_ENV": "staging" }
+    },
+    "production": {
+      "autoIncrement": true,
+      "env": { "APP_ENV": "production" }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": { "appleId": "your@apple.id", "ascAppId": "your-app-store-id" },
+      "android": { "serviceAccountKeyPath": "./google-play-service-account.json" }
+    }
+  }
+}

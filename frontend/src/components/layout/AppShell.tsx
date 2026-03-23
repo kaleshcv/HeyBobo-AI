@@ -35,8 +35,11 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import RecommendIcon from '@mui/icons-material/Recommend';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import LocalMallIcon from '@mui/icons-material/LocalMall';
+import StorefrontIcon from '@mui/icons-material/Storefront';
 import SpaIcon from '@mui/icons-material/Spa';
 import PsychologyIcon from '@mui/icons-material/Psychology';
+import HealingIcon from '@mui/icons-material/Healing';
 
 import { useAuth } from '@/hooks/useAuth';
 import { getInitials } from '@/lib/utils';
@@ -57,6 +60,7 @@ const modules: NavModule[] = [
   { id: 'health', label: 'Health', icon: <MonitorHeartIcon />, path: '/app/health' },
   { id: 'fitness', label: 'Fitness', icon: <FitnessCenterIcon />, path: '/app/fitness' },
   { id: 'dietary', label: 'Dietary', icon: <RestaurantIcon />, path: '/app/dietary' },
+  { id: 'shopping', label: 'Shopping', icon: <LocalMallIcon />, path: '/app/shopping' },
   { id: 'grooming', label: 'Grooming & Lifestyle', icon: <SpaIcon />, path: '/app/grooming' },
 ];
 
@@ -74,6 +78,7 @@ const healthSubModules: NavModule[] = [
   { id: 'health-profile', label: 'Health Profile', icon: <PersonIcon />, path: '/app/health/fitness-profile' },
   { id: 'activity-tracking', label: 'Activity Tracking', icon: <TimelineIcon />, path: '/app/health/activity-tracking' },
   { id: 'wearables', label: 'Wearables', icon: <WatchIcon />, path: '/app/health/wearables' },
+  { id: 'injury', label: 'Injury Tracker', icon: <HealingIcon />, path: '/app/health/injury' },
 ];
 
 const fitnessSubModules: NavModule[] = [
@@ -95,6 +100,14 @@ const groomingSubModules: NavModule[] = [
   { id: 'grooming-dashboard', label: 'Dashboard', icon: <DashboardIcon />, path: '/app/grooming' },
   { id: 'grooming-recommendations', label: 'Recommendations', icon: <RecommendIcon />, path: '/app/grooming/recommendations' },
   { id: 'grooming-visual-analysis', label: 'Visual Analysis', icon: <CameraAltIcon />, path: '/app/grooming/visual-analysis' },
+];
+
+const shoppingSubModules: NavModule[] = [
+  { id: 'shopping-dashboard', label: 'Dashboard', icon: <DashboardIcon />, path: '/app/shopping' },
+  { id: 'shopping-lists', label: 'Shopping Lists', icon: <ShoppingCartIcon />, path: '/app/shopping/lists' },
+  { id: 'campus-marketplace', label: 'Campus Marketplace', icon: <StorefrontIcon />, path: '/app/shopping/marketplace' },
+  { id: 'budget-expenses', label: 'Budget & Expenses', icon: <LocalMallIcon />, path: '/app/shopping/budget' },
+  { id: 'orders-reviews', label: 'Orders & Reviews', icon: <AutoAwesomeIcon />, path: '/app/shopping/orders' },
 ];
 
 const RIGHT_DRAWER_WIDTH = 240;
@@ -336,7 +349,19 @@ export default function AppShell() {
 
         {/* Sub-module links */}
         <List sx={{ py: 0.5 }}>
-          {(location.pathname.startsWith('/app/ai-brain') ? [] : location.pathname.startsWith('/app/grooming') ? groomingSubModules : location.pathname.startsWith('/app/fitness') ? fitnessSubModules : location.pathname.startsWith('/app/health') ? healthSubModules : location.pathname.startsWith('/app/dietary') ? dietarySubModules : educationSubModules).map((mod) => (
+          {(location.pathname.startsWith('/app/ai-brain')
+            ? []
+            : location.pathname.startsWith('/app/grooming')
+              ? groomingSubModules
+              : location.pathname.startsWith('/app/shopping')
+                ? shoppingSubModules
+                : location.pathname.startsWith('/app/fitness')
+                  ? fitnessSubModules
+                  : location.pathname.startsWith('/app/health')
+                    ? healthSubModules
+                    : location.pathname.startsWith('/app/dietary')
+                      ? dietarySubModules
+                      : educationSubModules).map((mod) => (
             <Tooltip key={mod.id} title={rightExpanded ? '' : mod.label} placement="left">
               <ListItemButton
                 selected={isActive(mod.path)}

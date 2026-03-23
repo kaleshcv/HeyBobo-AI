@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, Navigate } from 'react-router-dom'
 import {
   Box,
   Paper,
@@ -16,7 +16,6 @@ import SchoolIcon from '@mui/icons-material/School'
 import { useAuth } from '@/hooks/useAuth'
 
 export default function LoginPage() {
-  const navigate = useNavigate()
   const { login, isAuthenticated } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -24,8 +23,7 @@ export default function LoginPage() {
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
 
   if (isAuthenticated) {
-    navigate('/app', { replace: true })
-    return null
+    return <Navigate to="/app" replace />
   }
 
   const validate = () => {
