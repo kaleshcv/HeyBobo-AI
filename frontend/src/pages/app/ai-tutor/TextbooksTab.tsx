@@ -14,10 +14,12 @@ import UploadFileIcon from '@mui/icons-material/UploadFile';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import toast from 'react-hot-toast';
 import * as pdfjsLib from 'pdfjs-dist';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import { useAITutorStore, Textbook } from '@/store/aiTutorStore';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url,
+).toString();
 
 async function extractPdfText(file: File): Promise<{ text: string; pageCount: number }> {
   const arrayBuffer = await file.arrayBuffer();
