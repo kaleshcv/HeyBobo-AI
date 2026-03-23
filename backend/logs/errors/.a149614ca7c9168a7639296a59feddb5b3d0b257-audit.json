@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 90
+    },
+    "auditLog": "/Users/Kalesh/Desktop/eduplatform/backend/logs/errors/.a149614ca7c9168a7639296a59feddb5b3d0b257-audit.json",
+    "files": [
+        {
+            "date": 1774287968967,
+            "name": "/Users/Kalesh/Desktop/eduplatform/backend/logs/errors/error-2026-03-23.log",
+            "hash": "8f8936a832a8443ead8b37788b71fa1368541815094ac1239d9fb8aa8de5ba67"
+        }
+    ],
+    "hashType": "sha256"
+}

@@ -2,7 +2,7 @@ import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nes
 import { Observable, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { Request } from 'express';
-import { logger } from '@/common/logger/winston.config';
+import { logger, httpLogger } from '@/common/logger/winston.config';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
@@ -18,7 +18,7 @@ export class LoggingInterceptor implements NestInterceptor {
       tap(() => {
         const response = context.switchToHttp().getResponse();
         const delay = Date.now() - now;
-        logger.info(`${method} ${url} ${response.statusCode} ${delay}ms`, {
+        const meta = {
           context: 'HTTP',
           method,
           url,
@@ -27,11 +27,15 @@ export class LoggingInterceptor implements NestInterceptor {
           ip,
           userAgent,
           userId,
-        });
+        };
+        // Write to console + app log via main logger
+        logger.info(`${method} ${url} ${response.statusCode} ${delay}ms`, meta);
+        // Write to dedicated HTTP access log
+        httpLogger.info(`${method} ${url} ${response.statusCode} ${delay}ms`, meta);
       }),
       catchError((err) => {
         const delay = Date.now() - now;
-        logger.error(`${method} ${url} ERROR ${delay}ms — ${err.message}`, {
+        const meta = {
           context: 'HTTP',
           method,
           url,
@@ -39,7 +43,9 @@ export class LoggingInterceptor implements NestInterceptor {
           ip,
           userId,
           stack: err.stack,
-        });
+        };
+        logger.error(`${method} ${url} ERROR ${delay}ms — ${err.message}`, meta);
+        httpLogger.error(`${method} ${url} ERROR ${delay}ms — ${err.message}`, meta);
         return throwError(() => err);
       }),
     );

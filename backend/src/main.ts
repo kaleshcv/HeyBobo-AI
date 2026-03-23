@@ -14,6 +14,13 @@ import { TransformInterceptor } from '@/common/interceptors/transform.intercepto
 import { LoggingInterceptor } from '@/common/interceptors/logging.interceptor';
 import { WinstonLoggerService } from '@/common/logger/logger.service';
 
+// ── Ensure log directories exist before the logger module is loaded ──────────
+const LOG_ROOT = process.env.LOG_DIR || join(process.cwd(), 'logs');
+for (const sub of ['app', 'errors', 'http']) {
+  const dir = join(LOG_ROOT, sub);
+  if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+}
+
 async function bootstrap(): Promise<void> {
   const winstonLogger = new WinstonLoggerService();
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
