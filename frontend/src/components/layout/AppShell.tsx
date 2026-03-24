@@ -29,7 +29,6 @@ import TimelineIcon from '@mui/icons-material/Timeline';
 import WatchIcon from '@mui/icons-material/Watch';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
-import FlagIcon from '@mui/icons-material/Flag';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import RecommendIcon from '@mui/icons-material/Recommend';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
@@ -90,8 +89,6 @@ const dietarySubModules: NavModule[] = [
   { id: 'meal-log', label: 'Meal Log', icon: <RestaurantMenuIcon />, path: '/app/dietary/meals' },
   { id: 'meal-planner', label: 'Meal Planner', icon: <AutoAwesomeIcon />, path: '/app/dietary/meal-planner' },
   { id: 'nutrition-tracker', label: 'Nutrition Tracker', icon: <TimelineIcon />, path: '/app/dietary/nutrition' },
-  { id: 'dietary-profile', label: 'Dietary Profile', icon: <PersonIcon />, path: '/app/dietary/profile' },
-  { id: 'dietary-goals', label: 'Goals', icon: <FlagIcon />, path: '/app/dietary/goals' },
   { id: 'grocery', label: 'Grocery & Food', icon: <ShoppingCartIcon />, path: '/app/dietary/grocery' },
 ];
 
