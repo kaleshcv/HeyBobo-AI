@@ -1533,75 +1533,106 @@ export async function chatWithBrain(
     .map((m) => `${m.role === 'user' ? 'User' : 'Bobo'}: ${m.content}`)
     .join('\n');
 
-  const prompt = `You are Bobo, the central AI assistant of Heybobo — a multi-module personal growth platform. You have real-time access to ALL of the user's data across every module. Answer any question the user asks by referencing the actual data below. Be specific, insightful, and actionable.
+  // Detect which modules the user is asking about
+  const msg = message.toLowerCase();
+  const wantsEducation = /education|course|quiz|study|textbook|lecture|assignment|enroll|lesson|group|meeting/i.test(msg);
+  const wantsFitness = /fitness|workout|exercise|gym|training|form score|streak|active plan/i.test(msg);
+  const wantsHealth = /health|sleep|heart rate|stress|readiness|steps|wearable|calories burned|vitals/i.test(msg);
+  const wantsDietary = /diet|dietary|calorie|protein|carb|fat|meal|nutrition|supplement|grocery|food|macro/i.test(msg);
+  const wantsInjury = /injury|injuries|pain|rehab|rehabilitation|body part/i.test(msg);
+  const wantsShopping = /shopping|shop|list|grocery list|pending items/i.test(msg);
+  const wantsGroups = /group|team|task|meeting|assignment|member/i.test(msg);
+  const wantsAll = /everything|all module|overall|summary|overview|how am i doing|full report|all data/i.test(msg);
 
-Current time: ${moduleData.currentTime}
-User: ${moduleData.userName}
+  const needsData = wantsEducation || wantsFitness || wantsHealth || wantsDietary || wantsInjury || wantsShopping || wantsGroups || wantsAll;
 
-=== LIVE MODULE DATA ===
+  // Build module data sections only for what's relevant
+  let dataBlock = '';
+  if (needsData) {
+    dataBlock += '\n=== RELEVANT MODULE DATA ===\n';
 
-EDUCATION:
+    if (wantsEducation || wantsAll) {
+      dataBlock += `\nEDUCATION:
 - Enrolled courses: ${moduleData.education.enrolledCourses}, Completed: ${moduleData.education.completedCourses}
 - Pending assignments: ${moduleData.education.pendingAssignments}, Upcoming quizzes: ${moduleData.education.upcomingQuizzes}
 - Recent quiz scores: ${moduleData.education.recentQuizScores.length > 0 ? moduleData.education.recentQuizScores.join(', ') + '%' : 'None'}
 - Active study plans: ${moduleData.education.studyPlansActive}, Textbooks: ${moduleData.education.textbooksUploaded}
 - Lectures completed: ${moduleData.education.lecturesCompleted}, Missed: ${moduleData.education.lecturesMissed}
-- Groups: ${moduleData.education.groupsJoined}, Meetings scheduled: ${moduleData.education.meetingsScheduled}
+- Groups: ${moduleData.education.groupsJoined}, Meetings scheduled: ${moduleData.education.meetingsScheduled}\n`;
+    }
 
-FITNESS:
+    if (wantsFitness || wantsAll) {
+      dataBlock += `\nFITNESS:
 - Workouts this week: ${moduleData.fitness.workoutsThisWeek}/${moduleData.fitness.weeklyGoal}
 - Minutes this week: ${moduleData.fitness.totalMinutesThisWeek}
 - Avg form score: ${moduleData.fitness.avgFormScore}%
 - Active plan: ${moduleData.fitness.activePlan ?? 'None'}
 - Last workout: ${moduleData.fitness.lastWorkoutDate ?? 'Never'}
 - Streak: ${moduleData.fitness.streakDays} days
-- Custom workouts: ${moduleData.fitness.customWorkouts}
+- Custom workouts: ${moduleData.fitness.customWorkouts}\n`;
+    }
 
-HEALTH:
+    if (wantsHealth || wantsAll) {
+      dataBlock += `\nHEALTH:
 - Sleep score: ${moduleData.health.sleepScore}/100
 - Avg heart rate: ${moduleData.health.avgHeartRate} bpm
 - Stress score: ${moduleData.health.stressScore}/100
 - Readiness score: ${moduleData.health.readinessScore}/100
 - Steps today: ${moduleData.health.stepsToday}
 - Calories burned: ${moduleData.health.caloriesBurned}
-- Wearable connected: ${moduleData.health.hasWearable ? 'Yes' : 'No'}
+- Wearable connected: ${moduleData.health.hasWearable ? 'Yes' : 'No'}\n`;
+    }
 
-DIETARY:
+    if (wantsDietary || wantsAll) {
+      dataBlock += `\nDIETARY:
 - Calories: ${moduleData.dietary.caloriesConsumed}/${moduleData.dietary.calorieTarget} kcal
 - Protein: ${moduleData.dietary.proteinConsumed}/${moduleData.dietary.proteinTarget}g
 - Carbs: ${moduleData.dietary.carbsConsumed}/${moduleData.dietary.carbsTarget}g
 - Fat: ${moduleData.dietary.fatConsumed}/${moduleData.dietary.fatTarget}g
 - Meals logged: ${moduleData.dietary.mealsLogged}/${moduleData.dietary.mealsPerDayTarget}
 - Grocery items pending: ${moduleData.dietary.groceryItemsPending}
-- Supplements due: ${moduleData.dietary.supplementsDue}
+- Supplements due: ${moduleData.dietary.supplementsDue}\n`;
+    }
 
-INJURIES:
+    if (wantsInjury || wantsAll) {
+      dataBlock += `\nINJURIES:
 ${moduleData.injury.activeInjuries.length > 0
-    ? moduleData.injury.activeInjuries.map(i => `- ${i.bodyPart}: pain ${i.painScore}/10, ${i.daysSinceOnset} days`).join('\n')
-    : '- No active injuries'}
-- Rehab adherence: ${moduleData.injury.rehabAdherence}%
+        ? moduleData.injury.activeInjuries.map(i => `- ${i.bodyPart}: pain ${i.painScore}/10, ${i.daysSinceOnset} days`).join('\n')
+        : '- No active injuries'}
+- Rehab adherence: ${moduleData.injury.rehabAdherence}%\n`;
+    }
 
-SHOPPING:
+    if (wantsShopping || wantsAll) {
+      dataBlock += `\nSHOPPING:
 - Pending items: ${moduleData.shopping.pendingItems}
-- Total lists: ${moduleData.shopping.totalLists}, Checked: ${moduleData.shopping.checkedItems}
+- Total lists: ${moduleData.shopping.totalLists}, Checked: ${moduleData.shopping.checkedItems}\n`;
+    }
 
-GROUPS:
+    if (wantsGroups || wantsAll) {
+      dataBlock += `\nGROUPS:
 - Active groups: ${moduleData.groups.activeGroups}
 - Pending tasks: ${moduleData.groups.pendingTasks}
 - Upcoming meetings: ${moduleData.groups.upcomingMeetings}
-- Total assignments: ${moduleData.groups.totalAssignments}
+- Total assignments: ${moduleData.groups.totalAssignments}\n`;
+    }
+  }
 
+  const prompt = `You are Bobo, a friendly and conversational AI assistant on the Heybobo platform. The user's name is ${moduleData.userName}.
+
+BEHAVIOR:
+- For casual conversation (greetings, jokes, general questions, chitchat), just be friendly and conversational. Do NOT dump module data or statistics.
+- Only reference module data when the user specifically asks about a module (education, fitness, health, dietary, injuries, shopping, groups).
+- Keep responses natural and concise. Don't over-explain.
+- Use markdown sparingly — only for lists or emphasis when it helps readability.
+${dataBlock}
 ${recentHistory ? `=== CONVERSATION ===\n${recentHistory}\n` : ''}
 User: ${message}
 
 RULES:
-1. Always reference the user's actual data — never make up numbers.
-2. If the user asks about a module, pull specific stats from the data above.
-3. Be concise but thorough. Use markdown formatting for clarity.
-4. If data is zero or empty, acknowledge that the user hasn't started using that module yet.
-5. Cross-reference modules when relevant (e.g., fitness + dietary, health + fitness).
-6. Be warm, supportive, and proactive — suggest actions when appropriate.
-7. If you don't have enough data to answer, say so honestly.
+1. If this is casual conversation, respond naturally without referencing any data.
+2. If the user asks about specific modules, use ONLY the data provided above — never invent numbers.
+3. If data is zero or empty, mention the user hasn't used that module yet.
+4. Be warm and brief. No walls of text for simple questions.
 
 Respond as Bobo:`;
 
