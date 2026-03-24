@@ -1,20 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Avatar,
-  Badge,
   Box,
   CircularProgress,
-  Fab,
-  Fade,
   IconButton,
   Paper,
+  Slide,
   TextField,
   Typography,
 } from '@mui/material';
-import SmartToyIcon from '@mui/icons-material/SmartToy';
 import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from '@mui/icons-material/Send';
-import MinimizeIcon from '@mui/icons-material/Minimize';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import { chatWithBrain, type AIBrainInput } from '@/lib/gemini';
 
@@ -30,7 +26,7 @@ interface BrainChatbotProps {
 }
 
 export default function BrainChatbot({ moduleData }: BrainChatbotProps) {
-  const [open, setOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'welcome',
@@ -50,16 +46,19 @@ export default function BrainChatbot({ moduleData }: BrainChatbotProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Focus input when opened
+  // Focus input when chat window opens
   useEffect(() => {
-    if (open) {
+    if (chatOpen) {
       setTimeout(() => inputRef.current?.focus(), 200);
     }
-  }, [open]);
+  }, [chatOpen]);
 
   const handleSend = useCallback(async () => {
     const text = input.trim();
     if (!text || sending) return;
+
+    // Open chat window on first send
+    if (!chatOpen) setChatOpen(true);
 
     const userMsg: ChatMessage = {
       id: `u-${Date.now()}`,
@@ -101,7 +100,7 @@ export default function BrainChatbot({ moduleData }: BrainChatbotProps) {
     } finally {
       setSending(false);
     }
-  }, [input, sending, messages, moduleData]);
+  }, [input, sending, chatOpen, messages, moduleData]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -115,11 +114,8 @@ export default function BrainChatbot({ moduleData }: BrainChatbotProps) {
     const parts = text.split(/(\*\*[^*]+\*\*)/g);
     return parts.map((part, i) => {
       if (part.startsWith('**') && part.endsWith('**')) {
-        return (
-          <strong key={i}>{part.slice(2, -2)}</strong>
-        );
+        return <strong key={i}>{part.slice(2, -2)}</strong>;
       }
-      // Split on newlines
       return part.split('\n').map((line, j) => (
         <span key={`${i}-${j}`}>
           {j > 0 && <br />}
@@ -131,48 +127,23 @@ export default function BrainChatbot({ moduleData }: BrainChatbotProps) {
 
   return (
     <>
-      {/* Floating Action Button */}
-      <Fade in={!open}>
-        <Fab
-          onClick={() => setOpen(true)}
-          sx={{
-            position: 'fixed',
-            bottom: 24,
-            right: 24,
-            zIndex: 1300,
-            bgcolor: '#1a1a2e',
-            color: '#fff',
-            width: 60,
-            height: 60,
-            '&:hover': { bgcolor: '#16213e' },
-            boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
-          }}
-        >
-          <Badge
-            color="success"
-            variant="dot"
-            overlap="circular"
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-          >
-            <SmartToyIcon sx={{ fontSize: 28 }} />
-          </Badge>
-        </Fab>
-      </Fade>
-
-      {/* Chat Window */}
-      <Fade in={open}>
+      {/* Chat window — slides up when open */}
+      <Slide direction="up" in={chatOpen} mountOnEnter unmountOnExit>
         <Paper
           elevation={16}
           sx={{
             position: 'fixed',
-            bottom: 24,
-            right: 24,
-            zIndex: 1300,
-            width: { xs: 'calc(100vw - 32px)', sm: 400 },
-            height: { xs: 'calc(100vh - 100px)', sm: 560 },
-            maxHeight: '80vh',
-            borderRadius: 3,
-            display: open ? 'flex' : 'none',
+            bottom: 72,
+            left: 0,
+            right: 0,
+            zIndex: 1299,
+            height: { xs: 'calc(100vh - 140px)', sm: '60vh' },
+            maxHeight: 520,
+            mx: 'auto',
+            width: '100%',
+            maxWidth: 720,
+            borderRadius: '16px 16px 0 0',
+            display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
           }}
@@ -190,8 +161,8 @@ export default function BrainChatbot({ moduleData }: BrainChatbotProps) {
               flexShrink: 0,
             }}
           >
-            <Avatar sx={{ bgcolor: '#6c63ff', width: 36, height: 36 }}>
-              <AutoAwesomeIcon sx={{ fontSize: 20 }} />
+            <Avatar sx={{ bgcolor: '#6c63ff', width: 34, height: 34 }}>
+              <AutoAwesomeIcon sx={{ fontSize: 18 }} />
             </Avatar>
             <Box sx={{ flex: 1 }}>
               <Typography variant="subtitle2" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
@@ -201,10 +172,7 @@ export default function BrainChatbot({ moduleData }: BrainChatbotProps) {
                 {sending ? 'Thinking...' : 'Ask anything about your modules'}
               </Typography>
             </Box>
-            <IconButton size="small" onClick={() => setOpen(false)} sx={{ color: '#fff' }}>
-              <MinimizeIcon />
-            </IconButton>
-            <IconButton size="small" onClick={() => setOpen(false)} sx={{ color: '#fff' }}>
+            <IconButton size="small" onClick={() => setChatOpen(false)} sx={{ color: '#fff' }}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -286,56 +254,80 @@ export default function BrainChatbot({ moduleData }: BrainChatbotProps) {
 
             <div ref={messagesEndRef} />
           </Box>
-
-          {/* Input */}
-          <Box
-            sx={{
-              px: 2,
-              py: 1.5,
-              borderTop: '1px solid',
-              borderColor: 'divider',
-              bgcolor: '#fff',
-              display: 'flex',
-              gap: 1,
-              alignItems: 'flex-end',
-              flexShrink: 0,
-            }}
-          >
-            <TextField
-              inputRef={inputRef}
-              fullWidth
-              multiline
-              maxRows={3}
-              size="small"
-              placeholder="Ask about fitness, courses, health..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              disabled={sending}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: 2,
-                  bgcolor: '#f5f5f5',
-                },
-              }}
-            />
-            <IconButton
-              onClick={handleSend}
-              disabled={!input.trim() || sending}
-              sx={{
-                bgcolor: '#1a1a2e',
-                color: '#fff',
-                width: 40,
-                height: 40,
-                '&:hover': { bgcolor: '#16213e' },
-                '&.Mui-disabled': { bgcolor: '#e0e0e0', color: '#9e9e9e' },
-              }}
-            >
-              <SendIcon sx={{ fontSize: 20 }} />
-            </IconButton>
-          </Box>
         </Paper>
-      </Fade>
+      </Slide>
+
+      {/* Fixed bottom input bar — always visible, full width */}
+      <Box
+        sx={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 1300,
+          bgcolor: '#1a1a2e',
+          borderTop: '1px solid rgba(255,255,255,0.08)',
+          px: { xs: 1.5, sm: 3 },
+          py: 1.5,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1.5,
+        }}
+      >
+        <Avatar sx={{ bgcolor: '#6c63ff', width: 36, height: 36, flexShrink: 0 }}>
+          <AutoAwesomeIcon sx={{ fontSize: 20 }} />
+        </Avatar>
+        <TextField
+          inputRef={inputRef}
+          fullWidth
+          multiline
+          maxRows={3}
+          size="small"
+          placeholder="Ask Bobo anything about your modules..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onFocus={() => { if (messages.length > 1 || sending) setChatOpen(true); }}
+          disabled={sending}
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: 3,
+              bgcolor: 'rgba(255,255,255,0.07)',
+              color: '#fff',
+              '& fieldset': { borderColor: 'rgba(255,255,255,0.15)' },
+              '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.3)' },
+              '&.Mui-focused fieldset': { borderColor: '#6c63ff' },
+            },
+            '& .MuiOutlinedInput-input': {
+              color: '#fff',
+              '&::placeholder': { color: 'rgba(255,255,255,0.5)', opacity: 1 },
+            },
+          }}
+        />
+        <IconButton
+          onClick={handleSend}
+          disabled={!input.trim() || sending}
+          sx={{
+            bgcolor: '#6c63ff',
+            color: '#fff',
+            width: 40,
+            height: 40,
+            flexShrink: 0,
+            '&:hover': { bgcolor: '#5a52e0' },
+            '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.3)' },
+          }}
+        >
+          <SendIcon sx={{ fontSize: 20 }} />
+        </IconButton>
+        {chatOpen && (
+          <IconButton
+            onClick={() => setChatOpen(false)}
+            sx={{ color: 'rgba(255,255,255,0.6)', flexShrink: 0, width: 36, height: 36 }}
+          >
+            <CloseIcon sx={{ fontSize: 20 }} />
+          </IconButton>
+        )}
+      </Box>
     </>
   );
 }
