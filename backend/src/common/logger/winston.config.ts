@@ -8,9 +8,10 @@ const LOG_DIR = process.env.LOG_DIR || path.join(process.cwd(), 'logs');
 export const APP_LOG_DIR       = path.join(LOG_DIR, 'app');
 export const ERROR_LOG_DIR     = path.join(LOG_DIR, 'errors');
 export const HTTP_LOG_DIR      = path.join(LOG_DIR, 'http');
+export const GENERAL_LOG_DIR   = path.join(LOG_DIR, 'general-log');
 
 // Ensure all subdirectories exist before transports are created
-for (const dir of [APP_LOG_DIR, ERROR_LOG_DIR, HTTP_LOG_DIR]) {
+for (const dir of [APP_LOG_DIR, ERROR_LOG_DIR, HTTP_LOG_DIR, GENERAL_LOG_DIR]) {
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 }
 
@@ -69,6 +70,14 @@ export const logger = winston.createLogger({
       filename: path.join(ERROR_LOG_DIR, 'error-%DATE%.log'),
       level:    'error',
       maxFiles: '90d',
+    } as any),
+
+    // General log — info, warn, error only (no debug/verbose)
+    new winston.transports.DailyRotateFile({
+      ...rotateBase,
+      filename: path.join(GENERAL_LOG_DIR, 'general-%DATE%.log'),
+      level:    'info',
+      maxFiles: '30d',
     } as any),
   ],
 });

@@ -16,7 +16,7 @@ import { WinstonLoggerService } from '@/common/logger/logger.service';
 
 // ── Ensure log directories exist before the logger module is loaded ──────────
 const LOG_ROOT = process.env.LOG_DIR || join(process.cwd(), 'logs');
-for (const sub of ['app', 'errors', 'http']) {
+for (const sub of ['app', 'errors', 'http', 'general-log']) {
   const dir = join(LOG_ROOT, sub);
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 }
