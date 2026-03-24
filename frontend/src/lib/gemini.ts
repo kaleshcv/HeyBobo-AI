@@ -1518,3 +1518,93 @@ Return ONLY valid JSON, no markdown fences.`;
   const text = result.response.text().replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
   return text;
 }
+
+// ─── AI Brain Chatbot ────────────────────────────────────────────────────────
+
+export async function chatWithBrain(
+  message: string,
+  history: { role: 'user' | 'assistant'; content: string }[],
+  moduleData: AIBrainInput,
+): Promise<string> {
+  const model = getModel();
+
+  const recentHistory = history
+    .slice(-16)
+    .map((m) => `${m.role === 'user' ? 'User' : 'Bobo'}: ${m.content}`)
+    .join('\n');
+
+  const prompt = `You are Bobo, the central AI assistant of Heybobo — a multi-module personal growth platform. You have real-time access to ALL of the user's data across every module. Answer any question the user asks by referencing the actual data below. Be specific, insightful, and actionable.
+
+Current time: ${moduleData.currentTime}
+User: ${moduleData.userName}
+
+=== LIVE MODULE DATA ===
+
+EDUCATION:
+- Enrolled courses: ${moduleData.education.enrolledCourses}, Completed: ${moduleData.education.completedCourses}
+- Pending assignments: ${moduleData.education.pendingAssignments}, Upcoming quizzes: ${moduleData.education.upcomingQuizzes}
+- Recent quiz scores: ${moduleData.education.recentQuizScores.length > 0 ? moduleData.education.recentQuizScores.join(', ') + '%' : 'None'}
+- Active study plans: ${moduleData.education.studyPlansActive}, Textbooks: ${moduleData.education.textbooksUploaded}
+- Lectures completed: ${moduleData.education.lecturesCompleted}, Missed: ${moduleData.education.lecturesMissed}
+- Groups: ${moduleData.education.groupsJoined}, Meetings scheduled: ${moduleData.education.meetingsScheduled}
+
+FITNESS:
+- Workouts this week: ${moduleData.fitness.workoutsThisWeek}/${moduleData.fitness.weeklyGoal}
+- Minutes this week: ${moduleData.fitness.totalMinutesThisWeek}
+- Avg form score: ${moduleData.fitness.avgFormScore}%
+- Active plan: ${moduleData.fitness.activePlan ?? 'None'}
+- Last workout: ${moduleData.fitness.lastWorkoutDate ?? 'Never'}
+- Streak: ${moduleData.fitness.streakDays} days
+- Custom workouts: ${moduleData.fitness.customWorkouts}
+
+HEALTH:
+- Sleep score: ${moduleData.health.sleepScore}/100
+- Avg heart rate: ${moduleData.health.avgHeartRate} bpm
+- Stress score: ${moduleData.health.stressScore}/100
+- Readiness score: ${moduleData.health.readinessScore}/100
+- Steps today: ${moduleData.health.stepsToday}
+- Calories burned: ${moduleData.health.caloriesBurned}
+- Wearable connected: ${moduleData.health.hasWearable ? 'Yes' : 'No'}
+
+DIETARY:
+- Calories: ${moduleData.dietary.caloriesConsumed}/${moduleData.dietary.calorieTarget} kcal
+- Protein: ${moduleData.dietary.proteinConsumed}/${moduleData.dietary.proteinTarget}g
+- Carbs: ${moduleData.dietary.carbsConsumed}/${moduleData.dietary.carbsTarget}g
+- Fat: ${moduleData.dietary.fatConsumed}/${moduleData.dietary.fatTarget}g
+- Meals logged: ${moduleData.dietary.mealsLogged}/${moduleData.dietary.mealsPerDayTarget}
+- Grocery items pending: ${moduleData.dietary.groceryItemsPending}
+- Supplements due: ${moduleData.dietary.supplementsDue}
+
+INJURIES:
+${moduleData.injury.activeInjuries.length > 0
+    ? moduleData.injury.activeInjuries.map(i => `- ${i.bodyPart}: pain ${i.painScore}/10, ${i.daysSinceOnset} days`).join('\n')
+    : '- No active injuries'}
+- Rehab adherence: ${moduleData.injury.rehabAdherence}%
+
+SHOPPING:
+- Pending items: ${moduleData.shopping.pendingItems}
+- Total lists: ${moduleData.shopping.totalLists}, Checked: ${moduleData.shopping.checkedItems}
+
+GROUPS:
+- Active groups: ${moduleData.groups.activeGroups}
+- Pending tasks: ${moduleData.groups.pendingTasks}
+- Upcoming meetings: ${moduleData.groups.upcomingMeetings}
+- Total assignments: ${moduleData.groups.totalAssignments}
+
+${recentHistory ? `=== CONVERSATION ===\n${recentHistory}\n` : ''}
+User: ${message}
+
+RULES:
+1. Always reference the user's actual data — never make up numbers.
+2. If the user asks about a module, pull specific stats from the data above.
+3. Be concise but thorough. Use markdown formatting for clarity.
+4. If data is zero or empty, acknowledge that the user hasn't started using that module yet.
+5. Cross-reference modules when relevant (e.g., fitness + dietary, health + fitness).
+6. Be warm, supportive, and proactive — suggest actions when appropriate.
+7. If you don't have enough data to answer, say so honestly.
+
+Respond as Bobo:`;
+
+  const result = await model.generateContent(prompt);
+  return result.response.text();
+}

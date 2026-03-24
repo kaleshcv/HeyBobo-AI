@@ -74,6 +74,7 @@ import { useMeetingStore } from '@/store/meetingStore';
 import { useShoppingListStore } from '@/store/shoppingListStore';
 import { useWearablesStore, type HealthReading } from '@/store/wearablesStore';
 import { generateAIBrainDashboard, type AIBrainInput } from '@/lib/gemini';
+import BrainChatbot from '@/components/common/BrainChatbot';
 
 // ─── Module icon/color map ──────────────────────────────────────────────────
 
@@ -700,113 +701,124 @@ export default function AIBrainPage() {
 
   // ─── Gather all module data & call Gemini ─────────────────────────────────
 
+  const brainInput: AIBrainInput = useMemo(() => ({
+    userName: user?.firstName ?? 'User',
+    currentTime: new Date().toLocaleString(),
+    education: {
+      enrolledCourses: courses.length,
+      completedCourses,
+      pendingAssignments,
+      upcomingQuizzes: 0,
+      recentQuizScores: allRecentQuizScores,
+      studyPlansActive: studyPlans.length,
+      textbooksUploaded: textbooks.length,
+      lecturesCompleted,
+      lecturesMissed: totalLectures - lecturesCompleted,
+      groupsJoined: groups.length,
+      meetingsScheduled: meetings.filter((m) => m.status === 'scheduled').length,
+    },
+    fitness: {
+      workoutsThisWeek: weeklyLogs.length,
+      weeklyGoal: activePlan?.daysPerWeek ?? fitnessProfile.daysPerWeek,
+      totalMinutesThisWeek: weeklyLogs.reduce((s, l) => s + l.durationMinutes, 0),
+      avgFormScore,
+      activePlan: activePlan?.name ?? null,
+      lastWorkoutDate: workoutLogs[0]?.date ?? null,
+      streakDays,
+      customWorkouts: customWorkouts.length,
+    },
+    health: {
+      sleepScore: latestReading('sleep-score'),
+      avgHeartRate: latestReading('heart-rate'),
+      stressScore: latestReading('stress-level'),
+      readinessScore: latestReading('readiness-score'),
+      stepsToday: todayMetrics.steps,
+      caloriesBurned: todayMetrics.caloriesBurned,
+      hydrationLevel: 0,
+      hasWearable: wearableDevices.some((d) => d.connectionStatus === 'connected'),
+    },
+    dietary: {
+      caloriesConsumed: 0,
+      calorieTarget,
+      proteinConsumed: 0,
+      proteinTarget,
+      carbsConsumed: 0,
+      carbsTarget,
+      fatConsumed: 0,
+      fatTarget,
+      mealsLogged: lessons.filter((l) => {
+        const today = todayStr();
+        return l.completedAt.startsWith(today);
+      }).length,
+      adherenceRate: 0,
+      activeMealPlan: false,
+      groceryItemsPending: pendingShoppingItems,
+      supplementsDue: 0,
+      mealsPerDayTarget: mealsPerDay,
+    },
+    injury: {
+      activeInjuries: activeInjuries.map((inj) => {
+        const latestPain = painLogs
+          .filter((l) => l.injuryId === inj.id)
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+        return {
+          bodyPart: inj.bodyPart,
+          painScore: latestPain?.painLevel ?? 0,
+          daysSinceOnset: Math.ceil(
+            (Date.now() - new Date(inj.createdAt).getTime()) / 86400000,
+          ),
+        };
+      }),
+      rehabAdherence: rehabPrograms.length > 0
+        ? Math.round(
+          rehabPrograms
+            .filter((p: any) => p.status === 'active')
+            .reduce((s: number, p: any) => {
+              const totalExpected = p.exerciseIds?.length ?? 0;
+              const sessionsCompleted = p.completedSessions?.length ?? 0;
+              return s + (totalExpected > 0 ? Math.min((sessionsCompleted / totalExpected) * 100, 100) : 0);
+            }, 0) / Math.max(rehabPrograms.filter((p: any) => p.status === 'active').length, 1),
+        )
+        : 0,
+      movementRestrictions: activeInjuries.flatMap(
+        (inj) => (inj as any).movementRestrictions ?? [],
+      ),
+    },
+    shopping: {
+      pendingItems: pendingShoppingItems,
+      totalLists: shoppingLists.length,
+      checkedItems: shoppingLists.reduce((sum, list) => sum + list.items.filter((i: any) => i.checked).length, 0),
+      upcomingDeliveries: 0,
+      lowStockItems: [],
+    },
+    groups: {
+      activeGroups: groups.length,
+      pendingTasks: pendingGroupTasks,
+      upcomingMeetings: meetings.filter((m) => m.status === 'scheduled').length,
+      missedSessions: completedGroupMeetings,
+      totalAssignments: groups.reduce((sum, g) => sum + g.assignments.length, 0),
+      totalMembers: groups.reduce((sum, g) => sum + g.members.length, 0),
+    },
+  }), [
+    user, studyPlans, textbooks,
+    weeklyLogs, activePlan, workoutLogs, customWorkouts, avgFormScore,
+    latestReading, wearableDevices, todayMetrics,
+    calorieTarget, proteinTarget, carbsTarget, fatTarget, mealsPerDay,
+    activeInjuries, painLogs, rehabPrograms,
+    groups, meetings, pendingShoppingItems, shoppingLists,
+    courses, fitnessProfile,
+    completedCourses, lecturesCompleted, totalLectures, pendingAssignments,
+    streakDays, pendingGroupTasks, completedGroupMeetings, allRecentQuizScores,
+    lessons,
+  ]);
+
   const refreshDashboard = useCallback(async () => {
     if (isLoading) return;
     setLoading(true);
     setError(null);
 
     try {
-      const input: AIBrainInput = {
-        userName: user?.firstName ?? 'User',
-        currentTime: new Date().toLocaleString(),
-        education: {
-          enrolledCourses: courses.length,
-          completedCourses,
-          pendingAssignments,
-          upcomingQuizzes: 0,
-          recentQuizScores: allRecentQuizScores,
-          studyPlansActive: studyPlans.length,
-          textbooksUploaded: textbooks.length,
-          lecturesCompleted,
-          lecturesMissed: totalLectures - lecturesCompleted,
-          groupsJoined: groups.length,
-          meetingsScheduled: meetings.filter((m) => m.status === 'scheduled').length,
-        },
-        fitness: {
-          workoutsThisWeek: weeklyLogs.length,
-          weeklyGoal: activePlan?.daysPerWeek ?? fitnessProfile.daysPerWeek,
-          totalMinutesThisWeek: weeklyLogs.reduce((s, l) => s + l.durationMinutes, 0),
-          avgFormScore,
-          activePlan: activePlan?.name ?? null,
-          lastWorkoutDate: workoutLogs[0]?.date ?? null,
-          streakDays,
-          customWorkouts: customWorkouts.length,
-        },
-        health: {
-          sleepScore: latestReading('sleep-score'),
-          avgHeartRate: latestReading('heart-rate'),
-          stressScore: latestReading('stress-level'),
-          readinessScore: latestReading('readiness-score'),
-          stepsToday: todayMetrics.steps,
-          caloriesBurned: todayMetrics.caloriesBurned,
-          hydrationLevel: 0,
-          hasWearable: wearableDevices.some((d) => d.connectionStatus === 'connected'),
-        },
-        dietary: {
-          caloriesConsumed: 0,
-          calorieTarget,
-          proteinConsumed: 0,
-          proteinTarget,
-          carbsConsumed: 0,
-          carbsTarget,
-          fatConsumed: 0,
-          fatTarget,
-          mealsLogged: lessons.filter((l) => {
-            const today = todayStr();
-            return l.completedAt.startsWith(today);
-          }).length,
-          adherenceRate: 0,
-          activeMealPlan: false,
-          groceryItemsPending: pendingShoppingItems,
-          supplementsDue: 0,
-          mealsPerDayTarget: mealsPerDay,
-        },
-        injury: {
-          activeInjuries: activeInjuries.map((inj) => {
-            const latestPain = painLogs
-              .filter((l) => l.injuryId === inj.id)
-              .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
-            return {
-              bodyPart: inj.bodyPart,
-              painScore: latestPain?.painLevel ?? 0,
-              daysSinceOnset: Math.ceil(
-                (Date.now() - new Date(inj.createdAt).getTime()) / 86400000,
-              ),
-            };
-          }),
-          rehabAdherence: rehabPrograms.length > 0
-            ? Math.round(
-              rehabPrograms
-                .filter((p: any) => p.status === 'active')
-                .reduce((s: number, p: any) => {
-                  const totalExpected = p.exerciseIds?.length ?? 0;
-                  const sessionsCompleted = p.completedSessions?.length ?? 0;
-                  return s + (totalExpected > 0 ? Math.min((sessionsCompleted / totalExpected) * 100, 100) : 0);
-                }, 0) / Math.max(rehabPrograms.filter((p: any) => p.status === 'active').length, 1),
-            )
-            : 0,
-          movementRestrictions: activeInjuries.flatMap(
-            (inj) => (inj as any).movementRestrictions ?? [],
-          ),
-        },
-        shopping: {
-          pendingItems: pendingShoppingItems,
-          totalLists: shoppingLists.length,
-          checkedItems: shoppingLists.reduce((sum, list) => sum + list.items.filter((i: any) => i.checked).length, 0),
-          upcomingDeliveries: 0,
-          lowStockItems: [],
-        },
-        groups: {
-          activeGroups: groups.length,
-          pendingTasks: pendingGroupTasks,
-          upcomingMeetings: meetings.filter((m) => m.status === 'scheduled').length,
-          missedSessions: completedGroupMeetings,
-          totalAssignments: groups.reduce((sum, g) => sum + g.assignments.length, 0),
-          totalMembers: groups.reduce((sum, g) => sum + g.members.length, 0),
-        },
-      };
-
-      const rawJson = await generateAIBrainDashboard(input);
+      const rawJson = await generateAIBrainDashboard(brainInput);
       const parsed = JSON.parse(rawJson);
 
       setBrainData({
@@ -842,16 +854,7 @@ export default function AIBrainPage() {
       setLoading(false);
     }
   }, [
-    isLoading, user, studyPlans, textbooks,
-    weeklyLogs, activePlan, workoutLogs, customWorkouts, avgFormScore,
-    liveSessions, latestReading, wearableDevices, todayMetrics,
-    calorieTarget, proteinTarget, carbsTarget, fatTarget, mealsPerDay,
-    activeInjuries, painLogs, rehabPrograms,
-    groups, meetings, pendingShoppingItems,
-    courses, videoProgress, courseQuizProgress, fitnessProfile,
-    completedCourses, lecturesCompleted, totalLectures, pendingAssignments,
-    streakDays, pendingGroupTasks, completedGroupMeetings, allRecentQuizScores,
-    lessons,
+    isLoading, brainInput,
     setLoading, setBrainData,
   ]);
 
@@ -1182,6 +1185,9 @@ export default function AIBrainPage() {
           )}
         </Stack>
       )}
+
+      {/* Floating AI Chatbot */}
+      <BrainChatbot moduleData={brainInput} />
     </Box>
   );
 }
