@@ -3,7 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { PDFParse } from 'pdf-parse';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const pdfParse = require('pdf-parse');
 import { readFileSync, existsSync, unlinkSync } from 'fs';
 import { join } from 'path';
 import { AIConversation } from '@/modules/ai/schemas/ai-conversation.schema';
@@ -241,10 +242,7 @@ Include:
     file: Express.Multer.File,
   ): Promise<AIDocument> {
     const fileData = readFileSync(file.path);
-    const parser = new PDFParse({ data: new Uint8Array(fileData) });
-    const info = await parser.getInfo();
-    const textResult = await parser.getText();
-    await parser.destroy();
+    const pdfData = await pdfParse(fileData);
 
     const document = await this.documentModel.create({
       studentId: new Types.ObjectId(studentId),
@@ -252,12 +250,12 @@ Include:
       originalName: file.originalname,
       mimeType: file.mimetype,
       size: file.size,
-      extractedText: textResult.text,
-      pageCount: info.total || 0,
+      extractedText: pdfData.text,
+      pageCount: pdfData.numpages || 0,
       filePath: `/uploads/textbooks/${file.filename}`,
     });
 
-    this.logger.log(`Uploaded document: ${file.originalname} (${info.total} pages, ${textResult.text.length} chars)`);
+    this.logger.log(`Uploaded document: ${file.originalname} (${pdfData.numpages} pages, ${pdfData.text.length} chars)`);
 
     return document;
   }

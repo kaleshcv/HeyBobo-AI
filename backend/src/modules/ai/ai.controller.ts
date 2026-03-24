@@ -2,10 +2,18 @@ import { Controller, Post, Get, Delete, Body, Param, Req, UploadedFile, UseInter
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiConsumes } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
+import { Types } from 'mongoose';
+import { createHash } from 'crypto';
 import { createDiskStorage } from '@/common/storage/multer.config';
 import { AIService } from '@/modules/ai/ai.service';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
 import { Public } from '@/common/decorators/public.decorator';
+
+/** Convert any string user ID to a valid 24-char hex ObjectId */
+function toObjectId(id: string): string {
+  if (/^[a-f\d]{24}$/i.test(id)) return id;
+  return createHash('md5').update(id).digest('hex').substring(0, 24);
+}
 
 @ApiTags('AI')
 @ApiBearerAuth('access-token')
@@ -46,6 +54,7 @@ export class AIController {
   ): Promise<any> {
     // Fall back to x-user-id header when JWT is not available (local auth mode)
     if (!userId) userId = req.headers['x-user-id'] as string || 'anonymous';
+    userId = toObjectId(userId);
     const document = await this.aiService.uploadDocument(userId, file);
     return {
       success: true,
@@ -65,6 +74,7 @@ export class AIController {
   @ApiOperation({ summary: 'Get user uploaded documents' })
   async getDocuments(@CurrentUser('sub') userId: string, @Req() req: Request): Promise<any> {
     if (!userId) userId = req.headers['x-user-id'] as string || 'anonymous';
+    userId = toObjectId(userId);
     const documents = await this.aiService.getUserDocuments(userId);
     return { success: true, data: documents };
   }
@@ -78,6 +88,7 @@ export class AIController {
     @Param('id') id: string,
   ): Promise<any> {
     if (!userId) userId = req.headers['x-user-id'] as string || 'anonymous';
+    userId = toObjectId(userId);
     const deleted = await this.aiService.deleteDocument(id, userId);
     return { success: true, deleted };
   }

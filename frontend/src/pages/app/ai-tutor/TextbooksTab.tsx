@@ -56,7 +56,9 @@ export default function TextbooksTab({ onSelectBook, selectedBookId }: Props) {
     setIsUploading(true);
     try {
       const res = await aiApi.uploadDocument(file);
-      const d = res.data?.data;
+      const raw = res.data?.data;
+      // Unwrap double-wrapped response: { success, data: { success, data: {...} } }
+      const d = (raw as any)?.data ?? raw;
       if (!d) throw new Error('Upload failed');
       const book: Textbook = {
         id: String(d.id),
