@@ -11,7 +11,7 @@ interface RoleRouteProps {
 export const RoleRoute: React.FC<RoleRouteProps> = ({ children, allowedRoles }) => {
   const { isAuthenticated, hasRole } = useAuth()
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated && window.location.pathname !== '/auth/login') {
     return <Navigate to="/auth/login" replace />
   }
 
