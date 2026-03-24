@@ -132,8 +132,8 @@ export default function BrainChatbot() {
           sx={{
             position: 'fixed',
             bottom: 88,
-            left: { xs: 0, sm: '200px' },
-            right: { xs: 0, sm: '200px' },
+            left: { xs: 0, sm: '300px' },
+            right: { xs: 0, sm: '300px' },
             zIndex: 1299,
             height: { xs: 'calc(100vh - 140px)', sm: '60vh' },
             maxHeight: 520,
@@ -257,8 +257,8 @@ export default function BrainChatbot() {
         sx={{
           position: 'fixed',
           bottom: 16,
-          left: { xs: 8, sm: '200px' },
-          right: { xs: 8, sm: '200px' },
+          left: { xs: 8, sm: '300px' },
+          right: { xs: 8, sm: '300px' },
           zIndex: 1300,
           bgcolor: '#1a1a2e',
           borderRadius: '50px',
