@@ -16,9 +16,8 @@ import toast from 'react-hot-toast';
 import * as pdfjsLib from 'pdfjs-dist';
 import { useAITutorStore, Textbook } from '@/store/aiTutorStore';
 
-// Disable worker so pdf.js runs on the main thread — avoids production
-// bundling issues where the hashed worker URL fails to load.
-pdfjsLib.GlobalWorkerOptions.workerSrc = '';
+// Point to the static worker file in public/ — works in both dev and production
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
 async function extractTextFromPdf(file: File): Promise<{ text: string; pageCount: number }> {
   const arrayBuffer = await file.arrayBuffer();
