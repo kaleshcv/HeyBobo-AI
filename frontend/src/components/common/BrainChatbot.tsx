@@ -12,7 +12,8 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from '@mui/icons-material/Send';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import { chatWithBrain, type AIBrainInput } from '@/lib/gemini';
+import { chatWithBrain } from '@/lib/gemini';
+import { useBrainData } from '@/hooks/useBrainData';
 
 interface ChatMessage {
   id: string;
@@ -21,11 +22,8 @@ interface ChatMessage {
   timestamp: Date;
 }
 
-interface BrainChatbotProps {
-  moduleData: AIBrainInput;
-}
-
-export default function BrainChatbot({ moduleData }: BrainChatbotProps) {
+export default function BrainChatbot() {
+  const moduleData = useBrainData();
   const [chatOpen, setChatOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {

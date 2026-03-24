@@ -61,20 +61,9 @@ import {
   type SmartRecommendation,
   type BrainMode,
 } from '@/store/aiBrainStore';
-import { useAITutorStore } from '@/store/aiTutorStore';
-import { useCourseStore } from '@/store/courseStore';
-import { useWorkoutSystemStore, PRESET_PLANS } from '@/store/workoutSystemStore';
-import { useFitnessProfileStore } from '@/store/fitnessProfileStore';
-import { useLiveWorkoutStore } from '@/store/liveWorkoutStore';
-import { useActivityTrackingStore } from '@/store/activityTrackingStore';
-import { useInjuryStore } from '@/store/injuryStore';
-import { useDietaryProfileStore } from '@/store/dietaryProfileStore';
-import { useGroupStore } from '@/store/groupStore';
-import { useMeetingStore } from '@/store/meetingStore';
-import { useShoppingListStore } from '@/store/shoppingListStore';
-import { useWearablesStore, type HealthReading } from '@/store/wearablesStore';
-import { generateAIBrainDashboard, type AIBrainInput } from '@/lib/gemini';
+import { generateAIBrainDashboard } from '@/lib/gemini';
 import BrainChatbot from '@/components/common/BrainChatbot';
+import { useBrainData } from '@/hooks/useBrainData';
 
 // ─── Module icon/color map ──────────────────────────────────────────────────
 
@@ -132,12 +121,6 @@ const MODE_SECTIONS: Record<BrainMode, Set<string>> = {
   sync: new Set(['cross', 'insights']),
   insight: new Set(['weekly', 'cross', 'insights']),
 };
-
-// ─── Helper ─────────────────────────────────────────────────────────────────
-
-function todayStr() {
-  return new Date().toISOString().slice(0, 10);
-}
 
 // ─── Sub-Components ─────────────────────────────────────────────────────────
 
@@ -554,263 +537,14 @@ export default function AIBrainPage() {
     setBrainData,
   } = useAIBrainStore();
 
-  // Cross-module stores
-  const textbooks = useAITutorStore((s) => s.textbooks);
-  const studyPlans = useAITutorStore((s) => s.studyPlans);
-  const quizAttempts = useAITutorStore((s) => s.quizAttempts);
-  const lessons = useAITutorStore((s) => s.lessons);
-
-  const courses = useCourseStore((s) => s.courses);
-  const videoProgress = useCourseStore((s) => s.progress);
-  const courseQuizProgress = useCourseStore((s) => s.quizProgress);
-
-  const workoutLogs = useWorkoutSystemStore((s) => s.workoutLogs);
-  const activePlanId = useWorkoutSystemStore((s) => s.activePlanId);
-  const customWorkouts = useWorkoutSystemStore((s) => s.customWorkouts);
-
-  const fitnessProfile = useFitnessProfileStore((s) => s.profile);
-
-  const liveSessions = useLiveWorkoutStore((s) => s.sessions);
-
-  const todayMetrics = useActivityTrackingStore((s) => s.getDailyMetrics(todayStr()));
-
-  const injuries = useInjuryStore((s) => s.injuries);
-  const painLogs = useInjuryStore((s) => s.painLogs);
-  const rehabPrograms = useInjuryStore((s) => s.rehabPrograms);
-
-  const calorieTarget = useDietaryProfileStore((s) => s.dailyCalorieTarget);
-  const proteinTarget = useDietaryProfileStore((s) => s.dailyProteinTargetG);
-  const carbsTarget = useDietaryProfileStore((s) => s.dailyCarbsTargetG);
-  const fatTarget = useDietaryProfileStore((s) => s.dailyFatTargetG);
-  const mealsPerDay = useDietaryProfileStore((s) => s.mealsPerDay);
-
-  const groups = useGroupStore((s) => s.groups);
-  const meetings = useMeetingStore((s) => s.meetings);
-
-  const shoppingLists = useShoppingListStore((s) => s.lists);
-
-  const wearableReadings = useWearablesStore((s) => s.readings);
-  const wearableDevices = useWearablesStore((s) => s.devices);
-
-  // Computed
-  const activePlan = PRESET_PLANS.find((p) => p.id === activePlanId) ?? null;
-
-  const weeklyLogs = useMemo(() =>
-    workoutLogs.filter((l) => Date.now() - new Date(l.date).getTime() <= 7 * 86400000),
-    [workoutLogs],
-  );
-
-  const avgFormScore = useMemo(() => {
-    if (liveSessions.length === 0) return 0;
-    return Math.round(
-      liveSessions.reduce((s, sess) => s + Math.round(sess.avgFormScore * 100), 0) / liveSessions.length,
-    );
-  }, [liveSessions]);
-
-  const activeInjuries = useMemo(
-    () => injuries.filter((i) => i.status === 'active' || i.status === 'recovering'),
-    [injuries],
-  );
-
-  const pendingShoppingItems = useMemo(
-    () => shoppingLists.reduce((sum, list) => sum + list.items.filter((i: any) => !i.checked).length, 0),
-    [shoppingLists],
-  );
-
-  // Education: completed courses (all videos watched)
-  const completedCourses = useMemo(
-    () => courses.filter((c) => {
-      const total = c.videos.length;
-      if (total === 0) return false;
-      const done = videoProgress.filter((p) => p.courseId === c.id && p.completed).length;
-      return done === total;
-    }).length,
-    [courses, videoProgress],
-  );
-
-  // Education: total and completed lecture counts
-  const lecturesCompleted = useMemo(
-    () => videoProgress.filter((p) => p.completed).length,
-    [videoProgress],
-  );
-
-  const totalLectures = useMemo(
-    () => courses.reduce((sum, c) => sum + c.videos.length, 0),
-    [courses],
-  );
-
-  // Education: pending assignments across all groups
-  const pendingAssignments = useMemo(
-    () => groups.reduce((sum, g) => {
-      const now = new Date();
-      return sum + g.assignments.filter((a) =>
-        a.submissions.length === 0 && new Date(a.deadline) > now,
-      ).length;
-    }, 0),
-    [groups],
-  );
-
-  // Fitness: consecutive workout streak in days
-  const streakDays = useMemo(() => {
-    if (workoutLogs.length === 0) return 0;
-    const uniqueDates = [...new Set(workoutLogs.map((l) => l.date))].sort().reverse();
-    let streak = 0;
-    let cursor = new Date();
-    cursor.setHours(0, 0, 0, 0);
-    for (const dateStr of uniqueDates) {
-      const d = new Date(dateStr);
-      d.setHours(0, 0, 0, 0);
-      const diff = Math.round((cursor.getTime() - d.getTime()) / 86400000);
-      if (diff <= 1) { streak++; cursor = d; }
-      else break;
-    }
-    return streak;
-  }, [workoutLogs]);
-
-  // Groups: pending assignment tasks (no submission)
-  const pendingGroupTasks = useMemo(
-    () => groups.reduce((sum, g) => sum + g.assignments.filter((a) => a.submissions.length === 0).length, 0),
-    [groups],
-  );
-
-  // Groups: meetings completed (as proxy for attended sessions count)
-  const completedGroupMeetings = useMemo(
-    () => groups.reduce((sum, g) => sum + g.meetings.filter((m) => m.status === 'completed').length, 0),
-    [groups],
-  );
-
-  // Today's AI Tutor quiz scores (from courseStore + aiTutorStore combined)
-  const allRecentQuizScores = useMemo(() => {
-    const aiScores = quizAttempts.slice(-5).map((a) => Math.round((a.score / a.total) * 100));
-    const courseScores = courseQuizProgress.slice(-5).map((q) => Math.round((q.score / q.total) * 100));
-    return [...aiScores, ...courseScores].slice(-10);
-  }, [quizAttempts, courseQuizProgress]);
-
-  // Extract latest wearable readings by metric type
-  const latestReading = useCallback((metric: string): number => {
-    const reading = wearableReadings
-      .filter((r: HealthReading) => r.metric === metric)
-      .sort((a: HealthReading, b: HealthReading) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
-    return reading?.value ?? 0;
-  }, [wearableReadings]);
-
   const visibleAlerts = useMemo(
     () => alerts.filter((a) => !a.dismissed),
     [alerts],
   );
 
-  // ─── Gather all module data & call Gemini ─────────────────────────────────
+  // ─── Gather all module data via shared hook ────────────────────────────────
 
-  const brainInput: AIBrainInput = useMemo(() => ({
-    userName: user?.firstName ?? 'User',
-    currentTime: new Date().toLocaleString(),
-    education: {
-      enrolledCourses: courses.length,
-      completedCourses,
-      pendingAssignments,
-      upcomingQuizzes: 0,
-      recentQuizScores: allRecentQuizScores,
-      studyPlansActive: studyPlans.length,
-      textbooksUploaded: textbooks.length,
-      lecturesCompleted,
-      lecturesMissed: totalLectures - lecturesCompleted,
-      groupsJoined: groups.length,
-      meetingsScheduled: meetings.filter((m) => m.status === 'scheduled').length,
-    },
-    fitness: {
-      workoutsThisWeek: weeklyLogs.length,
-      weeklyGoal: activePlan?.daysPerWeek ?? fitnessProfile.daysPerWeek,
-      totalMinutesThisWeek: weeklyLogs.reduce((s, l) => s + l.durationMinutes, 0),
-      avgFormScore,
-      activePlan: activePlan?.name ?? null,
-      lastWorkoutDate: workoutLogs[0]?.date ?? null,
-      streakDays,
-      customWorkouts: customWorkouts.length,
-    },
-    health: {
-      sleepScore: latestReading('sleep-score'),
-      avgHeartRate: latestReading('heart-rate'),
-      stressScore: latestReading('stress-level'),
-      readinessScore: latestReading('readiness-score'),
-      stepsToday: todayMetrics.steps,
-      caloriesBurned: todayMetrics.caloriesBurned,
-      hydrationLevel: 0,
-      hasWearable: wearableDevices.some((d) => d.connectionStatus === 'connected'),
-    },
-    dietary: {
-      caloriesConsumed: 0,
-      calorieTarget,
-      proteinConsumed: 0,
-      proteinTarget,
-      carbsConsumed: 0,
-      carbsTarget,
-      fatConsumed: 0,
-      fatTarget,
-      mealsLogged: lessons.filter((l) => {
-        const today = todayStr();
-        return l.completedAt.startsWith(today);
-      }).length,
-      adherenceRate: 0,
-      activeMealPlan: false,
-      groceryItemsPending: pendingShoppingItems,
-      supplementsDue: 0,
-      mealsPerDayTarget: mealsPerDay,
-    },
-    injury: {
-      activeInjuries: activeInjuries.map((inj) => {
-        const latestPain = painLogs
-          .filter((l) => l.injuryId === inj.id)
-          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
-        return {
-          bodyPart: inj.bodyPart,
-          painScore: latestPain?.painLevel ?? 0,
-          daysSinceOnset: Math.ceil(
-            (Date.now() - new Date(inj.createdAt).getTime()) / 86400000,
-          ),
-        };
-      }),
-      rehabAdherence: rehabPrograms.length > 0
-        ? Math.round(
-          rehabPrograms
-            .filter((p: any) => p.status === 'active')
-            .reduce((s: number, p: any) => {
-              const totalExpected = p.exerciseIds?.length ?? 0;
-              const sessionsCompleted = p.completedSessions?.length ?? 0;
-              return s + (totalExpected > 0 ? Math.min((sessionsCompleted / totalExpected) * 100, 100) : 0);
-            }, 0) / Math.max(rehabPrograms.filter((p: any) => p.status === 'active').length, 1),
-        )
-        : 0,
-      movementRestrictions: activeInjuries.flatMap(
-        (inj) => (inj as any).movementRestrictions ?? [],
-      ),
-    },
-    shopping: {
-      pendingItems: pendingShoppingItems,
-      totalLists: shoppingLists.length,
-      checkedItems: shoppingLists.reduce((sum, list) => sum + list.items.filter((i: any) => i.checked).length, 0),
-      upcomingDeliveries: 0,
-      lowStockItems: [],
-    },
-    groups: {
-      activeGroups: groups.length,
-      pendingTasks: pendingGroupTasks,
-      upcomingMeetings: meetings.filter((m) => m.status === 'scheduled').length,
-      missedSessions: completedGroupMeetings,
-      totalAssignments: groups.reduce((sum, g) => sum + g.assignments.length, 0),
-      totalMembers: groups.reduce((sum, g) => sum + g.members.length, 0),
-    },
-  }), [
-    user, studyPlans, textbooks,
-    weeklyLogs, activePlan, workoutLogs, customWorkouts, avgFormScore,
-    latestReading, wearableDevices, todayMetrics,
-    calorieTarget, proteinTarget, carbsTarget, fatTarget, mealsPerDay,
-    activeInjuries, painLogs, rehabPrograms,
-    groups, meetings, pendingShoppingItems, shoppingLists,
-    courses, fitnessProfile,
-    completedCourses, lecturesCompleted, totalLectures, pendingAssignments,
-    streakDays, pendingGroupTasks, completedGroupMeetings, allRecentQuizScores,
-    lessons,
-  ]);
+  const brainInput = useBrainData();
 
   const refreshDashboard = useCallback(async () => {
     if (isLoading) return;
@@ -1187,7 +921,7 @@ export default function AIBrainPage() {
       )}
 
       {/* Floating AI Chatbot */}
-      <BrainChatbot moduleData={brainInput} />
+      <BrainChatbot />
     </Box>
   );
 }
