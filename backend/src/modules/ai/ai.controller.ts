@@ -25,7 +25,7 @@ export class AIController {
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: createDiskStorage('documents'),
+      storage: createDiskStorage('textbooks'),
       limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
       fileFilter: (_req, file, cb) => {
         if (file.mimetype === 'application/pdf') {

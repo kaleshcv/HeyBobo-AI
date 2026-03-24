@@ -32,7 +32,7 @@ async function bootstrap(): Promise<void> {
 
   // Ensure upload directories exist
   const uploadBase = join(process.cwd(), 'uploads');
-  const subfolders = ['avatars', 'documents', 'media', 'meals'];
+  const subfolders = ['avatars', 'documents', 'media', 'meals', 'textbooks'];
   for (const folder of subfolders) {
     const dir = join(uploadBase, folder);
     if (!existsSync(dir)) {

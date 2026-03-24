@@ -254,7 +254,7 @@ Include:
       size: file.size,
       extractedText: textResult.text,
       pageCount: info.total || 0,
-      filePath: `/uploads/documents/${file.filename}`,
+      filePath: `/uploads/textbooks/${file.filename}`,
     });
 
     this.logger.log(`Uploaded document: ${file.originalname} (${info.total} pages, ${textResult.text.length} chars)`);
