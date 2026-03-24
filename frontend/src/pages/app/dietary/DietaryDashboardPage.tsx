@@ -580,7 +580,7 @@ export default function DietaryDashboardPage() {
         </Box>
 
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-          <Button variant="outlined" startIcon={<RestaurantMenuIcon />} onClick={() => navigate('/app/dietary/meal-log')}>
+          <Button variant="outlined" startIcon={<RestaurantMenuIcon />} onClick={() => navigate('/app/dietary/meals')}>
             Meal Log
           </Button>
           <Button variant="outlined" startIcon={<TrackChangesIcon />} onClick={() => navigate('/app/dietary/nutrition')}>
@@ -661,7 +661,7 @@ export default function DietaryDashboardPage() {
               <SectionCard
                 title="Meal Logging Insights"
                 subtitle="How today is distributed across meal moments"
-                action={<Button size="small" onClick={() => navigate('/app/dietary/meal-log')}>Open</Button>}
+                action={<Button size="small" onClick={() => navigate('/app/dietary/meals')}>Open</Button>}
               >
                 {mealTypeDistribution.map((entry) => {
                   const pct = meals.length > 0 ? clamp((entry.count / meals.length) * 100) : 0;
