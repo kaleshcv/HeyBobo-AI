@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import {
   Box,
   Typography,
@@ -13,8 +13,30 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import toast from 'react-hot-toast';
-import { aiApi } from '@/lib/api';
+import * as pdfjsLib from 'pdfjs-dist';
 import { useAITutorStore, Textbook } from '@/store/aiTutorStore';
+
+// Configure PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.mjs',
+  import.meta.url,
+).toString();
+
+async function extractTextFromPdf(file: File): Promise<{ text: string; pageCount: number }> {
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  const pages: string[] = [];
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    const text = content.items
+      .filter((item) => 'str' in item)
+      .map((item) => (item as any).str as string)
+      .join(' ');
+    pages.push(text);
+  }
+  return { text: pages.join('\n\n'), pageCount: pdf.numPages };
+}
 
 interface Props {
   onSelectBook: (id: string) => void;
@@ -22,27 +44,9 @@ interface Props {
 }
 
 export default function TextbooksTab({ onSelectBook, selectedBookId }: Props) {
-  const { textbooks, setTextbooks, addTextbook, removeTextbook } = useAITutorStore();
+  const { textbooks, addTextbook, removeTextbook } = useAITutorStore();
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Load user's documents from server on mount and sync with store
-  useEffect(() => {
-    aiApi.getDocuments().then((res) => {
-      const docs = res.data?.data ?? [];
-      const mapped: Textbook[] = docs.map((d: any) => ({
-        id: String(d._id ?? d.id),
-        name: d.originalName ?? d.filename,
-        size: d.size,
-        pageCount: d.pageCount ?? 0,
-        extractedText: d.extractedText ?? '',
-        createdAt: d.createdAt ?? new Date().toISOString(),
-      }));
-      setTextbooks(mapped);
-    }).catch(() => {
-      // Silently fall back to local store if API call fails
-    });
-  }, []);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -57,35 +61,28 @@ export default function TextbooksTab({ onSelectBook, selectedBookId }: Props) {
     }
     setIsUploading(true);
     try {
-      const res = await aiApi.uploadDocument(file);
-      const d = res.data?.data;
-      if (!d) throw new Error('Invalid server response');
+      const { text, pageCount } = await extractTextFromPdf(file);
       const book: Textbook = {
-        id: String(d.id),
-        name: d.filename,
-        size: d.size ?? file.size,
-        pageCount: d.pageCount ?? 0,
-        extractedText: d.extractedText ?? '',
-        createdAt: d.createdAt ?? new Date().toISOString(),
+        id: `book-${Date.now()}`,
+        name: file.name,
+        size: file.size,
+        pageCount,
+        extractedText: text,
+        createdAt: new Date().toISOString(),
       };
       addTextbook(book);
       onSelectBook(book.id);
-      toast.success(`"${book.name}" uploaded (${book.pageCount} pages)`);
+      toast.success(`"${book.name}" processed (${pageCount} pages)`);
     } catch (err: any) {
-      toast.error('Failed to upload PDF: ' + (err?.response?.data?.message || err?.message || 'Unknown error'));
+      toast.error('Failed to process PDF: ' + (err?.message || 'Unknown error'));
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
-  const handleDelete = async (bookId: string, e: React.MouseEvent) => {
+  const handleDelete = (bookId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    try {
-      await aiApi.deleteDocument(bookId);
-    } catch {
-      // If server delete fails (e.g. old local-only book), still remove from store
-    }
     removeTextbook(bookId);
     if (selectedBookId === bookId) onSelectBook('');
     toast.success('Textbook removed');
