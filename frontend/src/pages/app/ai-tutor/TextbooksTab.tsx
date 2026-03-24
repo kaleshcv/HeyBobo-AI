@@ -16,15 +16,13 @@ import toast from 'react-hot-toast';
 import * as pdfjsLib from 'pdfjs-dist';
 import { useAITutorStore, Textbook } from '@/store/aiTutorStore';
 
-// Configure PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.mjs',
-  import.meta.url,
-).toString();
+// Disable worker so pdf.js runs on the main thread — avoids production
+// bundling issues where the hashed worker URL fails to load.
+pdfjsLib.GlobalWorkerOptions.workerSrc = '';
 
 async function extractTextFromPdf(file: File): Promise<{ text: string; pageCount: number }> {
   const arrayBuffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer, useWorkerFetch: false, isEvalSupported: false, useSystemFonts: true }).promise;
   const pages: string[] = [];
   for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
