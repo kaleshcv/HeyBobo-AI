@@ -3,6 +3,7 @@ import {
   Avatar,
   Box,
   CircularProgress,
+  Chip,
   IconButton,
   Paper,
   Slide,
@@ -12,25 +13,30 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from '@mui/icons-material/Send';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { chatWithBrain } from '@/lib/gemini';
 import { useBrainData } from '@/hooks/useBrainData';
+import { AGENT_TOOLS, executeAgentTool } from '@/lib/agentTools';
+import { useAuthStore } from '@/store/authStore';
 
 interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  actionTaken?: string; // label shown when an agent action was performed
 }
 
 export default function BrainChatbot() {
   const moduleData = useBrainData();
+  const authUser = useAuthStore((s) => s.user);
   const [chatOpen, setChatOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'welcome',
       role: 'assistant',
       content:
-        "Hey! I'm **Bobo**, your AI assistant. Ask me anything about your education, fitness, health, dietary, or any other module — I have access to all your data and can give you real-time insights. 🧠",
+        "Hey! I'm **Bobo**, your AI assistant. Ask me anything about your education, fitness, health, dietary, or any other module — I have access to all your data and can give you real-time insights. I can also **create quizzes, log workouts, add shopping items, schedule meetings** and more for you. 🧠",
       timestamp: new Date(),
     },
   ]);
@@ -72,19 +78,65 @@ export default function BrainChatbot() {
     try {
       const history = messages
         .filter((m) => m.id !== 'welcome')
-        .map((m) => ({ role: m.role, content: m.content }));
+        .map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content }));
 
-      const response = await chatWithBrain(text, history, moduleData);
+      const userContext = {
+        email: authUser?.email,
+        name: authUser ? `${authUser.firstName} ${authUser.lastName}`.trim() : undefined,
+      };
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `a-${Date.now()}`,
-          role: 'assistant',
-          content: response,
-          timestamp: new Date(),
-        },
-      ]);
+      // Step 1: send to Gemini with tools enabled
+      const result = await chatWithBrain(text, history, moduleData, AGENT_TOOLS);
+
+      if (result.functionCall) {
+        // Step 2: show a "working" indicator
+        const thinkingId = `thinking-${Date.now()}`;
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: thinkingId,
+            role: 'assistant',
+            content: `Working on it...`,
+            timestamp: new Date(),
+          },
+        ]);
+
+        // Step 3: execute the tool against the store
+        const toolResult = await executeAgentTool(result.functionCall.name, result.functionCall.args, userContext);
+
+        // Step 4: send result back to Gemini for a natural-language confirmation
+        const confirmResult = await chatWithBrain(
+          text,
+          history,
+          moduleData,
+          [],
+          { name: result.functionCall.name, result: { success: toolResult.success, message: toolResult.message, ...toolResult.data } },
+        );
+
+        // Step 5: replace "working" message with final confirmation
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === thinkingId
+              ? {
+                  ...m,
+                  content: confirmResult.text ?? toolResult.message,
+                  actionTaken: toolResult.success ? toolResult.message : undefined,
+                }
+              : m,
+          ),
+        );
+      } else {
+        // Plain text response
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `a-${Date.now()}`,
+            role: 'assistant',
+            content: result.text ?? '',
+            timestamp: new Date(),
+          },
+        ]);
+      }
     } catch (err: any) {
       setMessages((prev) => [
         ...prev,
@@ -98,7 +150,7 @@ export default function BrainChatbot() {
     } finally {
       setSending(false);
     }
-  }, [input, sending, chatOpen, messages, moduleData]);
+  }, [input, sending, chatOpen, messages, moduleData, authUser]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -227,6 +279,16 @@ export default function BrainChatbot() {
                   >
                     {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </Typography>
+                  {msg.actionTaken && (
+                    <Chip
+                      icon={<CheckCircleIcon />}
+                      label="Action completed"
+                      size="small"
+                      color="success"
+                      variant="outlined"
+                      sx={{ mt: 0.5, fontSize: '0.65rem', height: 20 }}
+                    />
+                  )}
                 </Paper>
               </Box>
             ))}

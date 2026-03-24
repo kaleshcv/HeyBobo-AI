@@ -1521,11 +1521,18 @@ Return ONLY valid JSON, no markdown fences.`;
 
 // ─── AI Brain Chatbot ────────────────────────────────────────────────────────
 
+export interface ChatWithBrainResult {
+  text?: string;
+  functionCall?: { name: string; args: Record<string, any> };
+}
+
 export async function chatWithBrain(
   message: string,
   history: { role: 'user' | 'assistant'; content: string }[],
   moduleData: AIBrainInput,
-): Promise<string> {
+  tools?: object[],
+  functionResult?: { name: string; result: Record<string, any> },
+): Promise<ChatWithBrainResult> {
   const model = getModel();
 
   const recentHistory = history
@@ -1626,16 +1633,47 @@ BEHAVIOR:
 - Use markdown sparingly — only for lists or emphasis when it helps readability.
 ${dataBlock}
 ${recentHistory ? `=== CONVERSATION ===\n${recentHistory}\n` : ''}
-User: ${message}
+${functionResult
+    ? `=== ACTION COMPLETED ===\nYou just executed the action "${functionResult.name}" on behalf of the user.\nResult: ${JSON.stringify(functionResult.result)}\nNow confirm this to the user in a friendly, concise way. Mention any key details (e.g. quiz title, meeting code, workout logged). Do NOT say you cannot do things — the action is already done.\n`
+    : `User: ${message}
 
 RULES:
 1. If this is casual conversation, respond naturally without referencing any data.
 2. If the user asks about specific modules, use ONLY the data provided above — never invent numbers.
 3. If data is zero or empty, mention the user hasn't used that module yet.
 4. Be warm and brief. No walls of text for simple questions.
+5. If the user asks you to CREATE, ADD, LOG, SCHEDULE, or SET something — use the available tools. Never say you cannot do it.`}
 
 Respond as Bobo:`;
 
+  // If tools are provided and this isn't a follow-up after function execution,
+  // use function calling mode
+  if (tools && tools.length > 0 && !functionResult) {
+    const requestOptions: any = {
+      tools,
+    };
+
+    const result = await model.generateContent({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      ...requestOptions,
+    });
+
+    const candidate = result.response.candidates?.[0];
+    const part = candidate?.content?.parts?.[0];
+
+    if (part && 'functionCall' in part && part.functionCall) {
+      return {
+        functionCall: {
+          name: part.functionCall.name,
+          args: part.functionCall.args as Record<string, any>,
+        },
+      };
+    }
+
+    return { text: result.response.text() };
+  }
+
+  // Plain text mode (no tools or follow-up after function execution)
   const result = await model.generateContent(prompt);
-  return result.response.text();
+  return { text: result.response.text() };
 }
