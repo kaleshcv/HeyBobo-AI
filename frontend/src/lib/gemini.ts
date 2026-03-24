@@ -1328,8 +1328,11 @@ export interface AIBrainInput {
     proteinConsumed: number;
     proteinTarget: number;
     carbsConsumed: number;
+    carbsTarget: number;
     fatConsumed: number;
+    fatTarget: number;
     mealsLogged: number;
+    mealsPerDayTarget: number;
     adherenceRate: number;
     activeMealPlan: boolean;
     groceryItemsPending: number;
@@ -1342,6 +1345,8 @@ export interface AIBrainInput {
   };
   shopping: {
     pendingItems: number;
+    totalLists: number;
+    checkedItems: number;
     upcomingDeliveries: number;
     lowStockItems: string[];
   };
@@ -1350,6 +1355,8 @@ export interface AIBrainInput {
     pendingTasks: number;
     upcomingMeetings: number;
     missedSessions: number;
+    totalAssignments: number;
+    totalMembers: number;
   };
 }
 
@@ -1394,8 +1401,8 @@ HEALTH:
 DIETARY:
 - Calories: ${input.dietary.caloriesConsumed}/${input.dietary.calorieTarget} kcal
 - Protein: ${input.dietary.proteinConsumed}/${input.dietary.proteinTarget}g
-- Carbs: ${input.dietary.carbsConsumed}g, Fat: ${input.dietary.fatConsumed}g
-- Meals logged today: ${input.dietary.mealsLogged}
+- Carbs: ${input.dietary.carbsConsumed}/${input.dietary.carbsTarget}g, Fat: ${input.dietary.fatConsumed}/${input.dietary.fatTarget}g
+- Meals logged today: ${input.dietary.mealsLogged}/${input.dietary.mealsPerDayTarget}
 - Adherence rate: ${input.dietary.adherenceRate}%
 - Active meal plan: ${input.dietary.activeMealPlan ? 'Yes' : 'No'}
 - Grocery items pending: ${input.dietary.groceryItemsPending}
@@ -1410,12 +1417,14 @@ ${input.injury.activeInjuries.length > 0
 
 SHOPPING:
 - Pending items: ${input.shopping.pendingItems}
+- Total lists: ${input.shopping.totalLists}, Checked off: ${input.shopping.checkedItems}
 - Upcoming deliveries: ${input.shopping.upcomingDeliveries}
 - Low stock: ${input.shopping.lowStockItems.length > 0 ? input.shopping.lowStockItems.join(', ') : 'None'}
 
 GROUPS / COMMUNITY:
 - Active groups: ${input.groups.activeGroups}
-- Pending tasks: ${input.groups.pendingTasks}
+- Pending tasks: ${input.groups.pendingTasks}, Total assignments: ${input.groups.totalAssignments}
+- Total members across groups: ${input.groups.totalMembers}
 - Upcoming meetings: ${input.groups.upcomingMeetings}
 - Missed sessions: ${input.groups.missedSessions}
 

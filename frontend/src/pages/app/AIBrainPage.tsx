@@ -62,7 +62,9 @@ import {
   type BrainMode,
 } from '@/store/aiBrainStore';
 import { useAITutorStore } from '@/store/aiTutorStore';
+import { useCourseStore } from '@/store/courseStore';
 import { useWorkoutSystemStore, PRESET_PLANS } from '@/store/workoutSystemStore';
+import { useFitnessProfileStore } from '@/store/fitnessProfileStore';
 import { useLiveWorkoutStore } from '@/store/liveWorkoutStore';
 import { useActivityTrackingStore } from '@/store/activityTrackingStore';
 import { useInjuryStore } from '@/store/injuryStore';
@@ -555,16 +557,21 @@ export default function AIBrainPage() {
   const textbooks = useAITutorStore((s) => s.textbooks);
   const studyPlans = useAITutorStore((s) => s.studyPlans);
   const quizAttempts = useAITutorStore((s) => s.quizAttempts);
-  const conversations = useAITutorStore((s) => s.conversations);
+  const lessons = useAITutorStore((s) => s.lessons);
+
+  const courses = useCourseStore((s) => s.courses);
+  const videoProgress = useCourseStore((s) => s.progress);
+  const courseQuizProgress = useCourseStore((s) => s.quizProgress);
 
   const workoutLogs = useWorkoutSystemStore((s) => s.workoutLogs);
   const activePlanId = useWorkoutSystemStore((s) => s.activePlanId);
   const customWorkouts = useWorkoutSystemStore((s) => s.customWorkouts);
 
+  const fitnessProfile = useFitnessProfileStore((s) => s.profile);
+
   const liveSessions = useLiveWorkoutStore((s) => s.sessions);
 
   const todayMetrics = useActivityTrackingStore((s) => s.getDailyMetrics(todayStr()));
-  const connectedDevices = useActivityTrackingStore((s) => s.connectedDevices);
 
   const injuries = useInjuryStore((s) => s.injuries);
   const painLogs = useInjuryStore((s) => s.painLogs);
@@ -572,6 +579,9 @@ export default function AIBrainPage() {
 
   const calorieTarget = useDietaryProfileStore((s) => s.dailyCalorieTarget);
   const proteinTarget = useDietaryProfileStore((s) => s.dailyProteinTargetG);
+  const carbsTarget = useDietaryProfileStore((s) => s.dailyCarbsTargetG);
+  const fatTarget = useDietaryProfileStore((s) => s.dailyFatTargetG);
+  const mealsPerDay = useDietaryProfileStore((s) => s.mealsPerDay);
 
   const groups = useGroupStore((s) => s.groups);
   const meetings = useMeetingStore((s) => s.meetings);
@@ -606,6 +616,75 @@ export default function AIBrainPage() {
     [shoppingLists],
   );
 
+  // Education: completed courses (all videos watched)
+  const completedCourses = useMemo(
+    () => courses.filter((c) => {
+      const total = c.videos.length;
+      if (total === 0) return false;
+      const done = videoProgress.filter((p) => p.courseId === c.id && p.completed).length;
+      return done === total;
+    }).length,
+    [courses, videoProgress],
+  );
+
+  // Education: total and completed lecture counts
+  const lecturesCompleted = useMemo(
+    () => videoProgress.filter((p) => p.completed).length,
+    [videoProgress],
+  );
+
+  const totalLectures = useMemo(
+    () => courses.reduce((sum, c) => sum + c.videos.length, 0),
+    [courses],
+  );
+
+  // Education: pending assignments across all groups
+  const pendingAssignments = useMemo(
+    () => groups.reduce((sum, g) => {
+      const now = new Date();
+      return sum + g.assignments.filter((a) =>
+        a.submissions.length === 0 && new Date(a.deadline) > now,
+      ).length;
+    }, 0),
+    [groups],
+  );
+
+  // Fitness: consecutive workout streak in days
+  const streakDays = useMemo(() => {
+    if (workoutLogs.length === 0) return 0;
+    const uniqueDates = [...new Set(workoutLogs.map((l) => l.date))].sort().reverse();
+    let streak = 0;
+    let cursor = new Date();
+    cursor.setHours(0, 0, 0, 0);
+    for (const dateStr of uniqueDates) {
+      const d = new Date(dateStr);
+      d.setHours(0, 0, 0, 0);
+      const diff = Math.round((cursor.getTime() - d.getTime()) / 86400000);
+      if (diff <= 1) { streak++; cursor = d; }
+      else break;
+    }
+    return streak;
+  }, [workoutLogs]);
+
+  // Groups: pending assignment tasks (no submission)
+  const pendingGroupTasks = useMemo(
+    () => groups.reduce((sum, g) => sum + g.assignments.filter((a) => a.submissions.length === 0).length, 0),
+    [groups],
+  );
+
+  // Groups: meetings completed (as proxy for attended sessions count)
+  const completedGroupMeetings = useMemo(
+    () => groups.reduce((sum, g) => sum + g.meetings.filter((m) => m.status === 'completed').length, 0),
+    [groups],
+  );
+
+  // Today's AI Tutor quiz scores (from courseStore + aiTutorStore combined)
+  const allRecentQuizScores = useMemo(() => {
+    const aiScores = quizAttempts.slice(-5).map((a) => Math.round((a.score / a.total) * 100));
+    const courseScores = courseQuizProgress.slice(-5).map((q) => Math.round((q.score / q.total) * 100));
+    return [...aiScores, ...courseScores].slice(-10);
+  }, [quizAttempts, courseQuizProgress]);
+
   // Extract latest wearable readings by metric type
   const latestReading = useCallback((metric: string): number => {
     const reading = wearableReadings
@@ -631,26 +710,26 @@ export default function AIBrainPage() {
         userName: user?.firstName ?? 'User',
         currentTime: new Date().toLocaleString(),
         education: {
-          enrolledCourses: conversations.length,
-          completedCourses: 0,
-          pendingAssignments: 0,
+          enrolledCourses: courses.length,
+          completedCourses,
+          pendingAssignments,
           upcomingQuizzes: 0,
-          recentQuizScores: quizAttempts.slice(-5).map((a) => Math.round((a.score / a.total) * 100)),
+          recentQuizScores: allRecentQuizScores,
           studyPlansActive: studyPlans.length,
           textbooksUploaded: textbooks.length,
-          lecturesCompleted: 0,
-          lecturesMissed: 0,
+          lecturesCompleted,
+          lecturesMissed: totalLectures - lecturesCompleted,
           groupsJoined: groups.length,
           meetingsScheduled: meetings.filter((m) => m.status === 'scheduled').length,
         },
         fitness: {
           workoutsThisWeek: weeklyLogs.length,
-          weeklyGoal: activePlan?.daysPerWeek ?? 3,
+          weeklyGoal: activePlan?.daysPerWeek ?? fitnessProfile.daysPerWeek,
           totalMinutesThisWeek: weeklyLogs.reduce((s, l) => s + l.durationMinutes, 0),
           avgFormScore,
           activePlan: activePlan?.name ?? null,
           lastWorkoutDate: workoutLogs[0]?.date ?? null,
-          streakDays: 0,
+          streakDays,
           customWorkouts: customWorkouts.length,
         },
         health: {
@@ -669,12 +748,18 @@ export default function AIBrainPage() {
           proteinConsumed: 0,
           proteinTarget,
           carbsConsumed: 0,
+          carbsTarget,
           fatConsumed: 0,
-          mealsLogged: 0,
+          fatTarget,
+          mealsLogged: lessons.filter((l) => {
+            const today = todayStr();
+            return l.completedAt.startsWith(today);
+          }).length,
           adherenceRate: 0,
           activeMealPlan: false,
           groceryItemsPending: pendingShoppingItems,
           supplementsDue: 0,
+          mealsPerDayTarget: mealsPerDay,
         },
         injury: {
           activeInjuries: activeInjuries.map((inj) => {
@@ -706,14 +791,18 @@ export default function AIBrainPage() {
         },
         shopping: {
           pendingItems: pendingShoppingItems,
+          totalLists: shoppingLists.length,
+          checkedItems: shoppingLists.reduce((sum, list) => sum + list.items.filter((i: any) => i.checked).length, 0),
           upcomingDeliveries: 0,
           lowStockItems: [],
         },
         groups: {
           activeGroups: groups.length,
-          pendingTasks: 0,
+          pendingTasks: pendingGroupTasks,
           upcomingMeetings: meetings.filter((m) => m.status === 'scheduled').length,
-          missedSessions: 0,
+          missedSessions: completedGroupMeetings,
+          totalAssignments: groups.reduce((sum, g) => sum + g.assignments.length, 0),
+          totalMembers: groups.reduce((sum, g) => sum + g.members.length, 0),
         },
       };
 
@@ -753,11 +842,16 @@ export default function AIBrainPage() {
       setLoading(false);
     }
   }, [
-    isLoading, user, conversations, quizAttempts, studyPlans, textbooks,
+    isLoading, user, studyPlans, textbooks,
     weeklyLogs, activePlan, workoutLogs, customWorkouts, avgFormScore,
-    liveSessions, latestReading, wearableDevices, todayMetrics, connectedDevices,
-    calorieTarget, proteinTarget, activeInjuries, painLogs,
-    rehabPrograms, groups, meetings, pendingShoppingItems,
+    liveSessions, latestReading, wearableDevices, todayMetrics,
+    calorieTarget, proteinTarget, carbsTarget, fatTarget, mealsPerDay,
+    activeInjuries, painLogs, rehabPrograms,
+    groups, meetings, pendingShoppingItems,
+    courses, videoProgress, courseQuizProgress, fitnessProfile,
+    completedCourses, lecturesCompleted, totalLectures, pendingAssignments,
+    streakDays, pendingGroupTasks, completedGroupMeetings, allRecentQuizScores,
+    lessons,
     setLoading, setBrainData,
   ]);
 
