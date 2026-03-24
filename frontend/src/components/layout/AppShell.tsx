@@ -12,7 +12,11 @@ import {
   Tooltip,
   Divider,
   Avatar,
+  Switch,
 } from '@mui/material';
+import ChatIcon from '@mui/icons-material/Chat';
+import BrainChatbot from '@/components/common/BrainChatbot';
+import { useUIStore } from '@/store/uiStore';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import SchoolIcon from '@mui/icons-material/School';
@@ -125,6 +129,8 @@ export default function AppShell() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, isAuthenticated, logout } = useAuth();
+  const isChatEnabled = useUIStore((s) => s.isChatEnabled);
+  const toggleChat = useUIStore((s) => s.toggleChat);
 
   const drawerWidth = expanded ? DRAWER_WIDTH : COLLAPSED_WIDTH;
 
@@ -205,9 +211,32 @@ export default function AppShell() {
           ))}
         </List>
 
-        {/* Bottom section: settings + user */}
+        {/* Bottom section: chat toggle + settings + user */}
         <Divider sx={{ mx: 1 }} />
         <List sx={{ py: 1 }}>
+          <Tooltip title={expanded ? '' : `Chat UI: ${isChatEnabled ? 'On' : 'Off'}`} placement="right">
+            <ListItemButton
+              onClick={toggleChat}
+              sx={{ justifyContent: expanded ? 'flex-start' : 'center' }}
+            >
+              <ListItemIcon sx={{ minWidth: expanded ? 36 : 'auto', color: isChatEnabled ? 'primary.main' : 'text.secondary' }}>
+                <ChatIcon fontSize="small" />
+              </ListItemIcon>
+              {expanded && (
+                <>
+                  <ListItemText primary="Chat UI" primaryTypographyProps={{ fontSize: 14 }} />
+                  <Switch
+                    size="small"
+                    checked={isChatEnabled}
+                    onChange={toggleChat}
+                    onClick={(e) => e.stopPropagation()}
+                    color="primary"
+                  />
+                </>
+              )}
+            </ListItemButton>
+          </Tooltip>
+
           <Tooltip title={expanded ? '' : 'Settings'} placement="right">
             <ListItemButton
               onClick={() => navigate('/app/settings')}
@@ -278,6 +307,7 @@ export default function AppShell() {
         }}
       >
         <Outlet />
+        {isChatEnabled && <BrainChatbot />}
       </Box>
 
       {/* Right sidebar — education sub-modules */}
