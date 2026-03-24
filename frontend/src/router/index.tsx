@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react'
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { ProtectedRoute } from './ProtectedRoute'
 import { RoleRoute } from './RoleRoute'
 import { UserRole } from '@/types/index'
@@ -77,7 +77,6 @@ const FitnessDashboardPage = lazy(() => import('@/pages/app/FitnessDashboardPage
 const WorkoutsPage = lazy(() => import('@/pages/app/WorkoutsPage'))
 
 // Dietary pages (lazy loaded)
-const DietaryPage = lazy(() => import('@/pages/app/DietaryPage'))
 const DietaryDashboardPage = lazy(() => import('@/pages/app/dietary/DietaryDashboardPage'))
 const DietaryMealLogPage = lazy(() => import('@/pages/app/dietary/MealLogPage'))
 const NutritionTrackerPage = lazy(() => import('@/pages/app/dietary/NutritionTrackerPage'))
@@ -569,11 +568,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'dietary',
-        element: (
-          <SuspenseWrapper>
-            <DietaryPage />
-          </SuspenseWrapper>
-        ),
+        element: <Navigate to="/app/dietary/dashboard" replace />,
       },
       {
         path: 'dietary/dashboard',
