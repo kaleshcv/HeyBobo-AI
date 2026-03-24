@@ -133,13 +133,13 @@ export default function BrainChatbot({ moduleData }: BrainChatbotProps) {
           elevation={16}
           sx={{
             position: 'fixed',
-            bottom: 72,
+            bottom: 88,
             left: { xs: 0, sm: '100px' },
             right: { xs: 0, sm: '100px' },
             zIndex: 1299,
             height: { xs: 'calc(100vh - 140px)', sm: '60vh' },
             maxHeight: 520,
-            borderRadius: '16px 16px 0 0',
+            borderRadius: '24px 24px 24px 24px',
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
@@ -258,12 +258,12 @@ export default function BrainChatbot({ moduleData }: BrainChatbotProps) {
       <Box
         sx={{
           position: 'fixed',
-          bottom: 0,
-          left: { xs: 0, sm: '100px' },
-          right: { xs: 0, sm: '100px' },
+          bottom: 16,
+          left: { xs: 8, sm: '100px' },
+          right: { xs: 8, sm: '100px' },
           zIndex: 1300,
           bgcolor: '#1a1a2e',
-          borderTop: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: '50px',
           px: { xs: 1.5, sm: 3 },
           py: 1.5,
           display: 'flex',
