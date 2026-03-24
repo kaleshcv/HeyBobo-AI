@@ -29,7 +29,7 @@ import {
   EnrollmentStats,
 } from '@/types/index'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api/v1'
+const API_URL = import.meta.env.VITE_API_URL || '/api/v1'
 
 let isRefreshing = false
 let failedQueue: Array<{
@@ -61,9 +61,13 @@ const createApiInstance = (): AxiosInstance => {
   // Request interceptor
   instance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-      const { accessToken } = useAuthStore.getState()
+      const { accessToken, user } = useAuthStore.getState()
       if (accessToken) {
         config.headers.Authorization = `Bearer ${accessToken}`
+      }
+      // Send local user ID for endpoints that need it when JWT is not available
+      if (user?.id) {
+        config.headers['x-user-id'] = user.id
       }
       return config
     },
