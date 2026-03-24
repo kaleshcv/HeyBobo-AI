@@ -62,7 +62,6 @@ import {
   type BrainMode,
 } from '@/store/aiBrainStore';
 import { generateAIBrainDashboard } from '@/lib/gemini';
-import BrainChatbot from '@/components/common/BrainChatbot';
 import { useBrainData } from '@/hooks/useBrainData';
 
 // ─── Module icon/color map ──────────────────────────────────────────────────
@@ -920,8 +919,6 @@ export default function AIBrainPage() {
         </Stack>
       )}
 
-      {/* Floating AI Chatbot */}
-      <BrainChatbot />
     </Box>
   );
 }
