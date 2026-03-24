@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from 'react'
-import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router-dom'
 import { ProtectedRoute } from './ProtectedRoute'
 import { RoleRoute } from './RoleRoute'
 import { UserRole } from '@/types/index'
@@ -17,6 +17,7 @@ const HomePage = lazy(() => import('@/pages/public/HomePage'))
 const NotFoundPage = lazy(() => import('@/pages/public/NotFoundPage'))
 
 // Auth pages (lazy loaded)
+const LoginPage = lazy(() => import('@/pages/auth/LoginPage'))
 const RegisterPage = lazy(() => import('@/pages/auth/RegisterPage'))
 const ForgotPasswordPage = lazy(() => import('@/pages/auth/ForgotPasswordPage'))
 const ResetPasswordPage = lazy(() => import('@/pages/auth/ResetPasswordPage'))
@@ -116,7 +117,11 @@ export const router = createBrowserRouter([
     children: [
       {
         path: 'login',
-        element: <Navigate to="/" replace />,
+        element: (
+          <SuspenseWrapper>
+            <LoginPage />
+          </SuspenseWrapper>
+        ),
       },
       {
         path: 'register',
