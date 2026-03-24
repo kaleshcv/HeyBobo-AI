@@ -40,7 +40,6 @@ export const Header: React.FC = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-br from-primary-600 to-secondary-600 rounded-lg" />
-            <span className="text-xl font-bold text-gray-900 hidden sm:inline">Heybobo</span>
           </Link>
 
 
