@@ -1283,3 +1283,229 @@ Be honest and constructive. Provide 3+ pros, 1-3 cons, and 2+ alternatives.`;
   const text = result.response.text().replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
   return JSON.parse(text);
 }
+
+// ─── AI Brain Dashboard Intelligence ─────────────────────────────────────────
+
+export interface AIBrainInput {
+  userName: string;
+  currentTime: string;
+  education: {
+    enrolledCourses: number;
+    completedCourses: number;
+    pendingAssignments: number;
+    upcomingQuizzes: number;
+    recentQuizScores: number[];
+    studyPlansActive: number;
+    textbooksUploaded: number;
+    lecturesCompleted: number;
+    lecturesMissed: number;
+    groupsJoined: number;
+    meetingsScheduled: number;
+  };
+  fitness: {
+    workoutsThisWeek: number;
+    weeklyGoal: number;
+    totalMinutesThisWeek: number;
+    avgFormScore: number;
+    activePlan: string | null;
+    lastWorkoutDate: string | null;
+    streakDays: number;
+    customWorkouts: number;
+  };
+  health: {
+    sleepScore: number;
+    avgHeartRate: number;
+    stressScore: number;
+    readinessScore: number;
+    stepsToday: number;
+    caloriesBurned: number;
+    hydrationLevel: number;
+    hasWearable: boolean;
+  };
+  dietary: {
+    caloriesConsumed: number;
+    calorieTarget: number;
+    proteinConsumed: number;
+    proteinTarget: number;
+    carbsConsumed: number;
+    fatConsumed: number;
+    mealsLogged: number;
+    adherenceRate: number;
+    activeMealPlan: boolean;
+    groceryItemsPending: number;
+    supplementsDue: number;
+  };
+  injury: {
+    activeInjuries: { bodyPart: string; painScore: number; daysSinceOnset: number }[];
+    rehabAdherence: number;
+    movementRestrictions: string[];
+  };
+  shopping: {
+    pendingItems: number;
+    upcomingDeliveries: number;
+    lowStockItems: string[];
+  };
+  groups: {
+    activeGroups: number;
+    pendingTasks: number;
+    upcomingMeetings: number;
+    missedSessions: number;
+  };
+}
+
+export async function generateAIBrainDashboard(input: AIBrainInput): Promise<string> {
+  const model = getModel();
+
+  const prompt = `You are the central AI Brain of Heybobo, a multi-module personal growth platform. You are a proactive, context-aware, human-like intelligence layer. Your job is to analyze ALL the user's data across every module and produce a unified, actionable dashboard.
+
+Current time: ${input.currentTime}
+User: ${input.userName}
+
+=== MODULE DATA ===
+
+EDUCATION:
+- Enrolled courses: ${input.education.enrolledCourses}, Completed: ${input.education.completedCourses}
+- Pending assignments: ${input.education.pendingAssignments}
+- Upcoming quizzes: ${input.education.upcomingQuizzes}
+- Recent quiz scores: ${input.education.recentQuizScores.length > 0 ? input.education.recentQuizScores.join(', ') + '%' : 'No quizzes taken yet'}
+- Active study plans: ${input.education.studyPlansActive}, Textbooks: ${input.education.textbooksUploaded}
+- Lectures completed: ${input.education.lecturesCompleted}, Missed: ${input.education.lecturesMissed}
+- Groups: ${input.education.groupsJoined}, Meetings scheduled: ${input.education.meetingsScheduled}
+
+FITNESS:
+- Workouts this week: ${input.fitness.workoutsThisWeek}/${input.fitness.weeklyGoal}
+- Minutes this week: ${input.fitness.totalMinutesThisWeek}
+- Avg form score: ${input.fitness.avgFormScore}%
+- Active plan: ${input.fitness.activePlan ?? 'None'}
+- Last workout: ${input.fitness.lastWorkoutDate ?? 'Never'}
+- Streak: ${input.fitness.streakDays} days
+- Custom workouts: ${input.fitness.customWorkouts}
+
+HEALTH:
+- Sleep score: ${input.health.sleepScore}/100
+- Avg heart rate: ${input.health.avgHeartRate} bpm
+- Stress score: ${input.health.stressScore}/100
+- Readiness score: ${input.health.readinessScore}/100
+- Steps today: ${input.health.stepsToday}
+- Calories burned: ${input.health.caloriesBurned}
+- Hydration: ${input.health.hydrationLevel}%
+- Wearable connected: ${input.health.hasWearable ? 'Yes' : 'No'}
+
+DIETARY:
+- Calories: ${input.dietary.caloriesConsumed}/${input.dietary.calorieTarget} kcal
+- Protein: ${input.dietary.proteinConsumed}/${input.dietary.proteinTarget}g
+- Carbs: ${input.dietary.carbsConsumed}g, Fat: ${input.dietary.fatConsumed}g
+- Meals logged today: ${input.dietary.mealsLogged}
+- Adherence rate: ${input.dietary.adherenceRate}%
+- Active meal plan: ${input.dietary.activeMealPlan ? 'Yes' : 'No'}
+- Grocery items pending: ${input.dietary.groceryItemsPending}
+- Supplements due: ${input.dietary.supplementsDue}
+
+INJURIES:
+${input.injury.activeInjuries.length > 0
+    ? input.injury.activeInjuries.map(i => `- ${i.bodyPart}: pain ${i.painScore}/10, ${i.daysSinceOnset} days`).join('\n')
+    : '- No active injuries'}
+- Rehab adherence: ${input.injury.rehabAdherence}%
+- Movement restrictions: ${input.injury.movementRestrictions.length > 0 ? input.injury.movementRestrictions.join(', ') : 'None'}
+
+SHOPPING:
+- Pending items: ${input.shopping.pendingItems}
+- Upcoming deliveries: ${input.shopping.upcomingDeliveries}
+- Low stock: ${input.shopping.lowStockItems.length > 0 ? input.shopping.lowStockItems.join(', ') : 'None'}
+
+GROUPS / COMMUNITY:
+- Active groups: ${input.groups.activeGroups}
+- Pending tasks: ${input.groups.pendingTasks}
+- Upcoming meetings: ${input.groups.upcomingMeetings}
+- Missed sessions: ${input.groups.missedSessions}
+
+=== YOUR OUTPUT ===
+
+Produce a JSON response with this exact structure:
+
+{
+  "priorities": [
+    {
+      "id": "p1",
+      "title": "Short action title",
+      "description": "Specific, actionable description",
+      "module": "education|fitness|health|dietary|injury|shopping|groups",
+      "level": "critical|high|medium|low",
+      "icon": "Assignment|FitnessCenter|Healing|Restaurant|ShoppingCart|Groups|MonitorHeart"
+    }
+  ],
+  "alerts": [
+    {
+      "id": "a1",
+      "title": "Alert title",
+      "description": "What's going on and why it matters",
+      "module": "education|fitness|health|dietary|injury|shopping|groups",
+      "severity": "error|warning|info|success",
+      "icon": "Warning|Error|Info|CheckCircle"
+    }
+  ],
+  "schedule": [
+    {
+      "id": "s1",
+      "title": "Event name",
+      "time": "HH:MM AM/PM",
+      "module": "education|fitness|health|dietary|groups",
+      "icon": "School|FitnessCenter|Restaurant|Groups|MonitorHeart",
+      "color": "#hex"
+    }
+  ],
+  "moduleInsights": [
+    {
+      "module": "education",
+      "label": "Education",
+      "score": 75,
+      "trend": "up|down|stable",
+      "summary": "One-line summary",
+      "details": ["Detail 1", "Detail 2"]
+    }
+  ],
+  "crossInsights": [
+    {
+      "id": "ci1",
+      "title": "Insightful title",
+      "description": "Cross-module connection explanation",
+      "modules": ["fitness", "dietary"],
+      "type": "pattern|risk|opportunity|sync"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "r1",
+      "title": "Recommendation title",
+      "description": "Specific, practical recommendation",
+      "type": "do-now|recover|learn|buy|plan|monitor",
+      "module": "education|fitness|health|dietary|injury|shopping|groups"
+    }
+  ],
+  "weeklySummary": {
+    "wins": ["Win 1", "Win 2"],
+    "risks": ["Risk 1"],
+    "missedItems": ["Missed 1"],
+    "adherence": { "education": 80, "fitness": 65, "dietary": 70, "health": 90 },
+    "predictedPriorities": ["Next week priority 1"]
+  }
+}
+
+RULES:
+1. Think holistically — connect modules, don't treat them separately
+2. Prioritize by: critical health/injury risk > deadlines > recovery/safety > daily goals > optimization > shopping
+3. Be proactive — surface issues the user hasn't asked about
+4. Be specific and actionable — never vague like "take care of your health"
+5. If injury exists, adapt fitness AND dietary AND shopping recommendations
+6. If sleep/readiness is low, reduce workout intensity AND adjust study schedule
+7. Generate 3-5 priorities, 2-4 alerts, 6-10 schedule events, insights for each active module, 2-4 cross-module insights, 4-6 recommendations
+8. Schedule should cover a full day from morning to night based on current time
+9. Scores should reflect actual data (not always positive)
+10. Be human-like, calm, supportive, and action-oriented
+
+Return ONLY valid JSON, no markdown fences.`;
+
+  const result = await model.generateContent(prompt);
+  const text = result.response.text().replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+  return text;
+}

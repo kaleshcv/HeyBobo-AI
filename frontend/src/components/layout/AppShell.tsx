@@ -20,7 +20,6 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import VideocamIcon from '@mui/icons-material/Videocam';
-import AddIcon from '@mui/icons-material/Add';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
@@ -110,6 +109,16 @@ const shoppingSubModules: NavModule[] = [
   { id: 'orders-reviews', label: 'Orders & Reviews', icon: <AutoAwesomeIcon />, path: '/app/shopping/orders' },
 ];
 
+// AI Brain shows ALL sub-modules from every module, grouped by section header
+const aiBrainSections: { label: string; color: string; items: NavModule[] }[] = [
+  { label: 'Education', color: '#1976d2', items: educationSubModules },
+  { label: 'Health', color: '#d32f2f', items: healthSubModules },
+  { label: 'Fitness', color: '#e65100', items: fitnessSubModules },
+  { label: 'Dietary', color: '#2e7d32', items: dietarySubModules },
+  { label: 'Shopping', color: '#7b1fa2', items: shoppingSubModules },
+  { label: 'Grooming', color: '#00796b', items: groomingSubModules },
+];
+
 const RIGHT_DRAWER_WIDTH = 240;
 const RIGHT_COLLAPSED_WIDTH = 52;
 
@@ -169,27 +178,6 @@ export default function AppShell() {
               Heybobo
             </Typography>
           )}
-        </Box>
-
-        {/* New action */}
-        <Box sx={{ px: expanded ? 1.5 : 0.5, py: 0.5 }}>
-          <Tooltip title={expanded ? '' : 'New'} placement="right">
-            <ListItemButton
-              sx={{
-                borderRadius: 2,
-                justifyContent: expanded ? 'flex-start' : 'center',
-                border: '1px solid',
-                borderColor: 'divider',
-                mb: 1,
-              }}
-              onClick={() => navigate('/app/education')}
-            >
-              <ListItemIcon sx={{ minWidth: expanded ? 36 : 'auto', color: 'text.secondary' }}>
-                <AddIcon fontSize="small" />
-              </ListItemIcon>
-              {expanded && <ListItemText primary="New" primaryTypographyProps={{ fontSize: 14 }} />}
-            </ListItemButton>
-          </Tooltip>
         </Box>
 
         <Divider sx={{ mx: 1, my: 0.5 }} />
@@ -348,10 +336,74 @@ export default function AppShell() {
         <Divider sx={{ mx: 1, mb: 0.5 }} />
 
         {/* Sub-module links */}
+        {location.pathname.startsWith('/app/ai-brain') ? (
+          /* AI Brain: show ALL modules grouped with section headers */
+          <Box sx={{ overflowY: 'auto', flex: 1 }}>
+            {aiBrainSections.map((section) => (
+              <React.Fragment key={section.label}>
+                {rightExpanded && (
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      display: 'block',
+                      px: 1.5,
+                      pt: 1.5,
+                      pb: 0.25,
+                      fontWeight: 700,
+                      fontSize: '0.6rem',
+                      color: section.color,
+                      letterSpacing: 0.8,
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {section.label}
+                  </Typography>
+                )}
+                {!rightExpanded && (
+                  <Divider sx={{ mx: 0.5, my: 0.5 }} />
+                )}
+                <List sx={{ py: 0 }}>
+                  {section.items.map((mod) => (
+                    <Tooltip key={mod.id} title={rightExpanded ? '' : `${section.label} · ${mod.label}`} placement="left">
+                      <ListItemButton
+                        selected={isActive(mod.path)}
+                        onClick={() => navigate(mod.path)}
+                        sx={{
+                          justifyContent: rightExpanded ? 'flex-start' : 'center',
+                          py: 0.6,
+                          mx: 0.5,
+                          borderRadius: 1.5,
+                          minHeight: 36,
+                        }}
+                      >
+                        <ListItemIcon
+                          sx={{
+                            minWidth: rightExpanded ? 28 : 'auto',
+                            color: isActive(mod.path) ? section.color : 'text.secondary',
+                            '& .MuiSvgIcon-root': { fontSize: 18 },
+                          }}
+                        >
+                          {mod.icon}
+                        </ListItemIcon>
+                        {rightExpanded && (
+                          <ListItemText
+                            primary={mod.label}
+                            primaryTypographyProps={{
+                              fontSize: 12,
+                              fontWeight: isActive(mod.path) ? 600 : 400,
+                            }}
+                          />
+                        )}
+                      </ListItemButton>
+                    </Tooltip>
+                  ))}
+                </List>
+              </React.Fragment>
+            ))}
+          </Box>
+        ) : (
         <List sx={{ py: 0.5 }}>
-          {(location.pathname.startsWith('/app/ai-brain')
-            ? []
-            : location.pathname.startsWith('/app/grooming')
+          {(location.pathname.startsWith('/app/grooming')
               ? groomingSubModules
               : location.pathname.startsWith('/app/shopping')
                 ? shoppingSubModules
@@ -394,6 +446,7 @@ export default function AppShell() {
             </Tooltip>
           ))}
         </List>
+        )}
       </Drawer>
     </Box>
   );

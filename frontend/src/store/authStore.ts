@@ -33,11 +33,11 @@ function saveStoredUsers(users: StoredUser[]) {
 // Seed a test user on first load
 ;(() => {
   const users = getStoredUsers()
-  if (!users.some((u) => u.email === 'test@heybobo.com')) {
+  if (!users.some((u) => u.email === 'test@heybobo.ai')) {
     const now = new Date().toISOString()
     saveStoredUsers([...users, {
       id: 'user-test-1',
-      email: 'test@heybobo.com',
+      email: 'test@heybobo.ai',
       password: 'test123',
       firstName: 'Test',
       lastName: 'User',
