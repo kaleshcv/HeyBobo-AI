@@ -777,8 +777,8 @@ export default function AIBrainPage() {
         </Box>
       </Box>
 
-      {/* Brain Mode Chips */}
-      <Stack direction="row" spacing={0.5} sx={{ mb: 1.5, flexWrap: 'wrap', gap: 0.5 }}>
+      {/* Brain Mode Chips — only visible in Brain view */}
+      <Stack direction="row" spacing={0.5} sx={{ mb: 1.5, flexWrap: 'wrap', gap: 0.5, display: dashboardOn ? 'flex' : 'none' }}>
         {BRAIN_MODES.map((mode) => (
           <Chip
             key={mode.id}
