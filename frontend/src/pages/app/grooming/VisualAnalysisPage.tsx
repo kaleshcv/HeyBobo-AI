@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Box, Typography, Paper, Tabs, Tab, Button, Grid, Chip, Alert,
   CircularProgress, LinearProgress, Avatar, IconButton, Dialog,
   DialogTitle, DialogContent, DialogActions, TextField, Snackbar,
-  Divider,
+  Divider, Stack, ToggleButtonGroup, ToggleButton,
 } from '@mui/material';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import FaceIcon from '@mui/icons-material/Face';
@@ -32,6 +32,12 @@ import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import PaletteIcon from '@mui/icons-material/Palette';
 import StraightenIcon from '@mui/icons-material/Straighten';
+import VideocamIcon from '@mui/icons-material/Videocam';
+import VideocamOffIcon from '@mui/icons-material/VideocamOff';
+import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
+import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import { groomingApi } from '@/lib/api';
 import { errorLogger } from '@/lib/errorLogger';
 import {
@@ -40,12 +46,15 @@ import {
   performDetailedBodyStyleAnalysis,
   compareProgressPhotos,
   virtualStyleTryOn,
+  performLiveFaceAnalysis,
   type DetailedSkinAnalysis,
   type DetailedHairFaceAnalysis,
   type DetailedBodyStyleAnalysis,
   type ProgressComparisonResult,
   type VirtualTryOnResult,
   type VisualAnalysisMetric,
+  type LiveFaceAnalysisResult,
+  type LiveAnalysisMode,
 } from '@/lib/gemini';
 
 const USER_ID = 'demo-user';
@@ -56,6 +65,7 @@ const COLORS = {
   body: '#ff9800',
   progress: '#4caf50',
   tryOn: '#9c27b0',
+  live: '#00bcd4',
 };
 
 const getScoreColor = (score: number) =>
@@ -89,6 +99,16 @@ export default function VisualAnalysisPage() {
   // Try-on state
   const [tryOnDescription, setTryOnDescription] = useState('');
 
+  // Live camera state
+  const [liveResult, setLiveResult] = useState<LiveFaceAnalysisResult | null>(null);
+  const [liveMode, setLiveMode] = useState<LiveAnalysisMode>('full');
+  const [cameraOn, setCameraOn] = useState(false);
+  const [countdown, setCountdown] = useState<number | null>(null);
+  const [capturedFrame, setCapturedFrame] = useState<string | null>(null);
+  const liveVideoRef = useRef<HTMLVideoElement>(null);
+  const liveStreamRef = useRef<MediaStream | null>(null);
+  const liveCanvasRef = useRef<HTMLCanvasElement>(null);
+
   // File refs
   const fileInputRef = useRef<HTMLInputElement>(null);
   const beforeFileRef = useRef<HTMLInputElement>(null);
@@ -112,6 +132,16 @@ export default function VisualAnalysisPage() {
   useEffect(() => {
     if (tab === 3) loadProgressTimeline();
   }, [tab, progressType]);
+
+  // Stop camera when navigating away from live tab
+  useEffect(() => {
+    if (tab !== 5 && liveStreamRef.current) {
+      liveStreamRef.current.getTracks().forEach((t) => t.stop());
+      liveStreamRef.current = null;
+      setCameraOn(false);
+      setCapturedFrame(null);
+    }
+  }, [tab]);
 
   const loadProfile = async () => {
     try {
@@ -242,7 +272,7 @@ export default function VisualAnalysisPage() {
   };
 
   const getTabColor = () =>
-    tab === 0 ? COLORS.skin : tab === 1 ? COLORS.hair : tab === 2 ? COLORS.body : tab === 3 ? COLORS.progress : COLORS.tryOn;
+    tab === 0 ? COLORS.skin : tab === 1 ? COLORS.hair : tab === 2 ? COLORS.body : tab === 3 ? COLORS.progress : tab === 4 ? COLORS.tryOn : COLORS.live;
 
   // ═══════════ RENDER ═══════════════════════════════════
 
@@ -282,6 +312,7 @@ export default function VisualAnalysisPage() {
         <Tab icon={<CheckroomIcon />} iconPosition="start" label="Body & Style" />
         <Tab icon={<TimelineIcon />} iconPosition="start" label="Progress Tracking" />
         <Tab icon={<ViewInArIcon />} iconPosition="start" label="Virtual Try-On" />
+        <Tab icon={<VideocamIcon />} iconPosition="start" label="Live Analysis" sx={{ color: tab === 5 ? COLORS.live : undefined }} />
       </Tabs>
 
       {/* Skin / Hair / Body Analysis Tabs (0-2) */}
@@ -352,6 +383,29 @@ export default function VisualAnalysisPage() {
         onUpload={handleTryOn}
         loading={loading}
       />}
+
+      {/* Live Camera Tab (5) */}
+      {tab === 5 && (
+        <LiveCameraTab
+          liveMode={liveMode}
+          setLiveMode={setLiveMode}
+          cameraOn={cameraOn}
+          setCameraOn={setCameraOn}
+          countdown={countdown}
+          setCountdown={setCountdown}
+          capturedFrame={capturedFrame}
+          setCapturedFrame={setCapturedFrame}
+          liveResult={liveResult}
+          setLiveResult={setLiveResult}
+          liveVideoRef={liveVideoRef}
+          liveStreamRef={liveStreamRef}
+          liveCanvasRef={liveCanvasRef}
+          profile={profile}
+          loading={loading}
+          setLoading={setLoading}
+          setError={setError}
+        />
+      )}
 
       {/* Results */}
       {tab === 0 && skinAnalysis && <SkinAnalysisResults result={skinAnalysis} />}
@@ -1359,6 +1413,441 @@ function RecommendationsSection({ recommendations, products, color }: { recommen
     </>
   );
 }
+
+// ═══════════ LIVE CAMERA TAB ════════════════════════════
+
+interface LiveCameraTabProps {
+  liveMode: LiveAnalysisMode;
+  setLiveMode: (m: LiveAnalysisMode) => void;
+  cameraOn: boolean;
+  setCameraOn: (v: boolean) => void;
+  countdown: number | null;
+  setCountdown: (v: number | null) => void;
+  capturedFrame: string | null;
+  setCapturedFrame: (v: string | null) => void;
+  liveResult: LiveFaceAnalysisResult | null;
+  setLiveResult: (v: LiveFaceAnalysisResult | null) => void;
+  liveVideoRef: React.RefObject<HTMLVideoElement>;
+  liveStreamRef: React.MutableRefObject<MediaStream | null>;
+  liveCanvasRef: React.RefObject<HTMLCanvasElement>;
+  profile: any;
+  loading: boolean;
+  setLoading: (v: boolean) => void;
+  setError: (v: string) => void;
+}
+
+function LiveCameraTab({
+  liveMode, setLiveMode,
+  cameraOn, setCameraOn,
+  countdown, setCountdown,
+  capturedFrame, setCapturedFrame,
+  liveResult, setLiveResult,
+  liveVideoRef, liveStreamRef, liveCanvasRef,
+  profile, loading, setLoading, setError,
+}: LiveCameraTabProps) {
+  const color = COLORS.live;
+
+  const startCamera = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: false,
+      });
+      liveStreamRef.current = stream;
+      if (liveVideoRef.current) {
+        liveVideoRef.current.srcObject = stream;
+        await liveVideoRef.current.play();
+      }
+      setCameraOn(true);
+      setCapturedFrame(null);
+      setLiveResult(null);
+    } catch (e: any) {
+      setError('Camera access denied. Please allow camera permission and try again.');
+    }
+  }, [liveVideoRef, liveStreamRef, setCameraOn, setCapturedFrame, setLiveResult, setError]);
+
+  const stopCamera = useCallback(() => {
+    liveStreamRef.current?.getTracks().forEach((t) => t.stop());
+    liveStreamRef.current = null;
+    setCameraOn(false);
+  }, [liveStreamRef, setCameraOn]);
+
+  const captureAndAnalyse = useCallback(() => {
+    // 3-second countdown then capture
+    let count = 3;
+    setCountdown(count);
+    const interval = setInterval(() => {
+      count -= 1;
+      if (count === 0) {
+        clearInterval(interval);
+        setCountdown(null);
+        // Capture frame from video
+        const video = liveVideoRef.current;
+        const canvas = liveCanvasRef.current;
+        if (!video || !canvas) return;
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        // Mirror the capture (selfie orientation)
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
+        ctx.drawImage(video, 0, 0);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+        setCapturedFrame(dataUrl);
+
+        // Convert to Blob and run analysis
+        canvas.toBlob(async (blob) => {
+          if (!blob) return;
+          setLoading(true);
+          try {
+            const result = await performLiveFaceAnalysis(blob, liveMode, profile);
+            setLiveResult(result);
+          } catch (e: any) {
+            setError(e?.message || 'Analysis failed — try better lighting');
+          } finally {
+            setLoading(false);
+          }
+        }, 'image/jpeg', 0.92);
+      } else {
+        setCountdown(count);
+      }
+    }, 1000);
+  }, [liveVideoRef, liveCanvasRef, liveMode, profile, setCountdown, setCapturedFrame, setLoading, setLiveResult, setError]);
+
+  const retake = () => {
+    setCapturedFrame(null);
+    setLiveResult(null);
+  };
+
+  const severityColors: Record<string, string> = { info: '#1976d2', warning: '#f57c00', critical: '#d32f2f' };
+
+  return (
+    <Box>
+      {/* Mode selector */}
+      <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+        <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.secondary' }}>Analysis mode:</Typography>
+        <ToggleButtonGroup
+          size="small"
+          exclusive
+          value={liveMode}
+          onChange={(_, v) => v && setLiveMode(v)}
+          sx={{ '& .MuiToggleButton-root': { textTransform: 'none', px: 2 } }}
+        >
+          <ToggleButton value="skin"><FaceIcon sx={{ fontSize: 15, mr: 0.5 }} />Skin</ToggleButton>
+          <ToggleButton value="hair_face"><ContentCutIcon sx={{ fontSize: 15, mr: 0.5 }} />Hair & Face</ToggleButton>
+          <ToggleButton value="full"><AutoAwesomeIcon sx={{ fontSize: 15, mr: 0.5 }} />Full Analysis</ToggleButton>
+        </ToggleButtonGroup>
+      </Box>
+
+      {/* Camera viewport */}
+      <Paper
+        variant="outlined"
+        sx={{
+          borderRadius: 3,
+          overflow: 'hidden',
+          position: 'relative',
+          bgcolor: '#0a0a0a',
+          border: `2px solid ${cameraOn ? color : '#333'}`,
+          mb: 2,
+          minHeight: 320,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {/* Live video feed */}
+        <video
+          ref={liveVideoRef}
+          style={{
+            width: '100%',
+            maxHeight: 400,
+            display: cameraOn && !capturedFrame ? 'block' : 'none',
+            transform: 'scaleX(-1)', // mirror selfie
+            objectFit: 'cover',
+          }}
+          playsInline
+          muted
+        />
+
+        {/* Captured frame preview */}
+        {capturedFrame && (
+          <Box sx={{ position: 'relative', width: '100%' }}>
+            <img src={capturedFrame} alt="Captured" style={{ width: '100%', maxHeight: 400, objectFit: 'cover', display: 'block' }} />
+            {loading && (
+              <Box sx={{
+                position: 'absolute', inset: 0, bgcolor: 'rgba(0,0,0,0.55)',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1.5,
+              }}>
+                <CircularProgress sx={{ color: color }} size={40} />
+                <Typography variant="body2" sx={{ color: '#fff', fontWeight: 600 }}>Analysing your face...</Typography>
+              </Box>
+            )}
+          </Box>
+        )}
+
+        {/* Countdown overlay */}
+        {countdown !== null && (
+          <Box sx={{
+            position: 'absolute', inset: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            bgcolor: 'rgba(0,0,0,0.4)',
+          }}>
+            <Typography variant="h1" sx={{ color: '#fff', fontWeight: 900, fontSize: '6rem', lineHeight: 1, textShadow: '0 0 20px rgba(0,188,212,0.8)' }}>
+              {countdown}
+            </Typography>
+          </Box>
+        )}
+
+        {/* Idle state */}
+        {!cameraOn && !capturedFrame && (
+          <Box sx={{ textAlign: 'center', py: 5, px: 3 }}>
+            <VideocamIcon sx={{ fontSize: 56, color: '#444', mb: 1.5 }} />
+            <Typography variant="h6" sx={{ color: '#888', fontWeight: 600, mb: 0.5 }}>Live Camera Analysis</Typography>
+            <Typography variant="body2" sx={{ color: '#555', mb: 2.5, maxWidth: 380 }}>
+              Open your camera and capture a selfie for instant AI-powered skin, face shape, and hair analysis — no upload needed.
+            </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, flexWrap: 'wrap' }}>
+              <Chip size="small" icon={<LightModeIcon />} label="Face front lighting" sx={{ bgcolor: '#1a1a1a', color: '#aaa', border: '1px solid #333' }} />
+              <Chip size="small" icon={<FaceIcon />} label="No filters" sx={{ bgcolor: '#1a1a1a', color: '#aaa', border: '1px solid #333' }} />
+              <Chip size="small" icon={<CameraAltIcon />} label="30–60 cm away" sx={{ bgcolor: '#1a1a1a', color: '#aaa', border: '1px solid #333' }} />
+            </Box>
+          </Box>
+        )}
+
+        {/* Face guide overlay on live feed */}
+        {cameraOn && !capturedFrame && countdown === null && (
+          <Box sx={{
+            position: 'absolute', inset: 0, pointerEvents: 'none',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <Box sx={{
+              width: 200, height: 260, borderRadius: '50%',
+              border: `2px dashed ${color}99`,
+              boxShadow: `0 0 0 4px ${color}22`,
+            }} />
+          </Box>
+        )}
+      </Paper>
+
+      {/* Hidden canvas for capture */}
+      <canvas ref={liveCanvasRef} style={{ display: 'none' }} />
+
+      {/* Controls */}
+      <Stack direction="row" spacing={1.5} justifyContent="center" sx={{ mb: 3 }}>
+        {!cameraOn && !capturedFrame && (
+          <Button
+            variant="contained"
+            startIcon={<VideocamIcon />}
+            onClick={startCamera}
+            sx={{ textTransform: 'none', borderRadius: 2, px: 3, bgcolor: color, '&:hover': { bgcolor: color, filter: 'brightness(0.9)' } }}
+          >
+            Open Camera
+          </Button>
+        )}
+
+        {cameraOn && !capturedFrame && (
+          <>
+            <Button
+              variant="contained"
+              startIcon={countdown !== null ? <CircularProgress size={16} color="inherit" /> : <RadioButtonCheckedIcon />}
+              onClick={captureAndAnalyse}
+              disabled={countdown !== null || loading}
+              sx={{ textTransform: 'none', borderRadius: 2, px: 3, bgcolor: '#e91e63', '&:hover': { bgcolor: '#c2185b' } }}
+            >
+              {countdown !== null ? `Capturing in ${countdown}…` : 'Capture & Analyse'}
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<VideocamOffIcon />}
+              onClick={stopCamera}
+              sx={{ textTransform: 'none', borderRadius: 2 }}
+            >
+              Stop Camera
+            </Button>
+          </>
+        )}
+
+        {capturedFrame && !loading && (
+          <>
+            <Button
+              variant="outlined"
+              startIcon={<FlipCameraAndroidIcon />}
+              onClick={retake}
+              sx={{ textTransform: 'none', borderRadius: 2 }}
+            >
+              Retake
+            </Button>
+            {cameraOn && (
+              <Button
+                variant="contained"
+                startIcon={<RadioButtonCheckedIcon />}
+                onClick={() => { retake(); setTimeout(captureAndAnalyse, 100); }}
+                sx={{ textTransform: 'none', borderRadius: 2, bgcolor: '#e91e63', '&:hover': { bgcolor: '#c2185b' } }}
+              >
+                Capture Again
+              </Button>
+            )}
+          </>
+        )}
+      </Stack>
+
+      {/* Live Results */}
+      {liveResult && !loading && (
+        <Box>
+          {/* Hero score + badge */}
+          <Paper
+            sx={{
+              p: 0, mb: 2, borderRadius: 3, overflow: 'hidden',
+              background: `linear-gradient(135deg, ${color}12 0%, ${color}05 50%, transparent 100%)`,
+              border: `1px solid ${color}25`,
+            }}
+          >
+            <Grid container>
+              <Grid item xs={12} sm={3} sx={{
+                p: 2.5, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                borderRight: { sm: `1px solid ${color}15` },
+              }}>
+                <Box sx={{ position: 'relative', display: 'inline-flex', mb: 1 }}>
+                  <CircularProgress variant="determinate" value={100} size={90} thickness={5} sx={{ color: '#eee', position: 'absolute' }} />
+                  <CircularProgress variant="determinate" value={liveResult.overallScore} size={90} thickness={5} sx={{ color: getScoreColor(liveResult.overallScore) }} />
+                  <Box sx={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <Typography variant="h4" sx={{ fontWeight: 900, color: getScoreColor(liveResult.overallScore), lineHeight: 1 }}>{liveResult.overallScore}</Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>SCORE</Typography>
+                  </Box>
+                </Box>
+                <Chip
+                  size="small"
+                  label={liveResult.energyBadge}
+                  sx={{ fontWeight: 700, bgcolor: `${color}18`, color, mt: 0.5 }}
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={9} sx={{ p: 2.5 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
+                  <VideocamIcon sx={{ color, fontSize: 18 }} />
+                  <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Live Face Analysis</Typography>
+                  <Chip size="small" label={liveMode === 'full' ? 'Full' : liveMode === 'skin' ? 'Skin' : 'Hair & Face'} sx={{ bgcolor: `${color}15`, color, fontWeight: 600, fontSize: 11 }} />
+                </Box>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 1.25, lineHeight: 1.6 }}>
+                  {liveResult.headline}
+                </Typography>
+
+                {/* Alerts */}
+                {liveResult.alerts.length > 0 && (
+                  <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
+                    {liveResult.alerts.map((a, i) => (
+                      <Chip
+                        key={i}
+                        size="small"
+                        icon={<NotificationsActiveIcon sx={{ fontSize: '13px !important', color: `${severityColors[a.severity]} !important` }} />}
+                        label={a.label}
+                        sx={{ fontSize: '0.7rem', bgcolor: `${severityColors[a.severity]}15`, color: severityColors[a.severity], fontWeight: 600 }}
+                      />
+                    ))}
+                  </Stack>
+                )}
+              </Grid>
+            </Grid>
+          </Paper>
+
+          {/* Skin details */}
+          {(liveMode === 'skin' || liveMode === 'full') && (
+            <Paper variant="outlined" sx={{ p: 2.5, mb: 2, borderRadius: 2.5 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1.5, display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                <FaceIcon sx={{ fontSize: 16, color: COLORS.skin }} /> Skin Analysis
+              </Typography>
+              <Grid container spacing={1.5}>
+                {[
+                  { label: 'Hydration', value: liveResult.skin.hydration, icon: <WaterDropIcon /> },
+                  { label: 'Pores', value: liveResult.skin.pores, icon: <FaceIcon /> },
+                  { label: 'Texture', value: liveResult.skin.texture, icon: <StraightenIcon /> },
+                  { label: 'Pigmentation', value: liveResult.skin.pigmentation, icon: <PaletteIcon /> },
+                  { label: 'Redness', value: liveResult.skin.redness, icon: <LightModeIcon /> },
+                ].map((item, i) => (
+                  <Grid item xs={12} sm={6} key={i}>
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
+                      <Avatar sx={{ width: 28, height: 28, bgcolor: `${COLORS.skin}12`, flexShrink: 0 }}>
+                        {React.cloneElement(item.icon, { sx: { fontSize: 14, color: COLORS.skin } })}
+                      </Avatar>
+                      <Box>
+                        <Typography variant="caption" sx={{ fontWeight: 700, color: COLORS.skin }}>{item.label}</Typography>
+                        <Typography variant="body2" color="text.secondary">{item.value}</Typography>
+                      </Box>
+                    </Box>
+                  </Grid>
+                ))}
+                {liveResult.skin.quickTips.length > 0 && (
+                  <Grid item xs={12}>
+                    <Divider sx={{ mb: 1 }} />
+                    <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', display: 'block', mb: 0.5 }}>Quick Tips</Typography>
+                    <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
+                      {liveResult.skin.quickTips.map((tip, i) => (
+                        <Chip key={i} size="small" label={tip} sx={{ bgcolor: `${COLORS.skin}10`, color: COLORS.skin, fontSize: '0.7rem', fontWeight: 500 }} />
+                      ))}
+                    </Stack>
+                  </Grid>
+                )}
+              </Grid>
+            </Paper>
+          )}
+
+          {/* Face & Hair details */}
+          {(liveMode === 'hair_face' || liveMode === 'full') && (
+            <Paper variant="outlined" sx={{ p: 2.5, mb: 2, borderRadius: 2.5 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1.5, display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                <ContentCutIcon sx={{ fontSize: 16, color: COLORS.hair }} /> Face & Hair Profile
+              </Typography>
+              <Grid container spacing={1.5}>
+                {[
+                  { label: 'Face Shape', value: liveResult.face.shape },
+                  { label: 'Symmetry', value: liveResult.face.symmetryNote },
+                  { label: 'Hair Type', value: liveResult.face.hairType },
+                  { label: 'Hair Condition', value: liveResult.face.hairCondition },
+                ].map((item, i) => (
+                  <Grid item xs={12} sm={6} key={i}>
+                    <Typography variant="caption" sx={{ fontWeight: 700, color: COLORS.hair, display: 'block' }}>{item.label}</Typography>
+                    <Typography variant="body2" color="text.secondary">{item.value}</Typography>
+                  </Grid>
+                ))}
+                <Grid item xs={12}>
+                  <Box sx={{ p: 1.5, bgcolor: `${COLORS.hair}08`, borderRadius: 1.5, borderLeft: `3px solid ${COLORS.hair}` }}>
+                    <Typography variant="caption" sx={{ fontWeight: 700, color: COLORS.hair }}>Style Recommendation</Typography>
+                    <Typography variant="body2" color="text.secondary">{liveResult.face.bestStyle}</Typography>
+                  </Box>
+                </Grid>
+              </Grid>
+            </Paper>
+          )}
+
+          {/* Recommendations + Shopping Nudge */}
+          <Paper variant="outlined" sx={{ p: 2.5, borderRadius: 2.5 }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1.5 }}>Top Recommendations</Typography>
+            <Stack spacing={1} sx={{ mb: liveResult.shoppingNudge ? 2 : 0 }}>
+              {liveResult.topRecommendations.map((rec, i) => (
+                <Box key={i} sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
+                  <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: color, mt: '6px', flexShrink: 0 }} />
+                  <Typography variant="body2">{rec}</Typography>
+                </Box>
+              ))}
+            </Stack>
+            {liveResult.shoppingNudge && (
+              <>
+                <Divider sx={{ mb: 1.5 }} />
+                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', p: 1.25, bgcolor: '#7b1fa215', borderRadius: 1.5, border: '1px solid #7b1fa230' }}>
+                  <ShoppingCartIcon sx={{ fontSize: 18, color: '#ce93d8', flexShrink: 0 }} />
+                  <Typography variant="body2" sx={{ color: '#ce93d8', fontWeight: 500 }}>{liveResult.shoppingNudge}</Typography>
+                </Box>
+              </>
+            )}
+          </Paper>
+        </Box>
+      )}
+    </Box>
+  );
+}
+
+// ═══════════ EMPTY STATE ════════════════════════════════
 
 function EmptyAnalysis({ type, color, icon }: { type: string; color: string; icon: React.ReactElement }) {
   return (

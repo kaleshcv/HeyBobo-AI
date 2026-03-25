@@ -1284,6 +1284,123 @@ Be honest and constructive. Provide 3+ pros, 1-3 cons, and 2+ alternatives.`;
   return JSON.parse(text);
 }
 
+// ─── Live Face Analysis ───────────────────────────────────────────────────────
+
+export type LiveAnalysisMode = 'skin' | 'hair_face' | 'full';
+
+export interface LiveFaceAnalysisResult {
+  mode: LiveAnalysisMode;
+  overallScore: number;
+  headline: string;          // 1 short line summary
+  energyBadge: string;       // e.g. "Glowing", "Needs hydration", "Stressed"
+  skin: {
+    score: number;
+    hydration: string;
+    pores: string;
+    texture: string;
+    pigmentation: string;
+    redness: string;
+    quickTips: string[];
+  };
+  face: {
+    shape: string;
+    symmetryNote: string;
+    hairType: string;
+    hairCondition: string;
+    bestStyle: string;
+  };
+  alerts: { label: string; severity: 'info' | 'warning' | 'critical' }[];
+  topRecommendations: string[];   // 3-5 specific product or habit recs
+  shoppingNudge: string | null;   // one specific buy suggestion or null
+}
+
+/**
+ * Analyse a single live-camera snapshot (blob/file).
+ * Mode 'skin': focuses on skin health metrics.
+ * Mode 'hair_face': focuses on face shape + hair type.
+ * Mode 'full': covers both skin and face/hair in one pass.
+ */
+export async function performLiveFaceAnalysis(
+  imageBlob: Blob,
+  mode: LiveAnalysisMode = 'full',
+  profile?: any,
+): Promise<LiveFaceAnalysisResult> {
+  const model = getModel();
+
+  const base64 = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve((reader.result as string).split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(imageBlob);
+  });
+
+  const profileCtx = profile
+    ? `User profile: gender=${profile.gender || 'unknown'}, age=${profile.age || 'unknown'}, skin type=${profile.skincare?.skinType || 'unknown'}, concerns=${(profile.skincare?.concerns || []).join(', ') || 'none'}.`
+    : '';
+
+  const modeInstructions =
+    mode === 'skin'
+      ? 'Focus primarily on skin health — hydration, pores, texture, pigmentation, redness. Give minimal detail on hair/face shape.'
+      : mode === 'hair_face'
+      ? 'Focus primarily on face shape, symmetry, hair type and condition. Give minimal detail on skin.'
+      : 'Provide a balanced full analysis covering both skin health and face/hair shape.';
+
+  const prompt = `You are an AI beauty and grooming analyst performing a LIVE CAMERA analysis. This is a real-time selfie capture, not a studio photo — lighting and angle may be imperfect. Adjust expectations accordingly.
+
+${profileCtx}
+Analysis mode: ${mode.toUpperCase()}
+${modeInstructions}
+
+Analyze the image and return ONLY valid JSON (no markdown):
+{
+  "mode": "${mode}",
+  "overallScore": 74,
+  "headline": "1-line situation summary (e.g. 'Good skin tone, mild dehydration detected')",
+  "energyBadge": "Short 1-3 word label (e.g. 'Glowing', 'Needs hydration', 'Oily T-zone', 'Healthy')",
+  "skin": {
+    "score": 72,
+    "hydration": "Slightly dehydrated — T-zone shows dullness",
+    "pores": "Enlarged pores on nose and forehead",
+    "texture": "Generally smooth with minor roughness",
+    "pigmentation": "Even tone, minor dark spots under eyes",
+    "redness": "Mild redness around nose",
+    "quickTips": ["Apply hyaluronic acid serum", "Use SPF 50 daily", "Drink 2L water"]
+  },
+  "face": {
+    "shape": "Oval",
+    "symmetryNote": "Good symmetry with slight asymmetry on left jaw",
+    "hairType": "Straight / Fine",
+    "hairCondition": "Healthy with minor frizz",
+    "bestStyle": "Textured layers would suit your face shape well"
+  },
+  "alerts": [
+    { "label": "Dehydration signs detected", "severity": "warning" },
+    { "label": "Under-eye circles visible", "severity": "info" }
+  ],
+  "topRecommendations": [
+    "CeraVe Hydrating Cleanser — cleanses without stripping moisture",
+    "The Ordinary Niacinamide 10% — pore minimiser",
+    "La Roche-Posay Anthelios SPF 50 — daily UV protection"
+  ],
+  "shoppingNudge": "Pick up a hyaluronic acid serum — dehydration is your biggest concern right now"
+}
+
+Rules:
+- overallScore 0-100 based purely on what is visible
+- energyBadge must be honest — don't default to 'Glowing' if issues are present
+- alerts max 3 items, only flag genuinely visible issues
+- topRecommendations must be real product names with brand + brief reason
+- shoppingNudge is the single most impactful purchase; null if skin is already good
+- If image quality is too low or face is not clearly visible, set overallScore to 0 and set headline to "Image too dark or unclear — please improve lighting"`;
+
+  const result = await model.generateContent([
+    { inlineData: { mimeType: 'image/jpeg', data: base64 } },
+    { text: prompt },
+  ]);
+  const text = result.response.text().replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+  return JSON.parse(text);
+}
+
 // ─── AI Brain Dashboard Intelligence ─────────────────────────────────────────
 
 export interface AIBrainInput {
