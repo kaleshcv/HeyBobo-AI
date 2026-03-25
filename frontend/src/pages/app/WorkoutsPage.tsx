@@ -34,6 +34,14 @@ import SpeedIcon from '@mui/icons-material/Speed';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import DirectionsRunIcon from '@mui/icons-material/DirectionsRun';
+import SelfImprovementIcon from '@mui/icons-material/SelfImprovement';
+import BoltIcon from '@mui/icons-material/Bolt';
+import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
+import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
+import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
+import SportsGymnasticsIcon from '@mui/icons-material/SportsGymnastics';
 import {
   useWorkoutSystemStore,
   EXERCISE_DATABASE,
@@ -52,6 +60,29 @@ import toast from 'react-hot-toast';
 
 const LiveWorkoutTab = lazy(() => import('@/components/LiveWorkoutTab'));
 
+// ─── Category / Goal icon maps ──────────────────────────
+function getCatIcon(category: ExerciseCategory, fontSize = 18, color?: string) {
+  const sx = { fontSize, ...(color ? { color } : {}) };
+  switch (category) {
+    case 'strength':   return <FitnessCenterIcon sx={sx} />;
+    case 'cardio':     return <DirectionsRunIcon sx={sx} />;
+    case 'yoga':       return <SelfImprovementIcon sx={sx} />;
+    case 'hiit':       return <BoltIcon sx={sx} />;
+    case 'stretching': return <AccessibilityNewIcon sx={sx} />;
+    case 'mobility':   return <AutorenewIcon sx={sx} />;
+  }
+}
+
+function getGoalIcon(goal: PlanGoal, fontSize = 22, color?: string) {
+  const sx = { fontSize, ...(color ? { color } : {}) };
+  switch (goal) {
+    case 'fat-loss':              return <LocalFireDepartmentIcon sx={sx} />;
+    case 'muscle-gain':           return <SportsMartialArtsIcon sx={sx} />;
+    case 'flexibility':           return <SelfImprovementIcon sx={sx} />;
+    case 'athletic-performance':  return <SportsGymnasticsIcon sx={sx} />;
+  }
+}
+
 // ─── Exercise Detail Dialog ─────────────────────────────
 function ExerciseDetailDialog({ exercise, open, onClose }: { exercise: Exercise | null; open: boolean; onClose: () => void }) {
   if (!exercise) return null;
@@ -61,7 +92,7 @@ function ExerciseDetailDialog({ exercise, open, onClose }: { exercise: Exercise 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3 } }}>
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, pr: 6 }}>
-        <Typography sx={{ fontSize: 22 }}>{cat.emoji}</Typography>
+        {getCatIcon(exercise.category, 26, cat.color)}
         <Box>
           <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>{exercise.name}</Typography>
           <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5 }}>
@@ -231,8 +262,8 @@ function WorkoutLibrary() {
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                <Avatar sx={{ bgcolor: `${cat.color}14`, width: 32, height: 32, fontSize: 16 }}>
-                  {cat.emoji}
+                <Avatar sx={{ bgcolor: `${cat.color}14`, width: 32, height: 32 }}>
+                  {getCatIcon(ex.category, 18, cat.color)}
                 </Avatar>
                 <Box sx={{ flex: 1 }}>
                   <Typography variant="body2" sx={{ fontWeight: 600, lineHeight: 1.2 }}>{ex.name}</Typography>
@@ -327,8 +358,8 @@ function WorkoutPlans() {
             >
               <Box sx={{ p: 1.5 }}>
                 <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-                  <Avatar sx={{ bgcolor: `${goalMeta.color}18`, width: 38, height: 38, fontSize: 20 }}>
-                    {goalMeta.emoji}
+                  <Avatar sx={{ bgcolor: `${goalMeta.color}18`, width: 38, height: 38 }}>
+                    {getGoalIcon(plan.goal, 22, goalMeta.color)}
                   </Avatar>
                   <Box sx={{ flex: 1 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -397,7 +428,7 @@ function WorkoutPlans() {
                         const cat = CATEGORY_META[ex.category];
                         return (
                           <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5 }}>
-                            <Typography sx={{ fontSize: 16 }}>{cat.emoji}</Typography>
+                            {getCatIcon(ex.category, 18, cat.color)}
                             <Typography variant="body2" sx={{ fontWeight: 500, flex: 1 }}>{ex.name}</Typography>
                             <Typography variant="caption" color="text.secondary">
                               {we.sets}×{we.reps ? `${we.reps} reps` : `${we.durationSeconds! >= 60 ? `${Math.floor(we.durationSeconds! / 60)}m` : `${we.durationSeconds}s`}`}
@@ -507,7 +538,7 @@ function CreateWorkoutDialog({ open, onClose }: { open: boolean; onClose: () => 
             return (
               <Paper key={idx} elevation={0} sx={{ p: 1.5, borderRadius: 2, border: '1px solid #e0e0e0', display: 'flex', flexDirection: 'column', gap: 1 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  {cat && <Typography sx={{ fontSize: 16 }}>{cat.emoji}</Typography>}
+                  {cat && dbEx && getCatIcon(dbEx.category, 16, cat.color)}
                   <Typography variant="body2" sx={{ fontWeight: 600, flex: 1 }}>{ex._name ?? dbEx?.name}</Typography>
                   <IconButton size="small" onClick={() => removeExercise(idx)}><DeleteIcon sx={{ fontSize: 16 }} /></IconButton>
                 </Box>
@@ -593,7 +624,7 @@ function CreateWorkoutDialog({ open, onClose }: { open: boolean; onClose: () => 
                   onClick={() => addExercise(ex)}
                   sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.75, px: 1, borderRadius: 1.5, cursor: 'pointer', '&:hover': { bgcolor: '#f5f5f5' } }}
                 >
-                  <Typography sx={{ fontSize: 14 }}>{CATEGORY_META[ex.category].emoji}</Typography>
+                  {getCatIcon(ex.category, 16, CATEGORY_META[ex.category].color)}
                   <Typography variant="body2" sx={{ flex: 1 }}>{ex.name}</Typography>
                   <AddIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
                 </Box>
@@ -678,7 +709,7 @@ function CustomWorkouts() {
                   if (!ex) return null;
                   return (
                     <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 0.75, py: 0.3 }}>
-                      <Typography sx={{ fontSize: 14 }}>{CATEGORY_META[ex.category].emoji}</Typography>
+                      {getCatIcon(ex.category, 16, CATEGORY_META[ex.category].color)}
                       <Typography variant="caption" sx={{ flex: 1 }}>{ex.name}</Typography>
                       <Typography variant="caption" color="text.secondary">
                         {we.sets}×{we.reps ?? `${we.durationSeconds}s`}
