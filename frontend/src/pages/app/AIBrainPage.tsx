@@ -729,7 +729,7 @@ export default function AIBrainPage() {
   return (
     <Box sx={{ p: { xs: 2, md: 3 } }}>
       {/* Header */}
-      <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
+      <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Avatar sx={{ bgcolor: '#424242', width: 36, height: 36 }}>
@@ -802,7 +802,7 @@ export default function AIBrainPage() {
       {!dashboardOn && <SimpleLifeDashboard />}
 
       {dashboardOn && (
-        <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
+        <Box>
       {/* Error */}
       {error && (
         <Alert severity="error" sx={{ mb: 1, borderRadius: 1.5, py: 0 }} onClose={() => setError(null)}>

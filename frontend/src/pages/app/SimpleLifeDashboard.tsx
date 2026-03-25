@@ -337,7 +337,7 @@ export default function SimpleLifeDashboard() {
 
       {/* ── Row 1: Vitals + Needs Attention ──────────────────────── */}
       <Grid container spacing={1.5} sx={{ mb: 1.5 }}>
-        <Grid item xs={12} md={topAlert ? 7 : 12}>
+        <Grid item xs={12} md={topAlert ? 8 : 12} lg={topAlert ? 8 : 12}>
           <Section>
             <Box sx={{ display: 'flex', gap: 3, mb: 0.5 }}>
               {vitals.map(v => (
@@ -373,7 +373,7 @@ export default function SimpleLifeDashboard() {
 
       {/* ── Row 2: Today's Plan + Suggested for You ───────────── */}
       <Grid container spacing={1.5} sx={{ mb: 1.5 }}>
-        <Grid item xs={12} md={suggestions.length > 0 ? 7 : 12}>
+        <Grid item xs={12} md={suggestions.length > 0 ? 8 : 12} lg={suggestions.length > 0 ? 8 : 12}>
           <Section>
             <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mb: 0.75 }}>
               <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: 13 }}>🎯 Today's Plan</Typography>
@@ -408,7 +408,7 @@ export default function SimpleLifeDashboard() {
           </Section>
         </Grid>
         {suggestions.length > 0 && (
-          <Grid item xs={12} md={5}>
+          <Grid item xs={12} md={4} lg={4}>
             <Section>
               <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.25, fontSize: 13 }}>✨ Suggested for You</Typography>
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.75, fontSize: 11 }}>
@@ -439,7 +439,7 @@ export default function SimpleLifeDashboard() {
 
       {/* ── Row 3: Daily Missions + Bobo Cards ─────────────────────── */}
       <Grid container spacing={1.5} sx={{ mb: 1.5 }}>
-        <Grid item xs={12} md={boboCards.length > 0 ? 6 : 12}>
+        <Grid item xs={12} md={boboCards.length > 0 ? 7 : 12} lg={boboCards.length > 0 ? 8 : 12}>
           <Section>
             <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mb: 0.5 }}>
               <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: 13 }}>🎮 Daily Missions</Typography>
@@ -477,7 +477,7 @@ export default function SimpleLifeDashboard() {
           </Section>
         </Grid>
         {boboCards.length > 0 && (
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={4} lg={4}>
             <Section>
               <Typography variant="subtitle2" sx={{ fontWeight: 700, fontSize: 13, mb: 0.75 }}>💬 Bobo Says</Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
@@ -513,7 +513,7 @@ export default function SimpleLifeDashboard() {
       {/* ── Row 4: Scores + Quick Actions ──────────────────────────── */}
       <Grid container spacing={1.5}>
         {scores.length > 0 && (
-          <Grid item xs={12} md={8}>
+          <Grid item xs={12} md={8} lg={9}>
             <Section>
               <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1, fontSize: 13 }}>📊 Your Scores</Typography>
               <Box sx={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap', gap: 1 }}>
@@ -524,7 +524,7 @@ export default function SimpleLifeDashboard() {
             </Section>
           </Grid>
         )}
-        <Grid item xs={12} md={scores.length > 0 ? 4 : 12}>
+        <Grid item xs={12} md={scores.length > 0 ? 4 : 12} lg={scores.length > 0 ? 3 : 12}>
           <Section>
             <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1, fontSize: 13 }}>⚡ Quick Actions</Typography>
             <Box sx={{ display: 'grid', gridTemplateColumns: scores.length > 0 ? '1fr 1fr' : 'repeat(4, 1fr)', gap: 0.75 }}>
