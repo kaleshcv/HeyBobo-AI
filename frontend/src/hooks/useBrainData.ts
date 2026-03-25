@@ -24,6 +24,16 @@ import { useWearablesStore, type HealthReading } from '@/store/wearablesStore';
 import { dietaryApi } from '@/lib/api';
 import { type AIBrainInput } from '@/lib/gemini';
 
+interface WeatherData {
+  condition: string;   // e.g. "Partly Cloudy"
+  tempC: number;
+  feelsLikeC: number;
+  humidity: number;
+  isRaining: boolean;
+  isHot: boolean;     // > 35°C
+  location: string;
+}
+
 function todayStr() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -87,6 +97,38 @@ export function useBrainData(): AIBrainInput {
     supplementsDue: 0,
   });
   const fetchedDateRef = useRef<string>('');
+
+  // ─── Weather data ────────────────────────────────────────────────
+  const [weather, setWeather] = useState<WeatherData>({
+    condition: 'Unknown', tempC: 25, feelsLikeC: 25, humidity: 50,
+    isRaining: false, isHot: false, location: 'Unknown',
+  });
+  const weatherFetchedRef = useRef(false);
+
+  const fetchWeather = useCallback(async () => {
+    if (weatherFetchedRef.current) return;
+    weatherFetchedRef.current = true;
+    try {
+      const res = await fetch('https://wttr.in/?format=j1', { signal: AbortSignal.timeout(4000) });
+      if (!res.ok) return;
+      const data = await res.json();
+      const cur = data.current_condition?.[0];
+      const area = data.nearest_area?.[0];
+      if (!cur) return;
+      const tempC = Number(cur.temp_C);
+      const feelsLikeC = Number(cur.FeelsLikeC);
+      const humidity = Number(cur.humidity);
+      const condition = cur.weatherDesc?.[0]?.value ?? 'Unknown';
+      const isRaining = /rain|drizzle|shower|thunder|storm/i.test(condition);
+      const isHot = tempC > 35;
+      const location = area?.areaName?.[0]?.value ?? 'Unknown';
+      setWeather({ condition, tempC, feelsLikeC, humidity, isRaining, isHot, location });
+    } catch {
+      // weather not available, keep defaults
+    }
+  }, []);
+
+  useEffect(() => { fetchWeather(); }, [fetchWeather]);
 
   const fetchDietaryApi = useCallback(async () => {
     const today = todayStr();
@@ -191,6 +233,18 @@ export function useBrainData(): AIBrainInput {
     return streak;
   }, [workoutLogs]);
 
+  const recentWorkoutCategories = useMemo(() => {
+    // Last 5 workouts — what muscle groups / categories were hit
+    const last5Logs = workoutLogs.slice(0, 5);
+    const categories = new Set<string>();
+    last5Logs.forEach((log) => {
+      log.exercises?.forEach((ex: any) => {
+        if (ex.category) categories.add(ex.category);
+      });
+    });
+    return Array.from(categories);
+  }, [workoutLogs]);
+
   const pendingGroupTasks = useMemo(
     () => groups.reduce((sum, g) => sum + g.assignments.filter((a) => a.submissions.length === 0).length, 0),
     [groups],
@@ -218,6 +272,23 @@ export function useBrainData(): AIBrainInput {
   return useMemo<AIBrainInput>(() => ({
     userName: user?.firstName ?? 'User',
     currentTime: new Date().toLocaleString(),
+    dayOfWeek: new Date().toLocaleDateString('en-US', { weekday: 'long' }),
+    weather: {
+      condition: weather.condition,
+      tempC: weather.tempC,
+      feelsLikeC: weather.feelsLikeC,
+      humidity: weather.humidity,
+      isRaining: weather.isRaining,
+      isHot: weather.isHot,
+      location: weather.location,
+    },
+    context: {
+      sleepHoursLastNight: latestReading('sleep-duration'),
+      hrv: latestReading('hrv'),
+      fitnessGoal: (fitnessProfile as any).goal ?? 'general-fitness',
+      recentWorkoutCategories,
+      workoutsCompletedToday: workoutLogs.filter((l) => l.date === todayStr()).length,
+    },
     education: {
       enrolledCourses: courses.length,
       completedCourses,
@@ -317,5 +388,6 @@ export function useBrainData(): AIBrainInput {
     mealsPerDay, pendingShoppingItems,
     activeInjuries, painLogs, rehabPrograms,
     shoppingLists, pendingGroupTasks, completedGroupMeetings, lessons,
+    weather, recentWorkoutCategories,
   ]);
 }

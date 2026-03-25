@@ -1289,6 +1289,23 @@ Be honest and constructive. Provide 3+ pros, 1-3 cons, and 2+ alternatives.`;
 export interface AIBrainInput {
   userName: string;
   currentTime: string;
+  dayOfWeek: string;
+  weather: {
+    condition: string;
+    tempC: number;
+    feelsLikeC: number;
+    humidity: number;
+    isRaining: boolean;
+    isHot: boolean;
+    location: string;
+  };
+  context: {
+    sleepHoursLastNight: number;    // 0 if unknown
+    hrv: number;                    // 0 if unknown
+    fitnessGoal: string;
+    recentWorkoutCategories: string[];
+    workoutsCompletedToday: number;
+  };
   education: {
     enrolledCourses: number;
     completedCourses: number;
@@ -1363,81 +1380,170 @@ export interface AIBrainInput {
 export async function generateAIBrainDashboard(input: AIBrainInput): Promise<string> {
   const model = getModel();
 
-  const prompt = `You are the central AI Brain of Heybobo, a multi-module personal growth platform. You are a proactive, context-aware, human-like intelligence layer. Your job is to analyze ALL the user's data across every module and produce a unified, actionable dashboard.
+  // Derive human-readable energy context from real data
+  const sleepContext = input.context.sleepHoursLastNight >= 7
+    ? `good sleep (${input.context.sleepHoursLastNight}h)`
+    : input.context.sleepHoursLastNight >= 5
+    ? `mediocre sleep (${input.context.sleepHoursLastNight}h — below ideal)`
+    : input.context.sleepHoursLastNight > 0
+    ? `poor sleep (only ${input.context.sleepHoursLastNight}h — significant deficit)`
+    : 'sleep unknown (no wearable)';
+
+  const readinessContext = input.health.readinessScore >= 75
+    ? 'high readiness — body is ready for training'
+    : input.health.readinessScore >= 50
+    ? 'moderate readiness — moderate effort only'
+    : input.health.readinessScore > 0
+    ? 'low readiness — prioritise recovery today'
+    : 'readiness unknown';
+
+  const weatherContext = input.weather.isRaining
+    ? `rainy / wet conditions outside in ${input.weather.location}`
+    : input.weather.isHot
+    ? `very hot (${input.weather.tempC}\u00b0C feels like ${input.weather.feelsLikeC}\u00b0C) — outdoor exertion risky`
+    : `${input.weather.condition}, ${input.weather.tempC}\u00b0C feels like ${input.weather.feelsLikeC}\u00b0C in ${input.weather.location}`;
+
+  const injuryContext = input.injury.activeInjuries.length > 0
+    ? input.injury.activeInjuries.map(i => `${i.bodyPart} (pain ${i.painScore}/10, ${i.daysSinceOnset}d)`).join(', ')
+    : 'none';
+
+  const recentCatsContext = input.context.recentWorkoutCategories.length > 0
+    ? input.context.recentWorkoutCategories.join(', ')
+    : 'none logged';
+
+  const prompt = `You are the AI Brain of Heybobo — a deeply personal, context-aware intelligence layer that truly knows this user. You are NOT a generic assistant. You synthesise real biometric, behavioural, and environmental data into a highly personalised daily plan.
 
 Current time: ${input.currentTime}
+Day: ${input.dayOfWeek}
 User: ${input.userName}
 
-=== MODULE DATA ===
+=== LIVE CONTEXT (use ALL of this to personalise every output) ===
 
-EDUCATION:
-- Enrolled courses: ${input.education.enrolledCourses}, Completed: ${input.education.completedCourses}
-- Pending assignments: ${input.education.pendingAssignments}
-- Upcoming quizzes: ${input.education.upcomingQuizzes}
-- Recent quiz scores: ${input.education.recentQuizScores.length > 0 ? input.education.recentQuizScores.join(', ') + '%' : 'No quizzes taken yet'}
-- Active study plans: ${input.education.studyPlansActive}, Textbooks: ${input.education.textbooksUploaded}
-- Lectures completed: ${input.education.lecturesCompleted}, Missed: ${input.education.lecturesMissed}
-- Groups: ${input.education.groupsJoined}, Meetings scheduled: ${input.education.meetingsScheduled}
+SLEEP & RECOVERY:
+- Last night: ${sleepContext}
+- Readiness: ${readinessContext}
+- HRV: ${input.context.hrv > 0 ? input.context.hrv + ' ms' : 'unknown'}
+- Stress score: ${input.health.stressScore > 0 ? input.health.stressScore + '/100' : 'unknown'}
+- Sleep score: ${input.health.sleepScore > 0 ? input.health.sleepScore + '/100' : 'unknown'}
 
-FITNESS:
-- Workouts this week: ${input.fitness.workoutsThisWeek}/${input.fitness.weeklyGoal}
-- Minutes this week: ${input.fitness.totalMinutesThisWeek}
-- Avg form score: ${input.fitness.avgFormScore}%
-- Active plan: ${input.fitness.activePlan ?? 'None'}
-- Last workout: ${input.fitness.lastWorkoutDate ?? 'Never'}
+WEATHER — ${weatherContext}
+- Humidity: ${input.weather.humidity}%
+- Raining: ${input.weather.isRaining ? 'YES — outdoor activity not ideal' : 'No'}
+- Hot: ${input.weather.isHot ? 'YES — avoid intense outdoor exertion' : 'No'}
+
+FITNESS STATE:
+- Weekly workouts: ${input.fitness.workoutsThisWeek}/${input.fitness.weeklyGoal} (${input.fitness.totalMinutesThisWeek} min total)
 - Streak: ${input.fitness.streakDays} days
-- Custom workouts: ${input.fitness.customWorkouts}
+- Active plan: ${input.fitness.activePlan ?? 'None selected'}
+- Goal: ${input.context.fitnessGoal}
+- Last workout: ${input.fitness.lastWorkoutDate ?? 'never'}
+- Recent categories trained: ${recentCatsContext}
+- Avg form score: ${input.fitness.avgFormScore}%
+- Workouts done today: ${input.context.workoutsCompletedToday}
 
-HEALTH:
-- Sleep score: ${input.health.sleepScore}/100
-- Avg heart rate: ${input.health.avgHeartRate} bpm
-- Stress score: ${input.health.stressScore}/100
-- Readiness score: ${input.health.readinessScore}/100
+INJURIES & RESTRICTIONS:
+- Active injuries: ${injuryContext}
+- Rehab adherence: ${input.injury.rehabAdherence}%
+- Movement restrictions: ${input.injury.movementRestrictions.length > 0 ? input.injury.movementRestrictions.join(', ') : 'none'}
+
+DIETARY (today):
+- Calories: ${input.dietary.caloriesConsumed}/${input.dietary.calorieTarget} kcal (${input.dietary.adherenceRate}%)
+- Protein: ${input.dietary.proteinConsumed}/${input.dietary.proteinTarget}g
+- Carbs: ${input.dietary.carbsConsumed}/${input.dietary.carbsTarget}g | Fat: ${input.dietary.fatConsumed}/${input.dietary.fatTarget}g
+- Meals logged: ${input.dietary.mealsLogged}/${input.dietary.mealsPerDayTarget}
+- Supplements due: ${input.dietary.supplementsDue}
+- Grocery items pending: ${input.dietary.groceryItemsPending}
+
+HEALTH VITALS:
+- Heart rate: ${input.health.avgHeartRate > 0 ? input.health.avgHeartRate + ' bpm' : 'unknown'}
 - Steps today: ${input.health.stepsToday}
 - Calories burned: ${input.health.caloriesBurned}
-- Hydration: ${input.health.hydrationLevel}%
-- Wearable connected: ${input.health.hasWearable ? 'Yes' : 'No'}
+- Wearable: ${input.health.hasWearable ? 'connected' : 'not connected'}
 
-DIETARY:
-- Calories: ${input.dietary.caloriesConsumed}/${input.dietary.calorieTarget} kcal
-- Protein: ${input.dietary.proteinConsumed}/${input.dietary.proteinTarget}g
-- Carbs: ${input.dietary.carbsConsumed}/${input.dietary.carbsTarget}g, Fat: ${input.dietary.fatConsumed}/${input.dietary.fatTarget}g
-- Meals logged today: ${input.dietary.mealsLogged}/${input.dietary.mealsPerDayTarget}
-- Adherence rate: ${input.dietary.adherenceRate}%
-- Active meal plan: ${input.dietary.activeMealPlan ? 'Yes' : 'No'}
-- Grocery items pending: ${input.dietary.groceryItemsPending}
-- Supplements due: ${input.dietary.supplementsDue}
+EDUCATION:
+- Enrolled: ${input.education.enrolledCourses} courses, ${input.education.completedCourses} completed
+- Pending assignments: ${input.education.pendingAssignments}
+- Lectures: ${input.education.lecturesCompleted} done, ${input.education.lecturesMissed} missed
+- Recent quiz scores: ${input.education.recentQuizScores.length > 0 ? input.education.recentQuizScores.join(', ') + '%' : 'none'}
+- Study plans active: ${input.education.studyPlansActive}
 
-INJURIES:
-${input.injury.activeInjuries.length > 0
-    ? input.injury.activeInjuries.map(i => `- ${i.bodyPart}: pain ${i.painScore}/10, ${i.daysSinceOnset} days`).join('\n')
-    : '- No active injuries'}
-- Rehab adherence: ${input.injury.rehabAdherence}%
-- Movement restrictions: ${input.injury.movementRestrictions.length > 0 ? input.injury.movementRestrictions.join(', ') : 'None'}
-
-SHOPPING:
-- Pending items: ${input.shopping.pendingItems}
-- Total lists: ${input.shopping.totalLists}, Checked off: ${input.shopping.checkedItems}
-- Upcoming deliveries: ${input.shopping.upcomingDeliveries}
-- Low stock: ${input.shopping.lowStockItems.length > 0 ? input.shopping.lowStockItems.join(', ') : 'None'}
+SHOPPING / RESOURCES:
+- Pending shopping items: ${input.shopping.pendingItems}
+- Total lists: ${input.shopping.totalLists}
+- Low stock items: ${input.shopping.lowStockItems.length > 0 ? input.shopping.lowStockItems.join(', ') : 'none flagged'}
 
 GROUPS / COMMUNITY:
 - Active groups: ${input.groups.activeGroups}
-- Pending tasks: ${input.groups.pendingTasks}, Total assignments: ${input.groups.totalAssignments}
-- Total members across groups: ${input.groups.totalMembers}
+- Pending tasks: ${input.groups.pendingTasks}
 - Upcoming meetings: ${input.groups.upcomingMeetings}
-- Missed sessions: ${input.groups.missedSessions}
 
-=== YOUR OUTPUT ===
+=== INTELLIGENCE RULES (apply strictly) ===
 
-Produce a JSON response with this exact structure:
+1. SLEEP-FIRST LOGIC:
+   - Sleep < 6h OR readiness < 50: Set energyLevel="low". Recommend restorative yoga or walk instead of HIIT/strength. Reduce study sessions to 25-min Pomodoros. Flag rest as critical priority.
+   - Sleep 6-7h OR readiness 50-74: Set energyLevel="medium". Moderate workout (not max effort). Normal study.
+   - Sleep >= 7h AND readiness >= 75: Set energyLevel="high". Full training session fine.
+
+2. WEATHER-AWARE PLANNING:
+   - Raining: Recommend indoor workout alternatives. Note "great day to study" or "catch up on courses".
+   - Very hot (>35°C): Warn against outdoor exercise. Suggest indoor gym or early morning activity. Remind to hydrate extra.
+   - Normal: Suggest outdoor run/walk if steps are low.
+
+3. INJURY-ADAPTIVE:
+   - Any active injury: NEVER suggest movements that use the injured body part. Suggest rehab first, then non-conflicting workout.
+   - High pain score (>6/10): Flag as critical. Suggest rest, ice, rehab only.
+   - Shopping nudge: If injured, suggest relevant recovery items (e.g., foam roller, compression sleeve, protein for tissue repair).
+
+4. DIETARY SMART NUDGES:
+   - Protein deficit (consumed < 60% of target): Alert + recommend high-protein meal AND proactively suggest buying protein-rich foods or supplements via shopping nudge.
+   - No meals logged by midday: Push alert to log meals.
+   - Supplements due: Remind in priorities.
+
+5. FITNESS MOMENTUM:
+   - If streak >= 3 days: Acknowledge it in todayFocus. Encourage continuation.
+   - If last workout was >3 days ago: Gentle nudge to get back on track.
+   - If weekly goal almost met (e.g., 3/4): Motivate to complete.
+   - Suggest workout category NOT recently trained (e.g., if only strength logged, suggest cardio).
+
+6. PROACTIVE SHOPPING NUDGES (not generic — must be based on actual data):
+   - Low protein intake consistently → “Pick up protein powder or Greek yoghurt”
+   - Active injury → “Consider a foam roller / compression sleeve for recovery”
+   - Very hot weather → “Stock up on electrolyte drinks for hydration”
+   - Steps low + raining → “A resistance band set for indoor training might help”
+   - Grocery items pending > 3 → Include shopping list reminder
+
+7. CROSS-MODULE INTELLIGENCE:
+   - Low sleep + heavy study + workout = burnout risk — flag as risk cross-insight
+   - Good sleep + protein on track + workout = performance opportunity — flag as opportunity
+   - Injury + continuing hard workouts = serious risk — flag as critical
+
+8. TODAY’S FOCUS is the most important output — it must be specific, personal, and NOT generic:
+   - Use the person’s name
+   - Reference actual data (e.g., “you slept 5.5h”, “it’s raining in London”, “your protein is at 40%”)
+   - Give 3-5 focused, ordered bullets for what to do today
+   - Keep the tone warm, human, and motivating
+
+=== OUTPUT JSON SCHEMA ===
 
 {
+  "todayFocus": {
+    "headline": "Short title capturing today’s situation (8-12 words)",
+    "body": "2-3 sentences using real data to explain today’s recommended energy level and why. Reference sleep, weather, or injury specifically.",
+    "energyLevel": "low|medium|high",
+    "suggestedFocus": [
+      "Specific bullet 1 — what to do first and why",
+      "Specific bullet 2",
+      "Specific bullet 3"
+    ],
+    "weatherNote": "One sentence about how weather affects today’s plan",
+    "shoppingNudge": "One specific item or category to buy based on a real need today (null if no genuine need)"
+  },
+  "nudge": "Single 12-20 word proactive push message the user should see right now — most urgent thing",
   "priorities": [
     {
       "id": "p1",
       "title": "Short action title",
-      "description": "Specific, actionable description",
+      "description": "Specific, data-driven description referencing actual numbers",
       "module": "education|fitness|health|dietary|injury|shopping|groups",
       "level": "critical|high|medium|low",
       "icon": "Assignment|FitnessCenter|Healing|Restaurant|ShoppingCart|Groups|MonitorHeart"
@@ -1447,7 +1553,7 @@ Produce a JSON response with this exact structure:
     {
       "id": "a1",
       "title": "Alert title",
-      "description": "What's going on and why it matters",
+      "description": "What’s happening and the specific implication",
       "module": "education|fitness|health|dietary|injury|shopping|groups",
       "severity": "error|warning|info|success",
       "icon": "Warning|Error|Info|CheckCircle"
@@ -1469,15 +1575,15 @@ Produce a JSON response with this exact structure:
       "label": "Education",
       "score": 75,
       "trend": "up|down|stable",
-      "summary": "One-line summary",
-      "details": ["Detail 1", "Detail 2"]
+      "summary": "One-line summary with actual numbers",
+      "details": ["Detail 1 with data", "Detail 2 with data"]
     }
   ],
   "crossInsights": [
     {
       "id": "ci1",
-      "title": "Insightful title",
-      "description": "Cross-module connection explanation",
+      "title": "Cross-module insight title",
+      "description": "Specific cross-module connection with data points",
       "modules": ["fitness", "dietary"],
       "type": "pattern|risk|opportunity|sync"
     }
@@ -1486,33 +1592,21 @@ Produce a JSON response with this exact structure:
     {
       "id": "r1",
       "title": "Recommendation title",
-      "description": "Specific, practical recommendation",
+      "description": "Specific, data-driven recommendation with reason",
       "type": "do-now|recover|learn|buy|plan|monitor",
       "module": "education|fitness|health|dietary|injury|shopping|groups"
     }
   ],
   "weeklySummary": {
-    "wins": ["Win 1", "Win 2"],
-    "risks": ["Risk 1"],
-    "missedItems": ["Missed 1"],
+    "wins": ["Specific win with data"],
+    "risks": ["Specific risk with data"],
+    "missedItems": ["Missed item"],
     "adherence": { "education": 80, "fitness": 65, "dietary": 70, "health": 90 },
-    "predictedPriorities": ["Next week priority 1"]
+    "predictedPriorities": ["Next week priority"]
   }
 }
 
-RULES:
-1. Think holistically — connect modules, don't treat them separately
-2. Prioritize by: critical health/injury risk > deadlines > recovery/safety > daily goals > optimization > shopping
-3. Be proactive — surface issues the user hasn't asked about
-4. Be specific and actionable — never vague like "take care of your health"
-5. If injury exists, adapt fitness AND dietary AND shopping recommendations
-6. If sleep/readiness is low, reduce workout intensity AND adjust study schedule
-7. Generate 3-5 priorities, 2-4 alerts, 6-10 schedule events, insights for each active module, 2-4 cross-module insights, 4-6 recommendations
-8. Schedule should cover a full day from morning to night based on current time
-9. Scores should reflect actual data (not always positive)
-10. Be human-like, calm, supportive, and action-oriented
-
-Return ONLY valid JSON, no markdown fences.`;
+CRITICAL: Every output must reference actual numbers from the data. Never be vague. Never give generic advice. Return ONLY valid JSON — no markdown.`;
 
   const result = await model.generateContent(prompt);
   const text = result.response.text().replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();

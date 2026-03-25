@@ -78,6 +78,15 @@ export interface WeeklySummary {
   predictedPriorities: string[];
 }
 
+export interface TodayFocus {
+  headline: string;          // e.g. "Low energy day — protect recovery"
+  body: string;              // 2-3 sentence personal context
+  energyLevel: 'low' | 'medium' | 'high';
+  suggestedFocus: string[];  // 3-5 specific bullets for today
+  weatherNote?: string;      // e.g. "Rainy outside — good indoor day"
+  shoppingNudge?: string;    // specific item to buy based on needs
+}
+
 export interface AIBrainState {
   // Dashboard data
   priorities: PriorityItem[];
@@ -87,6 +96,8 @@ export interface AIBrainState {
   crossInsights: CrossModuleInsight[];
   recommendations: SmartRecommendation[];
   weeklySummary: WeeklySummary | null;
+  todayFocus: TodayFocus | null;
+  nudge: string | null;  // single-line proactive push message
 
   // AI response
   brainAnalysis: string;
@@ -112,6 +123,8 @@ const initialState = {
   crossInsights: [],
   recommendations: [],
   weeklySummary: null,
+  todayFocus: null,
+  nudge: null,
   brainAnalysis: '',
   lastRefresh: null,
   isLoading: false,
@@ -162,6 +175,8 @@ export const useAIBrainStore = create<AIBrainState>()(
         crossInsights: state.crossInsights,
         recommendations: state.recommendations,
         weeklySummary: state.weeklySummary,
+        todayFocus: state.todayFocus,
+        nudge: state.nudge,
         brainAnalysis: state.brainAnalysis,
         lastRefresh: state.lastRefresh,
         activeMode: state.activeMode,

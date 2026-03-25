@@ -40,6 +40,11 @@ import CheckIcon from '@mui/icons-material/Check';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import BoltIcon from '@mui/icons-material/Bolt';
+import WbSunnyIcon from '@mui/icons-material/WbSunny';
+import BatterySaverIcon from '@mui/icons-material/BatterySaver';
+import BatteryChargingFullIcon from '@mui/icons-material/BatteryChargingFull';
+import Battery60Icon from '@mui/icons-material/Battery60';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
@@ -60,6 +65,7 @@ import {
   type CrossModuleInsight,
   type SmartRecommendation,
   type BrainMode,
+  type TodayFocus,
 } from '@/store/aiBrainStore';
 import { generateAIBrainDashboard } from '@/lib/gemini';
 import { useBrainData } from '@/hooks/useBrainData';
@@ -487,6 +493,113 @@ function RecommendationCard({ rec, onNavigate }: { rec: SmartRecommendation; onN
   );
 }
 
+const ENERGY_META: Record<'low' | 'medium' | 'high', { color: string; label: string; icon: React.ReactElement }> = {
+  low: { color: '#d32f2f', label: 'Low Energy', icon: <BatterySaverIcon fontSize="small" /> },
+  medium: { color: '#f57c00', label: 'Moderate Energy', icon: <Battery60Icon fontSize="small" /> },
+  high: { color: '#2e7d32', label: 'High Energy', icon: <BatteryChargingFullIcon fontSize="small" /> },
+};
+
+function TodayFocusCard({ focus, nudge }: { focus: TodayFocus; nudge: string | null }) {
+  const energy = ENERGY_META[focus.energyLevel] ?? ENERGY_META.medium;
+  return (
+    <Paper
+      variant="outlined"
+      sx={{
+        p: 2,
+        borderRadius: 2.5,
+        mb: 0,
+        border: `1.5px solid ${energy.color}33`,
+        background: `linear-gradient(135deg, ${energy.color}0a 0%, transparent 60%)`,
+      }}
+    >
+      {/* Nudge banner */}
+      {nudge && (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            mb: 1.5,
+            px: 1.5,
+            py: 0.75,
+            borderRadius: 1.5,
+            bgcolor: '#1a1a1a',
+            border: '1px solid #333',
+          }}
+        >
+          <NotificationsActiveIcon sx={{ fontSize: 16, color: '#ffb300' }} />
+          <Typography variant="caption" sx={{ fontWeight: 700, color: '#ffb300', letterSpacing: 0.3 }}>
+            {nudge}
+          </Typography>
+        </Box>
+      )}
+
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+        <Avatar sx={{ bgcolor: energy.color, width: 38, height: 38, mt: 0.25 }}>
+          {energy.icon}
+        </Avatar>
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mb: 0.25 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 800, lineHeight: 1.2 }}>
+              {focus.headline}
+            </Typography>
+            <Chip
+              size="small"
+              label={energy.label}
+              icon={energy.icon}
+              sx={{
+                height: 20,
+                fontSize: '0.68rem',
+                fontWeight: 700,
+                bgcolor: `${energy.color}22`,
+                color: energy.color,
+                '& .MuiChip-icon': { color: energy.color, fontSize: 13 },
+              }}
+            />
+          </Box>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1.25 }}>
+            {focus.body}
+          </Typography>
+
+          {/* Focus bullets */}
+          {focus.suggestedFocus.length > 0 && (
+            <Stack spacing={0.5} sx={{ mb: 1.25 }}>
+              {focus.suggestedFocus.map((bullet, i) => (
+                <Box key={i} sx={{ display: 'flex', alignItems: 'flex-start', gap: 0.75 }}>
+                  <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: energy.color, mt: '6px', flexShrink: 0 }} />
+                  <Typography variant="body2" sx={{ color: 'text.primary', lineHeight: 1.4 }}>
+                    {bullet}
+                  </Typography>
+                </Box>
+              ))}
+            </Stack>
+          )}
+
+          {/* Chips row */}
+          <Stack direction="row" spacing={0.75} flexWrap="wrap" useFlexGap>
+            {focus.weatherNote && (
+              <Chip
+                size="small"
+                icon={<WbSunnyIcon sx={{ fontSize: '13px !important' }} />}
+                label={focus.weatherNote}
+                sx={{ fontSize: '0.68rem', height: 22, bgcolor: '#1565c022', color: '#42a5f5' }}
+              />
+            )}
+            {focus.shoppingNudge && (
+              <Chip
+                size="small"
+                icon={<LocalMallIcon sx={{ fontSize: '13px !important' }} />}
+                label={focus.shoppingNudge}
+                sx={{ fontSize: '0.68rem', height: 22, bgcolor: '#7b1fa222', color: '#ce93d8' }}
+              />
+            )}
+          </Stack>
+        </Box>
+      </Box>
+    </Paper>
+  );
+}
+
 function DashboardSkeleton() {
   return (
     <Stack spacing={3}>
@@ -526,6 +639,8 @@ export default function AIBrainPage() {
     crossInsights,
     recommendations,
     weeklySummary,
+    todayFocus,
+    nudge,
     isLoading,
     activeMode,
     lastRefresh,
@@ -555,6 +670,8 @@ export default function AIBrainPage() {
       const parsed = JSON.parse(rawJson);
 
       setBrainData({
+        todayFocus: parsed.todayFocus ?? null,
+        nudge: parsed.nudge ?? null,
         priorities: (parsed.priorities ?? []).map((p: any) => ({
           ...p,
           dueTime: p.dueTime ?? undefined,
@@ -706,6 +823,11 @@ export default function AIBrainPage() {
             Activate AI Brain
           </Button>
         </Paper>
+      )}
+
+      {/* ─── Today's Focus Hero Card ───────────────────────────────── */}
+      {todayFocus && !isLoading && (
+        <TodayFocusCard focus={todayFocus} nudge={nudge} />
       )}
 
       {/* ─── Dashboard Content ────────────────────────────────────── */}
