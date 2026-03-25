@@ -336,40 +336,36 @@ export default function SimpleLifeDashboard() {
       </Paper>
 
       {/* ── Row 1: Vitals + Needs Attention ──────────────────────── */}
-      <Grid container spacing={1.5} sx={{ mb: 1.5 }}>
-        <Grid item xs={12} md={topAlert ? 8 : 12} lg={topAlert ? 8 : 12}>
-          <Section>
-            <Box sx={{ display: 'flex', gap: 3, mb: 0.5 }}>
-              {vitals.map(v => (
-                <Box key={v.label}>
-                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 10 }}>
-                    {v.label}
-                  </Typography>
-                  <Typography sx={{ fontWeight: 700, color: v.color, fontSize: 13 }}>{v.value}</Typography>
-                </Box>
-              ))}
-            </Box>
-            <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11 }}>
-              {vitalsSummary}
-            </Typography>
-          </Section>
-        </Grid>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, mb: 1.5, alignItems: 'flex-start' }}>
+        <Paper variant="outlined" sx={{ borderRadius: 2, p: 1.5, width: 'fit-content' }}>
+          <Box sx={{ display: 'flex', gap: 3, mb: 0.5 }}>
+            {vitals.map(v => (
+              <Box key={v.label}>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: 10 }}>
+                  {v.label}
+                </Typography>
+                <Typography sx={{ fontWeight: 700, color: v.color, fontSize: 13 }}>{v.value}</Typography>
+              </Box>
+            ))}
+          </Box>
+          <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11 }}>
+            {vitalsSummary}
+          </Typography>
+        </Paper>
         {topAlert && (
-          <Grid item xs={12} md={5}>
-            <Section sx={{ bgcolor: '#fff8f8', borderColor: '#ffcdd2' }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#d32f2f', fontSize: 12, mb: 0.5 }}>
-                🔴 Needs Attention
-              </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.25, fontSize: 13 }}>
-                {topAlert.title}
-              </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5, fontSize: 11 }}>
-                {topAlert.description}
-              </Typography>
-            </Section>
-          </Grid>
+          <Paper variant="outlined" sx={{ borderRadius: 2, p: 1.5, maxWidth: 460, bgcolor: '#fff8f8', borderColor: '#ffcdd2' }}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#d32f2f', fontSize: 12, mb: 0.5 }}>
+              🔴 Needs Attention
+            </Typography>
+            <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.25, fontSize: 13 }}>
+              {topAlert.title}
+            </Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5, fontSize: 11 }}>
+              {topAlert.description}
+            </Typography>
+          </Paper>
         )}
-      </Grid>
+      </Box>
 
       {/* ── Row 2: Today's Plan + Suggested for You ───────────── */}
       <Grid container spacing={1.5} sx={{ mb: 1.5 }}>
