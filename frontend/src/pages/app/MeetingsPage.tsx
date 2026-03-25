@@ -478,6 +478,32 @@ function LiveMeetingView({ meeting, onLeave }: { meeting: Meeting; onLeave: () =
   const chatEndRef = useRef<HTMLDivElement>(null);
   const isHost = user?.email === currentMeeting.hostEmail;
 
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const localStreamRef = useRef<MediaStream | null>(null);
+  const screenStreamRef = useRef<MediaStream | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recordingChunksRef = useRef<Blob[]>([]);
+  const recordingStartRef = useRef<number>(0);
+
+  // Initialize camera/mic on mount
+  useEffect(() => {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        localStreamRef.current = stream;
+        if (localVideoRef.current) localVideoRef.current.srcObject = stream;
+      })
+      .catch(() => {
+        toast.error('Camera/microphone access denied');
+        setCamOn(false);
+        setMicOn(false);
+      });
+    return () => {
+      localStreamRef.current?.getTracks().forEach((t) => t.stop());
+      screenStreamRef.current?.getTracks().forEach((t) => t.stop());
+      if (mediaRecorderRef.current?.state === 'recording') mediaRecorderRef.current.stop();
+    };
+  }, []);
+
   useEffect(() => {
     if (user) {
       joinMeeting(meeting.id, { name: `${user.firstName} ${user.lastName}`, email: user.email });
@@ -508,6 +534,90 @@ function LiveMeetingView({ meeting, onLeave }: { meeting: Meeting; onLeave: () =
     if (user) leaveMeeting(meeting.id, user.email);
     toast('You left the meeting');
     onLeave();
+  };
+
+  const handleToggleCam = () => {
+    const enabled = !camOn;
+    localStreamRef.current?.getVideoTracks().forEach((t) => { t.enabled = enabled; });
+    setCamOn(enabled);
+  };
+
+  const handleToggleMic = () => {
+    const enabled = !micOn;
+    localStreamRef.current?.getAudioTracks().forEach((t) => { t.enabled = enabled; });
+    setMicOn(enabled);
+  };
+
+  const handleToggleScreenShare = async () => {
+    if (currentMeeting.screenSharing) {
+      screenStreamRef.current?.getTracks().forEach((t) => t.stop());
+      screenStreamRef.current = null;
+      toggleScreenSharing(meeting.id);
+      toast('Screen sharing stopped');
+    } else {
+      try {
+        const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        screenStreamRef.current = stream;
+        toggleScreenSharing(meeting.id);
+        toast.success('Screen sharing started');
+        stream.getVideoTracks()[0]?.addEventListener('ended', () => {
+          screenStreamRef.current = null;
+          if (useMeetingStore.getState().meetings.find((m) => m.id === meeting.id)?.screenSharing) {
+            toggleScreenSharing(meeting.id);
+          }
+        });
+      } catch {
+        // user cancelled picker or denied
+      }
+    }
+  };
+
+  const handleToggleRecording = () => {
+    if (currentMeeting.recording) {
+      if (mediaRecorderRef.current?.state === 'recording') mediaRecorderRef.current.stop();
+      toggleRecording(meeting.id);
+    } else {
+      const stream = screenStreamRef.current || localStreamRef.current;
+      if (!stream) { toast.error('No media stream available to record'); return; }
+      const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+        ? 'video/webm;codecs=vp9'
+        : MediaRecorder.isTypeSupported('video/webm')
+        ? 'video/webm'
+        : '';
+      try {
+        const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+        recordingChunksRef.current = [];
+        recordingStartRef.current = Date.now();
+        const capturedTitle = currentMeeting.title;
+        const capturedMeetingId = meeting.id;
+        recorder.ondataavailable = (e) => { if (e.data.size > 0) recordingChunksRef.current.push(e.data); };
+        recorder.onstop = () => {
+          const blob = new Blob(recordingChunksRef.current, { type: 'video/webm' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${capturedTitle.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.webm`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          const durationSec = Math.round((Date.now() - recordingStartRef.current) / 1000);
+          useMeetingStore.getState().saveRecording({
+            meetingId: capturedMeetingId,
+            meetingTitle: capturedTitle,
+            recordedAt: new Date(recordingStartRef.current).toISOString(),
+            duration: durationSec,
+            sizeBytes: blob.size,
+          });
+          toast.success(`Recording downloaded (${durationSec}s)`);
+        };
+        recorder.start(1000);
+        mediaRecorderRef.current = recorder;
+        toggleRecording(meeting.id);
+      } catch {
+        toast.error('Recording not supported in this browser');
+      }
+    }
   };
 
   const activeParticipants = currentMeeting.participants.filter((p) => !p.leftAt);
@@ -544,13 +654,25 @@ function LiveMeetingView({ meeting, onLeave }: { meeting: Meeting; onLeave: () =
               activeParticipants.map((p) => (
                 <Grid item xs={12} sm={activeParticipants.length === 1 ? 8 : 6} md={activeParticipants.length <= 2 ? 6 : 4} key={p.email}>
                   <Box sx={{
-                    bgcolor: '#0f3460', borderRadius: 2, p: 2, display: 'flex', flexDirection: 'column',
+                    bgcolor: '#0f3460', borderRadius: 2, overflow: 'hidden', display: 'flex', flexDirection: 'column',
                     alignItems: 'center', justifyContent: 'center', aspectRatio: '16/9', position: 'relative',
                   }}>
-                    <Avatar sx={{ width: 64, height: 64, fontSize: 24, bgcolor: '#e94560', mb: 1 }}>
-                      {p.name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)}
-                    </Avatar>
-                    <Typography variant="body2" sx={{ color: '#fff' }}>{p.name}</Typography>
+                    {p.email === user?.email && camOn ? (
+                      <video
+                        ref={localVideoRef}
+                        autoPlay
+                        muted
+                        playsInline
+                        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <>
+                        <Avatar sx={{ width: 64, height: 64, fontSize: 24, bgcolor: '#e94560', mb: 1 }}>
+                          {p.name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)}
+                        </Avatar>
+                        <Typography variant="body2" sx={{ color: '#fff' }}>{p.name}</Typography>
+                      </>
+                    )}
                     {p.email === currentMeeting.hostEmail && (
                       <Chip label="Host" size="small" sx={{ position: 'absolute', top: 8, left: 8, height: 20, fontSize: 10, bgcolor: '#e94560', color: '#fff' }} />
                     )}
@@ -632,23 +754,23 @@ function LiveMeetingView({ meeting, onLeave }: { meeting: Meeting; onLeave: () =
       {/* Bottom controls */}
       <Box sx={{ py: 1.5, px: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, bgcolor: '#16213e' }}>
         <Tooltip title={micOn ? 'Mute' : 'Unmute'}>
-          <IconButton onClick={() => setMicOn(!micOn)} sx={{ bgcolor: micOn ? '#0f3460' : '#e94560', color: '#fff', '&:hover': { bgcolor: micOn ? '#1a4a8a' : '#c7384f' } }}>
+          <IconButton onClick={handleToggleMic} sx={{ bgcolor: micOn ? '#0f3460' : '#e94560', color: '#fff', '&:hover': { bgcolor: micOn ? '#1a4a8a' : '#c7384f' } }}>
             {micOn ? <MicIcon /> : <MicOffIcon />}
           </IconButton>
         </Tooltip>
         <Tooltip title={camOn ? 'Turn off camera' : 'Turn on camera'}>
-          <IconButton onClick={() => setCamOn(!camOn)} sx={{ bgcolor: camOn ? '#0f3460' : '#e94560', color: '#fff', '&:hover': { bgcolor: camOn ? '#1a4a8a' : '#c7384f' } }}>
+          <IconButton onClick={handleToggleCam} sx={{ bgcolor: camOn ? '#0f3460' : '#e94560', color: '#fff', '&:hover': { bgcolor: camOn ? '#1a4a8a' : '#c7384f' } }}>
             {camOn ? <VideocamIcon /> : <VideocamOffIcon />}
           </IconButton>
         </Tooltip>
         <Tooltip title={currentMeeting.screenSharing ? 'Stop sharing' : 'Share screen'}>
-          <IconButton onClick={() => toggleScreenSharing(meeting.id)} sx={{ bgcolor: currentMeeting.screenSharing ? '#4caf50' : '#0f3460', color: '#fff', '&:hover': { bgcolor: currentMeeting.screenSharing ? '#388e3c' : '#1a4a8a' } }}>
+          <IconButton onClick={handleToggleScreenShare} sx={{ bgcolor: currentMeeting.screenSharing ? '#4caf50' : '#0f3460', color: '#fff', '&:hover': { bgcolor: currentMeeting.screenSharing ? '#388e3c' : '#1a4a8a' } }}>
             {currentMeeting.screenSharing ? <StopScreenShareIcon /> : <ScreenShareIcon />}
           </IconButton>
         </Tooltip>
         {isHost && (
           <Tooltip title={currentMeeting.recording ? 'Stop recording' : 'Start recording'}>
-            <IconButton onClick={() => toggleRecording(meeting.id)} sx={{ bgcolor: currentMeeting.recording ? '#f44336' : '#0f3460', color: '#fff', '&:hover': { bgcolor: currentMeeting.recording ? '#d32f2f' : '#1a4a8a' } }}>
+            <IconButton onClick={handleToggleRecording} sx={{ bgcolor: currentMeeting.recording ? '#f44336' : '#0f3460', color: '#fff', '&:hover': { bgcolor: currentMeeting.recording ? '#d32f2f' : '#1a4a8a' } }}>
               {currentMeeting.recording ? <StopIcon /> : <FiberManualRecordIcon />}
             </IconButton>
           </Tooltip>
@@ -799,6 +921,8 @@ export default function MeetingsPage() {
   const { user } = useAuth();
   const meetings = useMeetingStore((s) => s.meetings);
   const { startMeeting, setActiveMeeting, joinMeeting } = useMeetingStore();
+  const recordings = useMeetingStore((s) => s.recordings);
+  const deleteRecording = useMeetingStore((s) => s.deleteRecording);
 
   const [createOpen, setCreateOpen] = useState(false);
   const [joinCodeOpen, setJoinCodeOpen] = useState(false);
@@ -877,10 +1001,51 @@ export default function MeetingsPage() {
         <Tab label={<Badge badgeContent={tabMeetings[1].length} color="success" sx={{ '& .MuiBadge-badge': { right: -8 } }}>Live</Badge>} />
         <Tab label={`Past (${tabMeetings[2].length})`} />
         <Tab label={`Invited (${tabMeetings[3].length})`} />
+        <Tab label={`Recordings (${recordings.length})`} icon={<FiberManualRecordIcon sx={{ fontSize: 14, color: '#f44336' }} />} iconPosition="start" />
       </Tabs>
 
       {/* Meeting list */}
-      {tabMeetings[tab].length === 0 ? (
+      {tab === 4 ? (
+        recordings.length === 0 ? (
+          <Paper sx={{ p: 4, textAlign: 'center', borderRadius: 2 }} elevation={0} variant="outlined">
+            <FiberManualRecordIcon sx={{ fontSize: 48, color: '#bdbdbd', mb: 1 }} />
+            <Typography color="text.secondary">No recordings yet. Start recording in a live meeting.</Typography>
+            <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
+              Recordings are automatically downloaded as .webm files when you stop recording.
+            </Typography>
+          </Paper>
+        ) : (
+          <Grid container spacing={1.5}>
+            {recordings.map((rec) => (
+              <Grid item xs={12} md={6} key={rec.id}>
+                <Paper sx={{ p: 2, borderRadius: 2, border: '1px solid #e0e0e0' }} elevation={0}>
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                    <Box sx={{ flex: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
+                        <FiberManualRecordIcon sx={{ fontSize: 14, color: '#f44336' }} />
+                        <Typography variant="subtitle2" fontWeight={600}>{rec.meetingTitle}</Typography>
+                      </Box>
+                      <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ gap: 0.5 }}>
+                        <Chip label={new Date(rec.recordedAt).toLocaleString()} size="small" variant="outlined" icon={<ScheduleIcon />} />
+                        <Chip label={`${rec.duration}s`} size="small" variant="outlined" />
+                        <Chip label={`${(rec.sizeBytes / 1024 / 1024).toFixed(1)} MB`} size="small" variant="outlined" />
+                      </Stack>
+                      <Typography variant="caption" color="text.secondary" sx={{ mt: 0.75, display: 'block' }}>
+                        File auto-downloaded when recording stopped.
+                      </Typography>
+                    </Box>
+                    <Tooltip title="Remove from list">
+                      <IconButton size="small" onClick={() => deleteRecording(rec.id)} sx={{ color: '#f44336' }}>
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
+        )
+      ) : tabMeetings[tab].length === 0 ? (
         <Paper sx={{ p: 4, textAlign: 'center', borderRadius: 2 }} elevation={0} variant="outlined">
           <VideocamIcon sx={{ fontSize: 48, color: '#bdbdbd', mb: 1 }} />
           <Typography color="text.secondary">

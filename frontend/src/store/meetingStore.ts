@@ -48,9 +48,21 @@ export interface Meeting {
   endedAt?: string;
 }
 
+export interface MeetingRecording {
+  id: string;
+  meetingId: string;
+  meetingTitle: string;
+  recordedAt: string;
+  duration: number; // seconds
+  sizeBytes: number;
+}
+
 interface MeetingState {
   meetings: Meeting[];
   activeMeetingId: string | null;
+  recordings: MeetingRecording[];
+  saveRecording: (rec: Omit<MeetingRecording, 'id'>) => void;
+  deleteRecording: (id: string) => void;
 
   createMeeting: (data: {
     title: string;
@@ -93,6 +105,7 @@ export const useMeetingStore = create<MeetingState>()(
     (set, get) => ({
       meetings: [],
       activeMeetingId: null,
+      recordings: [],
 
       createMeeting: (data) => {
         const meeting: Meeting = {
@@ -243,6 +256,15 @@ export const useMeetingStore = create<MeetingState>()(
 
       setActiveMeeting: (id) => {
         set({ activeMeetingId: id });
+      },
+
+      saveRecording: (rec) => {
+        const recording: MeetingRecording = { id: `rec-${Date.now()}`, ...rec };
+        set((s) => ({ recordings: [...s.recordings, recording] }));
+      },
+
+      deleteRecording: (id) => {
+        set((s) => ({ recordings: s.recordings.filter((r) => r.id !== id) }));
       },
     }),
     { name: 'heybobo_meetings' }
