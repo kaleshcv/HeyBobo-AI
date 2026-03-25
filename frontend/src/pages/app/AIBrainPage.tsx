@@ -14,6 +14,7 @@ import {
   Paper,
   Skeleton,
   Stack,
+  Switch,
   Typography,
 } from '@mui/material';
 import PsychologyIcon from '@mui/icons-material/Psychology';
@@ -69,6 +70,7 @@ import {
 } from '@/store/aiBrainStore';
 import { generateAIBrainDashboard } from '@/lib/gemini';
 import { useBrainData } from '@/hooks/useBrainData';
+import SimpleLifeDashboard from './SimpleLifeDashboard';
 
 // ─── Module icon/color map ──────────────────────────────────────────────────
 
@@ -156,23 +158,23 @@ function SectionCard({
           alignItems: 'center',
           gap: 1,
           px: 2,
-          py: 1,
+          py: 1.25,
           cursor: collapsible ? 'pointer' : 'default',
           '&:hover': collapsible ? { bgcolor: 'action.hover' } : {},
         }}
         onClick={collapsible ? () => setOpen(!open) : undefined}
       >
         {icon && (
-          <Avatar sx={{ width: 28, height: 28, bgcolor: '#f5f5f5', color: '#616161' }}>
+          <Box sx={{ color: '#616161', display: 'flex' }}>
             {icon}
-          </Avatar>
+          </Box>
         )}
         <Box sx={{ flex: 1 }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 700, lineHeight: 1.3 }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 600, lineHeight: 1.3 }}>
             {title}
           </Typography>
           {subtitle && (
-            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+            <Typography variant="caption" color="text.secondary">
               {subtitle}
             </Typography>
           )}
@@ -213,28 +215,25 @@ function PriorityCard({ item, onNavigate }: { item: PriorityItem; onNavigate: (p
     <Box
       sx={{
         display: 'flex',
-        gap: 1,
-        py: 1,
-        px: 1.5,
-        borderRadius: 1.5,
+        gap: 1.5,
+        py: 1.25,
+        px: 2,
+        borderRadius: 2,
         border: '1px solid',
         borderColor: 'divider',
-        borderLeft: '3px solid',
-        borderLeftColor: PRIORITY_COLORS[item.level] ?? '#757575',
         cursor: meta?.path ? 'pointer' : 'default',
-        transition: 'all 0.15s',
-        '&:hover': meta?.path ? { bgcolor: 'action.hover', borderColor: '#bdbdbd' } : {},
+        '&:hover': meta?.path ? { bgcolor: 'action.hover' } : {},
       }}
       onClick={() => meta?.path && onNavigate(meta.path)}
     >
-      <Avatar sx={{ width: 28, height: 28, bgcolor: `${PRIORITY_COLORS[item.level]}14`, color: PRIORITY_COLORS[item.level] }}>
-        {meta?.icon ?? <AssignmentIcon sx={{ fontSize: 16 }} />}
-      </Avatar>
+      <Box sx={{ color: PRIORITY_COLORS[item.level] ?? '#757575', display: 'flex', mt: 0.25 }}>
+        {meta?.icon ?? <AssignmentIcon sx={{ fontSize: 18 }} />}
+      </Box>
       <Box sx={{ flex: 1, minWidth: 0 }}>
-        <Typography variant="caption" sx={{ fontWeight: 600, lineHeight: 1.3, display: 'block' }}>
+        <Typography variant="body2" sx={{ fontWeight: 600, lineHeight: 1.4 }}>
           {item.title}
         </Typography>
-        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.68rem', lineHeight: 1.3 }}>
+        <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.4 }}>
           {item.description}
         </Typography>
       </Box>
@@ -245,8 +244,8 @@ function PriorityCard({ item, onNavigate }: { item: PriorityItem; onNavigate: (p
           bgcolor: `${PRIORITY_COLORS[item.level]}14`,
           color: PRIORITY_COLORS[item.level],
           fontWeight: 600,
-          fontSize: 10,
-          height: 20,
+          fontSize: 11,
+          height: 22,
           alignSelf: 'flex-start',
         }}
       />
@@ -260,15 +259,15 @@ function AlertCard({ alert, onDismiss }: { alert: BrainAlert; onDismiss: (id: st
     <Alert
       severity={sev.color}
       variant="outlined"
-      sx={{ borderRadius: 1.5, py: 0, '& .MuiAlert-message': { flex: 1 } }}
+      sx={{ borderRadius: 2, py: 0.5, '& .MuiAlert-message': { flex: 1 } }}
       action={
         <IconButton size="small" onClick={() => onDismiss(alert.id)}>
           <CloseIcon fontSize="small" />
         </IconButton>
       }
     >
-      <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', lineHeight: 1.3 }}>{alert.title}</Typography>
-      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.68rem' }}>{alert.description}</Typography>
+      <Typography variant="body2" sx={{ fontWeight: 600, lineHeight: 1.4 }}>{alert.title}</Typography>
+      <Typography variant="caption" color="text.secondary">{alert.description}</Typography>
     </Alert>
   );
 }
@@ -314,7 +313,7 @@ function ScheduleTimeline({ events, toggleComplete }: { events: ScheduleEvent[];
               <Typography
                 variant="body2"
                 sx={{
-                  fontWeight: 500,
+                  fontWeight: 600,
                   textDecoration: event.completed ? 'line-through' : 'none',
                 }}
               >
@@ -353,16 +352,15 @@ function InsightScoreCard({ insight, onNavigate }: { insight: ModuleInsight; onN
         p: 1.5,
         borderRadius: 2,
         cursor: meta?.path ? 'pointer' : 'default',
-        transition: 'all 0.15s',
-        '&:hover': meta?.path ? { borderColor: meta.color, boxShadow: `0 2px 8px ${meta.color}18` } : {},
+        '&:hover': meta?.path ? { bgcolor: 'action.hover' } : {},
       }}
       onClick={() => meta?.path && onNavigate(meta.path)}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.75 }}>
-        <Avatar sx={{ width: 24, height: 24, bgcolor: `${meta?.color}14`, color: meta?.color }}>
-          {meta?.icon ?? <InsightsIcon sx={{ fontSize: 14 }} />}
-        </Avatar>
-        <Typography variant="caption" sx={{ fontWeight: 700, flex: 1, fontSize: '0.72rem' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5 }}>
+        <Box sx={{ color: meta?.color ?? '#616161', display: 'flex' }}>
+          {meta?.icon ?? <InsightsIcon sx={{ fontSize: 18 }} />}
+        </Box>
+        <Typography variant="body2" sx={{ fontWeight: 600, flex: 1 }}>
           {insight.label}
         </Typography>
         {trendIcon}
@@ -372,7 +370,7 @@ function InsightScoreCard({ insight, onNavigate }: { insight: ModuleInsight; onN
           <CircularProgress
             variant="determinate"
             value={insight.score}
-            size={40}
+            size={34}
             thickness={4.5}
             sx={{ color: meta?.color ?? '#616161' }}
           />
@@ -385,19 +383,19 @@ function InsightScoreCard({ insight, onNavigate }: { insight: ModuleInsight; onN
               justifyContent: 'center',
             }}
           >
-            <Typography variant="caption" sx={{ fontWeight: 700, fontSize: 12 }}>
+            <Typography variant="caption" sx={{ fontWeight: 700, fontSize: 11 }}>
               {insight.score}
             </Typography>
           </Box>
         </Box>
-        <Typography variant="caption" color="text.secondary" sx={{ flex: 1, fontSize: '0.68rem', lineHeight: 1.3 }}>
+        <Typography variant="caption" color="text.secondary" sx={{ flex: 1, lineHeight: 1.35, fontSize: '0.7rem' }}>
           {insight.summary}
         </Typography>
       </Box>
       {insight.details.length > 0 && (
-        <Stack spacing={0.15} sx={{ mt: 0.5 }}>
+        <Stack spacing={0.15} sx={{ mt: 0.25 }}>
           {insight.details.slice(0, 2).map((d, i) => (
-            <Typography key={i} variant="caption" color="text.secondary" sx={{ fontSize: '0.65rem', lineHeight: 1.3 }}>
+            <Typography key={i} variant="caption" color="text.secondary" sx={{ lineHeight: 1.35, fontSize: '0.68rem' }}>
               • {d}
             </Typography>
           ))}
@@ -417,16 +415,15 @@ function CrossInsightCard({ insight }: { insight: CrossModuleInsight }) {
   return (
     <Box
       sx={{
-        p: 1.5,
-        borderRadius: 1.5,
-        bgcolor: `${typeColors[insight.type] ?? '#616161'}08`,
+        p: 2,
+        borderRadius: 2,
         border: '1px solid',
-        borderColor: `${typeColors[insight.type] ?? '#616161'}30`,
+        borderColor: 'divider',
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.25 }}>
-        <InsightsIcon sx={{ fontSize: 16, color: typeColors[insight.type] ?? '#616161' }} />
-        <Typography variant="caption" sx={{ fontWeight: 700, flex: 1, fontSize: '0.72rem' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+        <InsightsIcon sx={{ fontSize: 18, color: typeColors[insight.type] ?? '#616161' }} />
+        <Typography variant="body2" sx={{ fontWeight: 600, flex: 1 }}>
           {insight.title}
         </Typography>
         <Chip
@@ -436,12 +433,12 @@ function CrossInsightCard({ insight }: { insight: CrossModuleInsight }) {
             bgcolor: `${typeColors[insight.type] ?? '#616161'}14`,
             color: typeColors[insight.type] ?? '#616161',
             fontWeight: 600,
-            fontSize: 10,
-            height: 20,
+            fontSize: 11,
+            height: 22,
           }}
         />
       </Box>
-      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5, fontSize: '0.68rem', lineHeight: 1.3 }}>
+      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1, lineHeight: 1.4 }}>
         {insight.description}
       </Typography>
       <Stack direction="row" spacing={0.5}>
@@ -460,9 +457,9 @@ function RecommendationCard({ rec, onNavigate }: { rec: SmartRecommendation; onN
     <Box
       sx={{
         display: 'flex',
-        gap: 1,
-        p: 1.25,
-        borderRadius: 1.5,
+        gap: 1.5,
+        p: 2,
+        borderRadius: 2,
         border: '1px solid',
         borderColor: 'divider',
         cursor: moduleMeta?.path ? 'pointer' : 'default',
@@ -470,22 +467,21 @@ function RecommendationCard({ rec, onNavigate }: { rec: SmartRecommendation; onN
       }}
       onClick={() => moduleMeta?.path && onNavigate(moduleMeta.path)}
     >
-      <Avatar sx={{ width: 28, height: 28, bgcolor: `${meta.color}14`, color: meta.color }}>
+      <Box sx={{ color: meta.color, display: 'flex', mt: 0.25 }}>
         {meta.icon}
-      </Avatar>
+      </Box>
       <Box sx={{ flex: 1, minWidth: 0 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.15 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 0.5 }}>
           <Chip
             label={meta.label}
             size="small"
-            sx={{ bgcolor: `${meta.color}14`, color: meta.color, fontWeight: 700, fontSize: 10, height: 18 }}
+            sx={{ bgcolor: `${meta.color}14`, color: meta.color, fontWeight: 600, fontSize: 11, height: 22 }}
           />
-          <ModuleChip module={rec.module} />
         </Box>
-        <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', lineHeight: 1.3 }}>
+        <Typography variant="body2" sx={{ fontWeight: 600, lineHeight: 1.4 }}>
           {rec.title}
         </Typography>
-        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.68rem', lineHeight: 1.3 }}>
+        <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.4 }}>
           {rec.description}
         </Typography>
       </Box>
@@ -505,11 +501,9 @@ function TodayFocusCard({ focus, nudge }: { focus: TodayFocus; nudge: string | n
     <Paper
       variant="outlined"
       sx={{
-        p: 2,
+        p: 2.5,
         borderRadius: 2.5,
         mb: 0,
-        border: `1.5px solid ${energy.color}33`,
-        background: `linear-gradient(135deg, ${energy.color}0a 0%, transparent 60%)`,
       }}
     >
       {/* Nudge banner */}
@@ -523,24 +517,24 @@ function TodayFocusCard({ focus, nudge }: { focus: TodayFocus; nudge: string | n
             px: 1.5,
             py: 0.75,
             borderRadius: 1.5,
-            bgcolor: '#1a1a1a',
-            border: '1px solid #333',
+            bgcolor: '#fff8e1',
+            border: '1px solid #ffe082',
           }}
         >
-          <NotificationsActiveIcon sx={{ fontSize: 16, color: '#ffb300' }} />
-          <Typography variant="caption" sx={{ fontWeight: 700, color: '#ffb300', letterSpacing: 0.3 }}>
+          <NotificationsActiveIcon sx={{ fontSize: 16, color: '#f57c00' }} />
+          <Typography variant="caption" sx={{ fontWeight: 600, color: '#e65100', letterSpacing: 0.3 }}>
             {nudge}
           </Typography>
         </Box>
       )}
 
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-        <Avatar sx={{ bgcolor: energy.color, width: 38, height: 38, mt: 0.25 }}>
+        <Avatar sx={{ bgcolor: '#f5f5f5', color: energy.color, width: 38, height: 38, mt: 0.25 }}>
           {energy.icon}
         </Avatar>
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mb: 0.25 }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 800, lineHeight: 1.2 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700, lineHeight: 1.3 }}>
               {focus.headline}
             </Typography>
             <Chip
@@ -548,10 +542,10 @@ function TodayFocusCard({ focus, nudge }: { focus: TodayFocus; nudge: string | n
               label={energy.label}
               icon={energy.icon}
               sx={{
-                height: 20,
-                fontSize: '0.68rem',
-                fontWeight: 700,
-                bgcolor: `${energy.color}22`,
+                height: 22,
+                fontSize: 11,
+                fontWeight: 600,
+                bgcolor: `${energy.color}14`,
                 color: energy.color,
                 '& .MuiChip-icon': { color: energy.color, fontSize: 13 },
               }}
@@ -728,19 +722,21 @@ export default function AIBrainPage() {
 
   const hasData = priorities.length > 0 || moduleInsights.length > 0;
   const show = MODE_SECTIONS[activeMode] ?? MODE_SECTIONS.monitor;
+  const [dashboardOn, setDashboardOn] = useState(false);
 
   // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
-    <Box sx={{ maxWidth: 1200, mx: 'auto', p: { xs: 1.5, md: 2 } }}>
+    <Box sx={{ p: { xs: 2, md: 3 } }}>
       {/* Header */}
+      <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Avatar sx={{ bgcolor: '#424242', width: 36, height: 36 }}>
             <PsychologyIcon fontSize="small" />
           </Avatar>
           <Box>
-            <Typography variant="h6" sx={{ fontWeight: 800, lineHeight: 1.2 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.3 }}>
               AI Brain
             </Typography>
             <Typography variant="caption" color="text.secondary">
@@ -754,6 +750,20 @@ export default function AIBrainPage() {
               {new Date(lastRefresh).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </Typography>
           )}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
+              {dashboardOn ? 'AI Brain' : 'Life View'}
+            </Typography>
+            <Switch
+              size="small"
+              checked={dashboardOn}
+              onChange={(e) => setDashboardOn(e.target.checked)}
+              sx={{
+                '& .MuiSwitch-switchBase.Mui-checked': { color: '#424242' },
+                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#424242' },
+              }}
+            />
+          </Box>
           <Button
             variant="outlined"
             size="small"
@@ -787,7 +797,12 @@ export default function AIBrainPage() {
           />
         ))}
       </Stack>
+      </Box>{/* end maxWidth header wrapper */}
 
+      {!dashboardOn && <SimpleLifeDashboard />}
+
+      {dashboardOn && (
+        <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
       {/* Error */}
       {error && (
         <Alert severity="error" sx={{ mb: 1, borderRadius: 1.5, py: 0 }} onClose={() => setError(null)}>
@@ -832,18 +847,18 @@ export default function AIBrainPage() {
 
       {/* ─── Dashboard Content ────────────────────────────────────── */}
       {hasData && (
-        <Stack spacing={1.5}>
-          {/* Row 1: Priorities + Alerts */}
-          {(show.has('priorities') || show.has('alerts')) && (
-            <Grid container spacing={1.5}>
+        <Stack spacing={2}>
+          {/* Row 1: Priorities + Alerts + Schedule */}
+          {(show.has('priorities') || show.has('alerts') || show.has('schedule')) && (
+            <Grid container spacing={2}>
               {show.has('priorities') && (
-                <Grid item xs={12} md={show.has('alerts') ? 7 : 12}>
+                <Grid item xs={12} md={show.has('alerts') || show.has('schedule') ? 5 : 12}>
                   <SectionCard
                     title="Today's Priorities"
                     subtitle={`${priorities.length} action${priorities.length !== 1 ? 's' : ''} for today`}
                     icon={<BoltIcon fontSize="small" />}
                   >
-                    <Stack spacing={0.75}>
+                    <Stack spacing={1}>
                       {priorities.map((p) => (
                         <PriorityCard key={p.id} item={p} onNavigate={navigate} />
                       ))}
@@ -856,13 +871,13 @@ export default function AIBrainPage() {
               )}
 
               {show.has('alerts') && (
-                <Grid item xs={12} md={show.has('priorities') ? 5 : 12}>
+                <Grid item xs={12} md={show.has('priorities') && show.has('schedule') ? 4 : show.has('priorities') ? 5 : 12}>
                   <SectionCard
                     title="Alerts & Risks"
                     subtitle={`${visibleAlerts.length} active alert${visibleAlerts.length !== 1 ? 's' : ''}`}
                     icon={<WarningAmberIcon fontSize="small" />}
                   >
-                    <Stack spacing={0.75}>
+                    <Stack spacing={1}>
                       {visibleAlerts.map((a) => (
                         <AlertCard key={a.id} alert={a} onDismiss={dismissAlert} />
                       ))}
@@ -876,14 +891,9 @@ export default function AIBrainPage() {
                   </SectionCard>
                 </Grid>
               )}
-            </Grid>
-          )}
 
-          {/* Row 2: Schedule + Module Insights */}
-          {(show.has('schedule') || show.has('insights')) && (
-            <Grid container spacing={1.5}>
               {show.has('schedule') && (
-                <Grid item xs={12} md={show.has('insights') ? 5 : 12}>
+                <Grid item xs={12} md={show.has('priorities') && show.has('alerts') ? 3 : show.has('priorities') || show.has('alerts') ? 5 : 12}>
                   <SectionCard
                     title="Today's Schedule"
                     subtitle={new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
@@ -892,39 +902,38 @@ export default function AIBrainPage() {
                     {schedule.length > 0 ? (
                       <ScheduleTimeline events={schedule} toggleComplete={toggleScheduleComplete} />
                     ) : (
-                      <Typography variant="body2" color="text.disabled" sx={{ py: 2, textAlign: 'center' }}>
+                      <Typography variant="body2" color="text.disabled" sx={{ py: 1, textAlign: 'center' }}>
                         No events scheduled
                       </Typography>
                     )}
                   </SectionCard>
                 </Grid>
               )}
-
-              {show.has('insights') && (
-                <Grid item xs={12} md={show.has('schedule') ? 7 : 12}>
-                  <SectionCard
-                    title="Module Intelligence"
-                    subtitle="Performance scores across all modules"
-                    icon={<InsightsIcon fontSize="small" />}
-                  >
-                    <Grid container spacing={1}>
-                      {moduleInsights.map((mi) => (
-                        <Grid item xs={6} sm={4} key={mi.module}>
-                          <InsightScoreCard insight={mi} onNavigate={navigate} />
-                        </Grid>
-                      ))}
-                      {moduleInsights.length === 0 && (
-                        <Grid item xs={12}>
-                          <Typography variant="body2" color="text.disabled" sx={{ py: 2, textAlign: 'center' }}>
-                            No module data available yet
-                          </Typography>
-                        </Grid>
-                      )}
-                    </Grid>
-                  </SectionCard>
-                </Grid>
-              )}
             </Grid>
+          )}
+
+          {/* Row 2: Module Intelligence */}
+          {show.has('insights') && (
+            <SectionCard
+              title="Module Intelligence"
+              subtitle="Performance scores across all modules"
+              icon={<InsightsIcon fontSize="small" />}
+            >
+              <Grid container spacing={1}>
+                {moduleInsights.map((mi) => (
+                  <Grid item xs={12} sm={6} md={3} key={mi.module}>
+                    <InsightScoreCard insight={mi} onNavigate={navigate} />
+                  </Grid>
+                ))}
+                {moduleInsights.length === 0 && (
+                  <Grid item xs={12}>
+                    <Typography variant="body2" color="text.disabled" sx={{ py: 2, textAlign: 'center' }}>
+                      No module data available yet
+                    </Typography>
+                  </Grid>
+                )}
+              </Grid>
+            </SectionCard>
           )}
 
           {/* Row 3: Cross-Module Insights */}
@@ -935,7 +944,7 @@ export default function AIBrainPage() {
               icon={<LightbulbIcon fontSize="small" />}
               collapsible
             >
-              <Grid container spacing={1}>
+              <Grid container spacing={1.5}>
                 {crossInsights.map((ci) => (
                   <Grid item xs={12} sm={6} key={ci.id}>
                     <CrossInsightCard insight={ci} />
@@ -953,7 +962,7 @@ export default function AIBrainPage() {
               icon={<AutoAwesomeIcon fontSize="small" />}
               collapsible
             >
-              <Grid container spacing={1}>
+              <Grid container spacing={1.5}>
                 {recommendations.map((rec) => (
                   <Grid item xs={12} sm={6} key={rec.id}>
                     <RecommendationCard rec={rec} onNavigate={navigate} />
@@ -972,9 +981,9 @@ export default function AIBrainPage() {
               collapsible
               defaultOpen={false}
             >
-              <Grid container spacing={1.5}>
+              <Grid container spacing={2}>
                 <Grid item xs={12} sm={6} md={3}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#4caf50', display: 'block', mb: 0.5 }}>
+                  <Typography variant="caption" sx={{ fontWeight: 600, color: '#4caf50', display: 'block', mb: 0.5 }}>
                     Wins
                   </Typography>
                   {weeklySummary.wins.map((w, i) => (
@@ -986,7 +995,7 @@ export default function AIBrainPage() {
                 </Grid>
 
                 <Grid item xs={12} sm={6} md={3}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#f57c00', display: 'block', mb: 0.5 }}>
+                  <Typography variant="caption" sx={{ fontWeight: 600, color: '#f57c00', display: 'block', mb: 0.5 }}>
                     Risks
                   </Typography>
                   {weeklySummary.risks.map((r, i) => (
@@ -998,7 +1007,7 @@ export default function AIBrainPage() {
                 </Grid>
 
                 <Grid item xs={12} sm={6} md={3}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, display: 'block', mb: 0.5 }}>
+                  <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 0.5 }}>
                     Adherence
                   </Typography>
                   {Object.entries(weeklySummary.adherence).map(([mod, pct]) => (
@@ -1025,7 +1034,7 @@ export default function AIBrainPage() {
                 </Grid>
 
                 <Grid item xs={12} sm={6} md={3}>
-                  <Typography variant="caption" sx={{ fontWeight: 700, color: '#1976d2', display: 'block', mb: 0.5 }}>
+                  <Typography variant="caption" sx={{ fontWeight: 600, color: '#1976d2', display: 'block', mb: 0.5 }}>
                     Next Week Focus
                   </Typography>
                   {weeklySummary.predictedPriorities.map((p, i) => (
@@ -1039,6 +1048,8 @@ export default function AIBrainPage() {
             </SectionCard>
           )}
         </Stack>
+      )}
+        </Box>
       )}
 
     </Box>

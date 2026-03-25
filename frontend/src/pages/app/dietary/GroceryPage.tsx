@@ -526,7 +526,7 @@ export default function GroceryPage() {
               return (
                 <Box key={category} sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 0.75 }}>
                   <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: catColor }} />
-                  <Typography sx={{ flex: 1, textTransform: 'capitalize', fontWeight: 500 }}>{category}</Typography>
+                  <Typography sx={{ flex: 1, textTransform: 'capitalize', fontWeight: 600 }}>{category}</Typography>
                   <Chip label={`${items.length} items`} size="small" sx={{ bgcolor: `${catColor}15`, color: catColor, fontWeight: 600 }} />
                   <Typography variant="caption" sx={{ fontWeight: 600, color: '#f44336' }}>{catCal} cal</Typography>
                   <Typography variant="caption" sx={{ fontWeight: 600, color: '#4caf50' }}>${catCost.toFixed(2)}</Typography>

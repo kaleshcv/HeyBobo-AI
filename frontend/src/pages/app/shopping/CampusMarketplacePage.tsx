@@ -173,7 +173,7 @@ export default function CampusMarketplacePage() {
             <Grid item xs={12} sm={6} md={4} key={listing.id}>
               <Paper
                 variant="outlined"
-                sx={{ p: 2, borderRadius: 3, cursor: 'pointer', position: 'relative', '&:hover': { borderColor: '#bdbdbd', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' } }}
+                sx={{ p: 2, borderRadius: 3, cursor: 'pointer', position: 'relative', '&:hover': { bgcolor: 'action.hover' } }}
                 onClick={() => setDetailListing(listing.id)}
               >
                 {listing.status === 'sold' && (

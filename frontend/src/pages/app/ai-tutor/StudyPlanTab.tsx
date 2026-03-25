@@ -228,7 +228,7 @@ export default function StudyPlanTab({ selectedBookId, onTeach }: Props) {
                                 sx={{ mt: -0.5, color: '#7c4dff', '&.Mui-checked': { color: '#7c4dff' } }}
                               />
                               <Box sx={{ flex: 1 }}>
-                                <Typography variant="body2" sx={{ fontWeight: 500, textDecoration: ch.completed ? 'line-through' : 'none' }}>
+                                <Typography variant="body2" sx={{ fontWeight: 600, textDecoration: ch.completed ? 'line-through' : 'none' }}>
                                   {idx + 1}. {ch.title}
                                 </Typography>
                                 {ch.description && (

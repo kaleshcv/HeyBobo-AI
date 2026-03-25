@@ -429,7 +429,7 @@ function WorkoutPlans() {
                         return (
                           <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5 }}>
                             {getCatIcon(ex.category, 18, cat.color)}
-                            <Typography variant="body2" sx={{ fontWeight: 500, flex: 1 }}>{ex.name}</Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 600, flex: 1 }}>{ex.name}</Typography>
                             <Typography variant="caption" color="text.secondary">
                               {we.sets}×{we.reps ? `${we.reps} reps` : `${we.durationSeconds! >= 60 ? `${Math.floor(we.durationSeconds! / 60)}m` : `${we.durationSeconds}s`}`}
                             </Typography>
@@ -749,8 +749,8 @@ export default function WorkoutsPage() {
   const [tab, setTab] = useState(0);
 
   return (
-    <Box sx={{ py: 1.5, px: 1.5 }}>
-      <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.25, fontSize: 20 }}>Workouts</Typography>
+    <Box sx={{ py: 2, px: 2 }}>
+      <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5, fontSize: 20 }}>Workouts</Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5, fontSize: 13 }}>
         Browse exercises, follow plans, or build your own routines.
       </Typography>

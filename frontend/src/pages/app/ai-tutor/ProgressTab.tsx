@@ -111,7 +111,7 @@ export default function ProgressTab({ selectedBookId }: Props) {
               const pct = totalChapters > 0 ? Math.round((completedChapters / totalChapters) * 100) : 0;
               return (
                 <Paper key={book.id} variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
-                  <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>{book.name}</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>{book.name}</Typography>
                   <LinearProgress
                     variant="determinate"
                     value={pct}

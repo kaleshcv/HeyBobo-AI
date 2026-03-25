@@ -322,7 +322,6 @@ export default function VisualAnalysisPage() {
           sx={{
             p: 2.5, mb: 3, borderRadius: 3,
             borderColor: `${getTabColor()}30`,
-            background: `linear-gradient(135deg, ${getTabColor()}08 0%, transparent 100%)`,
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
@@ -477,18 +476,16 @@ function MetricsGrid({ metrics, color }: { metrics: VisualAnalysisMetric[]; colo
             sx={{
               p: 2, borderRadius: 2.5, height: '100%',
               borderColor: `${getScoreColor(metric.score)}25`,
-              transition: 'all 0.2s',
-              '&:hover': { transform: 'translateY(-2px)', boxShadow: `0 4px 16px ${getScoreColor(metric.score)}15` },
             }}
           >
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Avatar sx={{ width: 28, height: 28, bgcolor: `${getSeverityColor(metric.severity)}15` }}>
-                  {React.cloneElement(getSeverityIcon(metric.severity), { sx: { fontSize: 16, color: getSeverityColor(metric.severity) } })}
-                </Avatar>
-                <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{metric.name}</Typography>
+                <Box sx={{ color: getSeverityColor(metric.severity), display: 'flex' }}>
+                  {React.cloneElement(getSeverityIcon(metric.severity), { sx: { fontSize: 18, color: getSeverityColor(metric.severity) } })}
+                </Box>
+                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{metric.name}</Typography>
               </Box>
-              <Typography variant="h6" sx={{ fontWeight: 800, color: getScoreColor(metric.score) }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, color: getScoreColor(metric.score) }}>
                 {metric.score}
               </Typography>
             </Box>
@@ -540,7 +537,6 @@ function SkinAnalysisResults({ result }: { result: DetailedSkinAnalysis }) {
       <Paper
         sx={{
           p: 0, mb: 3, borderRadius: 3, overflow: 'hidden',
-          background: `linear-gradient(135deg, ${color}12 0%, ${color}05 50%, #fff 100%)`,
           border: `1px solid ${color}20`,
         }}
       >
@@ -550,13 +546,13 @@ function SkinAnalysisResults({ result }: { result: DetailedSkinAnalysis }) {
               <CircularProgress variant="determinate" value={100} size={120} thickness={4} sx={{ color: '#eee', position: 'absolute' }} />
               <CircularProgress variant="determinate" value={result.overallScore} size={120} thickness={4} sx={{ color: getScoreColor(result.overallScore) }} />
               <Box sx={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <Typography variant="h3" sx={{ fontWeight: 800, color: getScoreColor(result.overallScore), lineHeight: 1 }}>{result.overallScore}</Typography>
+                <Typography variant="h3" sx={{ fontWeight: 700, color: getScoreColor(result.overallScore), lineHeight: 1 }}>{result.overallScore}</Typography>
                 <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary' }}>SKIN SCORE</Typography>
               </Box>
             </Box>
           </Grid>
           <Grid item xs={12} md={9} sx={{ p: 3 }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
               <AutoAwesomeIcon sx={{ color, fontSize: 20 }} /> Comprehensive Skin Analysis
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2, lineHeight: 1.7 }}>{result.summary}</Typography>
@@ -586,8 +582,8 @@ function SkinAnalysisResults({ result }: { result: DetailedSkinAnalysis }) {
                     border: `1px solid ${getScoreColor(zone.score)}20`,
                   }}
                 >
-                  <Typography variant="h5" sx={{ fontWeight: 800, color: getScoreColor(zone.score), mb: 0.5 }}>{zone.score}</Typography>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>{zone.zone}</Typography>
+                  <Typography variant="h5" sx={{ fontWeight: 700, color: getScoreColor(zone.score), mb: 0.5 }}>{zone.score}</Typography>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>{zone.zone}</Typography>
                   <Typography variant="caption" color="text.secondary">{zone.condition}</Typography>
                 </Paper>
               </Grid>
@@ -659,7 +655,6 @@ function HairFaceResults({ result }: { result: DetailedHairFaceAnalysis }) {
       <Paper
         sx={{
           p: 0, mb: 3, borderRadius: 3, overflow: 'hidden',
-          background: `linear-gradient(135deg, ${color}12 0%, ${color}05 50%, #fff 100%)`,
           border: `1px solid ${color}20`,
         }}
       >
@@ -669,13 +664,13 @@ function HairFaceResults({ result }: { result: DetailedHairFaceAnalysis }) {
               <CircularProgress variant="determinate" value={100} size={120} thickness={4} sx={{ color: '#eee', position: 'absolute' }} />
               <CircularProgress variant="determinate" value={result.overallScore} size={120} thickness={4} sx={{ color: getScoreColor(result.overallScore) }} />
               <Box sx={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <Typography variant="h3" sx={{ fontWeight: 800, color: getScoreColor(result.overallScore), lineHeight: 1 }}>{result.overallScore}</Typography>
+                <Typography variant="h3" sx={{ fontWeight: 700, color: getScoreColor(result.overallScore), lineHeight: 1 }}>{result.overallScore}</Typography>
                 <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary' }}>SCORE</Typography>
               </Box>
             </Box>
           </Grid>
           <Grid item xs={12} md={9} sx={{ p: 3 }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
               <ContentCutIcon sx={{ color, fontSize: 20 }} /> Hair & Face Shape Analysis
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2, lineHeight: 1.7 }}>{result.summary}</Typography>
@@ -734,14 +729,12 @@ function HairFaceResults({ result }: { result: DetailedHairFaceAnalysis }) {
                   sx={{
                     p: 2.5, borderRadius: 2.5, height: '100%',
                     bgcolor: `${color}06`, border: `1px solid ${color}15`,
-                    transition: 'all 0.2s',
-                    '&:hover': { transform: 'translateY(-2px)', boxShadow: `0 4px 12px ${color}15` },
                   }}
                 >
-                  <Avatar sx={{ width: 40, height: 40, bgcolor: `${color}15`, mb: 1.5 }}>
-                    <ContentCutIcon sx={{ color }} />
-                  </Avatar>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>{style.name}</Typography>
+                  <Box sx={{ color, display: 'flex', mb: 1.5 }}>
+                    <ContentCutIcon />
+                  </Box>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>{style.name}</Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>{style.description}</Typography>
                   <Chip size="small" label={style.suitability} sx={{ bgcolor: `${color}12`, color, fontSize: 11, fontWeight: 600 }} />
                 </Paper>
@@ -789,7 +782,6 @@ function BodyStyleResults({ result }: { result: DetailedBodyStyleAnalysis }) {
       <Paper
         sx={{
           p: 0, mb: 3, borderRadius: 3, overflow: 'hidden',
-          background: `linear-gradient(135deg, ${color}12 0%, ${color}05 50%, #fff 100%)`,
           border: `1px solid ${color}20`,
         }}
       >
@@ -799,13 +791,13 @@ function BodyStyleResults({ result }: { result: DetailedBodyStyleAnalysis }) {
               <CircularProgress variant="determinate" value={100} size={120} thickness={4} sx={{ color: '#eee', position: 'absolute' }} />
               <CircularProgress variant="determinate" value={result.overallScore} size={120} thickness={4} sx={{ color: getScoreColor(result.overallScore) }} />
               <Box sx={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <Typography variant="h3" sx={{ fontWeight: 800, color: getScoreColor(result.overallScore), lineHeight: 1 }}>{result.overallScore}</Typography>
+                <Typography variant="h3" sx={{ fontWeight: 700, color: getScoreColor(result.overallScore), lineHeight: 1 }}>{result.overallScore}</Typography>
                 <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary' }}>STYLE</Typography>
               </Box>
             </Box>
           </Grid>
           <Grid item xs={12} md={9} sx={{ p: 3 }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
               <CheckroomIcon sx={{ color, fontSize: 20 }} /> Body & Style Analysis
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2, lineHeight: 1.7 }}>{result.summary}</Typography>
@@ -883,11 +875,9 @@ function BodyStyleResults({ result }: { result: DetailedBodyStyleAnalysis }) {
                   sx={{
                     p: 2, borderRadius: 2, height: '100%',
                     bgcolor: `${color}06`, border: `1px solid ${color}12`,
-                    transition: 'all 0.2s',
-                    '&:hover': { transform: 'translateY(-2px)', boxShadow: `0 4px 12px ${color}10` },
                   }}
                 >
-                  <Typography variant="subtitle2" sx={{ fontWeight: 700, color, mb: 0.5 }}>{fit.category}</Typography>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600, color, mb: 0.5 }}>{fit.category}</Typography>
                   <Typography variant="body2" color="text.secondary">{fit.advice}</Typography>
                 </Paper>
               </Grid>
@@ -1044,7 +1034,6 @@ function ProgressTrackingSection({
           <Paper
             sx={{
               p: 3, mb: 3, borderRadius: 3,
-              background: `linear-gradient(135deg, ${progressResult.overallImprovement >= 0 ? '#e8f5e9' : '#ffebee'} 0%, #fff 100%)`,
               border: `1px solid ${progressResult.overallImprovement >= 0 ? '#c8e6c9' : '#ffcdd2'}`,
             }}
           >
@@ -1055,7 +1044,7 @@ function ProgressTrackingSection({
                   : <TrendingDownIcon sx={{ fontSize: 28, color: '#f44336' }} />}
               </Avatar>
               <Box>
-                <Typography variant="h4" sx={{ fontWeight: 800, color: progressResult.overallImprovement >= 0 ? '#4caf50' : '#f44336' }}>
+                <Typography variant="h4" sx={{ fontWeight: 700, color: progressResult.overallImprovement >= 0 ? '#4caf50' : '#f44336' }}>
                   {progressResult.overallImprovement >= 0 ? '+' : ''}{progressResult.overallImprovement}%
                 </Typography>
                 <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.secondary' }}>Overall Improvement</Typography>
@@ -1153,7 +1142,7 @@ function ProgressTrackingSection({
                   bgcolor: `${color}06`, border: `1px solid ${color}15`,
                 }}
               >
-                <Typography variant="h5" sx={{ fontWeight: 800, color: getScoreColor(entry.overallScore) }}>
+                <Typography variant="h5" sx={{ fontWeight: 700, color: getScoreColor(entry.overallScore) }}>
                   {entry.overallScore}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
@@ -1213,7 +1202,6 @@ function VirtualTryOnSection({
         variant="outlined"
         sx={{
           p: 3, mb: 3, borderRadius: 3, borderColor: `${color}30`,
-          background: `linear-gradient(135deg, ${color}08 0%, transparent 100%)`,
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
@@ -1260,7 +1248,6 @@ function VirtualTryOnSection({
           <Paper
             sx={{
               p: 3, mb: 3, borderRadius: 3,
-              background: `linear-gradient(135deg, ${color}12 0%, #fff 100%)`,
               border: `1px solid ${color}20`,
             }}
           >
@@ -1269,7 +1256,7 @@ function VirtualTryOnSection({
                 <CircularProgress variant="determinate" value={100} size={100} thickness={4} sx={{ color: '#eee', position: 'absolute' }} />
                 <CircularProgress variant="determinate" value={tryOnResult.suitabilityScore} size={100} thickness={4} sx={{ color: getScoreColor(tryOnResult.suitabilityScore) }} />
                 <Box sx={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                  <Typography variant="h4" sx={{ fontWeight: 800, color: getScoreColor(tryOnResult.suitabilityScore), lineHeight: 1 }}>
+                  <Typography variant="h4" sx={{ fontWeight: 700, color: getScoreColor(tryOnResult.suitabilityScore), lineHeight: 1 }}>
                     {tryOnResult.suitabilityScore}
                   </Typography>
                   <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary', fontSize: 9 }}>SUITABILITY</Typography>
@@ -1403,7 +1390,7 @@ function RecommendationsSection({ recommendations, products, color }: { recommen
                   <Avatar sx={{ width: 28, height: 28, bgcolor: `${color}15` }}>
                     <ShoppingBagIcon sx={{ fontSize: 14, color }} />
                   </Avatar>
-                  <Typography variant="body2" sx={{ fontWeight: 500 }}>{product}</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>{product}</Typography>
                 </Paper>
               </Grid>
             ))}
@@ -1699,7 +1686,6 @@ function LiveCameraTab({
           <Paper
             sx={{
               p: 0, mb: 2, borderRadius: 3, overflow: 'hidden',
-              background: `linear-gradient(135deg, ${color}12 0%, ${color}05 50%, transparent 100%)`,
               border: `1px solid ${color}25`,
             }}
           >
@@ -1783,7 +1769,7 @@ function LiveCameraTab({
                     <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', display: 'block', mb: 0.5 }}>Quick Tips</Typography>
                     <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
                       {liveResult.skin.quickTips.map((tip, i) => (
-                        <Chip key={i} size="small" label={tip} sx={{ bgcolor: `${COLORS.skin}10`, color: COLORS.skin, fontSize: '0.7rem', fontWeight: 500 }} />
+                        <Chip key={i} size="small" label={tip} sx={{ bgcolor: `${COLORS.skin}10`, color: COLORS.skin, fontSize: '0.7rem', fontWeight: 600 }} />
                       ))}
                     </Stack>
                   </Grid>
@@ -1836,7 +1822,7 @@ function LiveCameraTab({
                 <Divider sx={{ mb: 1.5 }} />
                 <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', p: 1.25, bgcolor: '#7b1fa215', borderRadius: 1.5, border: '1px solid #7b1fa230' }}>
                   <ShoppingCartIcon sx={{ fontSize: 18, color: '#ce93d8', flexShrink: 0 }} />
-                  <Typography variant="body2" sx={{ color: '#ce93d8', fontWeight: 500 }}>{liveResult.shoppingNudge}</Typography>
+                  <Typography variant="body2" sx={{ color: '#ce93d8', fontWeight: 600 }}>{liveResult.shoppingNudge}</Typography>
                 </Box>
               </>
             )}
@@ -1855,7 +1841,6 @@ function EmptyAnalysis({ type, color, icon }: { type: string; color: string; ico
       elevation={0}
       sx={{
         p: 5, textAlign: 'center', borderRadius: 3, mt: 2,
-        background: `linear-gradient(135deg, ${color}06 0%, ${color}02 100%)`,
         border: `1px dashed ${color}25`,
         position: 'relative', overflow: 'hidden',
       }}

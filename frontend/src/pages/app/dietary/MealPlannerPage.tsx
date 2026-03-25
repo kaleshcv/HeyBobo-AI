@@ -449,7 +449,7 @@ export default function MealPlannerPage() {
         <Paper
           sx={{
             p: 2, mb: 3, borderRadius: 2,
-            background: 'linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%)',
+            bgcolor: '#e8f5e9',
             border: '1px solid #a5d6a7',
             cursor: 'pointer',
           }}
@@ -659,8 +659,8 @@ export default function MealPlannerPage() {
               borderRadius: 2,
               fontWeight: 700,
               fontSize: 16,
-              background: 'linear-gradient(135deg, #ff9800 0%, #f44336 100%)',
-              '&:hover': { background: 'linear-gradient(135deg, #ffa726 0%, #ef5350 100%)' },
+              background: '#f57c00',
+              '&:hover': { background: '#ef6c00' },
             }}
           >
             Generate {planType === 'weekly' ? 'Weekly' : 'Daily'} Meal Plan with AI

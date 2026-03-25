@@ -513,7 +513,7 @@ function ProfileSummary({ onEdit }: { onEdit: () => void }) {
           </Box>
           <Divider sx={{ my: 1.5 }} />
           <Typography variant="caption" color="text.secondary">Activity Level</Typography>
-          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+          <Typography variant="body2" sx={{ fontWeight: 600 }}>
             {ACTIVITY_LEVELS.find((a) => a.id === profile.activityLevel)?.label ?? '—'}
           </Typography>
           {profile.injuries && (

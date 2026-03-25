@@ -44,7 +44,7 @@ function CourseCard({
         boxShadow: 'none',
         transition: 'all 0.2s',
         position: 'relative',
-        '&:hover': { borderColor: '#bdbdbd', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' },
+        '&:hover': { bgcolor: 'action.hover' },
         '&:hover .delete-btn': { opacity: 1 },
       }}
     >
@@ -137,7 +137,7 @@ export default function CoursesListPage() {
           minHeight: 36,
           mb: 2,
           '& .MuiTabs-indicator': { bgcolor: '#616161', height: 2 },
-          '& .MuiTab-root': { textTransform: 'none', minHeight: 36, px: 2, py: 0.5, fontSize: 13, fontWeight: 500, color: 'text.secondary', '&.Mui-selected': { color: 'text.primary' } },
+          '& .MuiTab-root': { textTransform: 'none', minHeight: 36, px: 2, py: 0.5, fontSize: 13, fontWeight: 600, color: 'text.secondary', '&.Mui-selected': { color: 'text.primary' } },
         }}
       >
         <Tab label="All Courses" />

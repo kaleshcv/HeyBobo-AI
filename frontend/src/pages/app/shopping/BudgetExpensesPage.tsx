@@ -174,7 +174,7 @@ export default function BudgetExpensesPage() {
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.3 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: CATEGORY_COLORS[cat] }} />
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>{CATEGORY_LABELS[cat]}</Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>{CATEGORY_LABELS[cat]}</Typography>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                     <Typography variant="body2" sx={{ fontWeight: 600, color: isOver ? 'error.main' : 'text.primary' }}>
@@ -246,7 +246,7 @@ export default function BudgetExpensesPage() {
                   <Box key={e.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.8, borderBottom: '1px solid', borderColor: 'divider' }}>
                     <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: CATEGORY_COLORS[e.category], flexShrink: 0 }} />
                     <Box sx={{ flex: 1 }}>
-                      <Typography variant="body2" sx={{ fontWeight: 500 }}>{e.description}</Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 600 }}>{e.description}</Typography>
                       <Typography variant="caption" color="text.secondary">
                         {CATEGORY_LABELS[e.category]} · {e.date} · {e.source}
                       </Typography>

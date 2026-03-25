@@ -283,7 +283,7 @@ export default function SmartShoppingListsPage() {
                         size="small"
                       />
                       <Box sx={{ flex: 1 }}>
-                        <Typography variant="body2" sx={{ fontWeight: 500 }}>{item.name}</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{item.name}</Typography>
                         <Box sx={{ display: 'flex', gap: 0.5, mt: 0.3 }}>
                           <Chip
                             label={item.source}

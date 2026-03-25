@@ -554,7 +554,7 @@ export default function GroomingRecommendationPage() {
             sx={{
               p: 0, mb: 3, borderRadius: 3, overflow: 'hidden',
               borderColor: `${tabColor}30`,
-              background: hasProfile ? '#fff' : `linear-gradient(135deg, ${tabColor}08 0%, ${tabColor}03 100%)`,
+              bgcolor: hasProfile ? '#fff' : `${tabColor}05`,
             }}
           >
             {/* Profile status bar */}
@@ -562,10 +562,10 @@ export default function GroomingRecommendationPage() {
               sx={{
                 px: 2.5, py: 1.5,
                 display: 'flex', alignItems: 'center', gap: 1.5,
-                background: `linear-gradient(90deg, ${tabColor}12 0%, transparent 100%)`,
+                bgcolor: `${tabColor}08`,
                 borderBottom: `1px solid ${tabColor}15`,
                 cursor: 'pointer',
-                '&:hover': { background: `linear-gradient(90deg, ${tabColor}18 0%, transparent 100%)` },
+                '&:hover': { bgcolor: `${tabColor}12` },
               }}
               onClick={openProfileDialog}
             >
@@ -704,7 +704,7 @@ function SkincareResults({ result, color }: { result: SkinAnalysisResult | null;
       <Paper
         sx={{
           p: 0, mb: 3, borderRadius: 3, overflow: 'hidden',
-          background: `linear-gradient(135deg, ${color}15 0%, ${color}08 50%, #fff 100%)`,
+          bgcolor: '#fff',
           border: `1px solid ${color}20`,
         }}
       >
@@ -714,7 +714,7 @@ function SkincareResults({ result, color }: { result: SkinAnalysisResult | null;
               <CircularProgress variant="determinate" value={100} size={130} thickness={4} sx={{ color: '#e0e0e0', position: 'absolute' }} />
               <CircularProgress variant="determinate" value={result.skinScore} size={130} thickness={4} sx={{ color: getScoreColor(result.skinScore) }} />
               <Box sx={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <Typography variant="h3" sx={{ fontWeight: 800, color: getScoreColor(result.skinScore), lineHeight: 1 }}>{result.skinScore}</Typography>
+                <Typography variant="h3" sx={{ fontWeight: 700, color: getScoreColor(result.skinScore), lineHeight: 1 }}>{result.skinScore}</Typography>
                 <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary', mt: 0.5 }}>SKIN SCORE</Typography>
               </Box>
             </Box>
@@ -768,13 +768,13 @@ function SkincareResults({ result, color }: { result: SkinAnalysisResult | null;
                 sx={{
                   p: 0, borderRadius: 3, overflow: 'hidden', height: '100%',
                   border: `1px solid ${catColor}30`,
-                  transition: 'all 0.25s ease',
-                  '&:hover': { transform: 'translateY(-4px)', boxShadow: `0 8px 25px ${catColor}20`, borderColor: catColor },
+                  transition: 'all 0.15s ease',
+                  '&:hover': { borderColor: catColor },
                 }}
               >
                 {/* Step header bar */}
-                <Box sx={{ background: `linear-gradient(135deg, ${catColor}20 0%, ${catColor}08 100%)`, p: 1.5, display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                  <Avatar sx={{ bgcolor: catColor, width: 36, height: 36, fontSize: 14, fontWeight: 800 }}>
+                <Box sx={{ bgcolor: `${catColor}08`, p: 1.5, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <Avatar sx={{ bgcolor: catColor, width: 36, height: 36, fontSize: 14, fontWeight: 700 }}>
                     {step.step}
                   </Avatar>
                   <Box sx={{ flex: 1 }}>
@@ -823,7 +823,7 @@ function SkincareResults({ result, color }: { result: SkinAnalysisResult | null;
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 0, borderRadius: 3, overflow: 'hidden', border: `1px solid ${color}20` }}>
-            <Box sx={{ background: `linear-gradient(135deg, #fff8e1 0%, #fff3e020 100%)`, p: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ bgcolor: '#fff8e1', p: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
               <Avatar sx={{ bgcolor: '#fff3e0', width: 32, height: 32 }}>
                 <TipsAndUpdatesIcon sx={{ color: '#ff8f00', fontSize: 18 }} />
               </Avatar>
@@ -843,7 +843,7 @@ function SkincareResults({ result, color }: { result: SkinAnalysisResult | null;
         </Grid>
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 0, borderRadius: 3, overflow: 'hidden', border: `1px solid ${color}20` }}>
-            <Box sx={{ background: 'linear-gradient(135deg, #e3f2fd 0%, #e8f5e920 100%)', p: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ bgcolor: '#e3f2fd', p: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
               <Avatar sx={{ bgcolor: '#e3f2fd', width: 32, height: 32 }}>
                 <AcUnitIcon sx={{ color: '#1565c0', fontSize: 18 }} />
               </Avatar>
@@ -870,7 +870,7 @@ function HaircareResults({ result, color }: { result: HairAnalysisResult | null;
       <Paper
         sx={{
           p: 0, mb: 3, borderRadius: 3, overflow: 'hidden',
-          background: `linear-gradient(135deg, ${color}12 0%, ${color}05 50%, #fff 100%)`,
+          bgcolor: '#fff',
           border: `1px solid ${color}20`,
         }}
       >
@@ -919,11 +919,11 @@ function HaircareResults({ result, color }: { result: HairAnalysisResult | null;
                   sx={{
                     p: 0, borderRadius: 3, overflow: 'hidden', height: '100%',
                     border: `1px solid ${color}25`,
-                    transition: 'all 0.25s ease',
-                    '&:hover': { transform: 'translateY(-4px)', boxShadow: `0 8px 25px ${color}15` },
+                    transition: 'all 0.15s ease',
+                    '&:hover': { borderColor: color },
                   }}
                 >
-                  <Box sx={{ background: `linear-gradient(135deg, ${color}15 0%, ${color}05 100%)`, p: 2, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <Box sx={{ bgcolor: `${color}08`, p: 2, display: 'flex', alignItems: 'center', gap: 1.5 }}>
                     <Avatar sx={{ bgcolor: color, width: 44, height: 44 }}>
                       <ContentCutIcon sx={{ fontSize: 22 }} />
                     </Avatar>
@@ -961,12 +961,12 @@ function HaircareResults({ result, color }: { result: HairAnalysisResult | null;
                   sx={{
                     p: 2, borderRadius: 3, height: '100%',
                     border: `1px solid ${color}25`,
-                    transition: 'all 0.25s ease',
-                    '&:hover': { transform: 'translateY(-2px)', boxShadow: `0 4px 15px ${color}15` },
+                    transition: 'all 0.15s ease',
+                    '&:hover': { borderColor: color },
                   }}
                 >
                   <Box sx={{ display: 'flex', gap: 1.5 }}>
-                    <Avatar sx={{ bgcolor: `${color}12`, width: 36, height: 36, fontSize: 14, fontWeight: 800, color }}>{i + 1}</Avatar>
+                    <Avatar sx={{ bgcolor: `${color}12`, width: 36, height: 36, fontSize: 14, fontWeight: 700, color }}>{i + 1}</Avatar>
                     <Box sx={{ flex: 1 }}>
                       <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{care.name}</Typography>
                       <Typography variant="body2" color="text.secondary" sx={{ mb: 1, lineHeight: 1.6 }}>{care.description}</Typography>
@@ -1007,11 +1007,11 @@ function HaircareResults({ result, color }: { result: HairAnalysisResult | null;
                     sx={{
                       p: 0, borderRadius: 3, overflow: 'hidden', height: '100%',
                       border: `1px solid ${catColor}25`,
-                      transition: 'all 0.25s ease',
-                      '&:hover': { transform: 'translateY(-3px)', boxShadow: `0 6px 20px ${catColor}15` },
+                      transition: 'all 0.15s ease',
+                      '&:hover': { borderColor: catColor },
                     }}
                   >
-                    <Box sx={{ background: `linear-gradient(135deg, ${catColor}12 0%, ${catColor}04 100%)`, p: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box sx={{ bgcolor: `${catColor}08`, p: 1.5, display: 'flex', alignItems: 'center', gap: 1 }}>
                       <Avatar sx={{ bgcolor: catColor, width: 32, height: 32 }}>
                         {React.cloneElement(getCategoryIcon(prod.category || prod.name), { sx: { fontSize: 16, color: '#fff' } })}
                       </Avatar>
@@ -1042,7 +1042,7 @@ function HaircareResults({ result, color }: { result: HairAnalysisResult | null;
         {(result.stylingTips || []).length > 0 && (
           <Grid item xs={12} md={6}>
             <Paper sx={{ p: 0, borderRadius: 3, overflow: 'hidden', border: `1px solid ${color}20` }}>
-              <Box sx={{ background: `linear-gradient(135deg, ${color}10 0%, ${color}04 100%)`, p: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ bgcolor: `${color}08`, p: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Avatar sx={{ bgcolor: `${color}20`, width: 32, height: 32 }}>
                   <ContentCutIcon sx={{ color, fontSize: 18 }} />
                 </Avatar>
@@ -1064,7 +1064,7 @@ function HaircareResults({ result, color }: { result: HairAnalysisResult | null;
         {(result.tips || []).length > 0 && (
           <Grid item xs={12} md={6}>
             <Paper sx={{ p: 0, borderRadius: 3, overflow: 'hidden', border: `1px solid ${color}20` }}>
-              <Box sx={{ background: 'linear-gradient(135deg, #fff8e1 0%, #fff3e005 100%)', p: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ bgcolor: '#fff8e1', p: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Avatar sx={{ bgcolor: '#fff3e0', width: 32, height: 32 }}>
                   <TipsAndUpdatesIcon sx={{ color: '#ff8f00', fontSize: 18 }} />
                 </Avatar>
@@ -1099,7 +1099,7 @@ function OutfitResults({ result, color }: { result: OutfitAnalysisResult | null;
       <Paper
         sx={{
           p: 0, mb: 3, borderRadius: 3, overflow: 'hidden',
-          background: `linear-gradient(135deg, ${color}12 0%, ${color}05 50%, #fff 100%)`,
+          bgcolor: '#fff',
           border: `1px solid ${color}20`,
         }}
       >
@@ -1135,7 +1135,6 @@ function OutfitResults({ result, color }: { result: OutfitAnalysisResult | null;
                       sx={{
                         width: 48, height: 48, borderRadius: '50%', bgcolor: hex,
                         border: '3px solid #fff',
-                        boxShadow: `0 2px 8px ${hex}40`,
                         transition: 'transform 0.2s',
                         '&:hover': { transform: 'scale(1.15)' },
                       }}
@@ -1174,10 +1173,10 @@ function OutfitResults({ result, color }: { result: OutfitAnalysisResult | null;
         >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
-            sx={{ background: i === 0 ? `linear-gradient(135deg, ${color}08 0%, transparent 100%)` : undefined }}
+            sx={{ bgcolor: i === 0 ? `${color}06` : undefined }}
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-              <Avatar sx={{ bgcolor: color, width: 36, height: 36, fontSize: 14, fontWeight: 800 }}>{i + 1}</Avatar>
+              <Avatar sx={{ bgcolor: color, width: 36, height: 36, fontSize: 14, fontWeight: 700 }}>{i + 1}</Avatar>
               <Box>
                 <Typography sx={{ fontWeight: 700 }}>{outfit.occasion}</Typography>
                 <Typography variant="caption" color="text.secondary">{(outfit.items || []).length} pieces</Typography>
@@ -1196,8 +1195,8 @@ function OutfitResults({ result, color }: { result: OutfitAnalysisResult | null;
                         p: 0, borderRadius: 2.5, overflow: 'hidden', height: '100%',
                         border: `1px solid ${color}15`,
                         cursor: 'pointer',
-                        transition: 'all 0.25s ease',
-                        '&:hover': { borderColor: color, boxShadow: `0 6px 20px ${color}15`, transform: 'translateY(-3px)' },
+                        transition: 'all 0.15s ease',
+                        '&:hover': { borderColor: color },
                       }}
                     >
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, p: 1.5, bgcolor: '#f8f9fa' }}>
@@ -1262,8 +1261,8 @@ function OutfitResults({ result, color }: { result: OutfitAnalysisResult | null;
                       p: 2, borderRadius: 3, textAlign: 'center', height: '100%',
                       border: `1px solid ${color}20`,
                       cursor: 'pointer',
-                      transition: 'all 0.25s ease',
-                      '&:hover': { transform: 'translateY(-4px)', boxShadow: `0 8px 25px ${color}12`, borderColor: color },
+                      transition: 'all 0.15s ease',
+                      '&:hover': { borderColor: color },
                     }}
                   >
                     <Avatar sx={{ bgcolor: `${color}10`, width: 48, height: 48, mx: 'auto', mb: 1 }}>
@@ -1290,7 +1289,7 @@ function OutfitResults({ result, color }: { result: OutfitAnalysisResult | null;
         {(result.accessoryTips || []).length > 0 && (
           <Grid item xs={12} md={4}>
             <Paper sx={{ p: 0, borderRadius: 3, overflow: 'hidden', border: `1px solid ${color}20` }}>
-              <Box sx={{ background: `linear-gradient(135deg, #fff3e0 0%, transparent 100%)`, p: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ bgcolor: '#fff3e0', p: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Avatar sx={{ bgcolor: '#ffe0b2', width: 32, height: 32 }}>
                   <WatchIcon sx={{ color: '#e65100', fontSize: 18 }} />
                 </Avatar>
@@ -1310,7 +1309,7 @@ function OutfitResults({ result, color }: { result: OutfitAnalysisResult | null;
         {(result.tips || []).length > 0 && (
           <Grid item xs={12} md={4}>
             <Paper sx={{ p: 0, borderRadius: 3, overflow: 'hidden', border: `1px solid ${color}20` }}>
-              <Box sx={{ background: `linear-gradient(135deg, #f3e5f5 0%, transparent 100%)`, p: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ bgcolor: '#f3e5f5', p: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Avatar sx={{ bgcolor: '#e1bee7', width: 32, height: 32 }}>
                   <StarIcon sx={{ color: '#7b1fa2', fontSize: 18 }} />
                 </Avatar>
@@ -1330,7 +1329,7 @@ function OutfitResults({ result, color }: { result: OutfitAnalysisResult | null;
         {(result.sustainableTips || []).length > 0 && (
           <Grid item xs={12} md={4}>
             <Paper sx={{ p: 0, borderRadius: 3, overflow: 'hidden', border: `1px solid ${color}20` }}>
-              <Box sx={{ background: 'linear-gradient(135deg, #e8f5e9 0%, transparent 100%)', p: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ bgcolor: '#e8f5e9', p: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
                 <Avatar sx={{ bgcolor: '#c8e6c9', width: 32, height: 32 }}>
                   <RecyclingIcon sx={{ color: '#2e7d32', fontSize: 18 }} />
                 </Avatar>
@@ -1361,14 +1360,14 @@ function OutfitResults({ result, color }: { result: OutfitAnalysisResult | null;
           const itemHex = resolveColor(selectedItem.color || '');
           return (
             <>
-              {/* Gradient header */}
-              <Box sx={{ background: `linear-gradient(135deg, ${color}18 0%, ${color}08 100%)`, p: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
+              {/* Header */}
+              <Box sx={{ bgcolor: `${color}10`, p: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
                 <Avatar sx={{ bgcolor: color, width: 64, height: 64 }}>
                   {React.cloneElement(getClothingIcon(selectedItem.type || selectedItem.name), { sx: { fontSize: 32, color: '#fff' } })}
                 </Avatar>
                 <Box sx={{ flex: 1 }}>
                   <Chip label={selectedItem.type} size="small" sx={{ bgcolor: `${color}25`, color, fontWeight: 700, mb: 0.5 }} />
-                  <Typography variant="h6" sx={{ fontWeight: 800 }}>{selectedItem.name}</Typography>
+                  <Typography variant="h6" sx={{ fontWeight: 700 }}>{selectedItem.name}</Typography>
                 </Box>
                 <IconButton onClick={() => setSelectedItem(null)} size="small">✕</IconButton>
               </Box>
@@ -1473,7 +1472,7 @@ function EmptyState({ type, color, icon }: { type: string; color: string; icon: 
     <Paper
       sx={{
         p: 5, borderRadius: 4, textAlign: 'center',
-        background: `linear-gradient(180deg, ${color}08 0%, #fff 60%)`,
+        bgcolor: '#fafafa',
         border: `2px dashed ${color}30`,
       }}
     >
@@ -1485,10 +1484,10 @@ function EmptyState({ type, color, icon }: { type: string; color: string; icon: 
           </Avatar>
         </Box>
         {/* Small floating icons */}
-        <Avatar sx={{ bgcolor: '#fff3e0', width: 28, height: 28, position: 'absolute', top: -4, right: -8, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+        <Avatar sx={{ bgcolor: '#fff3e0', width: 28, height: 28, position: 'absolute', top: -4, right: -8 }}>
           <AutoAwesomeIcon sx={{ fontSize: 14, color: '#ff8f00' }} />
         </Avatar>
-        <Avatar sx={{ bgcolor: '#e8f5e9', width: 24, height: 24, position: 'absolute', bottom: 0, left: -6, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+        <Avatar sx={{ bgcolor: '#e8f5e9', width: 24, height: 24, position: 'absolute', bottom: 0, left: -6 }}>
           <StarIcon sx={{ fontSize: 12, color: '#4caf50' }} />
         </Avatar>
       </Box>

@@ -352,7 +352,7 @@ function ActiveSession({
               position: 'absolute', top: 12, left: 12,
               bgcolor: 'rgba(0,0,0,0.7)', borderRadius: 2, px: 2, py: 0.75,
             }}>
-              <Typography sx={{ color: '#fff', fontWeight: 800, fontSize: 28, lineHeight: 1 }}>{reps}</Typography>
+              <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: 28, lineHeight: 1 }}>{reps}</Typography>
               <Typography sx={{ color: '#aaa', fontSize: 10, textTransform: 'uppercase', letterSpacing: 1 }}>Reps</Typography>
             </Box>
 
@@ -518,15 +518,15 @@ function ResultsDialog({
 
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, my: 2 }}>
           <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="h4" sx={{ fontWeight: 800, color: '#1e88e5' }}>{reps}</Typography>
+            <Typography variant="h4" sx={{ fontWeight: 700, color: '#1e88e5' }}>{reps}</Typography>
             <Typography variant="caption" color="text.secondary">Reps</Typography>
           </Box>
           <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="h4" sx={{ fontWeight: 800, color: '#7b1fa2' }}>{formatTime(duration)}</Typography>
+            <Typography variant="h4" sx={{ fontWeight: 700, color: '#7b1fa2' }}>{formatTime(duration)}</Typography>
             <Typography variant="caption" color="text.secondary">Duration</Typography>
           </Box>
           <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="h4" sx={{ fontWeight: 800, color: formColor }}>{formPct}%</Typography>
+            <Typography variant="h4" sx={{ fontWeight: 700, color: formColor }}>{formPct}%</Typography>
             <Typography variant="caption" color="text.secondary">Form ({formLabel})</Typography>
           </Box>
         </Box>

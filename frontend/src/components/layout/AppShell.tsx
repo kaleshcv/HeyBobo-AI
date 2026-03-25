@@ -124,8 +124,8 @@ const RIGHT_DRAWER_WIDTH = 240;
 const RIGHT_COLLAPSED_WIDTH = 52;
 
 export default function AppShell() {
-  const [expanded, setExpanded] = useState(true);
-  const [rightExpanded, setRightExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
+  const [rightExpanded, setRightExpanded] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { user, isAuthenticated, logout } = useAuth();
@@ -222,7 +222,7 @@ export default function AppShell() {
               <ListItemIcon sx={{ minWidth: expanded ? 36 : 'auto', color: isChatEnabled ? 'primary.main' : 'text.secondary' }}>
                 <ChatIcon fontSize="small" />
               </ListItemIcon>
-              {expanded && (
+              {expanded ? (
                 <>
                   <ListItemText primary="Chat UI" primaryTypographyProps={{ fontSize: 14 }} />
                   <Switch
@@ -233,6 +233,8 @@ export default function AppShell() {
                     color="primary"
                   />
                 </>
+              ) : (
+                <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: isChatEnabled ? 'primary.main' : 'grey.400', position: 'absolute', bottom: 8, right: 8 }} />
               )}
             </ListItemButton>
           </Tooltip>
@@ -275,7 +277,7 @@ export default function AppShell() {
               </Avatar>
               {expanded && (
                 <Box sx={{ flex: 1, overflow: 'hidden' }}>
-                  <Typography variant="body2" sx={{ fontWeight: 500 }} noWrap>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }} noWrap>
                     {user.firstName} {user.lastName}
                   </Typography>
                   <Typography variant="caption" color="text.secondary" noWrap>
@@ -376,8 +378,8 @@ export default function AppShell() {
                       px: 1.5,
                       pt: 1.5,
                       pb: 0.25,
-                      fontWeight: 700,
-                      fontSize: '0.6rem',
+                      fontWeight: 600,
+                      fontSize: '0.65rem',
                       color: section.color,
                       letterSpacing: 0.8,
                       textTransform: 'uppercase',

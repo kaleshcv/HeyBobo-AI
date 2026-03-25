@@ -41,10 +41,10 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <Paper variant="outlined" sx={{ p: 2, borderRadius: 3, height: '100%' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, mb: 1.5, alignItems: 'flex-start' }}>
+    <Paper variant="outlined" sx={{ p: 2.5, borderRadius: 3, height: '100%' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, mb: 2, alignItems: 'flex-start' }}>
         <Box>
-          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
             {title}
           </Typography>
           {subtitle && (
@@ -87,11 +87,11 @@ function StatCard({
         alignItems: 'flex-start',
         ...(onClick && {
           cursor: 'pointer',
-          '&:hover': { borderColor: '#bdbdbd', boxShadow: '0 2px 10px rgba(0,0,0,0.06)' },
+          '&:hover': { bgcolor: 'action.hover' },
         }),
       }}
     >
-      <Avatar sx={{ bgcolor: color, width: 42, height: 42 }}>{icon}</Avatar>
+      <Avatar sx={{ bgcolor: '#f5f5f5', color: color, width: 42, height: 42 }}>{icon}</Avatar>
       <Box>
         <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
           {label}
@@ -233,7 +233,7 @@ export default function ShoppingPage() {
       </Box>
 
       {/* Stat Cards */}
-      <Grid container spacing={1.5} sx={{ mb: 2 }}>
+      <Grid container spacing={2} sx={{ mb: 2.5 }}>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             icon={<AccountBalanceWalletIcon sx={{ color: '#fff', fontSize: 20 }} />}
@@ -277,10 +277,10 @@ export default function ShoppingPage() {
       </Grid>
 
       {/* Main Grid */}
-      <Grid container spacing={1.5}>
+      <Grid container spacing={2}>
         {/* Left 8 cols */}
         <Grid item xs={12} lg={8}>
-          <Grid container spacing={1.5}>
+          <Grid container spacing={2}>
             {/* Budget overview */}
             <Grid item xs={12}>
               <SectionCard
@@ -402,11 +402,11 @@ export default function ShoppingPage() {
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
                           <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: CATEGORY_COLORS[expense.category], flexShrink: 0 }} />
                           <Box sx={{ minWidth: 0 }}>
-                            <Typography variant="body2" sx={{ fontWeight: 500 }} noWrap>{expense.description}</Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 600 }} noWrap>{expense.description}</Typography>
                             <Typography variant="caption" color="text.secondary">{CATEGORY_LABELS[expense.category]} · {expense.date}</Typography>
                           </Box>
                         </Box>
-                        <Typography variant="body2" sx={{ fontWeight: 700, ml: 1, flexShrink: 0 }}>${expense.amount.toFixed(0)}</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 600, ml: 1, flexShrink: 0 }}>${expense.amount.toFixed(0)}</Typography>
                       </Box>
                     ))}
                   </Box>
@@ -424,12 +424,12 @@ export default function ShoppingPage() {
                 {orders.length === 0 ? (
                   <Alert severity="info">No orders yet. Place orders from your shopping lists or campus marketplace.</Alert>
                 ) : (
-                  <Grid container spacing={1}>
+                  <Grid container spacing={1.5}>
                     {orders.slice(0, 6).map((order) => {
                       const title = order.items.map((i) => i.name).join(', ');
                       return (
                         <Grid item xs={12} sm={6} key={order.id}>
-                          <Paper variant="outlined" sx={{ p: 1.5, borderRadius: 2 }}>
+                          <Paper variant="outlined" sx={{ p: 2, borderRadius: 2 }}>
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
                               <Typography variant="body2" sx={{ fontWeight: 600 }} noWrap>
                                 {title.length > 30 ? `${title.slice(0, 30)}…` : title}
@@ -456,7 +456,7 @@ export default function ShoppingPage() {
 
         {/* Right 4 cols */}
         <Grid item xs={12} lg={4}>
-          <Grid container spacing={1.5}>
+          <Grid container spacing={2}>
             {/* Insights */}
             <Grid item xs={12}>
               <SectionCard title="Shopping Insights" subtitle="Key signals across all shopping sub-modules">
@@ -492,11 +492,11 @@ export default function ShoppingPage() {
                     {availableListings.slice(0, 4).map((listing) => (
                       <Box key={listing.id} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 0.5 }}>
                         <Box sx={{ minWidth: 0 }}>
-                          <Typography variant="body2" sx={{ fontWeight: 500 }} noWrap>{listing.title}</Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 600 }} noWrap>{listing.title}</Typography>
                           <Typography variant="caption" color="text.secondary">{listing.category} · {listing.condition}</Typography>
                         </Box>
                         <Box sx={{ textAlign: 'right', flexShrink: 0, ml: 1 }}>
-                          <Typography variant="body2" sx={{ fontWeight: 700 }}>${listing.price}</Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 600 }}>${listing.price}</Typography>
                           {listing.originalPrice && (
                             <Typography variant="caption" color="text.disabled" sx={{ textDecoration: 'line-through' }}>${listing.originalPrice}</Typography>
                           )}

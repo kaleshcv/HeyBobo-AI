@@ -126,7 +126,7 @@ export default function TextbooksTab({ onSelectBook, selectedBookId }: Props) {
         ) : (
           <>
             <UploadFileIcon sx={{ fontSize: 40, color: '#e57373', mb: 1 }} />
-            <Typography variant="body1" sx={{ fontWeight: 500 }}>Upload Textbook</Typography>
+            <Typography variant="body1" sx={{ fontWeight: 600 }}>Upload Textbook</Typography>
             <Typography variant="caption" color="text.secondary">PDF up to 50MB</Typography>
           </>
         )}
@@ -161,7 +161,7 @@ export default function TextbooksTab({ onSelectBook, selectedBookId }: Props) {
             >
               <PictureAsPdfIcon sx={{ fontSize: 28, color: '#e57373' }} />
               <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Typography variant="body2" sx={{ fontWeight: 500 }} noWrap>{book.name}</Typography>
+                <Typography variant="body2" sx={{ fontWeight: 600 }} noWrap>{book.name}</Typography>
                 <Typography variant="caption" color="text.secondary">
                   {book.pageCount} pages · {formatSize(book.size)} · {new Date(book.createdAt).toLocaleDateString()}
                 </Typography>

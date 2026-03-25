@@ -205,10 +205,10 @@ export default function GroupsPage() {
                   onClick={() => navigate(`/app/groups/${group.id}`)}
                   sx={{
                     cursor: 'pointer', border: '1px solid', borderColor: 'divider', boxShadow: 'none',
-                    transition: 'all 0.2s', '&:hover': { borderColor: '#bdbdbd', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', transform: 'translateY(-1px)' },
+                    '&:hover': { bgcolor: 'action.hover' },
                   }}
                 >
-                  <Box sx={{ height: 6, background: 'linear-gradient(90deg, #616161, #9e9e9e)', borderRadius: '12px 12px 0 0' }} />
+                  <Box sx={{ height: 4, bgcolor: '#9e9e9e', borderRadius: '12px 12px 0 0' }} />
                   <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                       <Badge badgeContent={unread} color="error" max={9} sx={{ '& .MuiBadge-badge': { fontSize: 10, height: 16, minWidth: 16 } }}>

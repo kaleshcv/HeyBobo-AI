@@ -217,7 +217,7 @@ function StatCard({
         borderColor: 'divider',
         ...(onClick && {
           cursor: 'pointer',
-          '&:hover': { borderColor: '#bdbdbd', boxShadow: '0 2px 10px rgba(0,0,0,0.06)' },
+          '&:hover': { bgcolor: 'action.hover' },
         }),
       }}
     >

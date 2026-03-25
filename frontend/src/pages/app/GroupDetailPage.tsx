@@ -226,7 +226,7 @@ function MembersTab({ group }: { group: Group }) {
                 <ListItemText
                   primary={<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>{m.name} {roleIcon(m.role)} <Chip label={m.role} size="small" sx={{ height: 18, fontSize: 10 }} /></Box>}
                   secondary={`${m.email} · Joined ${new Date(m.joinedAt).toLocaleDateString()}`}
-                  primaryTypographyProps={{ fontSize: 13, fontWeight: 500 }}
+                  primaryTypographyProps={{ fontSize: 13, fontWeight: 600 }}
                   secondaryTypographyProps={{ fontSize: 11 }}
                 />
                 <ListItemSecondaryAction>
@@ -337,7 +337,7 @@ function ContentTab({ group }: { group: Group }) {
                 <SectionCard>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Chip label={c.type} size="small" sx={{ height: 20, fontSize: 10 }} />
-                    <Typography variant="body2" sx={{ fontWeight: 500, flex: 1 }} noWrap>{c.title}</Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 600, flex: 1 }} noWrap>{c.title}</Typography>
                     <IconButton size="small" onClick={() => togglePinContent(group.id, c.id)}><PushPinIcon sx={{ fontSize: 14, color: '#616161' }} /></IconButton>
                     <IconButton size="small" onClick={() => { removeContent(group.id, c.id); toast.success('Removed'); }}><DeleteIcon sx={{ fontSize: 14 }} /></IconButton>
                   </Box>
@@ -1353,7 +1353,7 @@ function LeaderboardTab({ group }: { group: Group }) {
                 <ListItemText
                   primary={<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>{entry.memberName} {entry.badges.map((b) => <Chip key={b} label={b} size="small" sx={{ height: 18, fontSize: 9, bgcolor: '#f5f5f5' }} />)}</Box>}
                   secondary={`Quiz: ${entry.quizScore} · Participation: ${entry.participation} · Streak: ${entry.streak}d`}
-                  primaryTypographyProps={{ fontSize: 13, fontWeight: 500 }} secondaryTypographyProps={{ fontSize: 11 }}
+                  primaryTypographyProps={{ fontSize: 13, fontWeight: 600 }} secondaryTypographyProps={{ fontSize: 11 }}
                 />
                 <Typography variant="h6" sx={{ fontWeight: 700, color: '#616161', minWidth: 50, textAlign: 'right' }}>{entry.totalPoints}</Typography>
               </ListItem>

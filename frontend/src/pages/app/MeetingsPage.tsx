@@ -645,7 +645,7 @@ function LiveMeetingView({ meeting, onLeave }: { meeting: Meeting; onLeave: () =
       <Box sx={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
         {/* Video grid area */}
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', p: 2 }}>
-          <Grid container spacing={1} sx={{ maxWidth: 900, justifyContent: 'center' }}>
+          <Grid container spacing={1.5} sx={{ maxWidth: 900, justifyContent: 'center' }}>
             {activeParticipants.length === 0 ? (
               <Grid item xs={12} sx={{ textAlign: 'center' }}>
                 <Typography color="#888">Waiting for participants...</Typography>

@@ -196,7 +196,7 @@ function ScoreRing({ score }: { score: number }) {
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
       }}>
-        <Typography variant="h5" sx={{ fontWeight: 800, color, lineHeight: 1 }}>{score}</Typography>
+        <Typography variant="h5" sx={{ fontWeight: 700, color, lineHeight: 1 }}>{score}</Typography>
         <Typography variant="caption" color="text.secondary">/100</Typography>
       </Box>
     </Box>
@@ -327,7 +327,7 @@ export default function GroomingDashboardPage() {
               </Button>
             }
           >
-            <Grid container spacing={1} sx={{ mb: 1.5 }}>
+            <Grid container spacing={1.5} sx={{ mb: 1.5 }}>
               {[
                 { icon: <WaterDropIcon fontSize="small" />, label: 'Skin Type', value: PROFILE.skinType, color: '#e91e63' },
                 { icon: <ContentCutIcon fontSize="small" />, label: 'Hair Type', value: PROFILE.hairType, color: '#ff9800' },
@@ -518,15 +518,15 @@ export default function GroomingDashboardPage() {
             <Divider sx={{ my: 1.5 }} />
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="h6" sx={{ fontWeight: 800, color: '#6366F1' }}>{stats.total}</Typography>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: '#6366F1' }}>{stats.total}</Typography>
                 <Typography variant="caption" color="text.secondary">Total</Typography>
               </Box>
               <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="h6" sx={{ fontWeight: 800, color: '#e91e63' }}>{stats.saved}</Typography>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: '#e91e63' }}>{stats.saved}</Typography>
                 <Typography variant="caption" color="text.secondary">Saved</Typography>
               </Box>
               <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="h6" sx={{ fontWeight: 800, color: '#4caf50' }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: '#4caf50' }}>
                   {RECOMMENDATIONS.filter((r) => r.priority === 'High').length}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">High Priority</Typography>

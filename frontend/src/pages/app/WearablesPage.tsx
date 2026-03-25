@@ -201,7 +201,7 @@ function PairDeviceDialog({ open, onClose }: { open: boolean; onClose: () => voi
                       { label: '🚴 Cycling', desc: 'Speed & power' },
                     ].map((p) => (
                       <Tooltip key={p.label} title={p.desc}>
-                        <Chip label={p.label} size="small" sx={{ fontSize: 11, fontWeight: 500 }} />
+                        <Chip label={p.label} size="small" sx={{ fontSize: 11, fontWeight: 600 }} />
                       </Tooltip>
                     ))}
                   </Box>
@@ -493,7 +493,7 @@ function AdminStudentMonitor() {
         ].map((stat) => (
           <Paper key={stat.label} elevation={0} sx={{ p: 1.5, borderRadius: 2, border: '1px solid #e0e0e0', flex: '1 1 140px', minWidth: 140 }}>
             <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>{stat.label}</Typography>
-            <Typography variant="h5" sx={{ fontWeight: 800, color: stat.color }}>{stat.value}</Typography>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: stat.color }}>{stat.value}</Typography>
           </Paper>
         ))}
       </Box>

@@ -63,7 +63,7 @@ export default function AITutorPage() {
             '& .MuiTab-root': {
               minHeight: 42,
               textTransform: 'none',
-              fontWeight: 500,
+              fontWeight: 600,
               fontSize: 13,
               gap: 0.5,
               px: 2,

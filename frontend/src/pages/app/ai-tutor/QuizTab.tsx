@@ -189,7 +189,7 @@ export default function QuizTab({ selectedBookId }: Props) {
           const isCorrect = userAnswer === q.correctIndex;
           return (
             <Paper key={q.id} variant="outlined" sx={{ p: 2, mb: 1.5, borderRadius: 2, borderColor: showResults ? (isCorrect ? '#4caf50' : userAnswer !== undefined ? '#f44336' : 'divider') : 'divider' }}>
-              <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>
+              <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
                 {idx + 1}. {q.question}
               </Typography>
               <RadioGroup
@@ -327,7 +327,7 @@ export default function QuizTab({ selectedBookId }: Props) {
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <QuizIcon sx={{ fontSize: 20, color: '#7c4dff' }} />
                       <Box sx={{ flex: 1 }}>
-                        <Typography variant="body2" sx={{ fontWeight: 500 }}>{quiz.title}</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{quiz.title}</Typography>
                         <Typography variant="caption" color="text.secondary">
                           {quiz.questions.length} questions · {attempts.length} attempt{attempts.length !== 1 ? 's' : ''}
                           {bestScore !== null && ` · Best: ${bestScore}/${quiz.questions.length}`}

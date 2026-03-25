@@ -63,8 +63,7 @@ function CourseCard({
         transition: 'all 0.2s',
         position: 'relative',
         '&:hover': {
-          borderColor: '#bdbdbd',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+          bgcolor: 'action.hover',
         },
         '&:hover .delete-btn': { opacity: 1 },
       }}
@@ -361,7 +360,7 @@ function StatCard({
         alignItems: 'flex-start',
         gap: 1.5,
         borderColor: 'divider',
-        ...(onClick && { cursor: 'pointer', '&:hover': { borderColor: '#bdbdbd', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' } }),
+        ...(onClick && { cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }),
       }}
     >
       <Box
@@ -468,28 +467,28 @@ function AITutorInsights() {
       {/* AI stat cards */}
       <Grid container spacing={1.5} sx={{ mb: 1.5 }}>
         <Grid item xs={6} sm={3}>
-          <Paper variant="outlined" onClick={() => navigate('/app/ai-tutor?tab=0')} sx={{ p: 1.5, borderRadius: 3, textAlign: 'center', borderColor: 'divider', cursor: 'pointer', '&:hover': { borderColor: '#bdbdbd', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' } }}>
+          <Paper variant="outlined" onClick={() => navigate('/app/ai-tutor?tab=0')} sx={{ p: 1.5, borderRadius: 3, textAlign: 'center', borderColor: 'divider', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}>
             <MenuBookIcon sx={{ fontSize: 18, color: '#7c4dff', mb: 0.25 }} />
             <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 18 }}>{totalTextbooks}</Typography>
             <Typography variant="caption" color="text.secondary">Textbooks</Typography>
           </Paper>
         </Grid>
         <Grid item xs={6} sm={3}>
-          <Paper variant="outlined" onClick={() => navigate('/app/ai-tutor?tab=1')} sx={{ p: 1.5, borderRadius: 3, textAlign: 'center', borderColor: 'divider', cursor: 'pointer', '&:hover': { borderColor: '#bdbdbd', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' } }}>
+          <Paper variant="outlined" onClick={() => navigate('/app/ai-tutor?tab=1')} sx={{ p: 1.5, borderRadius: 3, textAlign: 'center', borderColor: 'divider', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}>
             <CheckCircleIcon sx={{ fontSize: 18, color: '#4caf50', mb: 0.25 }} />
             <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 18 }}>{completedChapters}/{totalChapters}</Typography>
             <Typography variant="caption" color="text.secondary">Chapters Done</Typography>
           </Paper>
         </Grid>
         <Grid item xs={6} sm={3}>
-          <Paper variant="outlined" onClick={() => navigate('/app/ai-tutor?tab=2')} sx={{ p: 1.5, borderRadius: 3, textAlign: 'center', borderColor: 'divider', cursor: 'pointer', '&:hover': { borderColor: '#bdbdbd', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' } }}>
+          <Paper variant="outlined" onClick={() => navigate('/app/ai-tutor?tab=2')} sx={{ p: 1.5, borderRadius: 3, textAlign: 'center', borderColor: 'divider', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}>
             <QuizIcon sx={{ fontSize: 18, color: '#ff9800', mb: 0.25 }} />
             <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 18 }}>{totalAttempts}</Typography>
             <Typography variant="caption" color="text.secondary">AI Quiz Attempts</Typography>
           </Paper>
         </Grid>
         <Grid item xs={6} sm={3}>
-          <Paper variant="outlined" onClick={() => navigate('/app/ai-tutor?tab=4')} sx={{ p: 1.5, borderRadius: 3, textAlign: 'center', borderColor: 'divider', cursor: 'pointer', '&:hover': { borderColor: '#bdbdbd', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' } }}>
+          <Paper variant="outlined" onClick={() => navigate('/app/ai-tutor?tab=4')} sx={{ p: 1.5, borderRadius: 3, textAlign: 'center', borderColor: 'divider', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}>
             <SchoolIcon sx={{ fontSize: 18, color: '#2196f3', mb: 0.25 }} />
             <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 18 }}>{totalLessons}</Typography>
             <Typography variant="caption" color="text.secondary">AI Lessons</Typography>
@@ -500,7 +499,7 @@ function AITutorInsights() {
       <Grid container spacing={1.5}>
         {/* Quiz Score History - Bar Chart */}
         <Grid item xs={12} md={6}>
-          <Paper variant="outlined" onClick={() => navigate('/app/ai-tutor?tab=2')} sx={{ p: 2, borderRadius: 3, borderColor: 'divider', cursor: 'pointer', '&:hover': { borderColor: '#bdbdbd', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' } }}>
+          <Paper variant="outlined" onClick={() => navigate('/app/ai-tutor?tab=2')} sx={{ p: 2, borderRadius: 3, borderColor: 'divider', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>AI Quiz Score History</Typography>
             {recentAttempts.length === 0 ? (
               <Typography variant="body2" color="text.secondary">No AI quizzes taken yet</Typography>
@@ -547,7 +546,7 @@ function AITutorInsights() {
 
         {/* Study Plan Progress - Donut Charts */}
         <Grid item xs={12} md={6}>
-          <Paper variant="outlined" onClick={() => navigate('/app/ai-tutor?tab=1')} sx={{ p: 2, borderRadius: 3, borderColor: 'divider', cursor: 'pointer', '&:hover': { borderColor: '#bdbdbd', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' } }}>
+          <Paper variant="outlined" onClick={() => navigate('/app/ai-tutor?tab=1')} sx={{ p: 2, borderRadius: 3, borderColor: 'divider', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>Study Plan Progress</Typography>
             {bookProgress.length === 0 || totalChapters === 0 ? (
               <Typography variant="body2" color="text.secondary">No study plans created yet</Typography>
@@ -613,7 +612,7 @@ function AITutorInsights() {
                     borderColor: 'divider',
                     borderLeft: '3px solid',
                     borderLeftColor: pct < 40 ? '#f44336' : '#ff9800',
-                    '&:hover': { borderColor: '#bdbdbd', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' },
+                    '&:hover': { bgcolor: 'action.hover' },
                   }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
@@ -843,7 +842,7 @@ function DashboardTab() {
       {/* Progress breakdown */}
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
         <Grid item xs={12} md={6}>
-          <Paper variant="outlined" onClick={() => navigate('/app/courses')} sx={{ p: 2, borderRadius: 3, borderColor: 'divider', cursor: 'pointer', '&:hover': { borderColor: '#bdbdbd', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' } }}>
+          <Paper variant="outlined" onClick={() => navigate('/app/courses')} sx={{ p: 2, borderRadius: 3, borderColor: 'divider', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5 }}>
               Course Progress
             </Typography>
@@ -956,7 +955,7 @@ function DashboardTab() {
                       borderRadius: 3,
                       cursor: 'pointer',
                       borderColor: 'divider',
-                      '&:hover': { borderColor: '#bdbdbd', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' },
+                      '&:hover': { bgcolor: 'action.hover' },
                     }}
                   >
                     <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5, fontSize: 13 }} noWrap>

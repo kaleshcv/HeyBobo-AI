@@ -14,6 +14,11 @@
             "date": 1774335955762,
             "name": "/Users/Kalesh/Desktop/eduplatform/backend/logs/app/app-2026-03-24.log",
             "hash": "1f662ef3ed3010ebed2376fd3aec4f80383ec12214aa7b8b9cf4314927921e44"
+        },
+        {
+            "date": 1774409562710,
+            "name": "/Users/Kalesh/Desktop/eduplatform/backend/logs/app/app-2026-03-25.log",
+            "hash": "e5e5ce39307194a270ba9ca178d6a5ea00ea3321ce4d7a8837e1195dd4df604c"
         }
     ],
     "hashType": "sha256"

@@ -1,19 +1,20 @@
-# EduPlatform — Full-Stack Education Super App
+# HeyBobo AI — Intelligent Life Management Platform
 
-> Phase 1: Education Module · Built for scale · Modular monolith architecture
+> AI-powered super app for education, health, fitness, nutrition, shopping, grooming, and more — all orchestrated by a central AI Brain.
 
 ## Stack
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | React 18 + Vite + TypeScript + TailwindCSS |
+| Frontend | React 18 + Vite + TypeScript + MUI v5 + Zustand |
 | Backend | NestJS + TypeScript |
 | Database | MongoDB (Mongoose) |
 | Cache / Queues | Redis + BullMQ |
-| AI | Google Gemini 1.5 Flash |
+| AI Engine | Google Gemini 1.5 Flash |
 | Video | Mux |
 | Auth | JWT (access + refresh) + Google OAuth |
 | Docs | Swagger at `/api/v1/docs` |
+| Deployment | Docker · Nginx · Linode VPS |
 
 ---
 
@@ -79,7 +80,7 @@ docker-compose up -d
 ## Project Structure
 
 ```
-eduplatform/
+HeyBobo-AI/
 ├── backend/                        # NestJS API
 │   └── src/
 │       ├── main.ts                 # App bootstrap, CORS, rate limiting
@@ -91,36 +92,25 @@ eduplatform/
 │       │   ├── filters/            # Global exception filters
 │       │   ├── guards/             # JWT auth, refresh token, roles
 │       │   ├── interceptors/       # Logging, response transform
-│       │   ├── logger/             # Winston logger config
-│       │   ├── pipes/              # ObjectId validation
-│       │   └── storage/            # Multer config for uploads
+│       │   └── pipes/              # ObjectId validation
 │       └── modules/
 │           ├── auth/               # JWT + OAuth + refresh tokens
 │           ├── users/              # Profiles, dashboard, preferences
-│           ├── education/          # Core education module
-│           │   ├── categories/
-│           │   ├── courses/
-│           │   ├── sections/
-│           │   ├── lessons/
-│           │   ├── enrollments/
-│           │   ├── quizzes/
-│           │   ├── assignments/
-│           │   └── reviews/
+│           ├── education/          # Courses, sections, lessons, quizzes, assignments, reviews, enrollments, categories
 │           ├── media/              # Mux video integration
-│           ├── ai/                 # Gemini AI tutor + documents
+│           ├── ai/                 # Gemini AI tutor + document generation
 │           ├── notifications/      # In-app + push + email
 │           ├── certificates/       # PDF generation + verify
 │           ├── analytics/          # Event tracking + platform stats
 │           ├── admin/              # User & course management
 │           ├── fitness/            # Workout sessions, daily metrics, goals
-│           ├── dietary/            # Meal logs, nutrition, supplements, meal plans, grocery lists
+│           ├── dietary/            # Meals, nutrition, supplements, meal plans, grocery
 │           └── grooming/           # Recommendations, visual analysis, profiles
 │
 ├── frontend/                       # React 18 + Vite SPA
 │   └── src/
-│       ├── main.tsx                # App entry + error logger init
+│       ├── main.tsx                # App entry
 │       ├── App.tsx                 # Root component with providers
-│       ├── theme.ts                # MUI theme configuration
 │       ├── pages/
 │       │   ├── public/             # Landing, course catalog, about
 │       │   ├── auth/               # Login, register, OAuth, password reset
@@ -128,24 +118,41 @@ eduplatform/
 │       │   ├── teacher/            # Course builder, analytics, students
 │       │   ├── admin/              # Users, courses, analytics management
 │       │   └── app/                # Main app pages
-│       │       ├── ai-tutor/       # Chat, quiz gen, study plans, textbooks
-│       │       ├── dietary/        # Meal log, nutrition tracker, meal planner, grocery
-│       │       └── grooming/       # Dashboard, recommendations, visual analysis
+│       │       ├── AIBrainPage     # Central AI dashboard + Life View toggle
+│       │       ├── SimpleLifeDashboard  # Life View — unified dashboard from all stores
+│       │       ├── ai-tutor/       # Textbooks, Study Plans, Quizzes, Progress, Chat
+│       │       ├── dietary/        # Dashboard, Meal Log, Nutrition, Meal Planner, Grocery
+│       │       ├── grooming/       # Dashboard, Recommendations, Visual Analysis
+│       │       └── shopping/       # Lists, Campus Marketplace, Budget, Orders
 │       ├── components/
-│       │   ├── common/             # ErrorBoundary, CourseCard, VideoPlayer, SearchBar
-│       │   ├── layout/             # AppShell, Header, Sidebar, Footer, role layouts
-│       │   └── ui/                 # Button, Card, Modal, Input, etc.
+│       │   ├── common/             # BrainChatbot, ErrorBoundary, CourseCard, etc.
+│       │   ├── layout/             # AppShell (dual sidebar), Header, Footer
+│       │   └── ui/                 # Shared UI components
 │       ├── hooks/                  # React Query hooks (courses, AI, quiz, enrollment, etc.)
-│       ├── store/                  # Zustand stores (auth, courses, fitness, dietary, AI tutor)
+│       ├── store/                  # 20 Zustand stores (persisted)
+│       │   ├── aiBrainStore        # AI dashboard data: schedule, insights, alerts, recommendations
+│       │   ├── wearablesStore      # BLE devices, health readings (28 metric types)
+│       │   ├── activityTrackingStore # Daily metrics, goals, workouts
+│       │   ├── workoutSystemStore  # Exercise library, workout plans, logs
+│       │   ├── liveWorkoutStore    # Real-time workout sessions
+│       │   ├── courseStore          # Courses, video progress, quiz progress
+│       │   ├── shoppingListStore   # Smart shopping lists from all modules
+│       │   ├── injuryStore         # Injury tracking, rehab programs, pain logs
+│       │   ├── dietaryProfileStore # Calorie/macro targets, diet type, allergies
+│       │   ├── fitnessProfileStore # Fitness onboarding profile
+│       │   ├── budgetStore         # Budget tracking, expense categories
+│       │   ├── groupStore          # Study groups, discussions
+│       │   ├── meetingStore        # Virtual meetings
+│       │   ├── campusMarketplaceStore # Marketplace listings
+│       │   ├── ordersReviewsStore  # Order tracking, reviews
+│       │   ├── aiTutorStore        # AI tutor conversations, study plans
+│       │   ├── authStore           # Auth state
+│       │   └── uiStore             # UI preferences (sidebar, chat toggle)
 │       ├── lib/
 │       │   ├── api.ts              # Axios client + interceptors + all API modules
-│       │   ├── gemini.ts           # Google Gemini AI functions (tutor, dietary, grooming)
-│       │   ├── errorLogger.ts      # Client-side error logging (localStorage + console)
-│       │   ├── bleService.ts       # Bluetooth LE wearable service
-│       │   ├── queryClient.ts      # React Query client config
-│       │   ├── utils.ts            # Shared utilities
+│       │   ├── gemini.ts           # Gemini AI functions (tutor, dietary, grooming, brain)
 │       │   └── validators.ts       # Input validation helpers
-│       ├── router/                 # React Router config + protected/role routes
+│       ├── router/                 # React Router + protected/role routes
 │       └── types/                  # TypeScript type definitions
 │
 └── docker-compose.yml              # Full stack: MongoDB + Redis + Backend + Frontend
@@ -153,66 +160,102 @@ eduplatform/
 
 ---
 
+## Architecture
+
+The app uses a **dual-sidebar layout** (AppShell):
+
+- **Left sidebar** — 7 main modules (AI Brain, Education, Health, Fitness, Dietary, Shopping, Grooming)
+- **Right sidebar** — Context-aware sub-modules that change based on the active module
+- **BrainChatbot** — Floating AI chat assistant (toggleable from left sidebar)
+- Both sidebars start collapsed by default and expand on click
+
+### State Management
+
+All client-side state is managed through **20 Zustand stores** with localStorage persistence. The `useBrainData()` hook aggregates data from every store into a single `AIBrainInput` object for AI analysis.
+
+### AI Brain & Life View
+
+The AI Brain page (`/app/ai-brain`) is the central hub:
+
+- **AI Brain mode** — AI-generated dashboard with priorities, schedule, alerts, module insights, cross-module insights, and smart recommendations
+- **Life View mode** (default) — Real-time dashboard pulling live data from all Zustand stores:
+  - Header: streak days, XP/level (computed from lectures, quizzes, workouts, live sessions), Life Score
+  - Vitals: wearable readings (sleep, stress, recovery) + activity metrics
+  - Needs Attention: highest-severity undismissed brain alert
+  - Today's Plan: AI-generated schedule
+  - Suggested for You: unified suggestions from health, fitness, injury, education, shopping, and AI recommendations
+  - Daily Missions: AI recommendations as gamified tasks
+  - Bobo Says: cross-module AI insights
+  - Module Scores: per-module score circles from AI analysis
+
+---
+
 ## Modules & Features
 
-The app is organized into **5 main modules**, each accessible from the left sidebar. Each module has its own sub-pages accessible from a right-side contextual menu.
+### 0. AI Brain (Central Hub)
+| Feature | Description |
+|---------|-------------|
+| **AI Brain Dashboard** | AI-analyzed priorities, schedule, alerts, module insights, recommendations |
+| **Life View Dashboard** | Real-time data aggregation from all 20 stores — zero static data |
+| **Cross-Module Insights** | AI-detected patterns across education, fitness, health, dietary |
+| **Smart Recommendations** | Typed: do-now, recover, learn, buy, plan, monitor — with navigation |
+| **BrainChatbot** | Floating AI assistant with module-aware context |
 
 ### 1. Education
 
-Core learning management system with courses, lessons, quizzes, and AI-powered tutoring.
-
 | Sub-Module | Description |
 |------------|-------------|
-| **Dashboard** | Overview of enrolled courses, progress, and recommendations |
+| **Dashboard** | Enrolled courses, progress, and recommendations |
 | **Courses** | Browse, enroll, and learn from structured courses |
-| **AI Tutor** | AI-powered learning assistant with 5 tabs: **Textbooks**, **Study Plans**, **Quizzes**, **Progress**, **Chat** |
-| **Groups** | Study groups and collaborative learning |
+| **AI Tutor** | 5 tabs: **Textbooks**, **Study Plans**, **Quizzes**, **Progress**, **Chat** |
+| **Groups** | Study groups with discussions, assignments, meetings |
 | **Meetings** | Virtual meetings and live sessions |
-| **Course Player** | Full lesson player with video, progress tracking, bookmarks |
+| **Course Player** | Video player with progress tracking and bookmarks |
 
 ### 2. Health
-
-Health monitoring, vitals tracking, and wearable device integration.
 
 | Sub-Module | Description |
 |------------|-------------|
 | **Dashboard** | Health overview with metrics summary and trends |
-| **Health Profile** | Personal health profile, vitals, and medical info |
-| **Activity Tracking** | Manual entry and auto-sync activity data (2 tabs: **Manual Entry**, **Auto Sync**) |
-| **Wearables** | Connect fitness devices (2 tabs: **Bluetooth Real Device**, **Simulated Device**) |
+| **Health Profile** | Personal health profile, vitals, medical info |
+| **Activity Tracking** | Manual entry + auto-sync (2 tabs) |
+| **Wearables** | BLE device pairing + simulated devices (28 health metric types) |
+| **Injury Tracker** | Injury logging, rehab programs, pain logs, recovery milestones |
 
 ### 3. Fitness
 
-Workout planning, exercise tracking, and live workout sessions.
-
 | Sub-Module | Description |
 |------------|-------------|
-| **Dashboard** | Fitness overview with workout stats and goals progress |
-| **Workouts** | Full workout system with 4 tabs: **Exercise Library**, **Workout Plans**, **Custom Workouts**, **Live Workout** |
+| **Dashboard** | Workout stats, goals progress, streak tracking |
+| **Workouts** | 4 tabs: **Exercise Library** (26 exercises), **Workout Plans** (4 presets), **Custom Workouts**, **Live Workout** (pose detection) |
 
 ### 4. Dietary
 
-Complete nutrition management with AI-powered meal planning and grocery list generation.
+| Sub-Module | Description |
+|------------|-------------|
+| **Dashboard** | Daily nutrition, calorie tracking, macro breakdown |
+| **Meal Log** | Log meals with AI photo analysis (filter by meal type) |
+| **Nutrition Tracker** | 3 tabs: **Dashboard**, **Food Diary**, **Supplements** |
+| **Meal Planner** | AI meal plans: **Meal Schedule**, **Prep Guide**, **Shopping List**, **AI Insights** |
+| **Grocery & Food** | Smart grocery lists: **My Lists**, **Shopping View**, **Nutrition Summary** |
+
+### 5. Shopping
 
 | Sub-Module | Description |
 |------------|-------------|
-| **Dashboard** | Daily nutrition summary, calorie tracking, macro breakdown |
-| **Meal Log** | Log meals with AI photo analysis (filter by: All, Breakfast, Lunch, Dinner, Snack) |
-| **Nutrition Tracker** | Detailed tracking with 3 tabs: **Dashboard**, **Food Diary**, **Supplements** |
-| **Meal Planner** | AI-generated meal plans with tabs: **Meal Schedule**, **Prep Guide**, **Shopping List**, **AI Insights** |
-| **Dietary Profile** | Allergies, preferences, dietary restrictions |
-| **Goals** | Calorie, macro, and micronutrient goal management |
-| **Grocery & Food** | Smart grocery lists with tabs: **My Lists**, **Shopping View**, **Nutrition Summary** |
+| **Dashboard** | Shopping overview with pending items across all lists |
+| **Shopping Lists** | Smart lists auto-populated from dietary, fitness, injury modules |
+| **Campus Marketplace** | Buy/sell within your campus community |
+| **Budget & Expenses** | Budget tracking with spending by category |
+| **Orders & Reviews** | Order history and product reviews |
 
-### 5. Grooming & Lifestyle
-
-AI-powered personal styling, skincare analysis, and visual recommendations.
+### 6. Grooming & Lifestyle
 
 | Sub-Module | Description |
 |------------|-------------|
-| **Dashboard** | Grooming overview with recent recommendations and analysis results |
-| **Recommendations** | AI-generated advice with 3 tabs: **Skincare**, **Haircare**, **Outfit Styling** |
-| **Visual Analysis** | Photo-based AI analysis with 5 tabs: **Skin Analysis**, **Hair & Face**, **Body & Style**, **Progress Tracking**, **Virtual Try-On** |
+| **Dashboard** | Overview with recent recommendations and analysis |
+| **Recommendations** | AI advice: **Skincare**, **Haircare**, **Outfit Styling** |
+| **Visual Analysis** | Photo AI: **Skin**, **Hair & Face**, **Body & Style**, **Progress**, **Virtual Try-On** |
 
 ---
 
@@ -345,18 +388,25 @@ See `.env.example` for all required variables with comments.
 ## Roadmap
 
 ### Completed
+- [x] AI Brain — central intelligence hub with Life View dashboard
+- [x] Life View — real-time unified dashboard synced from all 20 Zustand stores
+- [x] Cross-module suggestions (health, fitness, injury, education, shopping, AI)
 - [x] Education module (courses, lessons, quizzes, assignments, certificates)
 - [x] AI Tutor (chat, study plans, quiz generation, textbooks)
-- [x] Health module (vitals, activity tracking, wearable sync)
-- [x] Fitness module (workout plans, exercise library, live workouts)
-- [x] Dietary module (meal logging, AI photo analysis, nutrition tracking, meal planner, grocery lists)
+- [x] Health module (vitals, activity tracking, wearable sync, injury tracker)
+- [x] Fitness module (workout plans, exercise library, live workouts with pose detection)
+- [x] Dietary module (meal logging, AI photo analysis, nutrition tracking, meal planner, grocery)
+- [x] Shopping module (smart lists, campus marketplace, budget tracking, orders)
 - [x] Grooming & Lifestyle module (AI recommendations, visual analysis, virtual try-on)
-- [x] Client-side error logging across all API/AI calls
+- [x] BrainChatbot — floating AI assistant with module-aware context
+- [x] Dual collapsible sidebar layout (left modules + right sub-modules)
+- [x] 20 persisted Zustand stores with cross-module data aggregation
+- [x] Client-side error logging
 
 ### Planned
-- [ ] Community (groups, feeds, mentors)
+- [ ] Community (feeds, mentors)
 - [ ] Competitions & leaderboards
 - [ ] Live classes (video conferencing)
 - [ ] Mobile app (Flutter)
-- [ ] NFT certificates
+- [ ] Push notifications
 - [ ] Microservices migration (AI, Notifications, Media)

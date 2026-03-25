@@ -248,7 +248,7 @@ export default function ChatTab({ selectedBookId, injectedLesson, onLessonConsum
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, py: 1, borderBottom: '1px solid', borderColor: 'divider' }}>
         <Tooltip title="Chat history"><IconButton size="small" onClick={() => setHistoryOpen(true)} sx={{ color: 'text.secondary' }}><HistoryIcon fontSize="small" /></IconButton></Tooltip>
         <Tooltip title="New chat"><IconButton size="small" onClick={handleNewChat} sx={{ color: 'text.secondary' }}><AddIcon fontSize="small" /></IconButton></Tooltip>
-        <Typography variant="subtitle2" sx={{ color: 'text.primary', fontWeight: 500, flex: 1 }}>Chat</Typography>
+        <Typography variant="subtitle2" sx={{ color: 'text.primary', fontWeight: 600, flex: 1 }}>Chat</Typography>
         {activeBook && <Chip icon={<PictureAsPdfIcon sx={{ fontSize: 14 }} />} label={activeBook.name} size="small" sx={{ fontSize: 11, maxWidth: 180 }} />}
       </Box>
 

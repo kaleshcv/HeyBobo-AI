@@ -109,11 +109,11 @@ function StatCard({
         alignItems: 'flex-start',
         ...(onClick && {
           cursor: 'pointer',
-          '&:hover': { borderColor: '#bdbdbd', boxShadow: '0 2px 10px rgba(0,0,0,0.06)' },
+          '&:hover': { bgcolor: 'action.hover' },
         }),
       }}
     >
-      <Avatar sx={{ bgcolor: color, width: 42, height: 42 }}>{icon}</Avatar>
+      <Avatar sx={{ bgcolor: '#f5f5f5', color: color, width: 42, height: 42 }}>{icon}</Avatar>
       <Box>
         <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
           {label}
