@@ -737,7 +737,7 @@ export default function AIBrainPage() {
           </Avatar>
           <Box>
             <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.3 }}>
-              AI Brain
+              Bobo
             </Typography>
             <Typography variant="caption" color="text.secondary">
               {greeting}, {user?.firstName ?? 'there'}. Here's your unified dashboard.
@@ -752,7 +752,7 @@ export default function AIBrainPage() {
           )}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
-              {dashboardOn ? 'AI Brain' : 'Life View'}
+              {dashboardOn ? 'Brain' : 'Life View'}
             </Typography>
             <Switch
               size="small"
@@ -786,7 +786,7 @@ export default function AIBrainPage() {
             label={mode.label}
             size="small"
             variant={activeMode === mode.id ? 'filled' : 'outlined'}
-            onClick={() => setActiveMode(mode.id)}
+            onClick={() => { setActiveMode(mode.id); if (!dashboardOn) setDashboardOn(true); }}
             sx={{
               fontWeight: activeMode === mode.id ? 700 : 400,
               bgcolor: activeMode === mode.id ? '#424242' : 'transparent',
@@ -824,7 +824,7 @@ export default function AIBrainPage() {
         >
           <PsychologyIcon sx={{ fontSize: 48, color: 'text.disabled', mb: 1 }} />
           <Typography variant="h6" color="text.secondary" sx={{ fontWeight: 600, mb: 1 }}>
-            Your AI Brain is ready
+            Bobo is ready
           </Typography>
           <Typography variant="body2" color="text.disabled" sx={{ mb: 2, maxWidth: 440, mx: 'auto' }}>
             Click below to analyze all your modules and generate a personalized, unified dashboard with priorities, alerts, and cross-module insights.
@@ -835,7 +835,7 @@ export default function AIBrainPage() {
             onClick={refreshDashboard}
             sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600, bgcolor: '#424242', '&:hover': { bgcolor: '#616161' } }}
           >
-            Activate AI Brain
+            Activate Bobo
           </Button>
         </Paper>
       )}
@@ -940,7 +940,7 @@ export default function AIBrainPage() {
           {crossInsights.length > 0 && show.has('cross') && (
             <SectionCard
               title="Cross-Module Insights"
-              subtitle="Connections your AI Brain found across modules"
+              subtitle="Connections Bobo found across modules"
               icon={<LightbulbIcon fontSize="small" />}
               collapsible
             >

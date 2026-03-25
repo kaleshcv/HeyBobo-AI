@@ -57,7 +57,7 @@ interface NavModule {
 }
 
 const modules: NavModule[] = [
-  { id: 'ai-brain', label: 'AI Brain', icon: <PsychologyIcon />, path: '/app/ai-brain' },
+  { id: 'ai-brain', label: 'Bobo', icon: <PsychologyIcon />, path: '/app/ai-brain' },
   { id: 'education', label: 'Education', icon: <SchoolIcon />, path: '/app/education' },
   { id: 'health', label: 'Health', icon: <MonitorHeartIcon />, path: '/app/health' },
   { id: 'fitness', label: 'Fitness', icon: <FitnessCenterIcon />, path: '/app/fitness' },
