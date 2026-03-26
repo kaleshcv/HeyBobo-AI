@@ -9,14 +9,13 @@ import {
   Patch,
   Query,
   Logger,
-  Headers,
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiOperation, ApiConsumes } from '@nestjs/swagger';
-import { Public } from '../../common/decorators/public.decorator';
+import { ApiTags, ApiOperation, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
 import { createDiskStorage } from '../../common/storage/multer.config';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { DietaryService } from './dietary.service';
 import {
   CreateMealLogDto,
@@ -34,16 +33,12 @@ import {
 } from './dto/dietary.dto';
 
 @ApiTags('Dietary')
+@ApiBearerAuth('access-token')
 @Controller('dietary')
-@Public()
 export class DietaryController {
   private readonly logger = new Logger(DietaryController.name);
 
   constructor(private readonly dietaryService: DietaryService) {}
-
-  private getUserId(headers: Record<string, string>): string {
-    return headers['x-user-id'] || 'anonymous';
-  }
 
   // ═══════════ MEAL LOGS ════════════════════════════════
 
@@ -51,9 +46,8 @@ export class DietaryController {
   @ApiOperation({ summary: 'Log a meal' })
   async createMealLog(
     @Body() dto: CreateMealLogDto,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.createMealLog(userId, dto);
   }
 
@@ -61,9 +55,8 @@ export class DietaryController {
   @ApiOperation({ summary: 'Get meal logs with filters' })
   async getMealLogs(
     @Query() query: QueryMealLogsDto,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.getMealLogs(userId, query);
   }
 
@@ -71,9 +64,8 @@ export class DietaryController {
   @ApiOperation({ summary: 'Get a single meal log' })
   async getMealLog(
     @Param('id') id: string,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.getMealLog(userId, id);
   }
 
@@ -82,9 +74,8 @@ export class DietaryController {
   async updateMealLog(
     @Param('id') id: string,
     @Body() dto: UpdateMealLogDto,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.updateMealLog(userId, id, dto);
   }
 
@@ -95,9 +86,8 @@ export class DietaryController {
   async uploadMealPhoto(
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.addMealPhoto(userId, id, file);
   }
 
@@ -105,9 +95,8 @@ export class DietaryController {
   @ApiOperation({ summary: 'Delete a meal log' })
   async deleteMealLog(
     @Param('id') id: string,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     await this.dietaryService.deleteMealLog(userId, id);
     return { deleted: true };
   }
@@ -118,9 +107,8 @@ export class DietaryController {
   @ApiOperation({ summary: 'Get daily nutrition summary for a date' })
   async getDailyNutrition(
     @Param('date') date: string,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.getDailyNutrition(userId, date);
   }
 
@@ -129,9 +117,8 @@ export class DietaryController {
   async getDailyNutritionRange(
     @Query('startDate') startDate: string,
     @Query('endDate') endDate: string,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.getDailyNutritionRange(userId, startDate, endDate);
   }
 
@@ -139,9 +126,8 @@ export class DietaryController {
   @ApiOperation({ summary: 'Update daily nutrition (e.g. water intake)' })
   async updateDailyNutrition(
     @Body() dto: UpdateDailyNutritionDto,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.updateDailyNutrition(userId, dto);
   }
 
@@ -149,8 +135,7 @@ export class DietaryController {
 
   @Get('profile')
   @ApiOperation({ summary: 'Get dietary profile' })
-  async getProfile(@Headers() headers: Record<string, string>) {
-    const userId = this.getUserId(headers);
+  async getProfile(@CurrentUser('sub') userId: string) {
     return this.dietaryService.getDietaryProfile(userId);
   }
 
@@ -158,9 +143,8 @@ export class DietaryController {
   @ApiOperation({ summary: 'Save/update dietary profile' })
   async saveProfile(
     @Body() dto: SaveDietaryProfileDto,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.saveDietaryProfile(userId, dto);
   }
 
@@ -168,8 +152,7 @@ export class DietaryController {
 
   @Get('goals')
   @ApiOperation({ summary: 'Get dietary goals' })
-  async getGoals(@Headers() headers: Record<string, string>) {
-    const userId = this.getUserId(headers);
+  async getGoals(@CurrentUser('sub') userId: string) {
     return this.dietaryService.getGoals(userId);
   }
 
@@ -177,9 +160,8 @@ export class DietaryController {
   @ApiOperation({ summary: 'Create a dietary goal' })
   async createGoal(
     @Body() dto: CreateDietaryGoalDto,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.createGoal(userId, dto);
   }
 
@@ -188,9 +170,8 @@ export class DietaryController {
   async updateGoalProgress(
     @Param('id') id: string,
     @Body() body: { current: number },
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.updateGoalProgress(userId, id, body.current);
   }
 
@@ -198,9 +179,8 @@ export class DietaryController {
   @ApiOperation({ summary: 'Delete a dietary goal' })
   async deleteGoal(
     @Param('id') id: string,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     await this.dietaryService.deleteGoal(userId, id);
     return { deleted: true };
   }
@@ -209,8 +189,7 @@ export class DietaryController {
 
   @Get('stats')
   @ApiOperation({ summary: 'Get nutrition statistics and insights' })
-  async getStats(@Headers() headers: Record<string, string>) {
-    const userId = this.getUserId(headers);
+  async getStats(@CurrentUser('sub') userId: string) {
     return this.dietaryService.getNutritionStats(userId);
   }
 
@@ -220,9 +199,8 @@ export class DietaryController {
   @ApiOperation({ summary: 'Log a supplement' })
   async createSupplement(
     @Body() dto: CreateSupplementLogDto,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.createSupplement(userId, dto);
   }
 
@@ -230,9 +208,8 @@ export class DietaryController {
   @ApiOperation({ summary: 'Get supplement logs' })
   async getSupplements(
     @Query() query: QuerySupplementLogsDto,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.getSupplements(userId, query);
   }
 
@@ -241,9 +218,8 @@ export class DietaryController {
   async updateSupplement(
     @Param('id') id: string,
     @Body() dto: UpdateSupplementLogDto,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.updateSupplement(userId, id, dto);
   }
 
@@ -251,9 +227,8 @@ export class DietaryController {
   @ApiOperation({ summary: 'Toggle supplement taken status' })
   async toggleSupplement(
     @Param('id') id: string,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.toggleSupplementTaken(userId, id);
   }
 
@@ -261,9 +236,8 @@ export class DietaryController {
   @ApiOperation({ summary: 'Delete a supplement log' })
   async deleteSupplement(
     @Param('id') id: string,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     await this.dietaryService.deleteSupplement(userId, id);
     return { deleted: true };
   }
@@ -274,23 +248,20 @@ export class DietaryController {
   @ApiOperation({ summary: 'Save a meal plan (AI-generated or manual)' })
   async saveMealPlan(
     @Body() dto: SaveMealPlanDto,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.saveMealPlan(userId, dto);
   }
 
   @Get('meal-plans')
   @ApiOperation({ summary: 'Get all meal plans' })
-  async getMealPlans(@Headers() headers: Record<string, string>) {
-    const userId = this.getUserId(headers);
+  async getMealPlans(@CurrentUser('sub') userId: string) {
     return this.dietaryService.getMealPlans(userId);
   }
 
   @Get('meal-plans/active')
   @ApiOperation({ summary: 'Get the currently active meal plan' })
-  async getActivePlan(@Headers() headers: Record<string, string>) {
-    const userId = this.getUserId(headers);
+  async getActivePlan(@CurrentUser('sub') userId: string) {
     return this.dietaryService.getActivePlan(userId);
   }
 
@@ -298,9 +269,8 @@ export class DietaryController {
   @ApiOperation({ summary: 'Get a single meal plan' })
   async getMealPlan(
     @Param('id') id: string,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.getMealPlan(userId, id);
   }
 
@@ -309,9 +279,8 @@ export class DietaryController {
   async updateMealPlan(
     @Param('id') id: string,
     @Body() dto: SaveMealPlanDto,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.updateMealPlan(userId, id, dto);
   }
 
@@ -319,9 +288,8 @@ export class DietaryController {
   @ApiOperation({ summary: 'Set a meal plan as active' })
   async activatePlan(
     @Param('id') id: string,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.setActivePlan(userId, id);
   }
 
@@ -329,9 +297,8 @@ export class DietaryController {
   @ApiOperation({ summary: 'Delete a meal plan' })
   async deleteMealPlan(
     @Param('id') id: string,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     await this.dietaryService.deleteMealPlan(userId, id);
     return { deleted: true };
   }
@@ -342,16 +309,14 @@ export class DietaryController {
   @ApiOperation({ summary: 'Create a grocery list' })
   async createGroceryList(
     @Body() dto: CreateGroceryListDto,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.createGroceryList(userId, dto);
   }
 
   @Get('grocery-lists')
   @ApiOperation({ summary: 'Get all grocery lists' })
-  async getGroceryLists(@Headers() headers: Record<string, string>) {
-    const userId = this.getUserId(headers);
+  async getGroceryLists(@CurrentUser('sub') userId: string) {
     return this.dietaryService.getGroceryLists(userId);
   }
 
@@ -359,9 +324,8 @@ export class DietaryController {
   @ApiOperation({ summary: 'Get a single grocery list' })
   async getGroceryList(
     @Param('id') id: string,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.getGroceryList(userId, id);
   }
 
@@ -370,9 +334,8 @@ export class DietaryController {
   async updateGroceryList(
     @Param('id') id: string,
     @Body() dto: UpdateGroceryListDto,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.updateGroceryList(userId, id, dto);
   }
 
@@ -381,9 +344,8 @@ export class DietaryController {
   async toggleGroceryItem(
     @Param('id') id: string,
     @Param('index') index: string,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.toggleGroceryItem(userId, id, parseInt(index, 10));
   }
 
@@ -392,9 +354,8 @@ export class DietaryController {
   async addGroceryItems(
     @Param('id') id: string,
     @Body() body: { items: any[] },
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     return this.dietaryService.addGroceryItems(userId, id, body.items);
   }
 
@@ -402,9 +363,8 @@ export class DietaryController {
   @ApiOperation({ summary: 'Delete a grocery list' })
   async deleteGroceryList(
     @Param('id') id: string,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     await this.dietaryService.deleteGroceryList(userId, id);
     return { deleted: true };
   }

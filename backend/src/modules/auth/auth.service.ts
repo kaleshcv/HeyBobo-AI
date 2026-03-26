@@ -305,10 +305,13 @@ export class AuthService {
       expiresIn: this.configService.get<string>('jwt.expiresIn'),
     });
 
-    const refreshToken = this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('jwt.refreshSecret'),
-      expiresIn: this.configService.get<string>('jwt.refreshExpiresIn'),
-    });
+    const refreshToken = this.jwtService.sign(
+      { ...payload, jti: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}` },
+      {
+        secret: this.configService.get<string>('jwt.refreshSecret'),
+        expiresIn: this.configService.get<string>('jwt.refreshExpiresIn'),
+      },
+    );
 
     // Store refresh token in DB for revocation support
     const expiresIn = this.configService.get<string>('jwt.refreshExpiresIn', '7d');

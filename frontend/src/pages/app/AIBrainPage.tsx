@@ -14,7 +14,6 @@ import {
   Paper,
   Skeleton,
   Stack,
-  Switch,
   Typography,
 } from '@mui/material';
 import PsychologyIcon from '@mui/icons-material/Psychology';
@@ -106,16 +105,6 @@ const RECOMMENDATION_META: Record<string, { icon: React.ReactElement; color: str
   plan: { icon: <CalendarTodayIcon fontSize="small" />, color: '#0097a7', label: 'Plan' },
   monitor: { icon: <VisibilityIcon fontSize="small" />, color: '#757575', label: 'Monitor' },
 };
-
-const BRAIN_MODES: { id: BrainMode; label: string; icon: React.ReactElement }[] = [
-  { id: 'monitor', label: 'Monitor', icon: <VisibilityIcon fontSize="small" /> },
-  { id: 'priority', label: 'Priority', icon: <BoltIcon fontSize="small" /> },
-  { id: 'safety', label: 'Safety', icon: <HealingIcon fontSize="small" /> },
-  { id: 'coach', label: 'Coach', icon: <AutoAwesomeIcon fontSize="small" /> },
-  { id: 'planner', label: 'Planner', icon: <CalendarTodayIcon fontSize="small" /> },
-  { id: 'sync', label: 'Sync', icon: <InsightsIcon fontSize="small" /> },
-  { id: 'insight', label: 'Insight', icon: <LightbulbIcon fontSize="small" /> },
-];
 
 // ─── Mode → visible sections mapping ────────────────────────────────────────
 
@@ -639,7 +628,6 @@ export default function AIBrainPage() {
     activeMode,
     lastRefresh,
     setLoading,
-    setActiveMode,
     dismissAlert,
     toggleScheduleComplete,
     setBrainData,
@@ -722,7 +710,6 @@ export default function AIBrainPage() {
 
   const hasData = priorities.length > 0 || moduleInsights.length > 0;
   const show = MODE_SECTIONS[activeMode] ?? MODE_SECTIONS.monitor;
-  const [dashboardOn, setDashboardOn] = useState(false);
 
   // ─── Render ───────────────────────────────────────────────────────────────
 
@@ -750,20 +737,6 @@ export default function AIBrainPage() {
               {new Date(lastRefresh).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </Typography>
           )}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
-              {dashboardOn ? 'Brain' : 'Life View'}
-            </Typography>
-            <Switch
-              size="small"
-              checked={dashboardOn}
-              onChange={(e) => setDashboardOn(e.target.checked)}
-              sx={{
-                '& .MuiSwitch-switchBase.Mui-checked': { color: '#424242' },
-                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#424242' },
-              }}
-            />
-          </Box>
           <Button
             variant="outlined"
             size="small"
@@ -777,31 +750,11 @@ export default function AIBrainPage() {
         </Box>
       </Box>
 
-      {/* Brain Mode Chips — only visible in Brain view */}
-      <Stack direction="row" spacing={0.5} sx={{ mb: 1.5, flexWrap: 'wrap', gap: 0.5, display: dashboardOn ? 'flex' : 'none' }}>
-        {BRAIN_MODES.map((mode) => (
-          <Chip
-            key={mode.id}
-            icon={mode.icon}
-            label={mode.label}
-            size="small"
-            variant={activeMode === mode.id ? 'filled' : 'outlined'}
-            onClick={() => { setActiveMode(mode.id); if (!dashboardOn) setDashboardOn(true); }}
-            sx={{
-              fontWeight: activeMode === mode.id ? 700 : 400,
-              bgcolor: activeMode === mode.id ? '#424242' : 'transparent',
-              color: activeMode === mode.id ? '#fff' : 'text.secondary',
-              '& .MuiChip-icon': { color: activeMode === mode.id ? '#fff' : 'text.secondary' },
-              '&:hover': { bgcolor: activeMode === mode.id ? '#616161' : 'action.hover' },
-            }}
-          />
-        ))}
-      </Stack>
       </Box>{/* end maxWidth header wrapper */}
 
-      {!dashboardOn && <SimpleLifeDashboard />}
+      <SimpleLifeDashboard />
 
-      {dashboardOn && (
+      {false && (
         <Box>
       {/* Error */}
       {error && (

@@ -1,13 +1,11 @@
-import { Controller, Post, Get, Delete, Body, Param, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Post, Get, Delete, Body, Param, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiConsumes } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Request } from 'express';
 import { Types } from 'mongoose';
 import { createHash } from 'crypto';
 import { createDiskStorage } from '@/common/storage/multer.config';
 import { AIService } from '@/modules/ai/ai.service';
 import { CurrentUser } from '@/common/decorators/current-user.decorator';
-import { Public } from '@/common/decorators/public.decorator';
 
 /** Convert any string user ID to a valid 24-char hex ObjectId */
 function toObjectId(id: string): string {
@@ -30,7 +28,6 @@ export class AIController {
     return this.aiService.chat(userId, body.conversationId || null, body.courseId || null, body.lessonId || null, body.message, body.documentId || null);
   }
 
-  @Public()
   @Post('documents/upload')
   @ApiOperation({ summary: 'Upload a PDF document for AI context' })
   @ApiConsumes('multipart/form-data')
@@ -49,11 +46,8 @@ export class AIController {
   )
   async uploadDocument(
     @CurrentUser('sub') userId: string,
-    @Req() req: Request,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<any> {
-    // Fall back to x-user-id header when JWT is not available (local auth mode)
-    if (!userId) userId = req.headers['x-user-id'] as string || 'anonymous';
     userId = toObjectId(userId);
     const document = await this.aiService.uploadDocument(userId, file);
     return {
@@ -69,25 +63,20 @@ export class AIController {
     };
   }
 
-  @Public()
   @Get('documents')
   @ApiOperation({ summary: 'Get user uploaded documents' })
-  async getDocuments(@CurrentUser('sub') userId: string, @Req() req: Request): Promise<any> {
-    if (!userId) userId = req.headers['x-user-id'] as string || 'anonymous';
+  async getDocuments(@CurrentUser('sub') userId: string): Promise<any> {
     userId = toObjectId(userId);
     const documents = await this.aiService.getUserDocuments(userId);
     return { success: true, data: documents };
   }
 
-  @Public()
   @Delete('documents/:id')
   @ApiOperation({ summary: 'Delete an uploaded document' })
   async deleteDocument(
     @CurrentUser('sub') userId: string,
-    @Req() req: Request,
     @Param('id') id: string,
   ): Promise<any> {
-    if (!userId) userId = req.headers['x-user-id'] as string || 'anonymous';
     userId = toObjectId(userId);
     const deleted = await this.aiService.deleteDocument(id, userId);
     return { success: true, deleted };

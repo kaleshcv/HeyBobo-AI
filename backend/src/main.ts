@@ -22,6 +22,21 @@ for (const sub of ['app', 'errors', 'http', 'general-log']) {
 }
 
 async function bootstrap(): Promise<void> {
+  // Validate required secrets before starting
+  if (process.env.NODE_ENV === 'production') {
+    const required = ['JWT_SECRET', 'JWT_REFRESH_SECRET', 'MONGODB_URI', 'REDIS_PASSWORD'];
+    const missing = required.filter((k) => !process.env[k]);
+    if (missing.length) {
+      console.error(`FATAL: Missing required environment variables: ${missing.join(', ')}`);
+      process.exit(1);
+    }
+    const insecureDefaults = ['your-super-secret-jwt-key', 'your-super-secret-refresh-key'];
+    if (insecureDefaults.includes(process.env.JWT_SECRET!) || insecureDefaults.includes(process.env.JWT_REFRESH_SECRET!)) {
+      console.error('FATAL: JWT secrets must not use default values in production');
+      process.exit(1);
+    }
+  }
+
   const winstonLogger = new WinstonLoggerService();
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: winstonLogger,
@@ -75,7 +90,7 @@ async function bootstrap(): Promise<void> {
     origin: frontendUrl,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-user-id'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
   // Global pipes
@@ -100,6 +115,11 @@ async function bootstrap(): Promise<void> {
   // API prefix
   const apiPrefix = configService.get<string>('API_PREFIX', 'api/v1');
   app.setGlobalPrefix(apiPrefix);
+
+  // Health check endpoint (used by Docker health checks and load balancers)
+  app.getHttpAdapter().getInstance().get(`/${apiPrefix}/health`, (_req: any, res: any) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
 
   // Swagger documentation
   const swaggerConfig = new DocumentBuilder()

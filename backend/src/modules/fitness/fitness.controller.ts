@@ -8,11 +8,10 @@ import {
   Param,
   Query,
   Logger,
-  Headers,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
-import { Public } from '../../common/decorators/public.decorator';
 import { FitnessService } from './fitness.service';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import {
   CreateWorkoutSessionDto,
   UpdateDailyMetricsDto,
@@ -22,17 +21,12 @@ import {
 } from './dto/fitness.dto';
 
 @ApiTags('Fitness')
+@ApiBearerAuth('access-token')
 @Controller('fitness')
-@Public()
 export class FitnessController {
   private readonly logger = new Logger(FitnessController.name);
 
   constructor(private readonly fitnessService: FitnessService) {}
-
-  private getUserId(headers: Record<string, string>): string {
-    // Frontend uses local auth with user IDs like "user-test-1"
-    return headers['x-user-id'] || 'anonymous';
-  }
 
   // ═══════════ WORKOUT SESSIONS ═════════════════════════
 
@@ -40,9 +34,8 @@ export class FitnessController {
   @ApiOperation({ summary: 'Create a workout session' })
   async createSession(
     @Body() dto: CreateWorkoutSessionDto,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     const session = await this.fitnessService.createWorkoutSession(userId, dto);
     return { success: true, data: session };
   }
@@ -51,9 +44,8 @@ export class FitnessController {
   @ApiOperation({ summary: 'Bulk create workout sessions' })
   async bulkCreateSessions(
     @Body() body: { sessions: CreateWorkoutSessionDto[] },
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     const result = await this.fitnessService.bulkCreateSessions(userId, body.sessions);
     return { success: true, data: result };
   }
@@ -62,9 +54,8 @@ export class FitnessController {
   @ApiOperation({ summary: 'Get workout sessions with filters' })
   async getSessions(
     @Query() query: QueryWorkoutSessionsDto,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     const result = await this.fitnessService.getWorkoutSessions(userId, query);
     return { success: true, data: result };
   }
@@ -73,9 +64,8 @@ export class FitnessController {
   @ApiOperation({ summary: 'Get a single workout session' })
   async getSession(
     @Param('id') id: string,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     const session = await this.fitnessService.getWorkoutSession(userId, id);
     return { success: true, data: session };
   }
@@ -84,9 +74,8 @@ export class FitnessController {
   @ApiOperation({ summary: 'Delete a workout session' })
   async deleteSession(
     @Param('id') id: string,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     await this.fitnessService.deleteWorkoutSession(userId, id);
     return { success: true };
   }
@@ -97,9 +86,8 @@ export class FitnessController {
   @ApiOperation({ summary: 'Get daily metrics for a specific date' })
   async getDailyMetrics(
     @Param('date') date: string,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     const metrics = await this.fitnessService.getDailyMetrics(userId, date);
     return { success: true, data: metrics };
   }
@@ -109,9 +97,8 @@ export class FitnessController {
   async getDailyMetricsRange(
     @Query('startDate') startDate: string,
     @Query('endDate') endDate: string,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     const metrics = await this.fitnessService.getDailyMetricsRange(userId, startDate, endDate);
     return { success: true, data: metrics };
   }
@@ -120,9 +107,8 @@ export class FitnessController {
   @ApiOperation({ summary: 'Update daily metrics' })
   async updateDailyMetrics(
     @Body() dto: UpdateDailyMetricsDto,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     const metrics = await this.fitnessService.updateDailyMetrics(userId, dto);
     return { success: true, data: metrics };
   }
@@ -131,8 +117,7 @@ export class FitnessController {
 
   @Get('profile')
   @ApiOperation({ summary: 'Get fitness profile' })
-  async getProfile(@Headers() headers: Record<string, string>) {
-    const userId = this.getUserId(headers);
+  async getProfile(@CurrentUser('sub') userId: string) {
     const profile = await this.fitnessService.getFitnessProfile(userId);
     return { success: true, data: profile };
   }
@@ -141,9 +126,8 @@ export class FitnessController {
   @ApiOperation({ summary: 'Save/update fitness profile' })
   async saveProfile(
     @Body() dto: SaveFitnessProfileDto,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     const profile = await this.fitnessService.saveFitnessProfile(userId, dto);
     return { success: true, data: profile };
   }
@@ -152,8 +136,7 @@ export class FitnessController {
 
   @Get('goals')
   @ApiOperation({ summary: 'Get fitness goals' })
-  async getGoals(@Headers() headers: Record<string, string>) {
-    const userId = this.getUserId(headers);
+  async getGoals(@CurrentUser('sub') userId: string) {
     const goals = await this.fitnessService.getGoals(userId);
     return { success: true, data: goals };
   }
@@ -162,9 +145,8 @@ export class FitnessController {
   @ApiOperation({ summary: 'Create a fitness goal' })
   async createGoal(
     @Body() dto: CreateFitnessGoalDto,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     const goal = await this.fitnessService.createGoal(userId, dto);
     return { success: true, data: goal };
   }
@@ -174,9 +156,8 @@ export class FitnessController {
   async updateGoalProgress(
     @Param('id') id: string,
     @Body() body: { current: number },
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     const goal = await this.fitnessService.updateGoalProgress(userId, id, body.current);
     return { success: true, data: goal };
   }
@@ -185,9 +166,8 @@ export class FitnessController {
   @ApiOperation({ summary: 'Delete a fitness goal' })
   async deleteGoal(
     @Param('id') id: string,
-    @Headers() headers: Record<string, string>,
+    @CurrentUser('sub') userId: string,
   ) {
-    const userId = this.getUserId(headers);
     await this.fitnessService.deleteGoal(userId, id);
     return { success: true };
   }
@@ -196,8 +176,7 @@ export class FitnessController {
 
   @Get('stats')
   @ApiOperation({ summary: 'Get workout statistics and insights' })
-  async getStats(@Headers() headers: Record<string, string>) {
-    const userId = this.getUserId(headers);
+  async getStats(@CurrentUser('sub') userId: string) {
     const stats = await this.fitnessService.getWorkoutStats(userId);
     return { success: true, data: stats };
   }

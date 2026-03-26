@@ -2,6 +2,10 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# VITE_API_URL must be set at build time (Vite bakes env vars into the JS bundle)
+ARG VITE_API_URL=http://localhost:3001/api/v1
+ENV VITE_API_URL=$VITE_API_URL
+
 COPY package*.json ./
 RUN npm ci --legacy-peer-deps
 

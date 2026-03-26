@@ -28,6 +28,7 @@ Thumbs.db
 npm-debug.log*
 backend/logs/**/*.log
 backend/logs/**/*.gz
+backend/logs/**/*.json
 
 # Docker
 docker-compose.override.yml
