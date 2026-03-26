@@ -795,7 +795,7 @@ export default function AIBrainPage() {
 
       {/* ─── Today's Focus Hero Card ───────────────────────────────── */}
       {todayFocus && !isLoading && (
-        <TodayFocusCard focus={todayFocus} nudge={nudge} />
+        <TodayFocusCard focus={todayFocus!} nudge={nudge} />
       )}
 
       {/* ─── Dashboard Content ────────────────────────────────────── */}
@@ -939,7 +939,7 @@ export default function AIBrainPage() {
                   <Typography variant="caption" sx={{ fontWeight: 600, color: '#4caf50', display: 'block', mb: 0.5 }}>
                     Wins
                   </Typography>
-                  {weeklySummary.wins.map((w, i) => (
+                  {weeklySummary!.wins.map((w, i) => (
                     <Box key={i} sx={{ display: 'flex', gap: 0.5, mb: 0.5 }}>
                       <CheckCircleOutlineIcon sx={{ fontSize: 14, color: '#4caf50', mt: 0.2 }} />
                       <Typography variant="caption">{w}</Typography>
@@ -951,7 +951,7 @@ export default function AIBrainPage() {
                   <Typography variant="caption" sx={{ fontWeight: 600, color: '#f57c00', display: 'block', mb: 0.5 }}>
                     Risks
                   </Typography>
-                  {weeklySummary.risks.map((r, i) => (
+                  {weeklySummary!.risks.map((r, i) => (
                     <Box key={i} sx={{ display: 'flex', gap: 0.5, mb: 0.5 }}>
                       <WarningAmberIcon sx={{ fontSize: 14, color: '#f57c00', mt: 0.2 }} />
                       <Typography variant="caption">{r}</Typography>
@@ -963,7 +963,7 @@ export default function AIBrainPage() {
                   <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 0.5 }}>
                     Adherence
                   </Typography>
-                  {Object.entries(weeklySummary.adherence).map(([mod, pct]) => (
+                  {Object.entries(weeklySummary!.adherence).map(([mod, pct]) => (
                     <Box key={mod} sx={{ mb: 0.75 }}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.25 }}>
                         <Typography variant="caption" sx={{ textTransform: 'capitalize' }}>{mod}</Typography>
@@ -990,7 +990,7 @@ export default function AIBrainPage() {
                   <Typography variant="caption" sx={{ fontWeight: 600, color: '#1976d2', display: 'block', mb: 0.5 }}>
                     Next Week Focus
                   </Typography>
-                  {weeklySummary.predictedPriorities.map((p, i) => (
+                  {weeklySummary!.predictedPriorities.map((p, i) => (
                     <Box key={i} sx={{ display: 'flex', gap: 0.5, mb: 0.5 }}>
                       <PlayArrowIcon sx={{ fontSize: 14, color: '#1976d2', mt: 0.2 }} />
                       <Typography variant="caption">{p}</Typography>
