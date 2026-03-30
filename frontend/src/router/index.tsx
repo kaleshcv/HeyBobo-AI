@@ -75,6 +75,7 @@ const InjuryPage = lazy(() => import('@/pages/app/InjuryPage'))
 // Fitness pages (lazy loaded)
 const FitnessDashboardPage = lazy(() => import('@/pages/app/FitnessDashboardPage'))
 const WorkoutsPage = lazy(() => import('@/pages/app/WorkoutsPage'))
+const HealthGamePage = lazy(() => import('@/pages/app/HealthGamePage'))
 
 // Dietary pages (lazy loaded)
 const DietaryDashboardPage = lazy(() => import('@/pages/app/dietary/DietaryDashboardPage'))
@@ -547,6 +548,14 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <WorkoutsPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'health/game',
+        element: (
+          <SuspenseWrapper>
+            <HealthGamePage />
           </SuspenseWrapper>
         ),
       },

@@ -13,6 +13,7 @@ import {
   Divider,
   IconButton,
   Tooltip,
+  useTheme,
 } from '@mui/material';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import MonitorWeightIcon from '@mui/icons-material/MonitorWeight';
@@ -63,6 +64,7 @@ const FITNESS_LEVELS: { id: FitnessLevel; label: string; desc: string; icon: Rea
 const STEPS = ['Goals', 'Baseline', 'Level', 'Schedule'];
 
 function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
+  const dk = useTheme().palette.mode === 'dark';
   const { profile, setProfile, completeOnboarding } = useFitnessProfileStore();
   const [step, setStep] = useState(0);
 
@@ -108,13 +110,13 @@ function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
         <LinearProgress
           variant="determinate"
           value={((step + 1) / STEPS.length) * 100}
-          sx={{ height: 6, borderRadius: 3, bgcolor: '#e0e0e0', '& .MuiLinearProgress-bar': { borderRadius: 3, bgcolor: '#424242' } }}
+          sx={{ height: 6, borderRadius: 3, bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#e0e0e0', '& .MuiLinearProgress-bar': { borderRadius: 3, bgcolor: dk ? '#C9A84C' : '#424242' } }}
         />
       </Box>
 
       {/* Step 0: Goals */}
       {step === 0 && (
-        <Paper elevation={0} sx={{ p: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
+        <Paper elevation={0} sx={{ p: 4, borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
           <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
             What are your fitness goals?
           </Typography>
@@ -137,7 +139,7 @@ function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                     py: 2.5,
                     fontSize: 14,
                     fontWeight: selected ? 600 : 400,
-                    borderColor: selected ? g.color : '#bdbdbd',
+                    borderColor: selected ? g.color : (dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd'),
                     bgcolor: selected ? `${g.color}14` : 'transparent',
                     color: selected ? g.color : 'text.primary',
                     '& .MuiChip-icon': { color: selected ? g.color : 'text.secondary' },
@@ -152,7 +154,7 @@ function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
 
       {/* Step 1: Baseline Data */}
       {step === 1 && (
-        <Paper elevation={0} sx={{ p: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
+        <Paper elevation={0} sx={{ p: 4, borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
           <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
             Your baseline measurements
           </Typography>
@@ -212,11 +214,11 @@ function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                     p: 1.5,
                     borderRadius: 2,
                     border: '1px solid',
-                    borderColor: selected ? '#424242' : '#e0e0e0',
-                    bgcolor: selected ? '#fafafa' : 'transparent',
+                    borderColor: selected ? (dk ? '#C9A84C' : '#424242') : 'divider',
+                    bgcolor: selected ? (dk ? 'rgba(255,255,255,0.03)' : '#fafafa') : 'transparent',
                     cursor: 'pointer',
                     transition: 'all 0.15s',
-                    '&:hover': { borderColor: '#9e9e9e' },
+                    '&:hover': { borderColor: dk ? 'rgba(255,255,255,0.3)' : '#9e9e9e' },
                   }}
                 >
                   <Typography variant="body2" sx={{ fontWeight: selected ? 600 : 400 }}>
@@ -249,7 +251,7 @@ function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
 
       {/* Step 2: Fitness Level */}
       {step === 2 && (
-        <Paper elevation={0} sx={{ p: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
+        <Paper elevation={0} sx={{ p: 4, borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
           <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
             What's your fitness level?
           </Typography>
@@ -268,20 +270,20 @@ function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                     p: 2.5,
                     borderRadius: 2,
                     border: '2px solid',
-                    borderColor: selected ? '#424242' : '#e0e0e0',
-                    bgcolor: selected ? '#fafafa' : 'transparent',
+                    borderColor: selected ? (dk ? '#C9A84C' : '#424242') : 'divider',
+                    bgcolor: selected ? (dk ? 'rgba(255,255,255,0.03)' : '#fafafa') : 'transparent',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     gap: 2,
                     transition: 'all 0.15s',
-                    '&:hover': { borderColor: '#9e9e9e' },
+                    '&:hover': { borderColor: dk ? 'rgba(255,255,255,0.3)' : '#9e9e9e' },
                   }}
                 >
                   <Avatar
                     sx={{
-                      bgcolor: selected ? '#424242' : '#eeeeee',
-                      color: selected ? '#fff' : '#757575',
+                      bgcolor: selected ? (dk ? '#C9A84C' : '#424242') : (dk ? 'rgba(255,255,255,0.08)' : '#eeeeee'),
+                      color: selected ? '#fff' : (dk ? '#aaa' : '#757575'),
                       width: 44,
                       height: 44,
                     }}
@@ -296,7 +298,7 @@ function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                       {fl.desc}
                     </Typography>
                   </Box>
-                  {selected && <CheckCircleIcon sx={{ ml: 'auto', color: '#424242' }} />}
+                  {selected && <CheckCircleIcon sx={{ ml: 'auto', color: dk ? '#C9A84C' : '#424242' }} />}
                 </Paper>
               );
             })}
@@ -306,7 +308,7 @@ function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
 
       {/* Step 3: Time Availability */}
       {step === 3 && (
-        <Paper elevation={0} sx={{ p: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
+        <Paper elevation={0} sx={{ p: 4, borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
           <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
             How much time can you commit?
           </Typography>
@@ -335,7 +337,7 @@ function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                 { value: 7, label: '7' },
               ]}
               sx={{
-                color: '#424242',
+                color: dk ? '#C9A84C' : '#424242',
                 '& .MuiSlider-markLabel': { fontSize: 12 },
               }}
             />
@@ -363,7 +365,7 @@ function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
                 { value: 120, label: '120m' },
               ]}
               sx={{
-                color: '#424242',
+                color: dk ? '#C9A84C' : '#424242',
                 '& .MuiSlider-markLabel': { fontSize: 12 },
               }}
             />
@@ -384,7 +386,7 @@ function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
           variant="outlined"
           disabled={step === 0}
           onClick={() => setStep(step - 1)}
-          sx={{ borderRadius: 2, textTransform: 'none', borderColor: '#bdbdbd', color: 'text.primary' }}
+          sx={{ borderRadius: 2, textTransform: 'none', borderColor: dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd', color: 'text.primary' }}
         >
           Back
         </Button>
@@ -397,8 +399,8 @@ function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
               borderRadius: 2,
               textTransform: 'none',
               fontWeight: 600,
-              bgcolor: '#424242',
-              '&:hover': { bgcolor: '#212121' },
+              bgcolor: dk ? '#1A2B3C' : '#424242',
+              '&:hover': { bgcolor: dk ? '#243B4F' : '#212121' },
             }}
           >
             Continue
@@ -425,6 +427,7 @@ function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
 
 // --- Profile Summary (shown after onboarding) ---
 function ProfileSummary({ onEdit }: { onEdit: () => void }) {
+  const dk = useTheme().palette.mode === 'dark';
   const { profile, resetProfile } = useFitnessProfileStore();
   const bmi = useMemo(() => calcBMI(profile.heightCm, profile.weightKg), [profile.heightCm, profile.weightKg]);
 
@@ -433,7 +436,7 @@ function ProfileSummary({ onEdit }: { onEdit: () => void }) {
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <Avatar sx={{ bgcolor: '#424242', width: 44, height: 44 }}>
+          <Avatar sx={{ bgcolor: dk ? '#C9A84C' : '#424242', width: 44, height: 44 }}>
             <SelfImprovementIcon />
           </Avatar>
           <Box>
@@ -447,12 +450,12 @@ function ProfileSummary({ onEdit }: { onEdit: () => void }) {
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Tooltip title="Edit profile">
-            <IconButton onClick={onEdit} size="small" sx={{ border: '1px solid #e0e0e0' }}>
+            <IconButton onClick={onEdit} size="small" sx={{ border: '1px solid', borderColor: 'divider' }}>
               <EditIcon fontSize="small" />
             </IconButton>
           </Tooltip>
           <Tooltip title="Reset profile">
-            <IconButton onClick={resetProfile} size="small" sx={{ border: '1px solid #e0e0e0' }}>
+            <IconButton onClick={resetProfile} size="small" sx={{ border: '1px solid', borderColor: 'divider' }}>
               <RestartAltIcon fontSize="small" />
             </IconButton>
           </Tooltip>
@@ -460,7 +463,7 @@ function ProfileSummary({ onEdit }: { onEdit: () => void }) {
       </Box>
 
       {/* Goals */}
-      <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid #e0e0e0', mb: 2 }}>
+      <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid', borderColor: 'divider', mb: 2 }}>
         <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5, color: 'text.secondary', textTransform: 'uppercase', fontSize: 11, letterSpacing: 0.5 }}>
           Fitness Goals
         </Typography>
@@ -490,7 +493,7 @@ function ProfileSummary({ onEdit }: { onEdit: () => void }) {
       {/* Baseline & Level Row */}
       <Box sx={{ display: 'flex', gap: 2, mb: 2, flexWrap: 'wrap' }}>
         {/* Baseline */}
-        <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid #e0e0e0', flex: 1, minWidth: 200 }}>
+        <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid', borderColor: 'divider', flex: 1, minWidth: 200 }}>
           <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5, color: 'text.secondary', textTransform: 'uppercase', fontSize: 11, letterSpacing: 0.5 }}>
             Body Metrics
           </Typography>
@@ -527,7 +530,7 @@ function ProfileSummary({ onEdit }: { onEdit: () => void }) {
 
         {/* Fitness Level + Schedule */}
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 1, minWidth: 200 }}>
-          <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid #e0e0e0' }}>
+          <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1, color: 'text.secondary', textTransform: 'uppercase', fontSize: 11, letterSpacing: 0.5 }}>
               Fitness Level
             </Typography>
@@ -536,7 +539,7 @@ function ProfileSummary({ onEdit }: { onEdit: () => void }) {
               if (!fl) return <Typography color="text.secondary">—</Typography>;
               return (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                  <Avatar sx={{ bgcolor: '#424242', width: 36, height: 36 }}>{fl.icon}</Avatar>
+                  <Avatar sx={{ bgcolor: dk ? '#C9A84C' : '#424242', width: 36, height: 36 }}>{fl.icon}</Avatar>
                   <Box>
                     <Typography variant="body1" sx={{ fontWeight: 600 }}>{fl.label}</Typography>
                     <Typography variant="caption" color="text.secondary">{fl.desc}</Typography>
@@ -546,7 +549,7 @@ function ProfileSummary({ onEdit }: { onEdit: () => void }) {
             })()}
           </Paper>
 
-          <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid #e0e0e0' }}>
+          <Paper elevation={0} sx={{ p: 3, borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1, color: 'text.secondary', textTransform: 'uppercase', fontSize: 11, letterSpacing: 0.5 }}>
               Weekly Commitment
             </Typography>

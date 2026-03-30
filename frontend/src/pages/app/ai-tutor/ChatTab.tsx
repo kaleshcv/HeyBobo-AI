@@ -14,6 +14,7 @@ import {
   Divider,
   Drawer,
   Chip,
+  useTheme,
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import MicIcon from '@mui/icons-material/Mic';
@@ -87,10 +88,11 @@ function useTextToSpeech() {
 
 // --- Message bubble ---
 function MessageBubble({ message, isSpeaking, onSpeak, onStopSpeaking }: { message: ChatMessage; isSpeaking: boolean; onSpeak: () => void; onStopSpeaking: () => void }) {
+  const dk = useTheme().palette.mode === 'dark';
   const isUser = message.role === 'user';
   return (
     <Box sx={{ display: 'flex', gap: 1.5, py: 2, px: { xs: 2, md: 0 }, maxWidth: 768, mx: 'auto', width: '100%' }}>
-      <Avatar sx={{ width: 28, height: 28, bgcolor: isUser ? '#9e9e9e' : '#616161', fontSize: 12, fontWeight: 600, flexShrink: 0, mt: 0.5 }}>
+      <Avatar sx={{ width: 28, height: 28, bgcolor: isUser ? (dk ? 'rgba(255,255,255,0.15)' : '#9e9e9e') : (dk ? '#1A2B3C' : '#616161'), fontSize: 12, fontWeight: 600, flexShrink: 0, mt: 0.5 }}>
         {isUser ? 'U' : <SmartToyIcon sx={{ fontSize: 16 }} />}
       </Avatar>
       <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -100,12 +102,12 @@ function MessageBubble({ message, isSpeaking, onSpeak, onStopSpeaking }: { messa
         <Box sx={{
           '& p': { m: 0, mb: 1, lineHeight: 1.7, color: 'text.primary', fontSize: 14 },
           '& p:last-child': { mb: 0 },
-          '& code': { bgcolor: '#f5f5f5', px: 0.5, py: 0.25, borderRadius: 0.5, fontSize: 13, fontFamily: 'monospace' },
-          '& pre': { bgcolor: '#f5f5f5', p: 1.5, borderRadius: 1, overflow: 'auto', mb: 1, '& code': { bgcolor: 'transparent', p: 0 } },
+          '& code': { bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#f5f5f5', px: 0.5, py: 0.25, borderRadius: 0.5, fontSize: 13, fontFamily: 'monospace' },
+          '& pre': { bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#f5f5f5', p: 1.5, borderRadius: 1, overflow: 'auto', mb: 1, '& code': { bgcolor: 'transparent', p: 0 } },
           '& ul, & ol': { pl: 2.5, mb: 1 },
           '& li': { mb: 0.5, fontSize: 14, lineHeight: 1.7, color: 'text.primary' },
           '& h1, & h2, & h3, & h4': { mt: 1.5, mb: 0.5, fontWeight: 600, color: 'text.primary' },
-          '& blockquote': { borderLeft: '3px solid #e0e0e0', pl: 1.5, ml: 0, color: 'text.secondary' },
+          '& blockquote': { borderLeft: '3px solid', borderColor: 'divider', pl: 1.5, ml: 0, color: 'text.secondary' },
         }}>
           <ReactMarkdown>{message.content}</ReactMarkdown>
         </Box>
@@ -137,6 +139,7 @@ interface Props {
 }
 
 export default function ChatTab({ selectedBookId, injectedLesson, onLessonConsumed }: Props) {
+  const dk = useTheme().palette.mode === 'dark';
   const { textbooks, conversations, addConversation, updateConversation, removeConversation } = useAITutorStore();
   const [input, setInput] = useState('');
   const [currentConvId, setCurrentConvId] = useState<string | null>(null);
@@ -224,7 +227,7 @@ export default function ChatTab({ selectedBookId, injectedLesson, onLessonConsum
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
       {/* Conversation history drawer */}
-      <Drawer anchor="left" open={historyOpen} onClose={() => setHistoryOpen(false)} sx={{ '& .MuiDrawer-paper': { width: 300, bgcolor: '#fafafa' } }}>
+      <Drawer anchor="left" open={historyOpen} onClose={() => setHistoryOpen(false)} sx={{ '& .MuiDrawer-paper': { width: 300, bgcolor: dk ? '#0D1B2A' : '#fafafa' } }}>
         <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Chat History</Typography>
           <IconButton size="small" onClick={handleNewChat}><AddIcon fontSize="small" /></IconButton>
@@ -256,7 +259,7 @@ export default function ChatTab({ selectedBookId, injectedLesson, onLessonConsum
       <Box sx={{ flex: 1, overflow: 'auto', bgcolor: 'background.paper' }}>
         {messages.length === 0 ? (
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', px: 3 }}>
-            <SmartToyIcon sx={{ fontSize: 48, color: '#bdbdbd', mb: 2 }} />
+            <SmartToyIcon sx={{ fontSize: 48, color: dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd', mb: 2 }} />
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>Ask your AI Tutor</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', maxWidth: 400 }}>
               {activeBook ? `Ask questions about "${activeBook.name}" or any topic.` : 'Select a textbook for context-aware answers, or just ask anything.'}
@@ -269,12 +272,12 @@ export default function ChatTab({ selectedBookId, injectedLesson, onLessonConsum
             ))}
             {isLoading && (
               <Box sx={{ display: 'flex', gap: 1.5, py: 2, maxWidth: 768, mx: 'auto', px: { xs: 2, md: 0 } }}>
-                <Avatar sx={{ width: 28, height: 28, bgcolor: '#616161', fontSize: 12, flexShrink: 0, mt: 0.5 }}><SmartToyIcon sx={{ fontSize: 16 }} /></Avatar>
+                <Avatar sx={{ width: 28, height: 28, bgcolor: dk ? '#1A2B3C' : '#616161', fontSize: 12, flexShrink: 0, mt: 0.5 }}><SmartToyIcon sx={{ fontSize: 16 }} /></Avatar>
                 <Box sx={{ pt: 0.5 }}>
                   <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>AI Tutor</Typography>
                   <Box sx={{ display: 'flex', gap: 0.5 }}>
                     {[0, 1, 2].map((i) => (
-                      <Box key={i} sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#bdbdbd', animation: 'pulse 1.4s infinite ease-in-out', animationDelay: `${i * 0.2}s`, '@keyframes pulse': { '0%, 80%, 100%': { opacity: 0.3 }, '40%': { opacity: 1 } } }} />
+                      <Box key={i} sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: dk ? 'rgba(255,255,255,0.3)' : '#bdbdbd', animation: 'pulse 1.4s infinite ease-in-out', animationDelay: `${i * 0.2}s`, '@keyframes pulse': { '0%, 80%, 100%': { opacity: 0.3 }, '40%': { opacity: 1 } } }} />
                     ))}
                   </Box>
                 </Box>
@@ -287,7 +290,7 @@ export default function ChatTab({ selectedBookId, injectedLesson, onLessonConsum
 
       {/* Input area */}
       <Box sx={{ px: { xs: 2, md: 3 }, py: 2, bgcolor: 'background.paper' }}>
-        <Paper variant="outlined" sx={{ maxWidth: 768, mx: 'auto', display: 'flex', alignItems: 'flex-end', gap: 1, p: 1, borderRadius: 3, borderColor: isListening ? 'text.primary' : 'divider', transition: 'border-color 0.2s', '&:focus-within': { borderColor: '#9e9e9e' } }}>
+        <Paper variant="outlined" sx={{ maxWidth: 768, mx: 'auto', display: 'flex', alignItems: 'flex-end', gap: 1, p: 1, borderRadius: 3, borderColor: isListening ? 'text.primary' : 'divider', transition: 'border-color 0.2s', '&:focus-within': { borderColor: dk ? 'rgba(255,255,255,0.25)' : '#9e9e9e' } }}>
           <TextField
             inputRef={inputRef}
             fullWidth
@@ -306,7 +309,7 @@ export default function ChatTab({ selectedBookId, injectedLesson, onLessonConsum
               {isListening ? <MicOffIcon fontSize="small" /> : <MicIcon fontSize="small" />}
             </IconButton>
           </Tooltip>
-          <IconButton onClick={handleSend} disabled={!input.trim() || isLoading} size="small" sx={{ bgcolor: input.trim() ? '#616161' : 'transparent', color: input.trim() ? '#fff' : 'text.secondary', '&:hover': { bgcolor: input.trim() ? '#424242' : 'action.hover' }, '&:disabled': { bgcolor: 'transparent', color: '#e0e0e0' } }}>
+          <IconButton onClick={handleSend} disabled={!input.trim() || isLoading} size="small" sx={{ bgcolor: input.trim() ? (dk ? '#1A2B3C' : '#616161') : 'transparent', color: input.trim() ? '#fff' : 'text.secondary', '&:hover': { bgcolor: input.trim() ? (dk ? '#243B4F' : '#424242') : 'action.hover' }, '&:disabled': { bgcolor: 'transparent', color: dk ? 'rgba(255,255,255,0.15)' : '#e0e0e0' } }}>
             {isLoading ? <CircularProgress size={18} sx={{ color: 'text.secondary' }} /> : <SendIcon fontSize="small" />}
           </IconButton>
         </Paper>

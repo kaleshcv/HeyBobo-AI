@@ -13,6 +13,7 @@ import {
   Paper,
   Typography,
   Checkbox,
+  useTheme,
 } from '@mui/material';
 import SpaIcon from '@mui/icons-material/Spa';
 import FaceIcon from '@mui/icons-material/Face';
@@ -30,90 +31,30 @@ import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import LocalFloristIcon from '@mui/icons-material/LocalFlorist';
 import CheckroomIcon from '@mui/icons-material/Checkroom';
 
-// ─── Seed data (mirrors mobile store) ────────────────────────────────────────
+// ─── Default empty state ────────────────────────────────────────
 
 const PROFILE = {
-  skinType: 'Combination',
-  hairType: 'Wavy',
-  faceShape: 'Oval',
-  concerns: ['Oiliness', 'Dryness', 'Uneven Tone'],
-  stylePrefs: ['Casual', 'Professional'],
+  skinType: '',
+  hairType: '',
+  faceShape: '',
+  concerns: [] as string[],
+  stylePrefs: [] as string[],
 };
 
-const RECOMMENDATIONS = [
-  {
-    id: '1', category: 'Skincare', title: 'Daily Moisturizer',
-    description: 'Use a lightweight, non-comedogenic moisturizer twice daily to maintain skin barrier.',
-    priority: 'High', saved: true,
-    products: ['CeraVe Facial Moisturizing Lotion', 'Cetaphil Daily Facial Cleanser'],
-  },
-  {
-    id: '2', category: 'Skincare', title: 'Sunscreen SPF 30+',
-    description: 'Apply broad-spectrum SPF 30+ every morning and reapply every 2 hours outdoors.',
-    priority: 'High', saved: true,
-    products: ['La Roche-Posay Anthelios', 'Neutrogena Ultra Sheer'],
-  },
-  {
-    id: '3', category: 'Skincare', title: 'Vitamin C Serum',
-    description: 'Use Vitamin C serum in the morning to brighten skin and reduce dark spots.',
-    priority: 'Medium', saved: false, products: ['TruSkin Vitamin C Serum'],
-  },
-  {
-    id: '4', category: 'Haircare', title: 'Deep Conditioning Mask',
-    description: 'Use a deep conditioning hair mask once a week to restore moisture and shine.',
-    priority: 'Medium', saved: false,
-    products: ['Olaplex No. 3 Hair Perfector', 'Kerastase Masque Therapiste'],
-  },
-  {
-    id: '5', category: 'Haircare', title: 'Scalp Massage',
-    description: 'Massage your scalp for 5 minutes daily to stimulate blood flow and hair growth.',
-    priority: 'Low', saved: false, products: [],
-  },
-  {
-    id: '6', category: 'Lifestyle', title: 'Stay Hydrated',
-    description: 'Drink at least 8 glasses of water daily. Hydration directly impacts skin clarity.',
-    priority: 'High', saved: true, products: [],
-  },
-  {
-    id: '7', category: 'Lifestyle', title: 'Beauty Sleep',
-    description: 'Aim for 7-9 hours of sleep. Skin repairs itself during sleep cycles.',
-    priority: 'Medium', saved: false, products: ['Silk Pillowcase', 'Overnight Hydrating Mask'],
-  },
-  {
-    id: '8', category: 'Grooming', title: 'Eyebrow Shaping',
-    description: 'Define your brows every 2-3 weeks to frame your face shape.',
-    priority: 'Low', saved: false, products: ['Benefit Precisely My Brow Pencil'],
-  },
-];
+const RECOMMENDATIONS: {
+  id: string; category: string; title: string;
+  description: string; priority: string; saved: boolean;
+  products: string[];
+}[] = [];
 
-const LAST_ANALYSIS = {
-  date: new Date(Date.now() - 2 * 86400000).toISOString(),
-  skinType: 'Combination',
-  skinScore: 72,
-  concerns: ['Oiliness', 'Dryness', 'Uneven Tone'],
-  recommendations: [
-    'Use lightweight non-comedogenic moisturizer',
-    'Apply sunscreen daily',
-    'Exfoliate 2-3 times per week',
-    'Use a gentle toner to balance pH',
-  ],
-};
+const LAST_ANALYSIS: {
+  date: string; skinType: string; skinScore: number;
+  concerns: string[]; recommendations: string[];
+} | null = null;
 
-const MORNING_ROUTINE = [
-  { id: 'm1', label: 'Cleanse face', done: false },
-  { id: 'm2', label: 'Apply toner', done: false },
-  { id: 'm3', label: 'Vitamin C serum', done: false },
-  { id: 'm4', label: 'Moisturize', done: true },
-  { id: 'm5', label: 'Sunscreen SPF 30+', done: true },
-];
+const MORNING_ROUTINE: { id: string; label: string; done: boolean }[] = [];
 
-const EVENING_ROUTINE = [
-  { id: 'e1', label: 'Double cleanse', done: false },
-  { id: 'e2', label: 'Exfoliate (2×/week)', done: false },
-  { id: 'e3', label: 'Night serum', done: false },
-  { id: 'e4', label: 'Eye cream', done: false },
-  { id: 'e5', label: 'Night moisturizer', done: false },
-];
+const EVENING_ROUTINE: { id: string; label: string; done: boolean }[] = [];
 
 // ─── Category config ──────────────────────────────────────────────────────────
 
@@ -157,6 +98,7 @@ function StatCard({
   icon: React.ReactNode; label: string; value: string | number;
   sub: string; color: string; onClick?: () => void;
 }) {
+  const dk = useTheme().palette.mode === 'dark';
   return (
     <Paper
       variant="outlined"
@@ -164,7 +106,7 @@ function StatCard({
       sx={{
         p: 2, borderRadius: 3,
         display: 'flex', gap: 1.5, alignItems: 'flex-start',
-        ...(onClick && { cursor: 'pointer', '&:hover': { borderColor: '#bdbdbd', boxShadow: '0 2px 10px rgba(0,0,0,0.06)' } }),
+        ...(onClick && { cursor: 'pointer', '&:hover': { borderColor: dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd', boxShadow: '0 2px 10px rgba(0,0,0,0.06)' } }),
       }}
     >
       <Avatar sx={{ bgcolor: color, width: 42, height: 42 }}>{icon}</Avatar>
@@ -178,13 +120,14 @@ function StatCard({
 }
 
 function ScoreRing({ score }: { score: number }) {
+  const dk = useTheme().palette.mode === 'dark';
   const color = score >= 75 ? '#4caf50' : score >= 50 ? '#ff9800' : '#f44336';
   return (
     <Box sx={{ position: 'relative', display: 'inline-flex' }}>
       <CircularProgress
         variant="determinate" value={100}
         size={100} thickness={4}
-        sx={{ color: '#eeeeee', position: 'absolute' }}
+        sx={{ color: dk ? 'rgba(255,255,255,0.08)' : '#eeeeee', position: 'absolute' }}
       />
       <CircularProgress
         variant="determinate" value={score}
@@ -206,6 +149,7 @@ function ScoreRing({ score }: { score: number }) {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function GroomingDashboardPage() {
+  const dk = useTheme().palette.mode === 'dark';
   const navigate = useNavigate();
 
   const [morningDone, setMorningDone] = useState(() => MORNING_ROUTINE.map((s) => s.done));
@@ -221,28 +165,45 @@ export default function GroomingDashboardPage() {
 
   const topRecs = RECOMMENDATIONS.filter((r) => r.priority === 'High').slice(0, 4);
 
-  const insights = useMemo(() => [
-    {
-      tone: 'info' as const,
-      title: 'Combination skin needs balance',
-      body: 'Your skin type benefits from lightweight hydration in the AM and richer repair at night. Avoid stripping cleansers.',
-    },
-    {
-      tone: 'success' as const,
-      title: 'Morning routine nearly complete',
-      body: `${morningDone.filter(Boolean).length}/${MORNING_ROUTINE.length} morning steps done. Sunscreen and moisturizer are already checked off.`,
-    },
-    {
-      tone: 'warning' as const,
-      title: 'Evening routine not started',
-      body: 'Consistency with your evening routine is key. Nightly cleansing removes pollutants that accelerate aging.',
-    },
-    {
-      tone: 'info' as const,
-      title: 'Skin score trending up',
-      body: `Your latest AI scan scored ${LAST_ANALYSIS.skinScore}/100. Address oiliness and uneven tone to push above 80.`,
-    },
-  ], [morningDone]);
+  const insights = useMemo(() => {
+    if (!LAST_ANALYSIS && RECOMMENDATIONS.length === 0) {
+      return [{
+        tone: 'info' as const,
+        title: 'Get started with your grooming profile',
+        body: 'Run a Visual Analysis scan and configure your profile to receive personalised recommendations.',
+      }];
+    }
+    const result: { tone: 'info' | 'success' | 'warning'; title: string; body: string }[] = [];
+    if (PROFILE.skinType) {
+      result.push({
+        tone: 'info' as const,
+        title: `${PROFILE.skinType} skin needs balance`,
+        body: 'Your skin type benefits from lightweight hydration in the AM and richer repair at night. Avoid stripping cleansers.',
+      });
+    }
+    if (MORNING_ROUTINE.length > 0) {
+      result.push({
+        tone: 'success' as const,
+        title: 'Morning routine progress',
+        body: `${morningDone.filter(Boolean).length}/${MORNING_ROUTINE.length} morning steps done.`,
+      });
+    }
+    if (EVENING_ROUTINE.length > 0) {
+      result.push({
+        tone: 'warning' as const,
+        title: 'Evening routine not started',
+        body: 'Consistency with your evening routine is key. Nightly cleansing removes pollutants that accelerate aging.',
+      });
+    }
+    if (LAST_ANALYSIS) {
+      result.push({
+        tone: 'info' as const,
+        title: 'Skin score trending up',
+        body: `Your latest AI scan scored ${LAST_ANALYSIS.skinScore}/100.`,
+      });
+    }
+    return result;
+  }, [morningDone]);
 
   const formatDate = (iso: string) =>
     new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -306,8 +267,8 @@ export default function GroomingDashboardPage() {
           <StatCard
             icon={<StarIcon sx={{ fontSize: 20 }} />}
             label="Skin Score"
-            value={`${LAST_ANALYSIS.skinScore}/100`}
-            sub={`Last scan: ${formatDate(LAST_ANALYSIS.date)}`}
+            value={LAST_ANALYSIS ? `${LAST_ANALYSIS.skinScore}/100` : '--'}
+            sub={LAST_ANALYSIS ? `Last scan: ${formatDate(LAST_ANALYSIS.date)}` : 'No scan yet'}
             color="#4caf50"
             onClick={() => navigate('/app/grooming/visual-analysis')}
           />
@@ -365,7 +326,7 @@ export default function GroomingDashboardPage() {
         <Grid item xs={12} md={8}>
           <SectionCard
             title="AI Skin Analysis"
-            subtitle={`Last scan: ${formatDate(LAST_ANALYSIS.date)}`}
+            subtitle={LAST_ANALYSIS ? `Last scan: ${formatDate(LAST_ANALYSIS.date)}` : 'No scan performed yet'}
             action={
               <Button
                 size="small" variant="outlined" startIcon={<CameraAltIcon />}
@@ -376,62 +337,42 @@ export default function GroomingDashboardPage() {
               </Button>
             }
           >
-            <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap', alignItems: 'flex-start' }}>
-              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-                <ScoreRing score={LAST_ANALYSIS.skinScore} />
-                <Typography variant="caption" color="text.secondary">Overall Score</Typography>
-              </Box>
-
-              <Box sx={{ flex: 1, minWidth: 200 }}>
-                <Typography variant="body2" sx={{ fontWeight: 700, mb: 0.5 }}>
-                  {LAST_ANALYSIS.skinType} Skin Detected
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-                  Identified concerns:
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap', mb: 1.5 }}>
-                  {LAST_ANALYSIS.concerns.map((c) => (
-                    <Chip key={c} label={c} size="small" color="error" variant="outlined" />
-                  ))}
+            {LAST_ANALYSIS ? (
+              <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap', alignItems: 'flex-start' }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+                  <ScoreRing score={LAST_ANALYSIS.skinScore} />
+                  <Typography variant="caption" color="text.secondary">Overall Score</Typography>
                 </Box>
 
-                <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.75 }}>AI Recommendations</Typography>
-                {LAST_ANALYSIS.recommendations.slice(0, 3).map((r, i) => (
-                  <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                    <CheckCircleIcon sx={{ fontSize: 15, color: '#4caf50' }} />
-                    <Typography variant="body2" color="text.secondary">{r}</Typography>
+                <Box sx={{ flex: 1, minWidth: 200 }}>
+                  <Typography variant="body2" sx={{ fontWeight: 700, mb: 0.5 }}>
+                    {LAST_ANALYSIS.skinType} Skin Detected
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+                    Identified concerns:
+                  </Typography>
+                  <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap', mb: 1.5 }}>
+                    {LAST_ANALYSIS.concerns.map((c) => (
+                      <Chip key={c} label={c} size="small" color="error" variant="outlined" />
+                    ))}
                   </Box>
-                ))}
-              </Box>
 
-              <Box sx={{ minWidth: 140 }}>
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
-                  Score Breakdown
-                </Typography>
-                {[
-                  { label: 'Hydration', value: 65 },
-                  { label: 'Clarity', value: 58 },
-                  { label: 'Texture', value: 74 },
-                  { label: 'Tone', value: 70 },
-                ].map((metric) => (
-                  <Box key={metric.label} sx={{ mb: 1 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.25 }}>
-                      <Typography variant="caption" color="text.secondary">{metric.label}</Typography>
-                      <Typography variant="caption" sx={{ fontWeight: 600 }}>{metric.value}%</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.75 }}>AI Recommendations</Typography>
+                  {LAST_ANALYSIS.recommendations.slice(0, 3).map((r, i) => (
+                    <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                      <CheckCircleIcon sx={{ fontSize: 15, color: '#4caf50' }} />
+                      <Typography variant="body2" color="text.secondary">{r}</Typography>
                     </Box>
-                    <LinearProgress
-                      variant="determinate" value={metric.value}
-                      sx={{
-                        height: 5, borderRadius: 3, bgcolor: '#eeeeee',
-                        '& .MuiLinearProgress-bar': {
-                          bgcolor: metric.value >= 70 ? '#4caf50' : metric.value >= 55 ? '#ff9800' : '#f44336',
-                        },
-                      }}
-                    />
-                  </Box>
-                ))}
+                  ))}
+                </Box>
               </Box>
-            </Box>
+            ) : (
+              <Alert severity="info" variant="outlined" sx={{ borderRadius: 2 }}>
+                <Typography variant="body2">
+                  No skin analysis available. Use the <strong>New Scan</strong> button to run your first AI-powered skin assessment.
+                </Typography>
+              </Alert>
+            )}
           </SectionCard>
         </Grid>
       </Grid>
@@ -506,9 +447,9 @@ export default function GroomingDashboardPage() {
                 </Box>
                 <LinearProgress
                   variant="determinate"
-                  value={(cat.count / stats.total) * 100}
+                  value={(cat.count / Math.max(stats.total, 1)) * 100}
                   sx={{
-                    height: 6, borderRadius: 3, bgcolor: '#eeeeee',
+                    height: 6, borderRadius: 3, bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#eeeeee',
                     '& .MuiLinearProgress-bar': { bgcolor: cat.color, borderRadius: 3 },
                   }}
                 />
@@ -552,8 +493,8 @@ export default function GroomingDashboardPage() {
             </Box>
             <LinearProgress
               variant="determinate"
-              value={(morningDone.filter(Boolean).length / MORNING_ROUTINE.length) * 100}
-              sx={{ height: 5, borderRadius: 3, bgcolor: '#eeeeee', mb: 1 }}
+              value={(morningDone.filter(Boolean).length / Math.max(MORNING_ROUTINE.length, 1)) * 100}
+              sx={{ height: 5, borderRadius: 3, bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#eeeeee', mb: 1 }}
             />
             {MORNING_ROUTINE.map((step, i) => (
               <Box
@@ -586,8 +527,8 @@ export default function GroomingDashboardPage() {
             </Box>
             <LinearProgress
               variant="determinate"
-              value={(eveningDone.filter(Boolean).length / EVENING_ROUTINE.length) * 100}
-              sx={{ height: 5, borderRadius: 3, bgcolor: '#eeeeee', mb: 1,
+              value={(eveningDone.filter(Boolean).length / Math.max(EVENING_ROUTINE.length, 1)) * 100}
+              sx={{ height: 5, borderRadius: 3, bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#eeeeee', mb: 1,
                     '& .MuiLinearProgress-bar': { bgcolor: '#7c3aed' } }}
             />
             {EVENING_ROUTINE.map((step, i) => (

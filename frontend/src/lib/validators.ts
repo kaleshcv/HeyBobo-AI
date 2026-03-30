@@ -2,16 +2,27 @@ import { z } from 'zod'
 
 // Auth validators
 export const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  identifier: z.string().min(1, 'Email or username is required'),
+  password: z.string().min(1, 'Password is required'),
 })
 
 export const registerSchema = z
   .object({
-    firstName: z.string().min(2, 'First name must be at least 2 characters'),
-    lastName: z.string().min(2, 'Last name must be at least 2 characters'),
+    firstName: z.string().min(2, 'First name must be at least 2 characters').max(50),
+    lastName: z.string().min(2, 'Last name must be at least 2 characters').max(50),
+    username: z
+      .string()
+      .min(3, 'Username must be at least 3 characters')
+      .max(30, 'Username must be at most 30 characters')
+      .regex(/^[a-zA-Z0-9_-]+$/, 'Only letters, numbers, underscores, and hyphens allowed'),
     email: z.string().email('Invalid email address'),
-    password: z.string().min(8, 'Password must be at least 8 characters'),
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .regex(/[a-z]/, 'Must contain a lowercase letter')
+      .regex(/[A-Z]/, 'Must contain an uppercase letter')
+      .regex(/\d/, 'Must contain a number')
+      .regex(/[@$!%*?&]/, 'Must contain a special character (@$!%*?&)'),
     confirmPassword: z.string(),
     role: z.enum(['student', 'teacher']),
   })

@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { getUserScopedKey } from '@/lib/userStorage'
 import { syncWorkoutSession } from './fitnessSyncService'
 
 // ─── Types ──────────────────────────────────────────────
@@ -209,14 +210,14 @@ function generateId(): string {
 
 function loadState(): { customWorkouts: CustomWorkout[]; activePlanId: string | null; workoutLogs: WorkoutLog[] } {
   try {
-    const raw = localStorage.getItem('heybobo_workout_system')
+    const raw = localStorage.getItem(getUserScopedKey('heybobo_workout_system'))
     if (raw) return JSON.parse(raw)
   } catch { /* ignore */ }
   return { customWorkouts: [], activePlanId: null, workoutLogs: [] }
 }
 
 function persist(state: { customWorkouts: CustomWorkout[]; activePlanId: string | null; workoutLogs: WorkoutLog[] }) {
-  localStorage.setItem('heybobo_workout_system', JSON.stringify(state))
+  localStorage.setItem(getUserScopedKey('heybobo_workout_system'), JSON.stringify(state))
 }
 
 interface WorkoutSystemState {

@@ -9,6 +9,7 @@ import {
   Slide,
   TextField,
   Typography,
+  useTheme,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import SendIcon from '@mui/icons-material/Send';
@@ -28,6 +29,7 @@ interface ChatMessage {
 }
 
 export default function BrainChatbot() {
+  const dk = useTheme().palette.mode === 'dark';
   const moduleData = useBrainData();
   const authUser = useAuthStore((s) => s.user);
   const [chatOpen, setChatOpen] = useState(false);
@@ -234,7 +236,7 @@ export default function BrainChatbot() {
               display: 'flex',
               flexDirection: 'column',
               gap: 1,
-              bgcolor: '#f5f5f5',
+              bgcolor: dk ? '#0D1B2A' : '#f5f5f5',
             }}
           >
             {messages.map((msg) => (
@@ -259,7 +261,7 @@ export default function BrainChatbot() {
                     py: 1,
                     borderRadius: 2,
                     maxWidth: '80%',
-                    bgcolor: msg.role === 'user' ? '#1a1a2e' : '#fff',
+                    bgcolor: msg.role === 'user' ? '#1a1a2e' : (dk ? '#1A2B3C' : '#fff'),
                     color: msg.role === 'user' ? '#fff' : 'text.primary',
                     '& strong': { fontWeight: 700 },
                   }}

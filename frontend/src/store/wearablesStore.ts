@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { getUserScopedKey } from '@/lib/userStorage'
 import { type BLEDeviceInfo, type BLEReading } from '@/lib/bleService'
 
 // ─── Types ──────────────────────────────────────────────
@@ -216,63 +217,6 @@ function simulateReadings(device: WearableDevice): HealthReading[] {
     }))
 }
 
-// ─── MOCK STUDENTS (admin view) ─────────────────────────
-
-const MOCK_STUDENTS: StudentWearableProfile[] = [
-  {
-    studentId: 'stu-1', studentName: 'Alice Johnson', studentEmail: 'alice@school.edu', studentAvatar: null,
-    devices: [
-      { id: 'dev-a1', type: 'smart-watch', brand: 'apple-watch', name: 'Apple Watch', model: 'Series 9', firmwareVersion: '10.4', batteryLevel: 82, connectionStatus: 'connected', connectedAt: '2026-03-15T08:00:00Z', lastSyncedAt: '2026-03-20T09:30:00Z', syncIntervalMinutes: 15, isAutoSync: true, metrics: [{ metric: 'heart-rate', enabled: true, frequency: 'every-5-min' }, { metric: 'steps', enabled: true, frequency: 'every-15-min' }, { metric: 'sleep-duration', enabled: true, frequency: 'daily' }] },
-      { id: 'dev-a2', type: 'smart-ring', brand: 'oura-ring', name: 'Oura Ring', model: 'Gen 3', firmwareVersion: '2.8', batteryLevel: 55, connectionStatus: 'connected', connectedAt: '2026-03-10T12:00:00Z', lastSyncedAt: '2026-03-20T08:00:00Z', syncIntervalMinutes: 60, isAutoSync: true, metrics: [{ metric: 'sleep-score', enabled: true, frequency: 'daily' }, { metric: 'readiness-score', enabled: true, frequency: 'daily' }, { metric: 'hrv', enabled: true, frequency: 'daily' }] },
-    ],
-    lastActivity: '2026-03-20T09:30:00Z', healthScore: 88,
-    alerts: [],
-    latestReadings: { 'heart-rate': { value: 72, unit: 'bpm', timestamp: '2026-03-20T09:30:00Z' }, 'steps': { value: 6540, unit: 'steps', timestamp: '2026-03-20T09:30:00Z' }, 'sleep-score': { value: 91, unit: '/100', timestamp: '2026-03-20T08:00:00Z' }, 'readiness-score': { value: 85, unit: '/100', timestamp: '2026-03-20T08:00:00Z' }, 'hrv': { value: 48, unit: 'ms', timestamp: '2026-03-20T08:00:00Z' }, 'sleep-duration': { value: 7.8, unit: 'hrs', timestamp: '2026-03-20T08:00:00Z' } } as any,
-  },
-  {
-    studentId: 'stu-2', studentName: 'Brian Lee', studentEmail: 'brian@school.edu', studentAvatar: null,
-    devices: [
-      { id: 'dev-b1', type: 'smart-watch', brand: 'garmin', name: 'Garmin Forerunner', model: '265', firmwareVersion: '15.20', batteryLevel: 34, connectionStatus: 'connected', connectedAt: '2026-03-18T10:00:00Z', lastSyncedAt: '2026-03-20T07:45:00Z', syncIntervalMinutes: 30, isAutoSync: true, metrics: [{ metric: 'heart-rate', enabled: true, frequency: 'every-5-min' }, { metric: 'vo2-max', enabled: true, frequency: 'daily' }, { metric: 'stress-level', enabled: true, frequency: 'hourly' }] },
-    ],
-    lastActivity: '2026-03-20T07:45:00Z', healthScore: 72,
-    alerts: [{ id: 'alert-b1', deviceId: 'dev-b1', deviceName: 'Garmin Forerunner', type: 'low-battery', message: 'Battery at 34% — charge soon', severity: 'warning', timestamp: '2026-03-20T07:45:00Z', dismissed: false }],
-    latestReadings: { 'heart-rate': { value: 78, unit: 'bpm', timestamp: '2026-03-20T07:45:00Z' }, 'vo2-max': { value: 42, unit: 'mL/kg/min', timestamp: '2026-03-20T00:00:00Z' }, 'stress-level': { value: 62, unit: '/100', timestamp: '2026-03-20T07:00:00Z' } } as any,
-  },
-  {
-    studentId: 'stu-3', studentName: 'Carmen Rivera', studentEmail: 'carmen@school.edu', studentAvatar: null,
-    devices: [
-      { id: 'dev-c1', type: 'fitness-band', brand: 'xiaomi-band', name: 'Xiaomi Band', model: '8 Pro', firmwareVersion: '3.1', batteryLevel: 91, connectionStatus: 'connected', connectedAt: '2026-03-01T09:00:00Z', lastSyncedAt: '2026-03-20T10:00:00Z', syncIntervalMinutes: 15, isAutoSync: true, metrics: [{ metric: 'heart-rate', enabled: true, frequency: 'every-5-min' }, { metric: 'steps', enabled: true, frequency: 'every-15-min' }, { metric: 'sleep-duration', enabled: true, frequency: 'daily' }] },
-      { id: 'dev-c2', type: 'smart-scale', brand: 'withings-scale', name: 'Withings Body+', model: 'Body Smart', firmwareVersion: '1.8', batteryLevel: 100, connectionStatus: 'connected', connectedAt: '2026-03-05T07:00:00Z', lastSyncedAt: '2026-03-20T06:30:00Z', syncIntervalMinutes: 1440, isAutoSync: false, metrics: [{ metric: 'weight', enabled: true, frequency: 'daily' }, { metric: 'body-fat', enabled: true, frequency: 'daily' }, { metric: 'bmi', enabled: true, frequency: 'daily' }] },
-    ],
-    lastActivity: '2026-03-20T10:00:00Z', healthScore: 94,
-    alerts: [],
-    latestReadings: { 'heart-rate': { value: 68, unit: 'bpm', timestamp: '2026-03-20T10:00:00Z' }, 'steps': { value: 8230, unit: 'steps', timestamp: '2026-03-20T10:00:00Z' }, 'sleep-duration': { value: 8.2, unit: 'hrs', timestamp: '2026-03-20T06:00:00Z' }, 'weight': { value: 62.3, unit: 'kg', timestamp: '2026-03-20T06:30:00Z' }, 'body-fat': { value: 22.1, unit: '%', timestamp: '2026-03-20T06:30:00Z' }, 'bmi': { value: 21.8, unit: '', timestamp: '2026-03-20T06:30:00Z' } } as any,
-  },
-  {
-    studentId: 'stu-4', studentName: 'David Kim', studentEmail: 'david@school.edu', studentAvatar: null,
-    devices: [
-      { id: 'dev-d1', type: 'smart-watch', brand: 'samsung-galaxy-watch', name: 'Galaxy Watch', model: '6 Classic', firmwareVersion: '5.0', batteryLevel: 15, connectionStatus: 'error', connectedAt: '2026-03-12T14:00:00Z', lastSyncedAt: '2026-03-19T22:00:00Z', syncIntervalMinutes: 30, isAutoSync: true, metrics: [{ metric: 'heart-rate', enabled: true, frequency: 'every-5-min' }, { metric: 'blood-pressure', enabled: true, frequency: 'daily' }, { metric: 'ecg', enabled: true, frequency: 'daily' }] },
-    ],
-    lastActivity: '2026-03-19T22:00:00Z', healthScore: 58,
-    alerts: [
-      { id: 'alert-d1', deviceId: 'dev-d1', deviceName: 'Galaxy Watch', type: 'low-battery', message: 'Battery critically low at 15%', severity: 'critical', timestamp: '2026-03-20T06:00:00Z', dismissed: false },
-      { id: 'alert-d2', deviceId: 'dev-d1', deviceName: 'Galaxy Watch', type: 'sync-failed', message: 'Last sync failed — device unreachable', severity: 'warning', timestamp: '2026-03-20T08:00:00Z', dismissed: false },
-      { id: 'alert-d3', deviceId: 'dev-d1', deviceName: 'Galaxy Watch', type: 'abnormal-reading', message: 'Elevated resting heart rate: 105 bpm', severity: 'critical', timestamp: '2026-03-19T22:00:00Z', dismissed: false },
-    ],
-    latestReadings: { 'heart-rate': { value: 105, unit: 'bpm', timestamp: '2026-03-19T22:00:00Z' }, 'blood-pressure': { value: 145, unit: 'mmHg', timestamp: '2026-03-19T20:00:00Z' } } as any,
-  },
-  {
-    studentId: 'stu-5', studentName: 'Emma Chen', studentEmail: 'emma@school.edu', studentAvatar: null,
-    devices: [
-      { id: 'dev-e1', type: 'smart-ring', brand: 'ultrahuman', name: 'Ultrahuman Ring', model: 'Air', firmwareVersion: '2.1', batteryLevel: 67, connectionStatus: 'connected', connectedAt: '2026-03-08T11:00:00Z', lastSyncedAt: '2026-03-20T09:00:00Z', syncIntervalMinutes: 60, isAutoSync: true, metrics: [{ metric: 'sleep-score', enabled: true, frequency: 'daily' }, { metric: 'hrv', enabled: true, frequency: 'daily' }, { metric: 'readiness-score', enabled: true, frequency: 'daily' }, { metric: 'skin-temperature', enabled: true, frequency: 'hourly' }] },
-      { id: 'dev-e2', type: 'cgm', brand: 'freestyle-libre', name: 'FreeStyle Libre', model: '3', firmwareVersion: '1.0', batteryLevel: 100, connectionStatus: 'connected', connectedAt: '2026-03-17T09:00:00Z', lastSyncedAt: '2026-03-20T10:15:00Z', syncIntervalMinutes: 5, isAutoSync: true, metrics: [{ metric: 'blood-glucose', enabled: true, frequency: 'every-5-min' }] },
-    ],
-    lastActivity: '2026-03-20T10:15:00Z', healthScore: 81,
-    alerts: [{ id: 'alert-e1', deviceId: 'dev-e2', deviceName: 'FreeStyle Libre', type: 'abnormal-reading', message: 'Blood glucose spike: 185 mg/dL after meal', severity: 'warning', timestamp: '2026-03-20T09:30:00Z', dismissed: false }],
-    latestReadings: { 'sleep-score': { value: 78, unit: '/100', timestamp: '2026-03-20T06:00:00Z' }, 'hrv': { value: 38, unit: 'ms', timestamp: '2026-03-20T06:00:00Z' }, 'readiness-score': { value: 70, unit: '/100', timestamp: '2026-03-20T06:00:00Z' }, 'blood-glucose': { value: 112, unit: 'mg/dL', timestamp: '2026-03-20T10:15:00Z' } } as any,
-  },
-]
-
 // ─── STORE ──────────────────────────────────────────────
 
 interface WearablesState {
@@ -308,14 +252,14 @@ interface WearablesState {
 
 function loadState(): { devices: WearableDevice[]; readings: HealthReading[]; alerts: DeviceAlert[] } {
   try {
-    const raw = localStorage.getItem('heybobo_wearables')
+    const raw = localStorage.getItem(getUserScopedKey('heybobo_wearables'))
     if (raw) return JSON.parse(raw)
   } catch { /* ignore */ }
   return { devices: [], readings: [], alerts: [] }
 }
 
 function persist(state: { devices: WearableDevice[]; readings: HealthReading[]; alerts: DeviceAlert[] }) {
-  localStorage.setItem('heybobo_wearables', JSON.stringify(state))
+  localStorage.setItem(getUserScopedKey('heybobo_wearables'), JSON.stringify(state))
 }
 
 export const useWearablesStore = create<WearablesState>((set, get) => {
@@ -431,7 +375,8 @@ export const useWearablesStore = create<WearablesState>((set, get) => {
     },
 
     loadStudentProfiles: () => {
-      set({ studentProfiles: MOCK_STUDENTS })
+      // Admin-only: load from API when available. No mock data.
+      set({ studentProfiles: [] })
     },
 
     syncStudentDevice: (studentId, deviceId) => {

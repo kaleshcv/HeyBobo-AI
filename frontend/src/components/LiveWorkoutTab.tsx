@@ -10,6 +10,7 @@ import {
   DialogContent,
   DialogActions,
   LinearProgress,
+  useTheme,
 } from '@mui/material';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -92,6 +93,7 @@ function ExercisePicker({ onSelect }: { onSelect: (ex: LiveExercise) => void }) 
         {cats.map((c) => {
           const isAll = c === 'all';
           const meta = isAll ? null : LIVE_CATEGORIES[c];
+          const dk = useTheme().palette.mode === 'dark';
           return (
             <Chip
               key={c}
@@ -101,9 +103,9 @@ function ExercisePicker({ onSelect }: { onSelect: (ex: LiveExercise) => void }) 
               variant={filter === c ? 'filled' : 'outlined'}
               sx={{
                 fontWeight: filter === c ? 600 : 400,
-                bgcolor: filter === c ? (isAll ? '#424242' : `${meta!.color}18`) : 'transparent',
+                bgcolor: filter === c ? (isAll ? (dk ? '#1A2B3C' : '#424242') : `${meta!.color}18`) : 'transparent',
                 color: filter === c ? (isAll ? '#fff' : meta!.color) : 'text.primary',
-                borderColor: filter === c ? (isAll ? '#424242' : meta!.color) : '#bdbdbd',
+                borderColor: filter === c ? (isAll ? (dk ? '#1A2B3C' : '#424242') : meta!.color) : (dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd'),
                 fontSize: 12,
               }}
             />
@@ -122,7 +124,8 @@ function ExercisePicker({ onSelect }: { onSelect: (ex: LiveExercise) => void }) 
               sx={{
                 p: 1.25,
                 borderRadius: 1.5,
-                border: '1px solid #e0e0e0',
+                border: '1px solid',
+                borderColor: 'divider',
                 cursor: 'pointer',
                 transition: 'all 0.15s',
                 '&:hover': { borderColor: cat.color, bgcolor: `${cat.color}06` },
@@ -498,6 +501,7 @@ function ResultsDialog({
   avgForm: number;
   onClose: () => void;
 }) {
+  const dk = useTheme().palette.mode === 'dark';
   if (!exercise) return null;
   const formatTime = (s: number) => `${Math.floor(s / 60)}m ${s % 60}s`;
   const formPct = Math.round(avgForm * 100);
@@ -532,7 +536,7 @@ function ResultsDialog({
         </Box>
       </DialogContent>
       <DialogActions sx={{ justifyContent: 'center', pb: 2.5 }}>
-        <Button onClick={onClose} variant="contained" sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2, bgcolor: '#424242', '&:hover': { bgcolor: '#212121' }, px: 4 }}>
+        <Button onClick={onClose} variant="contained" sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2, bgcolor: dk ? '#1A2B3C' : '#424242', '&:hover': { bgcolor: dk ? '#243B4F' : '#212121' }, px: 4 }}>
           Done
         </Button>
       </DialogActions>
@@ -570,21 +574,21 @@ export default function LiveWorkoutTab() {
         <>
           {/* Stats bar */}
           <Box sx={{ display: 'flex', gap: 2, mb: 1.5, flexWrap: 'wrap' }}>
-            <Paper elevation={0} sx={{ px: 2, py: 1, borderRadius: 2, border: '1px solid #e0e0e0', display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Paper elevation={0} sx={{ px: 2, py: 1, borderRadius: 2, border: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center', gap: 1 }}>
               <VideocamIcon sx={{ fontSize: 18, color: '#00e676' }} />
               <Box>
                 <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>Sessions</Typography>
                 <Typography variant="body2" sx={{ fontWeight: 700 }}>{sessions.length}</Typography>
               </Box>
             </Paper>
-            <Paper elevation={0} sx={{ px: 2, py: 1, borderRadius: 2, border: '1px solid #e0e0e0', display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Paper elevation={0} sx={{ px: 2, py: 1, borderRadius: 2, border: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center', gap: 1 }}>
               <FitnessCenterIcon sx={{ fontSize: 18, color: '#1e88e5' }} />
               <Box>
                 <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>Total Reps</Typography>
                 <Typography variant="body2" sx={{ fontWeight: 700 }}>{totalReps}</Typography>
               </Box>
             </Paper>
-            <Paper elevation={0} sx={{ px: 2, py: 1, borderRadius: 2, border: '1px solid #e0e0e0', flex: 1, minWidth: 180 }}>
+            <Paper elevation={0} sx={{ px: 2, py: 1, borderRadius: 2, border: '1px solid', borderColor: 'divider', flex: 1, minWidth: 180 }}>
               <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10, display: 'block' }}>How it works</Typography>
               <Typography variant="caption" sx={{ fontSize: 11, color: 'text.primary' }}>
                 Pick an exercise → turn on camera → MoveNet tracks your pose → reps are counted automatically

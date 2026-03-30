@@ -7,6 +7,7 @@ import {
   LinearProgress,
   Tooltip,
   Chip,
+  useTheme,
 } from '@mui/material';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -22,6 +23,7 @@ interface Props {
 }
 
 export default function TextbooksTab({ onSelectBook, selectedBookId }: Props) {
+  const dk = useTheme().palette.mode === 'dark';
   const { textbooks, setTextbooks, addTextbook, removeTextbook } = useAITutorStore();
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -109,11 +111,11 @@ export default function TextbooksTab({ onSelectBook, selectedBookId }: Props) {
           p: 4,
           borderRadius: 2,
           borderStyle: 'dashed',
-          borderColor: '#ccc',
+          borderColor: dk ? 'rgba(255,255,255,0.15)' : '#ccc',
           textAlign: 'center',
           cursor: isUploading ? 'default' : 'pointer',
           transition: 'all 0.2s',
-          '&:hover': isUploading ? {} : { borderColor: '#999', bgcolor: '#fafafa' },
+          '&:hover': isUploading ? {} : { borderColor: dk ? 'rgba(255,255,255,0.25)' : '#999', bgcolor: dk ? 'rgba(255,255,255,0.03)' : '#fafafa' },
           mb: 3,
         }}
         onClick={() => !isUploading && fileInputRef.current?.click()}
@@ -135,7 +137,7 @@ export default function TextbooksTab({ onSelectBook, selectedBookId }: Props) {
       {/* Book list */}
       {textbooks.length === 0 ? (
         <Box sx={{ textAlign: 'center', py: 4 }}>
-          <MenuBookIcon sx={{ fontSize: 48, color: '#e0e0e0', mb: 1 }} />
+          <MenuBookIcon sx={{ fontSize: 48, color: dk ? 'rgba(255,255,255,0.15)' : '#e0e0e0', mb: 1 }} />
           <Typography variant="body2" color="text.secondary">
             No textbooks uploaded yet. Upload your first textbook to get started.
           </Typography>
@@ -153,9 +155,9 @@ export default function TextbooksTab({ onSelectBook, selectedBookId }: Props) {
                 p: 1.5,
                 borderRadius: 2,
                 cursor: 'pointer',
-                bgcolor: selectedBookId === book.id ? '#f3e5f5' : 'transparent',
+                bgcolor: selectedBookId === book.id ? (dk ? 'rgba(206,147,216,0.12)' : '#f3e5f5') : 'transparent',
                 borderColor: selectedBookId === book.id ? '#ce93d8' : 'divider',
-                '&:hover': { bgcolor: selectedBookId === book.id ? '#f3e5f5' : '#fafafa' },
+                '&:hover': { bgcolor: selectedBookId === book.id ? (dk ? 'rgba(206,147,216,0.15)' : '#f3e5f5') : (dk ? 'rgba(255,255,255,0.03)' : '#fafafa') },
               }}
               onClick={() => onSelectBook(book.id)}
             >

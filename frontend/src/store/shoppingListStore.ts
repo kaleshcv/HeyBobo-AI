@@ -251,7 +251,7 @@ export const useShoppingListStore = create<ShoppingListState>()(
       generateFromCourses: (courses) => {
         const id = genId();
         const items: ShoppingItem[] = courses.flatMap((c) => [
-          { id: genId(), name: `${c.title} — Textbook`, quantity: 1, unit: 'book', estimatedPrice: 45 + Math.floor(Math.random() * 30), checked: false, source: 'course' as const, sourceDetail: c.title, category: 'textbook', addedAt: now(), note: '' },
+          { id: genId(), name: `${c.title} — Textbook`, quantity: 1, unit: 'book', estimatedPrice: 55, checked: false, source: 'course' as const, sourceDetail: c.title, category: 'textbook', addedAt: now(), note: '' },
           { id: genId(), name: `Notebook for ${c.title}`, quantity: 1, unit: 'pc', estimatedPrice: 8, checked: false, source: 'course' as const, sourceDetail: c.title, category: 'stationery', addedAt: now(), note: '' },
         ]);
         set((s) => ({

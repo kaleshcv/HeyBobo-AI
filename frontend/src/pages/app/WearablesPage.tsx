@@ -4,7 +4,7 @@ import {
   Avatar, LinearProgress, Switch, Tooltip, Badge, Dialog, DialogTitle,
   DialogContent, DialogActions, Alert, TextField, InputAdornment,
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  CircularProgress,
+  CircularProgress, useTheme,
 } from '@mui/material';
 import SyncIcon from '@mui/icons-material/Sync';
 import AddIcon from '@mui/icons-material/Add';
@@ -71,6 +71,7 @@ function severityColor(s: string): 'error' | 'warning' | 'info' {
 // ─── Pair Device Dialog ─────────────────────────────────
 
 function PairDeviceDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const dk = useTheme().palette.mode === 'dark';
   const { pairDevice, pairRealDevice, devices } = useWearablesStore();
   const [mode, setMode] = useState<'bluetooth' | 'catalog'>('bluetooth');
   const [filter, setFilter] = useState<DeviceType | 'all'>('all');
@@ -188,7 +189,7 @@ function PairDeviceDialog({ open, onClose }: { open: boolean; onClose: () => voi
                   </Alert>
                 )}
 
-                <Paper elevation={0} sx={{ p: 2, borderRadius: 2, bgcolor: '#f5f5f5', mb: 2 }}>
+                <Paper elevation={0} sx={{ p: 2, borderRadius: 2, bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5', mb: 2 }}>
                   <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>Supported BLE Profiles</Typography>
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                     {[
@@ -238,7 +239,7 @@ function PairDeviceDialog({ open, onClose }: { open: boolean; onClose: () => voi
                 size="small"
                 onClick={() => setFilter(t)}
                 variant={filter === t ? 'filled' : 'outlined'}
-                sx={{ fontSize: 11, fontWeight: filter === t ? 600 : 400, bgcolor: filter === t ? '#e0e0e0' : undefined }}
+                sx={{ fontSize: 11, fontWeight: filter === t ? 600 : 400, bgcolor: filter === t ? (dk ? 'rgba(255,255,255,0.12)' : '#e0e0e0') : undefined }}
               />
             );
           })}
@@ -252,7 +253,7 @@ function PairDeviceDialog({ open, onClose }: { open: boolean; onClose: () => voi
                 key={entry.brand}
                 elevation={0}
                 sx={{
-                  p: 2, borderRadius: 2, border: '1px solid', borderColor: '#e0e0e0',
+                  p: 2, borderRadius: 2, border: '1px solid', borderColor: 'divider',
                   opacity: paired ? 0.5 : 1, cursor: paired ? 'default' : 'pointer',
                   transition: 'all 0.15s',
                   '&:hover': paired ? {} : { borderColor: '#1e88e5', bgcolor: '#e3f2fd08' },
@@ -295,6 +296,7 @@ function PairDeviceDialog({ open, onClose }: { open: boolean; onClose: () => voi
 // ─── Device Card ────────────────────────────────────────
 
 function DeviceCard({ device }: { device: WearableDevice }) {
+  const dk = useTheme().palette.mode === 'dark';
   const { syncDevice, unpairDevice, toggleAutoSync, toggleMetric } = useWearablesStore();
   const [showSettings, setShowSettings] = useState(false);
   const meta = DEVICE_TYPE_META[device.type];
@@ -312,9 +314,9 @@ function DeviceCard({ device }: { device: WearableDevice }) {
   const isLiveBLE = device.isRealDevice && device.connectionStatus === 'connected';
 
   return (
-    <Paper elevation={0} sx={{ borderRadius: 2.5, border: '1px solid', borderColor: isLiveBLE ? '#4caf50' : '#e0e0e0', overflow: 'hidden' }}>
+    <Paper elevation={0} sx={{ borderRadius: 2.5, border: '1px solid', borderColor: isLiveBLE ? '#4caf50' : dk ? 'rgba(255,255,255,0.12)' : '#e0e0e0', overflow: 'hidden' }}>
       {/* Header */}
-      <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1.5, bgcolor: isLiveBLE ? '#f1f8e9' : '#fafafa' }}>
+      <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1.5, bgcolor: isLiveBLE ? (dk ? 'rgba(76,175,80,0.1)' : '#f1f8e9') : (dk ? 'rgba(255,255,255,0.03)' : '#fafafa') }}>
         <Typography sx={{ fontSize: 32 }}>{meta.emoji}</Typography>
         <Box sx={{ flex: 1 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
@@ -326,7 +328,7 @@ function DeviceCard({ device }: { device: WearableDevice }) {
                 size="small"
                 sx={{
                   fontSize: 9, height: 20, fontWeight: 700,
-                  bgcolor: isLiveBLE ? '#4caf50' : '#9e9e9e', color: '#fff',
+                  bgcolor: isLiveBLE ? '#4caf50' : (dk ? 'rgba(255,255,255,0.2)' : '#9e9e9e'), color: '#fff',
                   '& .MuiChip-icon': { color: '#fff', ml: 0.5 },
                   ...(isLiveBLE ? { animation: 'pulse 2s infinite', '@keyframes pulse': { '0%, 100%': { opacity: 1 }, '50%': { opacity: 0.7 } } } : {}),
                 }}
@@ -351,15 +353,20 @@ function DeviceCard({ device }: { device: WearableDevice }) {
 
       {/* Latest Readings */}
       <Box sx={{ p: 2 }}>
+        {!device.isRealDevice && (
+          <Alert severity="info" sx={{ mb: 1.5, py: 0.25, fontSize: 11, '& .MuiAlert-message': { py: 0.5 } }}>
+            [*] Readings are estimated — pair via Bluetooth for live data
+          </Alert>
+        )}
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: 1 }}>
           {device.metrics.filter((m) => m.enabled).slice(0, 8).map((mc) => {
             const latest = latestByMetric.get(mc.metric);
             const mm = METRIC_META[mc.metric];
             const isAbnormal = latest && mm.normalRange && (latest.value < mm.normalRange[0] || latest.value > mm.normalRange[1]);
             return (
-              <Box key={mc.metric} sx={{ textAlign: 'center', p: 0.75, borderRadius: 1.5, bgcolor: isAbnormal ? '#fff3e0' : '#f5f5f5' }}>
+              <Box key={mc.metric} sx={{ textAlign: 'center', p: 0.75, borderRadius: 1.5, bgcolor: isAbnormal ? (dk ? 'rgba(255,152,0,0.15)' : '#fff3e0') : (dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5') }}>
                 <Typography sx={{ fontSize: 14 }}>{mm.emoji}</Typography>
-                <Typography variant="body2" sx={{ fontWeight: 700, color: isAbnormal ? '#e65100' : 'text.primary', fontSize: 15 }}>
+                <Typography variant="body2" sx={{ fontWeight: 700, color: isAbnormal ? (dk ? '#ffb74d' : '#e65100') : 'text.primary', fontSize: 15 }}>
                   {latest ? latest.value : '—'}
                 </Typography>
                 <Typography variant="caption" sx={{ fontSize: 9, color: 'text.secondary', display: 'block' }}>{mm.label}</Typography>
@@ -368,7 +375,7 @@ function DeviceCard({ device }: { device: WearableDevice }) {
           })}
         </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 1.5, pt: 1.5, borderTop: '1px solid #f0f0f0' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 1.5, pt: 1.5, borderTop: '1px solid', borderColor: 'divider' }}>
           <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>
             Synced: {timeAgo(device.lastSyncedAt)}
           </Typography>
@@ -391,7 +398,7 @@ function DeviceCard({ device }: { device: WearableDevice }) {
               </IconButton>
             </Tooltip>
             <Tooltip title="Unpair">
-              <IconButton size="small" onClick={() => { unpairDevice(device.id); toast.success('Device removed'); }} sx={{ color: '#9e9e9e' }}>
+              <IconButton size="small" onClick={() => { unpairDevice(device.id); toast.success('Device removed'); }} sx={{ color: dk ? 'rgba(255,255,255,0.3)' : '#9e9e9e' }}>
                 <DeleteIcon fontSize="small" />
               </IconButton>
             </Tooltip>
@@ -401,7 +408,7 @@ function DeviceCard({ device }: { device: WearableDevice }) {
 
       {/* Settings panel */}
       {showSettings && (
-        <Box sx={{ p: 2, pt: 0, borderTop: '1px solid #f0f0f0' }}>
+        <Box sx={{ p: 2, pt: 0, borderTop: '1px solid', borderColor: 'divider' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
             <Typography variant="body2" sx={{ fontWeight: 600 }}>Auto-Sync</Typography>
             <Switch size="small" checked={device.isAutoSync} onChange={() => toggleAutoSync(device.id)} />
@@ -415,7 +422,7 @@ function DeviceCard({ device }: { device: WearableDevice }) {
                 size="small"
                 variant={mc.enabled ? 'filled' : 'outlined'}
                 onClick={() => toggleMetric(device.id, mc.metric)}
-                sx={{ fontSize: 10, height: 24, bgcolor: mc.enabled ? '#e3f2fd' : undefined, fontWeight: mc.enabled ? 600 : 400 }}
+                sx={{ fontSize: 10, height: 24, bgcolor: mc.enabled ? (dk ? 'rgba(30,136,229,0.15)' : '#e3f2fd') : undefined, fontWeight: mc.enabled ? 600 : 400 }}
               />
             ))}
           </Box>
@@ -467,6 +474,7 @@ function AlertsPanel() {
 // ─── Admin: Student Monitor ─────────────────────────────
 
 function AdminStudentMonitor() {
+  const dk = useTheme().palette.mode === 'dark';
   const { studentProfiles, loadStudentProfiles, syncStudentDevice } = useWearablesStore();
   const [search, setSearch] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<StudentWearableProfile | null>(null);
@@ -491,7 +499,7 @@ function AdminStudentMonitor() {
           { label: 'Total Devices', value: studentProfiles.reduce((a, s) => a + s.devices.length, 0), color: undefined },
           { label: 'Active Alerts', value: totalAlerts, color: totalAlerts > 0 ? '#f44336' : '#4caf50' },
         ].map((stat) => (
-          <Paper key={stat.label} elevation={0} sx={{ p: 1.5, borderRadius: 2, border: '1px solid #e0e0e0', flex: '1 1 140px', minWidth: 140 }}>
+          <Paper key={stat.label} elevation={0} sx={{ p: 1.5, borderRadius: 2, border: '1px solid', borderColor: 'divider', flex: '1 1 140px', minWidth: 140 }}>
             <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>{stat.label}</Typography>
             <Typography variant="h5" sx={{ fontWeight: 700, color: stat.color }}>{stat.value}</Typography>
           </Paper>
@@ -509,10 +517,10 @@ function AdminStudentMonitor() {
       />
 
       {/* Student Table */}
-      <TableContainer component={Paper} elevation={0} sx={{ border: '1px solid #e0e0e0', borderRadius: 2 }}>
+      <TableContainer component={Paper} elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
         <Table size="small">
           <TableHead>
-            <TableRow sx={{ bgcolor: '#fafafa' }}>
+            <TableRow sx={{ bgcolor: dk ? 'rgba(255,255,255,0.03)' : '#fafafa' }}>
               {['Student', 'Devices', 'Health Score', 'Key Metrics', 'Alerts', 'Last Sync', 'Actions'].map((h) => (
                 <TableCell key={h} sx={{ fontWeight: 700, fontSize: 12 }}>{h}</TableCell>
               ))}
@@ -528,12 +536,12 @@ function AdminStudentMonitor() {
                 <TableRow
                   key={student.studentId}
                   hover
-                  sx={{ cursor: 'pointer', bgcolor: activeAlerts.some((a) => a.severity === 'critical') ? '#fff3e0' : undefined }}
+                  sx={{ cursor: 'pointer', bgcolor: activeAlerts.some((a) => a.severity === 'critical') ? (dk ? 'rgba(255,152,0,0.12)' : '#fff3e0') : undefined }}
                   onClick={() => setSelectedStudent(student)}
                 >
                   <TableCell>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Avatar sx={{ width: 28, height: 28, fontSize: 12, fontWeight: 600, bgcolor: '#9e9e9e' }}>
+                      <Avatar sx={{ width: 28, height: 28, fontSize: 12, fontWeight: 600, bgcolor: dk ? 'rgba(255,255,255,0.15)' : '#9e9e9e' }}>
                         {student.studentName.split(' ').map((n) => n[0]).join('')}
                       </Avatar>
                       <Box>
@@ -551,7 +559,7 @@ function AdminStudentMonitor() {
                             size="small"
                             sx={{
                               fontSize: 12, height: 22, minWidth: 22,
-                              bgcolor: d.connectionStatus === 'connected' ? '#e8f5e9' : d.connectionStatus === 'error' ? '#ffebee' : '#f5f5f5',
+                              bgcolor: d.connectionStatus === 'connected' ? (dk ? 'rgba(76,175,80,0.15)' : '#e8f5e9') : d.connectionStatus === 'error' ? (dk ? 'rgba(244,67,54,0.15)' : '#ffebee') : (dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5'),
                             }}
                           />
                         </Tooltip>
@@ -565,7 +573,7 @@ function AdminStudentMonitor() {
                           variant="determinate"
                           value={student.healthScore}
                           sx={{
-                            height: 6, borderRadius: 3, bgcolor: '#e0e0e0',
+                            height: 6, borderRadius: 3, bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#e0e0e0',
                             '& .MuiLinearProgress-bar': { bgcolor: student.healthScore > 80 ? '#4caf50' : student.healthScore > 60 ? '#ff9800' : '#f44336', borderRadius: 3 },
                           }}
                         />
@@ -634,8 +642,8 @@ function AdminStudentMonitor() {
                     size="small"
                     sx={{
                       fontWeight: 700,
-                      bgcolor: selectedStudent.healthScore > 80 ? '#e8f5e9' : selectedStudent.healthScore > 60 ? '#fff3e0' : '#ffebee',
-                      color: selectedStudent.healthScore > 80 ? '#2e7d32' : selectedStudent.healthScore > 60 ? '#e65100' : '#c62828',
+                      bgcolor: selectedStudent.healthScore > 80 ? (dk ? 'rgba(76,175,80,0.15)' : '#e8f5e9') : selectedStudent.healthScore > 60 ? (dk ? 'rgba(255,152,0,0.15)' : '#fff3e0') : (dk ? 'rgba(244,67,54,0.15)' : '#ffebee'),
+                      color: selectedStudent.healthScore > 80 ? (dk ? '#66bb6a' : '#2e7d32') : selectedStudent.healthScore > 60 ? (dk ? '#ffb74d' : '#e65100') : (dk ? '#ef5350' : '#c62828'),
                     }}
                   />
                 </Box>
@@ -645,7 +653,7 @@ function AdminStudentMonitor() {
               {/* Devices */}
               <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>Devices</Typography>
               {selectedStudent.devices.map((d) => (
-                <Paper key={d.id} elevation={0} sx={{ p: 1.5, mb: 1, borderRadius: 2, border: '1px solid #e0e0e0' }}>
+                <Paper key={d.id} elevation={0} sx={{ p: 1.5, mb: 1, borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Typography sx={{ fontSize: 20 }}>{DEVICE_TYPE_META[d.type].emoji}</Typography>
                     <Box sx={{ flex: 1 }}>
@@ -676,9 +684,9 @@ function AdminStudentMonitor() {
                   if (!mm) return null;
                   const isAbnormal = mm.normalRange && (data.value < mm.normalRange[0] || data.value > mm.normalRange[1]);
                   return (
-                    <Box key={metric} sx={{ textAlign: 'center', p: 0.75, borderRadius: 1.5, bgcolor: isAbnormal ? '#fff3e0' : '#f5f5f5' }}>
+                    <Box key={metric} sx={{ textAlign: 'center', p: 0.75, borderRadius: 1.5, bgcolor: isAbnormal ? (dk ? 'rgba(255,152,0,0.15)' : '#fff3e0') : (dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5') }}>
                       <Typography sx={{ fontSize: 14 }}>{mm.emoji}</Typography>
-                      <Typography variant="body2" sx={{ fontWeight: 700, color: isAbnormal ? '#e65100' : 'text.primary' }}>
+                      <Typography variant="body2" sx={{ fontWeight: 700, color: isAbnormal ? (dk ? '#ffb74d' : '#e65100') : 'text.primary' }}>
                         {data.value}{data.unit && data.unit !== 'steps' ? ` ${data.unit}` : ''}
                       </Typography>
                       <Typography variant="caption" sx={{ fontSize: 8, color: 'text.secondary' }}>{mm.label}</Typography>
@@ -764,12 +772,12 @@ export default function WearablesPage() {
         </Box>
       </Box>
 
-      <Paper elevation={0} sx={{ borderRadius: 2, border: '1px solid #e0e0e0', overflow: 'hidden', mt: 1.5 }}>
+      <Paper elevation={0} sx={{ borderRadius: 2, border: '1px solid', borderColor: 'divider', overflow: 'hidden', mt: 1.5 }}>
         <Tabs
           value={tab}
           onChange={(_, v) => setTab(v)}
           sx={{
-            borderBottom: '1px solid #e0e0e0',
+            borderBottom: '1px solid', borderColor: 'divider',
             '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontSize: 13 },
           }}
         >

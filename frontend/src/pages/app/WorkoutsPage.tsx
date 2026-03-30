@@ -22,6 +22,7 @@ import {
   Select,
   FormControl,
   InputLabel,
+  useTheme,
 } from '@mui/material';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -174,6 +175,7 @@ function ExerciseDetailDialog({ exercise, open, onClose }: { exercise: Exercise 
 
 // ─── A. Workout Library ─────────────────────────────────
 function WorkoutLibrary() {
+  const dk = useTheme().palette.mode === 'dark';
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<ExerciseCategory | 'all'>('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyLevel | 'all'>('all');
@@ -232,10 +234,10 @@ function WorkoutLibrary() {
               variant={active ? 'filled' : 'outlined'}
               sx={{
                 fontWeight: active ? 600 : 400,
-                bgcolor: active ? (isAll ? '#424242' : `${meta!.color}14`) : 'transparent',
+                bgcolor: active ? (isAll ? (dk ? '#1A2B3C' : '#424242') : `${meta!.color}14`) : 'transparent',
                 color: active ? (isAll ? '#fff' : meta!.color) : 'text.primary',
-                borderColor: active ? (isAll ? '#424242' : meta!.color) : '#bdbdbd',
-                '&:hover': { bgcolor: active ? undefined : '#f5f5f5' },
+                borderColor: active ? (isAll ? (dk ? '#1A2B3C' : '#424242') : meta!.color) : (dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd'),
+                '&:hover': { bgcolor: active ? undefined : (dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5') },
               }}
             />
           );
@@ -255,7 +257,8 @@ function WorkoutLibrary() {
               sx={{
                 p: 2,
                 borderRadius: 2.5,
-                border: '1px solid #e0e0e0',
+                border: '1px solid',
+                borderColor: 'divider',
                 cursor: 'pointer',
                 transition: 'all 0.15s',
                 '&:hover': { borderColor: cat.color, boxShadow: `0 0 0 1px ${cat.color}30` },
@@ -302,6 +305,7 @@ function WorkoutLibrary() {
 
 // ─── B. Workout Plans ───────────────────────────────────
 function WorkoutPlans() {
+  const dk = useTheme().palette.mode === 'dark';
   const { activePlanId, setActivePlan, getExercise } = useWorkoutSystemStore();
   const [goalFilter, setGoalFilter] = useState<PlanGoal | 'all'>('all');
   const [expandedPlan, setExpandedPlan] = useState<string | null>(null);
@@ -327,9 +331,9 @@ function WorkoutPlans() {
               variant={active ? 'filled' : 'outlined'}
               sx={{
                 fontWeight: active ? 600 : 400,
-                bgcolor: active ? (isAll ? '#424242' : `${meta!.color}14`) : 'transparent',
+                bgcolor: active ? (isAll ? (dk ? '#1A2B3C' : '#424242') : `${meta!.color}14`) : 'transparent',
                 color: active ? (isAll ? '#fff' : meta!.color) : 'text.primary',
-                borderColor: active ? (isAll ? '#424242' : meta!.color) : '#bdbdbd',
+                borderColor: active ? (isAll ? (dk ? '#1A2B3C' : '#424242') : meta!.color) : (dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd'),
               }}
             />
           );
@@ -351,8 +355,8 @@ function WorkoutPlans() {
               sx={{
                 borderRadius: 3,
                 border: '2px solid',
-                borderColor: isActive ? goalMeta.color : '#e0e0e0',
-                bgcolor: isActive ? `${goalMeta.color}06` : '#fff',
+                borderColor: isActive ? goalMeta.color : 'divider',
+                bgcolor: isActive ? `${goalMeta.color}06` : 'background.paper',
                 overflow: 'hidden',
               }}
             >
@@ -372,11 +376,11 @@ function WorkoutPlans() {
                       <Chip icon={<CalendarMonthIcon sx={{ fontSize: 14 }} />} label={`${plan.durationWeeks} weeks`} size="small" variant="outlined" sx={{ fontSize: 11, height: 24 }} />
                       <Chip icon={<SpeedIcon sx={{ fontSize: 14 }} />} label={`${plan.daysPerWeek} days/week`} size="small" variant="outlined" sx={{ fontSize: 11, height: 24 }} />
                       <Chip label={diffMeta.label} size="small" sx={{ fontSize: 11, height: 24, bgcolor: `${diffMeta.color}14`, color: diffMeta.color, fontWeight: 600 }} />
-                      {plan.isAdaptive && <Chip icon={<AutoFixHighIcon sx={{ fontSize: 14 }} />} label="Adaptive" size="small" sx={{ fontSize: 11, height: 24, bgcolor: '#e3f2fd', color: '#1565c0', fontWeight: 600 }} />}
+                      {plan.isAdaptive && <Chip icon={<AutoFixHighIcon sx={{ fontSize: 14 }} />} label="Adaptive" size="small" sx={{ fontSize: 11, height: 24, bgcolor: dk ? 'rgba(21,101,192,0.15)' : '#e3f2fd', color: '#1565c0', fontWeight: 600 }} />}
                     </Box>
 
                     <Box sx={{ display: 'flex', gap: 0.5, mt: 1 }}>
-                      {plan.tags.map((t) => <Chip key={t} label={t} size="small" variant="outlined" sx={{ fontSize: 10, height: 20, borderColor: '#e0e0e0' }} />)}
+                      {plan.tags.map((t) => <Chip key={t} label={t} size="small" variant="outlined" sx={{ fontSize: 10, height: 20, borderColor: 'divider' }} />)}
                     </Box>
                   </Box>
                 </Box>
@@ -388,7 +392,7 @@ function WorkoutPlans() {
                       size="small"
                       variant="outlined"
                       onClick={() => setActivePlan(null)}
-                      sx={{ textTransform: 'none', borderRadius: 2, borderColor: '#bdbdbd', color: 'text.primary', fontSize: 12 }}
+                      sx={{ textTransform: 'none', borderRadius: 2, borderColor: dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd', color: 'text.primary', fontSize: 12 }}
                     >
                       Deactivate Plan
                     </Button>
@@ -416,7 +420,7 @@ function WorkoutPlans() {
 
               {/* Expanded exercise list */}
               {isExpanded && (
-                <Box sx={{ borderTop: '1px solid #e0e0e0', p: 1.5, bgcolor: '#fafafa' }}>
+                <Box sx={{ borderTop: '1px solid', borderColor: 'divider', p: 1.5, bgcolor: dk ? 'rgba(255,255,255,0.03)' : '#fafafa' }}>
                   {plan.workoutsPerDay.map((dayExercises, dayIdx) => (
                     <Box key={dayIdx} sx={{ mb: dayIdx < plan.workoutsPerDay.length - 1 ? 2 : 0 }}>
                       <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', textTransform: 'uppercase', fontSize: 10, letterSpacing: 0.5, mb: 0.5, display: 'block' }}>
@@ -450,6 +454,7 @@ function WorkoutPlans() {
 
 // ─── C. Custom Workouts ─────────────────────────────────
 function CreateWorkoutDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const dk = useTheme().palette.mode === 'dark';
   const { createCustomWorkout } = useWorkoutSystemStore();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -536,7 +541,7 @@ function CreateWorkoutDialog({ open, onClose }: { open: boolean; onClose: () => 
             const dbEx = EXERCISE_DATABASE.find((e) => e.id === ex.exerciseId);
             const cat = dbEx ? CATEGORY_META[dbEx.category] : null;
             return (
-              <Paper key={idx} elevation={0} sx={{ p: 1.5, borderRadius: 2, border: '1px solid #e0e0e0', display: 'flex', flexDirection: 'column', gap: 1 }}>
+              <Paper key={idx} elevation={0} sx={{ p: 1.5, borderRadius: 2, border: '1px solid', borderColor: 'divider', display: 'flex', flexDirection: 'column', gap: 1 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   {cat && dbEx && getCatIcon(dbEx.category, 16, cat.color)}
                   <Typography variant="body2" sx={{ fontWeight: 600, flex: 1 }}>{ex._name ?? dbEx?.name}</Typography>
@@ -592,12 +597,12 @@ function CreateWorkoutDialog({ open, onClose }: { open: boolean; onClose: () => 
             <Button
               startIcon={<AddIcon />}
               onClick={() => setShowPicker(true)}
-              sx={{ textTransform: 'none', borderRadius: 2, border: '1px dashed #bdbdbd', color: 'text.secondary', py: 1 }}
+              sx={{ textTransform: 'none', borderRadius: 2, border: '1px dashed', borderColor: dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd', color: 'text.secondary', py: 1 }}
             >
               Add Exercise
             </Button>
           ) : (
-            <Paper elevation={0} sx={{ border: '1px solid #e0e0e0', borderRadius: 2, p: 1.5, maxHeight: 300, overflow: 'auto' }}>
+            <Paper elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2, p: 1.5, maxHeight: 300, overflow: 'auto' }}>
               <TextField
                 placeholder="Search..."
                 value={pickerSearch}
@@ -614,7 +619,7 @@ function CreateWorkoutDialog({ open, onClose }: { open: boolean; onClose: () => 
                     size="small"
                     onClick={() => setPickerCategory(c)}
                     variant={pickerCategory === c ? 'filled' : 'outlined'}
-                    sx={{ height: 24, fontSize: 11, bgcolor: pickerCategory === c ? '#424242' : undefined, color: pickerCategory === c ? '#fff' : undefined }}
+                    sx={{ height: 24, fontSize: 11, bgcolor: pickerCategory === c ? (dk ? '#1A2B3C' : '#424242') : undefined, color: pickerCategory === c ? '#fff' : undefined }}
                   />
                 ))}
               </Box>
@@ -622,7 +627,7 @@ function CreateWorkoutDialog({ open, onClose }: { open: boolean; onClose: () => 
                 <Box
                   key={ex.id}
                   onClick={() => addExercise(ex)}
-                  sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.75, px: 1, borderRadius: 1.5, cursor: 'pointer', '&:hover': { bgcolor: '#f5f5f5' } }}
+                  sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.75, px: 1, borderRadius: 1.5, cursor: 'pointer', '&:hover': { bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5' } }}
                 >
                   {getCatIcon(ex.category, 16, CATEGORY_META[ex.category].color)}
                   <Typography variant="body2" sx={{ flex: 1 }}>{ex.name}</Typography>
@@ -640,7 +645,7 @@ function CreateWorkoutDialog({ open, onClose }: { open: boolean; onClose: () => 
           variant="contained"
           onClick={handleSave}
           disabled={!name.trim() || exercises.length === 0}
-          sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2, bgcolor: '#424242', '&:hover': { bgcolor: '#212121' } }}
+          sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2, bgcolor: dk ? '#1A2B3C' : '#424242', '&:hover': { bgcolor: dk ? '#243B4F' : '#212121' } }}
         >
           Save Workout
         </Button>
@@ -650,6 +655,7 @@ function CreateWorkoutDialog({ open, onClose }: { open: boolean; onClose: () => 
 }
 
 function CustomWorkouts() {
+  const dk = useTheme().palette.mode === 'dark';
   const { customWorkouts, deleteCustomWorkout, useCustomWorkout, getExercise } = useWorkoutSystemStore();
   const [createOpen, setCreateOpen] = useState(false);
 
@@ -664,21 +670,21 @@ function CustomWorkouts() {
           variant="contained"
           startIcon={<AddIcon />}
           onClick={() => setCreateOpen(true)}
-          sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2, bgcolor: '#424242', '&:hover': { bgcolor: '#212121' } }}
+          sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2, bgcolor: dk ? '#1A2B3C' : '#424242', '&:hover': { bgcolor: dk ? '#243B4F' : '#212121' } }}
         >
           Create Workout
         </Button>
       </Box>
 
       {customWorkouts.length === 0 ? (
-        <Paper elevation={0} sx={{ p: 3, borderRadius: 2, border: '1px dashed #bdbdbd', textAlign: 'center' }}>
-          <FitnessCenterIcon sx={{ fontSize: 40, color: '#e0e0e0', mb: 0.5 }} />
+        <Paper elevation={0} sx={{ p: 3, borderRadius: 2, border: '1px dashed', borderColor: dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd', textAlign: 'center' }}>
+          <FitnessCenterIcon sx={{ fontSize: 40, color: dk ? 'rgba(255,255,255,0.15)' : '#e0e0e0', mb: 0.5 }} />
           <Typography variant="body1" sx={{ fontWeight: 600, mb: 0.5 }}>No custom workouts yet</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>Build your own workout routine from the exercise library.</Typography>
           <Button
             startIcon={<AddIcon />}
             onClick={() => setCreateOpen(true)}
-            sx={{ textTransform: 'none', borderRadius: 2, border: '1px solid #bdbdbd', color: 'text.primary' }}
+            sx={{ textTransform: 'none', borderRadius: 2, border: '1px solid', borderColor: dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd', color: 'text.primary' }}
           >
             Create Your First Workout
           </Button>
@@ -689,7 +695,7 @@ function CustomWorkouts() {
             <Paper
               key={cw.id}
               elevation={0}
-              sx={{ p: 1.5, borderRadius: 2, border: '1px solid #e0e0e0' }}
+              sx={{ p: 1.5, borderRadius: 2, border: '1px solid', borderColor: 'divider' }}
             >
               <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 1 }}>
                 <Box>
@@ -729,7 +735,7 @@ function CustomWorkouts() {
                   size="small"
                   startIcon={<PlayArrowIcon />}
                   onClick={() => { useCustomWorkout(cw.id); toast.success(`Starting: ${cw.name}`); }}
-                  sx={{ textTransform: 'none', fontSize: 12, fontWeight: 600, borderRadius: 1.5, bgcolor: '#f5f5f5' }}
+                  sx={{ textTransform: 'none', fontSize: 12, fontWeight: 600, borderRadius: 1.5, bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5' }}
                 >
                   Start
                 </Button>
@@ -746,6 +752,7 @@ function CustomWorkouts() {
 
 // ═══════════════════ MAIN PAGE ═══════════════════════════
 export default function WorkoutsPage() {
+  const dk = useTheme().palette.mode === 'dark';
   const [tab, setTab] = useState(0);
 
   return (
@@ -755,19 +762,20 @@ export default function WorkoutsPage() {
         Browse exercises, follow plans, or build your own routines.
       </Typography>
 
-      <Paper elevation={0} sx={{ borderRadius: 2, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
+      <Paper elevation={0} sx={{ borderRadius: 2, border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
         <Tabs
           value={tab}
           onChange={(_, v) => setTab(v)}
           sx={{
-            borderBottom: '1px solid #e0e0e0',
+            borderBottom: '1px solid',
+            borderColor: 'divider',
             '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontSize: 14 },
           }}
         >
           <Tab label="🏋️ Exercise Library" />
           <Tab label="📋 Workout Plans" />
           <Tab label="✏️ Custom Workouts" />
-          <Tab label="📹 Live Workout" sx={{ color: tab === 3 ? '#00c853' : undefined }} />
+          <Tab label="📹 Live Workout" sx={{ color: tab === 3 ? (dk ? '#C9A84C' : '#00c853') : undefined }} />
         </Tabs>
 
         <Box sx={{ p: 1.5 }}>

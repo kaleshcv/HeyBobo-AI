@@ -18,6 +18,7 @@ import {
   FormControl,
   Paper,
   Collapse,
+  useTheme,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
@@ -37,6 +38,7 @@ function VideoQuiz({
   courseId: string;
   videoId: string;
 }) {
+  const dk = useTheme().palette.mode === 'dark';
   const questions = getVideoQuiz(videoId);
   const completeQuiz = useCourseStore((s) => s.completeQuiz);
   const quizProgress = useCourseStore((s) =>
@@ -107,7 +109,7 @@ function VideoQuiz({
             sx={{
               height: 22,
               fontSize: 11,
-              bgcolor: quizProgress.score === quizProgress.total ? '#e8f5e9' : '#fff3e0',
+              bgcolor: quizProgress.score === quizProgress.total ? (dk ? 'rgba(46,125,50,0.15)' : '#e8f5e9') : (dk ? 'rgba(230,81,0,0.15)' : '#fff3e0'),
               color: quizProgress.score === quizProgress.total ? '#2e7d32' : '#e65100',
             }}
           />
@@ -139,9 +141,9 @@ function VideoQuiz({
                     : 'divider',
                   bgcolor: submitted
                     ? isCorrect
-                      ? '#f1f8e9'
+                      ? (dk ? 'rgba(165,214,167,0.1)' : '#f1f8e9')
                       : isWrong
-                      ? '#fce4ec'
+                      ? (dk ? 'rgba(198,40,40,0.08)' : '#fce4ec')
                       : 'background.paper'
                     : 'background.paper',
                   borderRadius: 2,
@@ -201,9 +203,9 @@ function VideoQuiz({
                 onClick={handleSubmit}
                 sx={{
                   textTransform: 'none',
-                  bgcolor: '#616161',
-                  '&:hover': { bgcolor: '#424242' },
-                  '&.Mui-disabled': { bgcolor: '#e0e0e0' },
+                  bgcolor: dk ? '#1A2B3C' : '#616161',
+                  '&:hover': { bgcolor: dk ? '#243B4F' : '#424242' },
+                  '&.Mui-disabled': { bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#e0e0e0' },
                 }}
               >
                 Submit Quiz
@@ -214,7 +216,7 @@ function VideoQuiz({
                   label={`Score: ${score}/${questions.length}`}
                   sx={{
                     fontWeight: 600,
-                    bgcolor: score === questions.length ? '#e8f5e9' : '#fff3e0',
+                    bgcolor: score === questions.length ? (dk ? 'rgba(46,125,50,0.15)' : '#e8f5e9') : (dk ? 'rgba(230,81,0,0.15)' : '#fff3e0'),
                     color: score === questions.length ? '#2e7d32' : '#e65100',
                   }}
                 />
@@ -222,7 +224,7 @@ function VideoQuiz({
                   variant="outlined"
                   size="small"
                   onClick={handleRetake}
-                  sx={{ textTransform: 'none', borderColor: '#e0e0e0', color: 'text.secondary' }}
+                  sx={{ textTransform: 'none', borderColor: 'divider', color: 'text.secondary' }}
                 >
                   Retake
                 </Button>
@@ -236,6 +238,7 @@ function VideoQuiz({
 }
 
 export default function CoursePlayerPage() {
+  const dk = useTheme().palette.mode === 'dark';
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
 
@@ -368,7 +371,7 @@ export default function CoursePlayerPage() {
           <Chip
             label={`${courseProgress.completed}/${courseProgress.total} completed`}
             size="small"
-            sx={{ height: 24, fontSize: 12, bgcolor: '#f5f5f5' }}
+            sx={{ height: 24, fontSize: 12, bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5' }}
           />
         </Box>
 
@@ -423,8 +426,8 @@ export default function CoursePlayerPage() {
                   onClick={handleMarkComplete}
                   sx={{
                     cursor: 'pointer',
-                    bgcolor: '#f5f5f5',
-                    '&:hover': { bgcolor: '#eeeeee' },
+                    bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5',
+                    '&:hover': { bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#eeeeee' },
                     fontSize: 12,
                   }}
                 />
@@ -435,7 +438,7 @@ export default function CoursePlayerPage() {
                 icon={<CheckCircleIcon sx={{ fontSize: 16 }} />}
                 label="Watched"
                 size="small"
-                sx={{ bgcolor: '#e8f5e9', color: '#2e7d32', fontSize: 12, '& .MuiChip-icon': { color: '#2e7d32' } }}
+                sx={{ bgcolor: dk ? 'rgba(46,125,50,0.15)' : '#e8f5e9', color: '#2e7d32', fontSize: 12, '& .MuiChip-icon': { color: '#2e7d32' } }}
               />
             )}
           </Box>
@@ -471,7 +474,7 @@ export default function CoursePlayerPage() {
                 flex: 1,
                 height: 4,
                 borderRadius: 2,
-                bgcolor: '#eeeeee',
+                bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#eeeeee',
                 '& .MuiLinearProgress-bar': {
                   bgcolor: courseProgress.percent === 100 ? '#66bb6a' : '#9e9e9e',
                   borderRadius: 2,
@@ -506,7 +509,7 @@ export default function CoursePlayerPage() {
           flexShrink: 0,
           borderLeft: '1px solid',
           borderColor: 'divider',
-          bgcolor: '#fafafa',
+          bgcolor: dk ? 'rgba(255,255,255,0.03)' : '#fafafa',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
@@ -539,16 +542,16 @@ export default function CoursePlayerPage() {
                   px: 2,
                   borderBottom: '1px solid',
                   borderColor: 'divider',
-                  '&.Mui-selected': { bgcolor: '#eeeeee' },
+                  '&.Mui-selected': { bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#eeeeee' },
                 }}
               >
                 <ListItemIcon sx={{ minWidth: 32 }}>
                   {completed ? (
                     <CheckCircleIcon sx={{ fontSize: 20, color: '#66bb6a' }} />
                   ) : isActive ? (
-                    <PlayCircleIcon sx={{ fontSize: 20, color: '#616161' }} />
+                    <PlayCircleIcon sx={{ fontSize: 20, color: dk ? '#aaa' : '#616161' }} />
                   ) : (
-                    <RadioButtonUncheckedIcon sx={{ fontSize: 20, color: '#bdbdbd' }} />
+                    <RadioButtonUncheckedIcon sx={{ fontSize: 20, color: dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd' }} />
                   )}
                 </ListItemIcon>
                 <ListItemText
@@ -564,7 +567,7 @@ export default function CoursePlayerPage() {
                             height: 16,
                             fontSize: 10,
                             ml: 0.5,
-                            bgcolor: qp.score === qp.total ? '#e8f5e9' : '#fff3e0',
+                            bgcolor: qp.score === qp.total ? (dk ? 'rgba(46,125,50,0.15)' : '#e8f5e9') : (dk ? 'rgba(230,81,0,0.15)' : '#fff3e0'),
                             color: qp.score === qp.total ? '#2e7d32' : '#e65100',
                             '& .MuiChip-label': { px: 0.5 },
                           }}
@@ -577,7 +580,7 @@ export default function CoursePlayerPage() {
                     fontWeight: isActive ? 600 : 400,
                     noWrap: true,
                     color: completed ? 'text.secondary' : 'text.primary',
-                    sx: completed ? { textDecoration: 'line-through', textDecorationColor: '#bdbdbd' } : undefined,
+                    sx: completed ? { textDecoration: 'line-through', textDecorationColor: dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd' } : undefined,
                   }}
                   secondaryTypographyProps={{ fontSize: 11, component: 'div' }}
                 />

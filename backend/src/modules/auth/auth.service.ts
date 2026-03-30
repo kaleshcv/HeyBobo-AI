@@ -27,6 +27,7 @@ export interface AuthResponse {
     id: string;
     email: string;
     name: string;
+    username: string;
     role: string;
   };
 }
@@ -44,21 +45,28 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto): Promise<AuthResponse> {
-    const { email, password, name, role } = registerDto;
+    const { email, password, firstName, lastName, username, role } = registerDto;
 
-    // Check if user already exists
-    const existingUser = await this.userModel.findOne({ email: email.toLowerCase() });
-    if (existingUser) {
+    // Check if email already exists
+    const existingEmail = await this.userModel.findOne({ email: email.toLowerCase() });
+    if (existingEmail) {
       throw new ConflictException('Email already registered');
     }
 
+    // Check if username already exists
+    const existingUsername = await this.userModel.findOne({ username: username.toLowerCase() });
+    if (existingUsername) {
+      throw new ConflictException('Username already taken');
+    }
+
     // Hash password
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, 12);
 
     // Create user
     const userRole = (role as UserRole) || UserRole.STUDENT;
     const user = await this.userModel.create({
-      name,
+      name: `${firstName} ${lastName}`.trim(),
+      username: username.toLowerCase(),
       email: email.toLowerCase(),
       passwordHash,
       role: userRole,
@@ -80,24 +88,32 @@ export class AuthService {
         id: user._id.toString(),
         email: user.email,
         name: user.name,
+        username: user.username,
         role: user.role,
       },
     };
   }
 
   async login(loginDto: LoginDto, ip?: string, userAgent?: string): Promise<AuthResponse> {
-    const { email, password } = loginDto;
+    const { identifier, password } = loginDto;
 
-    // Find user with password field
-    const user = await this.userModel.findOne({ email: email.toLowerCase() }).select('+passwordHash');
+    // Find user by email or username
+    const lowerIdentifier = identifier.toLowerCase();
+    const user = await this.userModel.findOne({
+      $or: [
+        { email: lowerIdentifier },
+        { username: lowerIdentifier },
+      ],
+    }).select('+passwordHash');
+
     if (!user) {
-      throw new UnauthorizedException('Invalid email or password');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     // Verify password
     const passwordValid = await bcrypt.compare(password, user.passwordHash!);
     if (!passwordValid) {
-      throw new UnauthorizedException('Invalid email or password');
+      throw new UnauthorizedException('Invalid credentials');
     }
 
     // Check user status
@@ -116,6 +132,7 @@ export class AuthService {
         id: user._id.toString(),
         email: user.email,
         name: user.name,
+        username: user.username,
         role: user.role,
       },
     };
@@ -168,6 +185,7 @@ export class AuthService {
         id: user._id.toString(),
         email: user.email,
         name: user.name,
+        username: user.username,
         role: user.role,
       },
     };
@@ -189,8 +207,17 @@ export class AuthService {
 
     if (!user) {
       // Create new user from Google profile
+      const googleUsername = profile.email.split('@')[0].replace(/[^a-zA-Z0-9_-]/g, '_').substring(0, 30);
+      // Ensure unique username
+      let finalUsername = googleUsername;
+      let counter = 1;
+      while (await this.userModel.findOne({ username: finalUsername })) {
+        finalUsername = `${googleUsername.substring(0, 26)}_${counter}`;
+        counter++;
+      }
       user = await this.userModel.create({
         name: profile.name,
+        username: finalUsername,
         email: profile.email.toLowerCase(),
         role: UserRole.STUDENT,
         status: UserStatus.ACTIVE,
@@ -226,9 +253,15 @@ export class AuthService {
         id: user._id.toString(),
         email: user.email,
         name: user.name,
+        username: user.username,
         role: user.role,
       },
     };
+  }
+
+  async checkUsername(username: string): Promise<{ available: boolean }> {
+    const existing = await this.userModel.findOne({ username: username.toLowerCase() });
+    return { available: !existing };
   }
 
   async forgotPassword(forgotPasswordDto: ForgotPasswordDto): Promise<{ message: string }> {

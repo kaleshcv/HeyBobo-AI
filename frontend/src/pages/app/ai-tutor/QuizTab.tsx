@@ -12,6 +12,7 @@ import {
   IconButton,
   Tooltip,
   Chip,
+  useTheme,
 } from '@mui/material';
 import QuizIcon from '@mui/icons-material/Quiz';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -29,6 +30,7 @@ interface Props {
 }
 
 export default function QuizTab({ selectedBookId }: Props) {
+  const dk = useTheme().palette.mode === 'dark';
   const { textbooks, quizzes, addQuiz, removeQuiz, quizAttempts, addQuizAttempt, addRevisionPlan, studyPlans } = useAITutorStore();
   const [topic, setTopic] = useState('');
   const [numQuestions, setNumQuestions] = useState('10');
@@ -180,7 +182,7 @@ export default function QuizTab({ selectedBookId }: Props) {
           <LinearProgress
             variant="determinate"
             value={(answeredCount / totalQ) * 100}
-            sx={{ mb: 2, borderRadius: 1, height: 6, bgcolor: '#f5f5f5', '& .MuiLinearProgress-bar': { bgcolor: '#7c4dff' } }}
+            sx={{ mb: 2, borderRadius: 1, height: 6, bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5', '& .MuiLinearProgress-bar': { bgcolor: '#7c4dff' } }}
           />
         )}
 
@@ -215,7 +217,7 @@ export default function QuizTab({ selectedBookId }: Props) {
                 ))}
               </RadioGroup>
               {showResults && q.explanation && (
-                <Typography variant="caption" sx={{ display: 'block', mt: 1, p: 1, bgcolor: '#f5f5f5', borderRadius: 1, color: 'text.secondary' }}>
+                <Typography variant="caption" sx={{ display: 'block', mt: 1, p: 1, bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5', borderRadius: 1, color: 'text.secondary' }}>
                   💡 {q.explanation}
                 </Typography>
               )}
@@ -258,7 +260,7 @@ export default function QuizTab({ selectedBookId }: Props) {
 
       {!activeBook ? (
         <Paper variant="outlined" sx={{ p: 3, textAlign: 'center', borderRadius: 2 }}>
-          <QuizIcon sx={{ fontSize: 40, color: '#e0e0e0', mb: 1 }} />
+          <QuizIcon sx={{ fontSize: 40, color: dk ? 'rgba(255,255,255,0.15)' : '#e0e0e0', mb: 1 }} />
           <Typography variant="body2" color="text.secondary">
             Select a textbook from the Textbooks tab to create quizzes.
           </Typography>
@@ -321,7 +323,7 @@ export default function QuizTab({ selectedBookId }: Props) {
                   <Paper
                     key={quiz.id}
                     variant="outlined"
-                    sx={{ p: 2, borderRadius: 2, cursor: 'pointer', '&:hover': { bgcolor: '#fafafa' } }}
+                    sx={{ p: 2, borderRadius: 2, cursor: 'pointer', '&:hover': { bgcolor: dk ? 'rgba(255,255,255,0.03)' : '#fafafa' } }}
                     onClick={() => handleStartQuiz(quiz.id)}
                   >
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

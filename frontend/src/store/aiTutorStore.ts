@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { createUserStorage } from '@/lib/userStorage';
 
 // --- Types ---
 export interface Textbook {
@@ -206,6 +207,7 @@ export const useAITutorStore = create<AITutorState>()(
     }),
     {
       name: 'heybobo-ai-tutor',
+      storage: createUserStorage(),
     },
   ),
 );

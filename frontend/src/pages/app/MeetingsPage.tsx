@@ -33,6 +33,7 @@ import {
   Badge,
   Stack,
   InputAdornment,
+  useTheme,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -65,6 +66,7 @@ import toast from 'react-hot-toast';
 
 // ============ Create Meeting Dialog ============
 function CreateMeetingDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const dk = useTheme().palette.mode === 'dark';
   const { user } = useAuth();
   const createMeeting = useMeetingStore((s) => s.createMeeting);
 
@@ -120,7 +122,7 @@ function CreateMeetingDialog({ open, onClose }: { open: boolean; onClose: () => 
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
         <Button onClick={onClose}>Cancel</Button>
-        <Button variant="contained" onClick={handleCreate} sx={{ bgcolor: '#616161' }}>Create Meeting</Button>
+        <Button variant="contained" onClick={handleCreate} sx={{ bgcolor: dk ? '#1A2B3C' : '#616161' }}>Create Meeting</Button>
       </DialogActions>
     </Dialog>
   );
@@ -129,16 +131,16 @@ function CreateMeetingDialog({ open, onClose }: { open: boolean; onClose: () => 
 // ============ Get registered users from localStorage ============
 function getRegisteredUsers(): { name: string; email: string }[] {
   try {
-    const raw = JSON.parse(localStorage.getItem('heybobo_users') || '[]');
-    return raw.map((u: { firstName?: string; lastName?: string; email: string }) => ({
-      name: `${u.firstName || ''} ${u.lastName || ''}`.trim() || u.email,
-      email: u.email,
-    }));
+    const raw = localStorage.getItem('auth_user');
+    if (!raw) return [];
+    const u = JSON.parse(raw);
+    return [{ name: `${u.firstName || ''} ${u.lastName || ''}`.trim() || u.email, email: u.email }];
   } catch { return []; }
 }
 
 // ============ Invite / Share Dialog ============
 function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () => void; meeting: Meeting | null }) {
+  const dk = useTheme().palette.mode === 'dark';
   const sendInvite = useMeetingStore((s) => s.sendInvite);
   const removeInvite = useMeetingStore((s) => s.removeInvite);
   const groups = useCourseStore((s) => s.groups);
@@ -241,7 +243,7 @@ function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () =
             </Typography>
           </Box>
           <Tooltip title="Copy meeting details">
-            <IconButton size="small" onClick={handleCopyLink} sx={{ bgcolor: '#f5f5f5' }}>
+            <IconButton size="small" onClick={handleCopyLink} sx={{ bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5' }}>
               <ContentCopyIcon fontSize="small" />
             </IconButton>
           </Tooltip>
@@ -264,7 +266,7 @@ function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () =
                 <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
                   Select users to invite ({registeredUsers.length} registered)
                 </Typography>
-                <List dense sx={{ maxHeight: 220, overflow: 'auto', border: '1px solid #e0e0e0', borderRadius: 1 }}>
+                <List dense sx={{ maxHeight: 220, overflow: 'auto', border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
                   {registeredUsers.map((u) => {
                     const isInvited = alreadyInvitedEmails.includes(u.email);
                     const isSelected = selectedUsers.includes(u.email);
@@ -274,13 +276,13 @@ function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () =
                         onClick={() => !isInvited && toggleUser(u.email)}
                         sx={{
                           cursor: isInvited ? 'default' : 'pointer',
-                          bgcolor: isSelected ? '#e3f2fd' : 'transparent',
+                          bgcolor: isSelected ? (dk ? 'rgba(25,118,210,0.15)' : '#e3f2fd') : 'transparent',
                           opacity: isInvited ? 0.5 : 1,
-                          '&:hover': { bgcolor: isInvited ? 'transparent' : '#f5f5f5' },
+                          '&:hover': { bgcolor: isInvited ? 'transparent' : (dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5') },
                         }}
                       >
                         <ListItemAvatar>
-                          <Avatar sx={{ width: 32, height: 32, fontSize: 13, bgcolor: isSelected ? '#1976d2' : '#616161' }}>
+                          <Avatar sx={{ width: 32, height: 32, fontSize: 13, bgcolor: isSelected ? '#1976d2' : (dk ? '#1A2B3C' : '#616161') }}>
                             {u.name[0]?.toUpperCase()}
                           </Avatar>
                         </ListItemAvatar>
@@ -305,7 +307,7 @@ function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () =
                     onClick={handleInviteSelectedUsers}
                     startIcon={<SendIcon />}
                     fullWidth
-                    sx={{ mt: 1.5, bgcolor: '#616161' }}
+                    sx={{ mt: 1.5, bgcolor: dk ? '#1A2B3C' : '#616161' }}
                   >
                     Invite {selectedUsers.length} User{selectedUsers.length > 1 ? 's' : ''}
                   </Button>
@@ -326,7 +328,7 @@ function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () =
                 <Typography variant="caption" color="text.secondary">
                   Select a group — all members will be invited
                 </Typography>
-                <List dense sx={{ border: '1px solid #e0e0e0', borderRadius: 1, maxHeight: 220, overflow: 'auto' }}>
+                <List dense sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1, maxHeight: 220, overflow: 'auto' }}>
                   {groups.map((g) => {
                     const isInvited = meeting.invites.some((i) => i.targetId === g.id);
                     return (
@@ -335,13 +337,13 @@ function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () =
                         onClick={() => { if (!isInvited) { setSelectedGroupId(g.id); } }}
                         sx={{
                           cursor: isInvited ? 'default' : 'pointer',
-                          bgcolor: selectedGroupId === g.id ? '#e3f2fd' : 'transparent',
+                          bgcolor: selectedGroupId === g.id ? (dk ? 'rgba(25,118,210,0.15)' : '#e3f2fd') : 'transparent',
                           opacity: isInvited ? 0.5 : 1,
-                          '&:hover': { bgcolor: isInvited ? 'transparent' : '#f5f5f5' },
+                          '&:hover': { bgcolor: isInvited ? 'transparent' : (dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5') },
                         }}
                       >
                         <ListItemAvatar>
-                          <Avatar sx={{ width: 32, height: 32, bgcolor: selectedGroupId === g.id ? '#1976d2' : '#616161' }}>
+                          <Avatar sx={{ width: 32, height: 32, bgcolor: selectedGroupId === g.id ? '#1976d2' : (dk ? '#1A2B3C' : '#616161') }}>
                             <GroupIcon sx={{ fontSize: 18 }} />
                           </Avatar>
                         </ListItemAvatar>
@@ -362,7 +364,7 @@ function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () =
                     onClick={handleSendGroup}
                     startIcon={<SendIcon />}
                     fullWidth
-                    sx={{ bgcolor: '#616161' }}
+                    sx={{ bgcolor: dk ? '#1A2B3C' : '#616161' }}
                   >
                     Invite Group
                   </Button>
@@ -380,7 +382,7 @@ function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () =
             <TextField label="Name (optional)" value={name} onChange={(e) => setName(e.target.value)} size="small" fullWidth />
             <TextField label="Email" value={email} onChange={(e) => setEmail(e.target.value)} size="small" fullWidth
               onKeyDown={(e) => e.key === 'Enter' && handleSendEmail()} />
-            <Button variant="contained" onClick={handleSendEmail} startIcon={<SendIcon />} sx={{ bgcolor: '#616161', alignSelf: 'flex-end' }}>
+            <Button variant="contained" onClick={handleSendEmail} startIcon={<SendIcon />} sx={{ bgcolor: dk ? '#1A2B3C' : '#616161', alignSelf: 'flex-end' }}>
               Send Invite
             </Button>
           </Box>
@@ -395,7 +397,7 @@ function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () =
               {meeting.invites.map((inv) => (
                 <ListItem key={inv.id} sx={{ py: 0.25 }}>
                   <ListItemAvatar>
-                    <Avatar sx={{ width: 26, height: 26, fontSize: 11, bgcolor: inv.type === 'group' ? '#1976d2' : '#616161' }}>
+                    <Avatar sx={{ width: 26, height: 26, fontSize: 11, bgcolor: inv.type === 'group' ? '#1976d2' : (dk ? '#1A2B3C' : '#616161') }}>
                       {inv.type === 'group' ? <GroupIcon sx={{ fontSize: 14 }} /> : inv.targetName[0]?.toUpperCase()}
                     </Avatar>
                   </ListItemAvatar>
@@ -423,6 +425,7 @@ function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () =
 
 // ============ Join by Code Dialog ============
 function JoinByCodeDialog({ open, onClose, onJoin }: { open: boolean; onClose: () => void; onJoin: (meeting: Meeting) => void }) {
+  const dk = useTheme().palette.mode === 'dark';
   const joinByCode = useMeetingStore((s) => s.joinByCode);
   const [code, setCode] = useState('');
 
@@ -455,7 +458,7 @@ function JoinByCodeDialog({ open, onClose, onJoin }: { open: boolean; onClose: (
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
         <Button onClick={onClose}>Cancel</Button>
-        <Button variant="contained" onClick={handleJoin} disabled={!code.trim()} sx={{ bgcolor: '#616161' }}>Join</Button>
+        <Button variant="contained" onClick={handleJoin} disabled={!code.trim()} sx={{ bgcolor: dk ? '#1A2B3C' : '#616161' }}>Join</Button>
       </DialogActions>
     </Dialog>
   );
@@ -803,6 +806,7 @@ function LiveMeetingView({ meeting, onLeave }: { meeting: Meeting; onLeave: () =
 
 // ============ Meeting Card ============
 function MeetingCard({ meeting, onInvite, onJoin }: { meeting: Meeting; onInvite: (m: Meeting) => void; onJoin: (m: Meeting) => void }) {
+  const dk = useTheme().palette.mode === 'dark';
   const { user } = useAuth();
   const { deleteMeeting, cancelMeeting, startMeeting } = useMeetingStore();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -823,7 +827,7 @@ function MeetingCard({ meeting, onInvite, onJoin }: { meeting: Meeting; onInvite
   const scheduledDate = new Date(meeting.scheduledAt);
 
   return (
-    <Card sx={{ borderRadius: 2, border: '1px solid #e0e0e0', position: 'relative', '&:hover': { boxShadow: 2 } }} elevation={0}>
+    <Card sx={{ borderRadius: 2, border: '1px solid', borderColor: 'divider', position: 'relative', '&:hover': { boxShadow: 2 } }} elevation={0}>
       <CardContent sx={{ p: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 1 }}>
           <Box sx={{ flex: 1 }}>
@@ -876,7 +880,7 @@ function MeetingCard({ meeting, onInvite, onJoin }: { meeting: Meeting; onInvite
             <AvatarGroup max={5} sx={{ justifyContent: 'flex-end', '& .MuiAvatar-root': { width: 26, height: 26, fontSize: 11 } }}>
               {meeting.invites.filter((i) => i.type === 'individual').map((inv) => (
                 <Tooltip key={inv.id} title={inv.targetName}>
-                  <Avatar sx={{ bgcolor: '#616161' }}>{inv.targetName[0]?.toUpperCase()}</Avatar>
+                  <Avatar sx={{ bgcolor: dk ? '#1A2B3C' : '#616161' }}>{inv.targetName[0]?.toUpperCase()}</Avatar>
                 </Tooltip>
               ))}
             </AvatarGroup>
@@ -918,6 +922,7 @@ function MeetingCard({ meeting, onInvite, onJoin }: { meeting: Meeting; onInvite
 
 // ============ Main MeetingsPage ============
 export default function MeetingsPage() {
+  const dk = useTheme().palette.mode === 'dark';
   const { user } = useAuth();
   const meetings = useMeetingStore((s) => s.meetings);
   const { startMeeting, setActiveMeeting, joinMeeting } = useMeetingStore();
@@ -972,7 +977,7 @@ export default function MeetingsPage() {
           <Button variant="outlined" startIcon={<KeyboardIcon />} onClick={() => setJoinCodeOpen(true)}>
             Join with Code
           </Button>
-          <Button variant="contained" startIcon={<AddIcon />} onClick={() => setCreateOpen(true)} sx={{ bgcolor: '#616161' }}>
+          <Button variant="contained" startIcon={<AddIcon />} onClick={() => setCreateOpen(true)} sx={{ bgcolor: dk ? '#1A2B3C' : '#616161' }}>
             New Meeting
           </Button>
         </Stack>
@@ -987,7 +992,7 @@ export default function MeetingsPage() {
           { label: 'Invitations', count: invitedMeetings.length, color: '#ff9800' },
         ].map((stat) => (
           <Grid item xs={6} sm={3} key={stat.label}>
-            <Paper sx={{ p: 1.5, textAlign: 'center', borderRadius: 2, borderTop: '3px solid #e0e0e0' }} elevation={0} variant="outlined">
+            <Paper sx={{ p: 1.5, textAlign: 'center', borderRadius: 2, borderTop: `3px solid ${stat.color}` }} elevation={0} variant="outlined">
               <Typography variant="h5" fontWeight={700} sx={{ color: stat.color }}>{stat.count}</Typography>
               <Typography variant="caption" color="text.secondary">{stat.label}</Typography>
             </Paper>
@@ -1008,7 +1013,7 @@ export default function MeetingsPage() {
       {tab === 4 ? (
         recordings.length === 0 ? (
           <Paper sx={{ p: 4, textAlign: 'center', borderRadius: 2 }} elevation={0} variant="outlined">
-            <FiberManualRecordIcon sx={{ fontSize: 48, color: '#bdbdbd', mb: 1 }} />
+            <FiberManualRecordIcon sx={{ fontSize: 48, color: dk ? 'rgba(255,255,255,0.15)' : '#bdbdbd', mb: 1 }} />
             <Typography color="text.secondary">No recordings yet. Start recording in a live meeting.</Typography>
             <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
               Recordings are automatically downloaded as .webm files when you stop recording.
@@ -1018,7 +1023,7 @@ export default function MeetingsPage() {
           <Grid container spacing={1.5}>
             {recordings.map((rec) => (
               <Grid item xs={12} md={6} key={rec.id}>
-                <Paper sx={{ p: 2, borderRadius: 2, border: '1px solid #e0e0e0' }} elevation={0}>
+                <Paper sx={{ p: 2, borderRadius: 2, border: '1px solid', borderColor: 'divider' }} elevation={0}>
                   <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                     <Box sx={{ flex: 1 }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
@@ -1047,7 +1052,7 @@ export default function MeetingsPage() {
         )
       ) : tabMeetings[tab].length === 0 ? (
         <Paper sx={{ p: 4, textAlign: 'center', borderRadius: 2 }} elevation={0} variant="outlined">
-          <VideocamIcon sx={{ fontSize: 48, color: '#bdbdbd', mb: 1 }} />
+          <VideocamIcon sx={{ fontSize: 48, color: dk ? 'rgba(255,255,255,0.15)' : '#bdbdbd', mb: 1 }} />
           <Typography color="text.secondary">
             {tab === 0 && 'No upcoming meetings. Create one to get started!'}
             {tab === 1 && 'No live meetings right now.'}

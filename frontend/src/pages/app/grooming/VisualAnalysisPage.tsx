@@ -3,7 +3,7 @@ import {
   Box, Typography, Paper, Tabs, Tab, Button, Grid, Chip, Alert,
   CircularProgress, LinearProgress, Avatar, IconButton, Dialog,
   DialogTitle, DialogContent, DialogActions, TextField, Snackbar,
-  Divider, Stack, ToggleButtonGroup, ToggleButton,
+  Divider, Stack, ToggleButtonGroup, ToggleButton, useTheme,
 } from '@mui/material';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import FaceIcon from '@mui/icons-material/Face';
@@ -80,6 +80,7 @@ const getSeverityIcon = (severity: string) =>
 // ═══════════ MAIN COMPONENT ═════════════════════════════
 
 export default function VisualAnalysisPage() {
+  const dk = useTheme().palette.mode === 'dark';
   const [tab, setTab] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -427,7 +428,7 @@ export default function VisualAnalysisPage() {
               <Paper
                 key={item._id}
                 variant="outlined"
-                sx={{ p: 2, mb: 1, borderRadius: 2, cursor: 'pointer', '&:hover': { bgcolor: '#f5f5f5' } }}
+                sx={{ p: 2, mb: 1, borderRadius: 2, cursor: 'pointer', '&:hover': { bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5' } }}
                 onClick={() => loadHistoryItem(item)}
               >
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -529,6 +530,7 @@ function MetricsGrid({ metrics, color }: { metrics: VisualAnalysisMetric[]; colo
 // ═══════════ SKIN ANALYSIS RESULTS ══════════════════════
 
 function SkinAnalysisResults({ result }: { result: DetailedSkinAnalysis }) {
+  const dk = useTheme().palette.mode === 'dark';
   const color = COLORS.skin;
 
   return (
@@ -543,7 +545,7 @@ function SkinAnalysisResults({ result }: { result: DetailedSkinAnalysis }) {
         <Grid container>
           <Grid item xs={12} md={3} sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRight: { md: `1px solid ${color}15` } }}>
             <Box sx={{ position: 'relative', display: 'inline-flex', mb: 2 }}>
-              <CircularProgress variant="determinate" value={100} size={120} thickness={4} sx={{ color: '#eee', position: 'absolute' }} />
+              <CircularProgress variant="determinate" value={100} size={120} thickness={4} sx={{ color: dk ? 'rgba(255,255,255,0.08)' : '#eee', position: 'absolute' }} />
               <CircularProgress variant="determinate" value={result.overallScore} size={120} thickness={4} sx={{ color: getScoreColor(result.overallScore) }} />
               <Box sx={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <Typography variant="h3" sx={{ fontWeight: 700, color: getScoreColor(result.overallScore), lineHeight: 1 }}>{result.overallScore}</Typography>
@@ -629,7 +631,7 @@ function SkinAnalysisResults({ result }: { result: DetailedSkinAnalysis }) {
                 <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mt: 1 }}>
                   <Typography variant="caption" sx={{ fontWeight: 700, color, mr: 1 }}>Aging Indicators:</Typography>
                   {result.detailedResult.agingIndicators.map((a, i) => (
-                    <Chip key={i} size="small" label={a} sx={{ bgcolor: '#fff3e0', color: '#e65100', fontSize: 11 }} />
+                    <Chip key={i} size="small" label={a} sx={{ bgcolor: dk ? 'rgba(230,81,0,0.15)' : '#fff3e0', color: dk ? '#ffb74d' : '#e65100', fontSize: 11 }} />
                   ))}
                 </Box>
               </Grid>
@@ -647,6 +649,7 @@ function SkinAnalysisResults({ result }: { result: DetailedSkinAnalysis }) {
 // ═══════════ HAIR & FACE RESULTS ════════════════════════
 
 function HairFaceResults({ result }: { result: DetailedHairFaceAnalysis }) {
+  const dk = useTheme().palette.mode === 'dark';
   const color = COLORS.hair;
 
   return (
@@ -661,7 +664,7 @@ function HairFaceResults({ result }: { result: DetailedHairFaceAnalysis }) {
         <Grid container>
           <Grid item xs={12} md={3} sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRight: { md: `1px solid ${color}15` } }}>
             <Box sx={{ position: 'relative', display: 'inline-flex', mb: 2 }}>
-              <CircularProgress variant="determinate" value={100} size={120} thickness={4} sx={{ color: '#eee', position: 'absolute' }} />
+              <CircularProgress variant="determinate" value={100} size={120} thickness={4} sx={{ color: dk ? 'rgba(255,255,255,0.08)' : '#eee', position: 'absolute' }} />
               <CircularProgress variant="determinate" value={result.overallScore} size={120} thickness={4} sx={{ color: getScoreColor(result.overallScore) }} />
               <Box sx={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <Typography variant="h3" sx={{ fontWeight: 700, color: getScoreColor(result.overallScore), lineHeight: 1 }}>{result.overallScore}</Typography>
@@ -774,6 +777,7 @@ function HairFaceResults({ result }: { result: DetailedHairFaceAnalysis }) {
 // ═══════════ BODY & STYLE RESULTS ═══════════════════════
 
 function BodyStyleResults({ result }: { result: DetailedBodyStyleAnalysis }) {
+  const dk = useTheme().palette.mode === 'dark';
   const color = COLORS.body;
 
   return (
@@ -788,7 +792,7 @@ function BodyStyleResults({ result }: { result: DetailedBodyStyleAnalysis }) {
         <Grid container>
           <Grid item xs={12} md={3} sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRight: { md: `1px solid ${color}15` } }}>
             <Box sx={{ position: 'relative', display: 'inline-flex', mb: 2 }}>
-              <CircularProgress variant="determinate" value={100} size={120} thickness={4} sx={{ color: '#eee', position: 'absolute' }} />
+              <CircularProgress variant="determinate" value={100} size={120} thickness={4} sx={{ color: dk ? 'rgba(255,255,255,0.08)' : '#eee', position: 'absolute' }} />
               <CircularProgress variant="determinate" value={result.overallScore} size={120} thickness={4} sx={{ color: getScoreColor(result.overallScore) }} />
               <Box sx={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <Typography variant="h3" sx={{ fontWeight: 700, color: getScoreColor(result.overallScore), lineHeight: 1 }}>{result.overallScore}</Typography>
@@ -919,6 +923,7 @@ function ProgressTrackingSection({
   onCompare: () => void;
   loading: boolean;
 }) {
+  const dk = useTheme().palette.mode === 'dark';
   const color = COLORS.progress;
 
   return (
@@ -961,14 +966,14 @@ function ProgressTrackingSection({
               elevation={0}
               sx={{
                 p: 3, borderRadius: 2, textAlign: 'center',
-                border: `2px dashed ${beforeFile ? color : '#ccc'}`,
-                bgcolor: beforeFile ? `${color}05` : '#fafafa',
+                border: `2px dashed ${beforeFile ? color : (dk ? 'rgba(255,255,255,0.2)' : '#ccc')}`,
+                bgcolor: beforeFile ? `${color}05` : (dk ? 'rgba(255,255,255,0.03)' : '#fafafa'),
                 cursor: 'pointer',
                 '&:hover': { borderColor: color, bgcolor: `${color}05` },
               }}
               onClick={() => beforeFileRef.current?.click()}
             >
-              <PhotoLibraryIcon sx={{ fontSize: 36, color: beforeFile ? color : '#999', mb: 1 }} />
+              <PhotoLibraryIcon sx={{ fontSize: 36, color: beforeFile ? color : (dk ? 'rgba(255,255,255,0.3)' : '#999'), mb: 1 }} />
               <Typography variant="subtitle2" sx={{ fontWeight: 600, color: beforeFile ? 'text.primary' : 'text.secondary' }}>
                 {beforeFile ? beforeFile.name : 'Upload BEFORE Photo'}
               </Typography>
@@ -989,14 +994,14 @@ function ProgressTrackingSection({
               elevation={0}
               sx={{
                 p: 3, borderRadius: 2, textAlign: 'center',
-                border: `2px dashed ${afterFile ? color : '#ccc'}`,
-                bgcolor: afterFile ? `${color}05` : '#fafafa',
+                border: `2px dashed ${afterFile ? color : (dk ? 'rgba(255,255,255,0.2)' : '#ccc')}`,
+                bgcolor: afterFile ? `${color}05` : (dk ? 'rgba(255,255,255,0.03)' : '#fafafa'),
                 cursor: 'pointer',
                 '&:hover': { borderColor: color, bgcolor: `${color}05` },
               }}
               onClick={() => afterFileRef.current?.click()}
             >
-              <PhotoLibraryIcon sx={{ fontSize: 36, color: afterFile ? color : '#999', mb: 1 }} />
+              <PhotoLibraryIcon sx={{ fontSize: 36, color: afterFile ? color : (dk ? 'rgba(255,255,255,0.3)' : '#999'), mb: 1 }} />
               <Typography variant="subtitle2" sx={{ fontWeight: 600, color: afterFile ? 'text.primary' : 'text.secondary' }}>
                 {afterFile ? afterFile.name : 'Upload AFTER Photo'}
               </Typography>
@@ -1059,11 +1064,11 @@ function ProgressTrackingSection({
             <Grid container spacing={2}>
               {progressResult.metricComparisons.map((mc, i) => (
                 <Grid item xs={12} sm={6} key={i}>
-                  <Paper elevation={0} sx={{ p: 2, borderRadius: 2, bgcolor: '#fafafa', border: '1px solid #eee' }}>
+                  <Paper elevation={0} sx={{ p: 2, borderRadius: 2, bgcolor: dk ? 'rgba(255,255,255,0.03)' : '#fafafa', border: '1px solid', borderColor: 'divider' }}>
                     <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>{mc.name}</Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-                      <Chip size="small" label={`Before: ${mc.before}`} sx={{ bgcolor: '#fff3e0', fontWeight: 600 }} />
-                      <SwapHorizIcon sx={{ color: '#999', fontSize: 18 }} />
+                      <Chip size="small" label={`Before: ${mc.before}`} sx={{ bgcolor: dk ? 'rgba(230,81,0,0.15)' : '#fff3e0', fontWeight: 600 }} />
+                      <SwapHorizIcon sx={{ color: dk ? 'rgba(255,255,255,0.3)' : '#999', fontSize: 18 }} />
                       <Chip size="small" label={`After: ${mc.after}`} sx={{ bgcolor: mc.change >= 0 ? '#e8f5e9' : '#ffebee', fontWeight: 600 }} />
                       <Chip
                         size="small"
@@ -1099,7 +1104,7 @@ function ProgressTrackingSection({
               </Paper>
             </Grid>
             <Grid item xs={12} sm={4}>
-              <Paper variant="outlined" sx={{ p: 2.5, borderRadius: 2.5, height: '100%', borderColor: '#fff3e0' }}>
+              <Paper variant="outlined" sx={{ p: 2.5, borderRadius: 2.5, height: '100%', borderColor: dk ? 'rgba(255,152,0,0.3)' : '#fff3e0' }}>
                 <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1.5, color: '#ff9800', display: 'flex', alignItems: 'center', gap: 0.5 }}>
                   <WarningAmberIcon sx={{ fontSize: 18 }} /> Areas to Watch
                 </Typography>
@@ -1193,6 +1198,7 @@ function VirtualTryOnSection({
   onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   loading: boolean;
 }) {
+  const dk = useTheme().palette.mode === 'dark';
   const color = COLORS.tryOn;
 
   return (
@@ -1253,7 +1259,7 @@ function VirtualTryOnSection({
           >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 2 }}>
               <Box sx={{ position: 'relative', display: 'inline-flex' }}>
-                <CircularProgress variant="determinate" value={100} size={100} thickness={4} sx={{ color: '#eee', position: 'absolute' }} />
+                <CircularProgress variant="determinate" value={100} size={100} thickness={4} sx={{ color: dk ? 'rgba(255,255,255,0.08)' : '#eee', position: 'absolute' }} />
                 <CircularProgress variant="determinate" value={tryOnResult.suitabilityScore} size={100} thickness={4} sx={{ color: getScoreColor(tryOnResult.suitabilityScore) }} />
                 <Box sx={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                   <Typography variant="h4" sx={{ fontWeight: 700, color: getScoreColor(tryOnResult.suitabilityScore), lineHeight: 1 }}>
@@ -1432,6 +1438,7 @@ function LiveCameraTab({
   liveVideoRef, liveStreamRef, liveCanvasRef,
   profile, loading, setLoading, setError,
 }: LiveCameraTabProps) {
+  const dk = useTheme().palette.mode === 'dark';
   const color = COLORS.live;
 
   const startCamera = useCallback(async () => {
@@ -1695,7 +1702,7 @@ function LiveCameraTab({
                 borderRight: { sm: `1px solid ${color}15` },
               }}>
                 <Box sx={{ position: 'relative', display: 'inline-flex', mb: 1 }}>
-                  <CircularProgress variant="determinate" value={100} size={90} thickness={5} sx={{ color: '#eee', position: 'absolute' }} />
+                  <CircularProgress variant="determinate" value={100} size={90} thickness={5} sx={{ color: dk ? 'rgba(255,255,255,0.08)' : '#eee', position: 'absolute' }} />
                   <CircularProgress variant="determinate" value={liveResult.overallScore} size={90} thickness={5} sx={{ color: getScoreColor(liveResult.overallScore) }} />
                   <Box sx={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                     <Typography variant="h4" sx={{ fontWeight: 900, color: getScoreColor(liveResult.overallScore), lineHeight: 1 }}>{liveResult.overallScore}</Typography>

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { createUserStorage } from '@/lib/userStorage';
 
 // ─── Types ───────────────────────────────────────────────
 
@@ -886,7 +887,7 @@ export const useGroupStore = create<GroupStore>()(
               ? Math.round(quizAttempts.reduce((s, a) => s + (a.score / a.total) * 100, 0) / quizAttempts.length)
               : 0;
             const participation = m.stats.participationScore;
-            const streak = Math.floor(Math.random() * 7) + 1; // simulated
+            const streak = m.stats.attendance > 0 ? Math.min(7, Math.ceil(m.stats.attendance / 15)) : 0;
             const badges: string[] = [];
             if (quizScore >= 90) badges.push('Quiz Master');
             if (m.stats.attendance >= 80) badges.push('Regular');
@@ -899,6 +900,7 @@ export const useGroupStore = create<GroupStore>()(
     }),
     {
       name: 'heybobo-groups',
+      storage: createUserStorage(),
     }
   )
 );

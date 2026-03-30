@@ -1,14 +1,34 @@
-import { IsEmail, IsNotEmpty, MinLength, MaxLength, Matches } from 'class-validator';
+import { IsEmail, IsNotEmpty, MinLength, MaxLength, Matches, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class RegisterDto {
   @ApiProperty({
-    description: 'User full name',
-    example: 'John Doe',
+    description: 'User first name',
+    example: 'John',
   })
   @IsNotEmpty()
-  @MaxLength(100)
-  name: string;
+  @MaxLength(50)
+  firstName: string;
+
+  @ApiProperty({
+    description: 'User last name',
+    example: 'Doe',
+  })
+  @IsNotEmpty()
+  @MaxLength(50)
+  lastName: string;
+
+  @ApiProperty({
+    description: 'Unique username (3-30 chars, letters, numbers, underscores, hyphens)',
+    example: 'john_doe',
+  })
+  @IsNotEmpty()
+  @MinLength(3)
+  @MaxLength(30)
+  @Matches(/^[a-zA-Z0-9_-]+$/, {
+    message: 'Username can only contain letters, numbers, underscores, and hyphens',
+  })
+  username: string;
 
   @ApiProperty({
     description: 'User email address',
@@ -34,5 +54,6 @@ export class RegisterDto {
     example: 'student',
     enum: ['student', 'teacher', 'creator'],
   })
+  @IsOptional()
   role?: string;
 }

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Alert,
@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Chip,
+  Collapse,
   Divider,
   Grid,
   LinearProgress,
@@ -13,6 +14,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 import DirectionsWalkIcon from '@mui/icons-material/DirectionsWalk';
 import WatchIcon from '@mui/icons-material/Watch';
@@ -27,6 +29,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import { useFitnessProfileStore, calcBMI, bmiCategory } from '@/store/fitnessProfileStore';
+import { useTheme } from '@mui/material';
 import { useActivityTrackingStore } from '@/store/activityTrackingStore';
 import { useWearablesStore } from '@/store/wearablesStore';
 import { useInjuryStore } from '@/store/injuryStore';
@@ -69,14 +72,28 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <Paper variant="outlined" sx={{ p: 2, borderRadius: 3, height: '100%' }}>
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 1.5 }}>
+    <Paper
+      elevation={0}
+      sx={{
+        p: 3,
+        borderRadius: 4,
+        height: '100%',
+        border: '1px solid',
+        borderColor: 'divider',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04)',
+        transition: 'box-shadow 0.2s ease',
+        '&:hover': {
+          boxShadow: '0 4px 20px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.06)',
+        },
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 2 }}>
         <Box>
-          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 700, fontSize: '1.05rem' }}>
             {title}
           </Typography>
           {subtitle && (
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
               {subtitle}
             </Typography>
           )}
@@ -95,6 +112,7 @@ function StatCard({
   sub,
   color,
   onClick,
+  detail,
 }: {
   icon: React.ReactNode;
   label: string;
@@ -102,41 +120,88 @@ function StatCard({
   sub: string;
   color: string;
   onClick?: () => void;
+  detail?: React.ReactNode;
 }) {
+  const [expanded, setExpanded] = useState(false);
+
+  const handleClick = () => {
+    if (detail) {
+      setExpanded((prev) => !prev);
+    } else if (onClick) {
+      onClick();
+    }
+  };
+
   return (
     <Paper
-      variant="outlined"
-      onClick={onClick}
+      elevation={0}
+      onClick={handleClick}
       sx={{
-        p: 2,
-        borderRadius: 3,
+        p: 2.5,
+        borderRadius: 4,
         display: 'flex',
-        gap: 1.5,
-        alignItems: 'flex-start',
-        borderColor: 'divider',
-        ...(onClick && {
-          cursor: 'pointer',
-          '&:hover': { bgcolor: 'action.hover' },
-        }),
+        flexDirection: 'column',
+        gap: 0,
+        border: '1px solid',
+        borderColor: expanded ? color : 'divider',
+        boxShadow: expanded
+          ? '0 6px 24px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06)'
+          : '0 2px 12px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04)',
+        cursor: (detail || onClick) ? 'pointer' : 'default',
+        transition: 'all 0.25s ease',
+        '&:hover': {
+          boxShadow: '0 6px 24px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06)',
+          transform: 'translateY(-2px)',
+          borderColor: color,
+        },
       }}
     >
-      <Avatar sx={{ bgcolor: '#f5f5f5', color: color, width: 42, height: 42 }}>{icon}</Avatar>
-      <Box>
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-          {label}
-        </Typography>
-        <Typography variant="h5" sx={{ fontWeight: 700, lineHeight: 1.1 }}>
-          {value}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          {sub}
-        </Typography>
+      <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
+        <Avatar
+          sx={{
+            bgcolor: `${color}15`,
+            color: color,
+            width: 52,
+            height: 52,
+            boxShadow: `0 4px 12px ${color}30`,
+          }}
+        >
+          {icon}
+        </Avatar>
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500, mb: 0.5 }}>
+            {label}
+          </Typography>
+          <Typography variant="h4" sx={{ fontWeight: 800, lineHeight: 1.1, mb: 0.5 }}>
+            {value}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.3 }}>
+            {sub}
+          </Typography>
+        </Box>
+        {detail && (
+          <ExpandMoreIcon
+            sx={{
+              transition: 'transform 0.25s ease',
+              transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+              color: 'text.secondary',
+              mt: 0.5,
+            }}
+          />
+        )}
       </Box>
+      {detail && (
+        <Collapse in={expanded}>
+          <Divider sx={{ my: 1.5 }} />
+          <Box sx={{ pt: 0.5 }}>{detail}</Box>
+        </Collapse>
+      )}
     </Paper>
   );
 }
 
 export default function HealthFitnessPage() {
+  const dk = useTheme().palette.mode === 'dark';
   const navigate = useNavigate();
 
   const profile = useFitnessProfileStore((s) => s.profile);
@@ -207,11 +272,9 @@ export default function HealthFitnessPage() {
       ? average(activeInjuries.map((injury) => getRecoveryScore(injury.id)))
       : 100;
 
-  const overallHealthScore = average([
-    activityScore,
-    wearableScoreParts.length > 0 ? wearableScore : 65,
-    recoveryScore,
-  ]);
+  const healthParts = [activityScore, recoveryScore];
+  if (wearableScoreParts.length > 0) healthParts.push(wearableScore);
+  const overallHealthScore = healthParts.some((p) => p > 0) ? average(healthParts) : 0;
 
   const weeklyAverages = {
     steps: average(weeklyMetrics.map((day) => Math.round((day.steps / Math.max(activityGoals.steps, 1)) * 100))),
@@ -393,44 +456,132 @@ export default function HealthFitnessPage() {
         </Alert>
       )}
 
-      <Grid container spacing={1.5} sx={{ mb: 2 }}>
+      <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            icon={<MonitorHeartIcon sx={{ color: '#fff', fontSize: 20 }} />}
+            icon={<MonitorHeartIcon sx={{ fontSize: 24 }} />}
             label="Overall Health Score"
             value={`${overallHealthScore}%`}
             sub={`Activity ${activityScore}% · Recovery ${recoveryScore}%`}
             color="#455a64"
+            detail={
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                    <Typography variant="body2">Activity</Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>{activityScore}%</Typography>
+                  </Box>
+                  <LinearProgress variant="determinate" value={activityScore} sx={{ height: 6, borderRadius: 3, bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#eee', '& .MuiLinearProgress-bar': { bgcolor: '#43a047', borderRadius: 3 } }} />
+                </Box>
+                {wearableScoreParts.length > 0 && (
+                  <Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                      <Typography variant="body2">Wearable</Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 600 }}>{wearableScore}%</Typography>
+                    </Box>
+                    <LinearProgress variant="determinate" value={wearableScore} sx={{ height: 6, borderRadius: 3, bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#eee', '& .MuiLinearProgress-bar': { bgcolor: '#1e88e5', borderRadius: 3 } }} />
+                  </Box>
+                )}
+                <Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                    <Typography variant="body2">Recovery</Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>{recoveryScore}%</Typography>
+                  </Box>
+                  <LinearProgress variant="determinate" value={recoveryScore} sx={{ height: 6, borderRadius: 3, bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#eee', '& .MuiLinearProgress-bar': { bgcolor: '#fb8c00', borderRadius: 3 } }} />
+                </Box>
+                <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
+                  Combined score from activity tracking, wearable vitals, and injury recovery modules.
+                </Typography>
+              </Box>
+            }
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            icon={<WatchIcon sx={{ color: '#fff', fontSize: 20 }} />}
+            icon={<WatchIcon sx={{ fontSize: 24 }} />}
             label="Connected Devices"
             value={devices.length}
             sub={`${activeAlerts.length} active alert${activeAlerts.length !== 1 ? 's' : ''}`}
             color="#1e88e5"
-            onClick={() => navigate('/app/health/wearables')}
+            detail={
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                {devices.length > 0 ? devices.map((device) => (
+                  <Box key={device.id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box>
+                      <Typography variant="body2" sx={{ fontWeight: 600 }}>{device.name}</Typography>
+                      <Typography variant="caption" color="text.secondary">{device.model}</Typography>
+                    </Box>
+                    <Chip
+                      label={device.connectionStatus}
+                      size="small"
+                      color={device.connectionStatus === 'connected' ? 'success' : 'default'}
+                      variant="outlined"
+                      sx={{ textTransform: 'capitalize' }}
+                    />
+                  </Box>
+                )) : (
+                  <Typography variant="body2" color="text.secondary">No devices paired yet. Tap to connect your first wearable.</Typography>
+                )}
+                <Button size="small" variant="text" onClick={() => navigate('/app/health/wearables')} sx={{ alignSelf: 'flex-start', mt: 0.5 }}>
+                  Manage Devices →
+                </Button>
+              </Box>
+            }
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            icon={<HealingIcon sx={{ color: '#fff', fontSize: 20 }} />}
+            icon={<HealingIcon sx={{ fontSize: 24 }} />}
             label="Active Injuries"
             value={activeInjuries.length}
             sub={activeInjuries.length > 0 ? `Avg recovery ${recoveryScore}%` : 'No active injury load'}
             color="#e53935"
-            onClick={() => navigate('/app/health/injury')}
+            detail={
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                {activeInjuries.length > 0 ? activeInjuries.slice(0, 3).map((injury) => (
+                  <Box key={injury.id} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box>
+                      <Typography variant="body2" sx={{ fontWeight: 600 }}>{injury.name}</Typography>
+                      <Typography variant="caption" color="text.secondary">{injury.bodyPart.replace(/-/g, ' ')} · {injury.status}</Typography>
+                    </Box>
+                    <Chip label={`${getRecoveryScore(injury.id)}%`} size="small" color={getRecoveryScore(injury.id) >= 70 ? 'success' : 'warning'} variant="outlined" />
+                  </Box>
+                )) : (
+                  <Typography variant="body2" color="text.secondary">No active injuries being tracked. Recovery score is at full baseline.</Typography>
+                )}
+                <Button size="small" variant="text" onClick={() => navigate('/app/health/injury')} sx={{ alignSelf: 'flex-start', mt: 0.5 }}>
+                  Injury Tracker →
+                </Button>
+              </Box>
+            }
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            icon={<DirectionsWalkIcon sx={{ color: '#fff', fontSize: 20 }} />}
+            icon={<DirectionsWalkIcon sx={{ fontSize: 24 }} />}
             label="Daily Activity"
             value={`${activityScore}%`}
             sub={`${todayMetrics.steps.toLocaleString()} steps · ${todayMetrics.activeMinutes} active min`}
             color="#43a047"
-            onClick={() => navigate('/app/health/activity-tracking')}
+            detail={
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                {[
+                  { label: 'Steps', value: todayMetrics.steps, goal: activityGoals.steps },
+                  { label: 'Distance', value: `${todayMetrics.distanceKm} km`, goal: `${activityGoals.distanceKm} km` },
+                  { label: 'Calories', value: todayMetrics.caloriesBurned, goal: activityGoals.caloriesBurned },
+                  { label: 'Active min', value: todayMetrics.activeMinutes, goal: activityGoals.activeMinutes },
+                  { label: 'Floors', value: todayMetrics.floorsClimbed, goal: activityGoals.floorsClimbed },
+                ].map((item) => (
+                  <Box key={item.label} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body2">{item.label}</Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>{item.value} / {item.goal}</Typography>
+                  </Box>
+                ))}
+                <Button size="small" variant="text" onClick={() => navigate('/app/health/activity-tracking')} sx={{ alignSelf: 'flex-start', mt: 0.5 }}>
+                  Activity Tracking →
+                </Button>
+              </Box>
+            }
           />
         </Grid>
       </Grid>
@@ -464,9 +615,9 @@ export default function HealthFitnessPage() {
                     sx={{
                       height: 8,
                       borderRadius: 4,
-                      bgcolor: '#eeeeee',
+                      bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#eeeeee',
                       '& .MuiLinearProgress-bar': {
-                        bgcolor: percent >= 100 ? '#43a047' : percent >= 60 ? '#fb8c00' : '#757575',
+                        bgcolor: percent >= 100 ? '#43a047' : percent >= 60 ? '#fb8c00' : (dk ? 'rgba(255,255,255,0.3)' : '#757575'),
                         borderRadius: 4,
                       },
                     }}
@@ -771,7 +922,7 @@ export default function HealthFitnessPage() {
                   <Box key={day.date} sx={{ flex: 1, minWidth: 0 }}>
                     <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 0.35, height: 120, justifyContent: 'center' }}>
                       <Tooltip title={`${day.steps.toLocaleString()} steps`}>
-                        <Box sx={{ width: 14, height: `${Math.max(12, stepPercent)}px`, bgcolor: '#616161', borderRadius: '6px 6px 0 0' }} />
+                        <Box sx={{ width: 14, height: `${Math.max(12, stepPercent)}px`, bgcolor: dk ? '#C9A84C' : '#616161', borderRadius: '6px 6px 0 0' }} />
                       </Tooltip>
                       <Tooltip title={`${day.activeMinutes} active min`}>
                         <Box sx={{ width: 14, height: `${Math.max(12, minutePercent)}px`, bgcolor: '#42a5f5', borderRadius: '6px 6px 0 0' }} />
@@ -787,7 +938,7 @@ export default function HealthFitnessPage() {
 
             <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 1.5 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                <Box sx={{ width: 12, height: 12, bgcolor: '#616161', borderRadius: 1 }} />
+                <Box sx={{ width: 12, height: 12, bgcolor: dk ? '#C9A84C' : '#616161', borderRadius: 1 }} />
                 <Typography variant="caption" color="text.secondary">Steps vs goal</Typography>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>

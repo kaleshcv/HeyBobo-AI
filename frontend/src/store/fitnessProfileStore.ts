@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { getUserScopedKey } from '@/lib/userStorage'
 import { syncFitnessProfile } from './fitnessSyncService'
 
 export type FitnessGoal = 'weight-loss' | 'muscle-gain' | 'general-fitness' | 'endurance' | 'rehab-mobility'
@@ -50,7 +51,7 @@ const DEFAULT_PROFILE: FitnessProfile = {
 
 function loadProfile(): { profile: FitnessProfile; isOnboarded: boolean } {
   try {
-    const stored = localStorage.getItem('heybobo_fitness_profile')
+    const stored = localStorage.getItem(getUserScopedKey('heybobo_fitness_profile'))
     if (stored) {
       const parsed = JSON.parse(stored)
       return { profile: { ...DEFAULT_PROFILE, ...parsed.profile }, isOnboarded: !!parsed.isOnboarded }
@@ -60,7 +61,7 @@ function loadProfile(): { profile: FitnessProfile; isOnboarded: boolean } {
 }
 
 function persist(profile: FitnessProfile, isOnboarded: boolean) {
-  localStorage.setItem('heybobo_fitness_profile', JSON.stringify({ profile, isOnboarded }))
+  localStorage.setItem(getUserScopedKey('heybobo_fitness_profile'), JSON.stringify({ profile, isOnboarded }))
 }
 
 export const useFitnessProfileStore = create<FitnessProfileState>((set, get) => {

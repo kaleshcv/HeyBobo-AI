@@ -5,6 +5,7 @@ import {
   DialogContent, DialogActions, TextField, Chip, Avatar, AvatarGroup,
   MenuItem, Select, FormControl, InputLabel, InputAdornment, IconButton,
   Tooltip, LinearProgress, Badge,
+  useTheme,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import GroupIcon from '@mui/icons-material/Group';
@@ -22,6 +23,7 @@ import toast from 'react-hot-toast';
 // ─── Create Group Dialog ──────────────────────────────────
 
 function CreateGroupDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const dk = useTheme().palette.mode === 'dark';
   const createGroup = useGroupStore((s) => s.createGroup);
   const navigate = useNavigate();
   const [name, setName] = useState('');
@@ -93,7 +95,7 @@ function CreateGroupDialog({ open, onClose }: { open: boolean; onClose: () => vo
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
         <Button onClick={onClose} sx={{ textTransform: 'none', color: 'text.secondary' }}>Cancel</Button>
-        <Button onClick={handleCreate} variant="contained" sx={{ textTransform: 'none', bgcolor: '#616161', '&:hover': { bgcolor: '#424242' } }}>Create Group</Button>
+        <Button onClick={handleCreate} variant="contained" sx={{ textTransform: 'none', bgcolor: dk ? '#1A2B3C' : '#616161', '&:hover': { bgcolor: dk ? '#243B4F' : '#424242' } }}>Create Group</Button>
       </DialogActions>
     </Dialog>
   );
@@ -102,6 +104,7 @@ function CreateGroupDialog({ open, onClose }: { open: boolean; onClose: () => vo
 // ─── Main Groups Page ──────────────────────────────────────
 
 export default function GroupsPage() {
+  const dk = useTheme().palette.mode === 'dark';
   const groups = useGroupStore((s) => s.groups);
   const navigate = useNavigate();
   const [createOpen, setCreateOpen] = useState(false);
@@ -137,7 +140,7 @@ export default function GroupsPage() {
             {groups.length} group{groups.length !== 1 ? 's' : ''} &middot; Collaborate, learn &amp; grow together
           </Typography>
         </Box>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={() => setCreateOpen(true)} sx={{ textTransform: 'none', bgcolor: '#616161', '&:hover': { bgcolor: '#424242' }, borderRadius: 2 }}>
+        <Button variant="contained" startIcon={<AddIcon />} onClick={() => setCreateOpen(true)} sx={{ textTransform: 'none', bgcolor: dk ? '#1A2B3C' : '#616161', '&:hover': { bgcolor: dk ? '#243B4F' : '#424242' }, borderRadius: 2 }}>
           New Group
         </Button>
       </Box>
@@ -175,10 +178,10 @@ export default function GroupsPage() {
       {groups.length > 0 && (
         <Grid container spacing={2} sx={{ mb: 3 }}>
           {[
-            { icon: <GroupIcon sx={{ fontSize: 28, color: '#757575', mb: 0.5 }} />, value: groups.length, label: 'Total Groups' },
-            { icon: <SchoolIcon sx={{ fontSize: 28, color: '#757575', mb: 0.5 }} />, value: groups.reduce((s, g) => s + g.members.length, 0), label: 'Total Members' },
-            { icon: <TrendingUpIcon sx={{ fontSize: 28, color: '#757575', mb: 0.5 }} />, value: groups.reduce((s, g) => s + g.discussions.length, 0), label: 'Discussions' },
-            { icon: <NotificationsIcon sx={{ fontSize: 28, color: '#757575', mb: 0.5 }} />, value: groups.reduce((s, g) => s + g.meetings.filter((m) => m.status === 'scheduled').length, 0), label: 'Upcoming Meetings' },
+            { icon: <GroupIcon sx={{ fontSize: 28, color: dk ? '#aaa' : '#757575', mb: 0.5 }} />, value: groups.length, label: 'Total Groups' },
+            { icon: <SchoolIcon sx={{ fontSize: 28, color: dk ? '#aaa' : '#757575', mb: 0.5 }} />, value: groups.reduce((s, g) => s + g.members.length, 0), label: 'Total Members' },
+            { icon: <TrendingUpIcon sx={{ fontSize: 28, color: dk ? '#aaa' : '#757575', mb: 0.5 }} />, value: groups.reduce((s, g) => s + g.discussions.length, 0), label: 'Discussions' },
+            { icon: <NotificationsIcon sx={{ fontSize: 28, color: dk ? '#aaa' : '#757575', mb: 0.5 }} />, value: groups.reduce((s, g) => s + g.meetings.filter((m) => m.status === 'scheduled').length, 0), label: 'Upcoming Meetings' },
           ].map((stat, i) => (
             <Grid item xs={6} sm={3} key={i}>
               <Card sx={{ border: '1px solid', borderColor: 'divider', boxShadow: 'none' }}>
@@ -212,7 +215,7 @@ export default function GroupsPage() {
                   <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                       <Badge badgeContent={unread} color="error" max={9} sx={{ '& .MuiBadge-badge': { fontSize: 10, height: 16, minWidth: 16 } }}>
-                        <GroupIcon sx={{ fontSize: 22, color: '#757575' }} />
+                        <GroupIcon sx={{ fontSize: 22, color: dk ? '#aaa' : '#757575' }} />
                       </Badge>
                       <Typography variant="subtitle2" sx={{ fontWeight: 600, flex: 1 }} noWrap>{group.name}</Typography>
                       <Tooltip title={group.groupType}>{typeIcon(group.groupType)}</Tooltip>
@@ -223,16 +226,16 @@ export default function GroupsPage() {
                       </Typography>
                     )}
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1.5 }}>
-                      <Chip label={categoryLabel(group.category)} size="small" sx={{ height: 20, fontSize: 10, bgcolor: '#f5f5f5' }} />
-                      <Chip label={`${group.members.length}/${group.maxMembers}`} size="small" icon={<GroupIcon sx={{ fontSize: '12px !important' }} />} sx={{ height: 20, fontSize: 10, bgcolor: '#f5f5f5' }} />
-                      {group.courseIds.length > 0 && <Chip label={`${group.courseIds.length} courses`} size="small" sx={{ height: 20, fontSize: 10, bgcolor: '#f5f5f5' }} />}
-                      {group.assignments.length > 0 && <Chip label={`${group.assignments.length} tasks`} size="small" sx={{ height: 20, fontSize: 10, bgcolor: '#f5f5f5' }} />}
+                      <Chip label={categoryLabel(group.category)} size="small" sx={{ height: 20, fontSize: 10, bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5' }} />
+                      <Chip label={`${group.members.length}/${group.maxMembers}`} size="small" icon={<GroupIcon sx={{ fontSize: '12px !important' }} />} sx={{ height: 20, fontSize: 10, bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5' }} />
+                      {group.courseIds.length > 0 && <Chip label={`${group.courseIds.length} courses`} size="small" sx={{ height: 20, fontSize: 10, bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5' }} />}
+                      {group.assignments.length > 0 && <Chip label={`${group.assignments.length} tasks`} size="small" sx={{ height: 20, fontSize: 10, bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5' }} />}
                     </Box>
                     <Box sx={{ mb: 1 }}>
-                      <LinearProgress variant="determinate" value={memberFill} sx={{ height: 3, borderRadius: 2, bgcolor: '#f0f0f0', '& .MuiLinearProgress-bar': { bgcolor: '#9e9e9e' } }} />
+                      <LinearProgress variant="determinate" value={memberFill} sx={{ height: 3, borderRadius: 2, bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#f0f0f0', '& .MuiLinearProgress-bar': { bgcolor: '#9e9e9e' } }} />
                     </Box>
                     {group.members.length > 0 && (
-                      <AvatarGroup max={5} sx={{ justifyContent: 'flex-start', '& .MuiAvatar-root': { width: 24, height: 24, fontSize: 11, bgcolor: '#bdbdbd' } }}>
+                      <AvatarGroup max={5} sx={{ justifyContent: 'flex-start', '& .MuiAvatar-root': { width: 24, height: 24, fontSize: 11, bgcolor: dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd' } }}>
                         {group.members.map((m) => <Avatar key={m.id}>{m.name.charAt(0).toUpperCase()}</Avatar>)}
                       </AvatarGroup>
                     )}
@@ -252,9 +255,9 @@ export default function GroupsPage() {
         </Grid>
       ) : groups.length === 0 ? (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', py: 8 }}>
-          <GroupIcon sx={{ fontSize: 48, color: '#bdbdbd', mb: 2 }} />
+          <GroupIcon sx={{ fontSize: 48, color: dk ? 'rgba(255,255,255,0.15)' : '#bdbdbd', mb: 2 }} />
           <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>No groups yet</Typography>
-          <Button variant="outlined" startIcon={<AddIcon />} onClick={() => setCreateOpen(true)} sx={{ textTransform: 'none', borderColor: '#e0e0e0', color: 'text.secondary' }}>
+          <Button variant="outlined" startIcon={<AddIcon />} onClick={() => setCreateOpen(true)} sx={{ textTransform: 'none', borderColor: 'divider', color: 'text.secondary' }}>
             Create your first group
           </Button>
         </Box>

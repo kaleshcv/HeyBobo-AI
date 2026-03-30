@@ -35,6 +35,9 @@ export class User extends Document {
   @Prop({ required: true, trim: true })
   name: string;
 
+  @Prop({ required: true, unique: true, lowercase: true, trim: true, index: true })
+  username: string;
+
   @Prop({ required: true, unique: true, lowercase: true, index: true })
   email: string;
 
@@ -73,6 +76,7 @@ export class User extends Document {
 export const UserSchema = SchemaFactory.createForClass(User);
 
 UserSchema.index({ email: 1, role: 1 });
+UserSchema.index({ username: 1 });
 UserSchema.index({ status: 1, createdAt: -1 });
 
 // Transform to JSON

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { createUserStorage } from '@/lib/userStorage';
 
 export type MeetingStatus = 'scheduled' | 'live' | 'ended' | 'cancelled';
 
@@ -267,6 +268,6 @@ export const useMeetingStore = create<MeetingState>()(
         set((s) => ({ recordings: s.recordings.filter((r) => r.id !== id) }));
       },
     }),
-    { name: 'heybobo_meetings' }
+    { name: 'heybobo_meetings', storage: createUserStorage() }
   )
 );

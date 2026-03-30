@@ -3,10 +3,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { useTheme } from '@mui/material'
 import { useAuth } from '@/hooks/useAuth'
 import { forgotPasswordSchema, type ForgotPasswordInput } from '@/lib/validators'
 
 export default function ForgotPasswordPage() {
+  const dk = useTheme().palette.mode === 'dark'
   const { forgotPassword } = useAuth()
   const {
     register,
@@ -21,7 +23,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{ background: '#F8F6F1' }}>
+    <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{ background: dk ? '#0D1B2A' : '#F8F6F1' }}>
       <Card className="w-full max-w-md">
         <h1 className="text-2xl font-bold text-navy-800 mb-2">Reset Password</h1>
         <p className="text-navy-500 mb-8">

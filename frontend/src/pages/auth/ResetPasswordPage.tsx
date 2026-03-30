@@ -4,10 +4,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
+import { useTheme } from '@mui/material'
 import { useAuth } from '@/hooks/useAuth'
 import { resetPasswordSchema, type ResetPasswordInput } from '@/lib/validators'
 
 export default function ResetPasswordPage() {
+  const dk = useTheme().palette.mode === 'dark'
   const { token } = useParams<{ token: string }>()
   const { resetPassword } = useAuth()
   const {
@@ -25,7 +27,7 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{ background: '#F8F6F1' }}>
+    <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{ background: dk ? '#0D1B2A' : '#F8F6F1' }}>
       <Card className="w-full max-w-md">
         <h1 className="text-2xl font-bold text-navy-800 mb-2">Set New Password</h1>
         <p className="text-navy-500 mb-8">Enter a new password for your account</p>

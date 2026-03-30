@@ -148,6 +148,8 @@ export function runPostWorkoutSimulation(): void {
         icon: 'MedicationIcon',
         color: '#d32f2f',
         completed: false,
+        note: 'Creatine boosts ATP for strength; magnesium supports muscle recovery & sleep',
+        buyLink: 'https://www.amazon.ae/dp/B07XLHQJFM',
       },
       {
         id: 'sim-s2',
@@ -160,6 +162,8 @@ export function runPostWorkoutSimulation(): void {
         icon: 'RestaurantIcon',
         color: '#2e7d32',
         completed: false,
+        note: 'Post-workout protein triggers muscle protein synthesis; carbs replenish glycogen',
+        buyLink: 'https://www.amazon.ae/dp/B0CX23V2ZK',
       },
       {
         id: 'sim-s3',
@@ -169,6 +173,8 @@ export function runPostWorkoutSimulation(): void {
         icon: 'NightlightIcon',
         color: '#5e35b1',
         completed: false,
+        note: 'Evening magnesium calms the nervous system and improves deep sleep quality',
+        buyLink: 'https://www.amazon.ae/dp/B000BD0RT0',
       },
       {
         id: 'sim-s4',
@@ -178,6 +184,8 @@ export function runPostWorkoutSimulation(): void {
         icon: 'WbSunnyIcon',
         color: '#f57c00',
         completed: false,
+        note: 'D3 supports testosterone & immunity; K2 directs calcium to bones, not arteries',
+        buyLink: 'https://www.amazon.ae/dp/B01GFCMHQE',
       },
     ],
 

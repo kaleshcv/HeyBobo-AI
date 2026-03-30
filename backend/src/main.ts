@@ -75,10 +75,11 @@ async function bootstrap(): Promise<void> {
 
   const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 5, // limit each IP to 5 requests per windowMs
-    message: 'Too many authentication attempts, please try again later.',
+    max: 10, // limit each IP to 10 auth POST requests per windowMs (login, register, etc.)
+    message: 'Too many authentication attempts, please try again in 15 minutes.',
     standardHeaders: true,
     legacyHeaders: false,
+    skip: (req) => req.method === 'GET', // Don't rate-limit GET requests (e.g. username availability check)
   });
 
   app.use(generalLimiter);

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { createUserStorage } from '@/lib/userStorage';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -40,6 +41,8 @@ export interface ScheduleEvent {
   icon: string;
   color: string;
   completed: boolean;
+  note?: string;
+  buyLink?: string;
 }
 
 export interface ModuleInsight {
@@ -167,6 +170,7 @@ export const useAIBrainStore = create<AIBrainState>()(
     }),
     {
       name: 'heybobo-ai-brain',
+      storage: createUserStorage(),
       partialize: (state) => ({
         priorities: state.priorities,
         alerts: state.alerts,

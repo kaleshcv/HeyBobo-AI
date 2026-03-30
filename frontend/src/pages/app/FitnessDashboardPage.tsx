@@ -11,6 +11,7 @@ import {
   LinearProgress,
   Paper,
   Typography,
+  useTheme,
 } from '@mui/material';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -97,6 +98,7 @@ function StatCard({
   color: string;
   onClick?: () => void;
 }) {
+  const dk = useTheme().palette.mode === 'dark';
   return (
     <Paper
       variant="outlined"
@@ -113,7 +115,7 @@ function StatCard({
         }),
       }}
     >
-      <Avatar sx={{ bgcolor: '#f5f5f5', color: color, width: 42, height: 42 }}>{icon}</Avatar>
+      <Avatar sx={{ bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5', color: color, width: 42, height: 42 }}>{icon}</Avatar>
       <Box>
         <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
           {label}
@@ -130,6 +132,7 @@ function StatCard({
 }
 
 export default function FitnessDashboardPage() {
+  const dk = useTheme().palette.mode === 'dark';
   const navigate = useNavigate();
 
   const customWorkouts = useWorkoutSystemStore((s) => s.customWorkouts);
@@ -383,7 +386,7 @@ export default function FitnessDashboardPage() {
                 <LinearProgress
                   variant="determinate"
                   value={clamp((weeklyLogs.length / Math.max(activePlan.daysPerWeek, 1)) * 100)}
-                  sx={{ height: 8, borderRadius: 4, bgcolor: '#eeeeee', mb: 0.5 }}
+                  sx={{ height: 8, borderRadius: 4, bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#eeeeee', mb: 0.5 }}
                 />
                 <Typography variant="caption" color="text.secondary">
                   {weeklyLogs.length} logged workout{weeklyLogs.length !== 1 ? 's' : ''} against a target of {activePlan.daysPerWeek} this week.
@@ -477,7 +480,7 @@ export default function FitnessDashboardPage() {
                       <Typography variant="body2">{category.emoji} {category.label}</Typography>
                       <Typography variant="caption" color="text.secondary">{category.count}</Typography>
                     </Box>
-                    <LinearProgress variant="determinate" value={pct} sx={{ height: 7, borderRadius: 4, bgcolor: '#eeeeee', '& .MuiLinearProgress-bar': { bgcolor: category.color } }} />
+                    <LinearProgress variant="determinate" value={pct} sx={{ height: 7, borderRadius: 4, bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#eeeeee', '& .MuiLinearProgress-bar': { bgcolor: category.color } }} />
                   </Box>
                 );
               })}

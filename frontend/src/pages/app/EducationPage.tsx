@@ -20,6 +20,7 @@ import {
   Tooltip,
   MenuItem,
   Paper,
+  useTheme,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
@@ -53,6 +54,7 @@ function CourseCard({
   onClick: () => void;
   onDelete: () => void;
 }) {
+  const dk = useTheme().palette.mode === 'dark';
   return (
     <Card
       sx={{
@@ -76,7 +78,7 @@ function CourseCard({
           alt={course.title}
           sx={{
             objectFit: 'cover',
-            bgcolor: '#f5f5f5',
+            bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5',
           }}
           onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
             e.currentTarget.style.display = 'none';
@@ -92,7 +94,7 @@ function CourseCard({
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.3 }}>
-              <OndemandVideoIcon sx={{ fontSize: 14, color: '#9e9e9e' }} />
+              <OndemandVideoIcon sx={{ fontSize: 14, color: dk ? '#777' : '#9e9e9e' }} />
               <Typography variant="caption" color="text.secondary">
                 {course.videos.length} videos
               </Typography>
@@ -104,8 +106,7 @@ function CourseCard({
                 ml: 'auto',
                 height: 20,
                 fontSize: 11,
-                bgcolor: '#f5f5f5',
-                color: 'text.secondary',
+                bgcolor: dk ? 'rgba(255,255,255,0.06)' : '#f5f5f5',
               }}
             />
           </Box>
@@ -119,8 +120,8 @@ function CourseCard({
                 flex: 1,
                 height: 4,
                 borderRadius: 2,
-                bgcolor: '#eeeeee',
-                '& .MuiLinearProgress-bar': { bgcolor: progress.percent === 100 ? '#66bb6a' : '#9e9e9e', borderRadius: 2 },
+                bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#eeeeee',
+                '& .MuiLinearProgress-bar': { bgcolor: progress.percent === 100 ? '#66bb6a' : dk ? '#666' : '#9e9e9e', borderRadius: 2 },
               }}
             />
             <Typography variant="caption" color="text.secondary" sx={{ minWidth: 32 }}>
@@ -165,6 +166,7 @@ function CreateCourseDialog({
   open: boolean;
   onClose: () => void;
 }) {
+  const dk = useTheme().palette.mode === 'dark';
   const addCourse = useCourseStore((s) => s.addCourse);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -312,7 +314,7 @@ function CreateCourseDialog({
           size="small"
           startIcon={<AddIcon />}
           onClick={handleAddVideo}
-          sx={{ alignSelf: 'flex-start', textTransform: 'none', borderColor: '#e0e0e0', color: 'text.secondary' }}
+          sx={{ alignSelf: 'flex-start', textTransform: 'none', borderColor: 'divider', color: 'text.secondary' }}
         >
           Add Video
         </Button>
@@ -324,7 +326,7 @@ function CreateCourseDialog({
         <Button
           onClick={handleSubmit}
           variant="contained"
-          sx={{ textTransform: 'none', bgcolor: '#616161', '&:hover': { bgcolor: '#424242' } }}
+          sx={{ textTransform: 'none', bgcolor: dk ? '#1A2B3C' : '#616161', '&:hover': { bgcolor: dk ? '#243B4F' : '#424242' } }}
         >
           Create Course
         </Button>
@@ -396,6 +398,7 @@ function StatCard({
 
 // --- AI Tutor Insights ---
 function AITutorInsights() {
+  const dk = useTheme().palette.mode === 'dark';
   const { textbooks, studyPlans, quizzes, quizAttempts, lessons, revisionPlans, dismissRevisionPlan } = useAITutorStore();
   const navigate = useNavigate();
   const [selectedRevision, setSelectedRevision] = useState<string | null>(null);
@@ -432,7 +435,7 @@ function AITutorInsights() {
     const offset = circ - (pct / 100) * circ;
     return (
       <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#f0f0f0" strokeWidth={stroke} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={dk ? 'rgba(255,255,255,0.06)' : '#f0f0f0'} strokeWidth={stroke} />
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={stroke} strokeDasharray={circ} strokeDashoffset={offset} strokeLinecap="round" style={{ transition: 'stroke-dashoffset 0.6s ease' }} />
       </svg>
     );
@@ -447,9 +450,9 @@ function AITutorInsights() {
         <Paper
           variant="outlined"
           onClick={() => navigate('/app/ai-tutor')}
-          sx={{ p: 2.5, borderRadius: 3, textAlign: 'center', cursor: 'pointer', borderColor: 'divider', '&:hover': { borderColor: '#bdbdbd' } }}
+          sx={{ p: 2.5, borderRadius: 3, textAlign: 'center', cursor: 'pointer', borderColor: 'divider', '&:hover': { borderColor: 'text.disabled' } }}
         >
-          <SmartToyIcon sx={{ fontSize: 36, color: '#e0e0e0', mb: 1 }} />
+          <SmartToyIcon sx={{ fontSize: 36, color: dk ? 'rgba(255,255,255,0.15)' : '#e0e0e0', mb: 1 }} />
           <Typography variant="body2" color="text.secondary">
             Upload textbooks and start studying with AI Tutor to see insights here.
           </Typography>
@@ -579,7 +582,7 @@ function AITutorInsights() {
                       <LinearProgress
                         variant="determinate"
                         value={b.pct}
-                        sx={{ height: 6, borderRadius: 3, bgcolor: '#f0f0f0', '& .MuiLinearProgress-bar': { bgcolor: '#7c4dff', borderRadius: 3 } }}
+                        sx={{ height: 6, borderRadius: 3, bgcolor: dk ? 'rgba(255,255,255,0.06)' : '#f0f0f0', '& .MuiLinearProgress-bar': { bgcolor: '#7c4dff', borderRadius: 3 } }}
                       />
                     </Box>
                   ))}
@@ -623,7 +626,7 @@ function AITutorInsights() {
                       <Chip
                         label={`${rev.score}/${rev.total}`}
                         size="small"
-                        sx={{ height: 20, fontSize: 11, bgcolor: '#fce4ec', color: '#c62828' }}
+                        sx={{ height: 20, fontSize: 11, bgcolor: dk ? 'rgba(198,40,40,0.12)' : '#fce4ec', color: '#c62828' }}
                       />
                       <IconButton
                         size="small"
@@ -649,7 +652,7 @@ function AITutorInsights() {
                         sx={{
                           height: 18,
                           fontSize: 10,
-                          bgcolor: w.priority === 'high' ? '#ffebee' : w.priority === 'medium' ? '#fff8e1' : '#f3e5f5',
+                          bgcolor: w.priority === 'high' ? (dk ? 'rgba(198,40,40,0.12)' : '#ffebee') : w.priority === 'medium' ? (dk ? 'rgba(230,81,0,0.12)' : '#fff8e1') : (dk ? 'rgba(106,27,154,0.12)' : '#f3e5f5'),
                           color: w.priority === 'high' ? '#c62828' : w.priority === 'medium' ? '#e65100' : '#6a1b9a',
                         }}
                       />
@@ -679,12 +682,12 @@ function AITutorInsights() {
                 <Chip
                   label={`${openRevision.score}/${openRevision.total} (${Math.round((openRevision.score / openRevision.total) * 100)}%)`}
                   size="small"
-                  sx={{ bgcolor: '#fce4ec', color: '#c62828', fontWeight: 600 }}
+                  sx={{ bgcolor: dk ? 'rgba(198,40,40,0.12)' : '#fce4ec', color: '#c62828', fontWeight: 600 }}
                 />
               </Box>
             </DialogTitle>
             <DialogContent>
-              <Paper variant="outlined" sx={{ p: 1.5, mb: 2, borderRadius: 2, bgcolor: '#fff8e1', borderColor: '#ffe082' }}>
+              <Paper variant="outlined" sx={{ p: 1.5, mb: 2, borderRadius: 2, bgcolor: dk ? 'rgba(230,81,0,0.08)' : '#fff8e1', borderColor: dk ? 'rgba(255,224,130,0.3)' : '#ffe082' }}>
                 <Typography variant="body2" sx={{ fontSize: 13 }}>{openRevision.summary}</Typography>
               </Paper>
               <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5 }}>Weak Areas & Action Plan</Typography>
@@ -710,7 +713,7 @@ function AITutorInsights() {
                           fontSize: 10,
                           textTransform: 'uppercase',
                           fontWeight: 700,
-                          bgcolor: item.priority === 'high' ? '#ffebee' : item.priority === 'medium' ? '#fff8e1' : '#f3e5f5',
+                          bgcolor: item.priority === 'high' ? (dk ? 'rgba(198,40,40,0.12)' : '#ffebee') : item.priority === 'medium' ? (dk ? 'rgba(230,81,0,0.12)' : '#fff8e1') : (dk ? 'rgba(106,27,154,0.12)' : '#f3e5f5'),
                           color: item.priority === 'high' ? '#c62828' : item.priority === 'medium' ? '#e65100' : '#6a1b9a',
                         }}
                       />
@@ -746,6 +749,7 @@ function AITutorInsights() {
 
 // --- Dashboard Tab ---
 function DashboardTab() {
+  const dk = useTheme().palette.mode === 'dark';
   const courses = useCourseStore((s) => s.courses);
   const progress = useCourseStore((s) => s.progress);
   const quizProgress = useCourseStore((s) => s.quizProgress);
@@ -813,7 +817,7 @@ function DashboardTab() {
             label="Overall Progress"
             value={`${overallPercent}%`}
             sub={`${videosWatched} of ${totalVideos} videos`}
-            color="#616161"
+            color={dk ? '#1A2B3C' : '#616161'}
             onClick={() => navigate('/app/courses')}
           />
         </Grid>
@@ -874,9 +878,9 @@ function DashboardTab() {
                         sx={{
                           height: 6,
                           borderRadius: 3,
-                          bgcolor: '#eeeeee',
+                          bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#eeeeee',
                           '& .MuiLinearProgress-bar': {
-                            bgcolor: cp.percent === 100 ? '#66bb6a' : '#9e9e9e',
+                            bgcolor: cp.percent === 100 ? '#66bb6a' : dk ? '#666' : '#9e9e9e',
                             borderRadius: 3,
                           },
                         }}
@@ -908,7 +912,7 @@ function DashboardTab() {
                     const video = course?.videos.find((v) => v.id === qp.videoId);
                     const pct = Math.round((qp.score / qp.total) * 100);
                     return (
-                      <Box key={i} onClick={() => course && navigate(`/app/education/${course.id}`)} sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer', borderRadius: 1, px: 0.5, mx: -0.5, '&:hover': { bgcolor: '#f5f5f5' } }}>
+                      <Box key={i} onClick={() => course && navigate(`/app/education/${course.id}`)} sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer', borderRadius: 1, px: 0.5, mx: -0.5, '&:hover': { bgcolor: 'action.hover' } }}>
                         {qp.score === qp.total ? (
                           <CheckCircleIcon sx={{ fontSize: 16, color: '#66bb6a' }} />
                         ) : (
@@ -923,7 +927,7 @@ function DashboardTab() {
                           sx={{
                             height: 20,
                             fontSize: 11,
-                            bgcolor: pct === 100 ? '#e8f5e9' : pct >= 50 ? '#fff3e0' : '#fce4ec',
+                            bgcolor: pct === 100 ? (dk ? 'rgba(46,125,50,0.15)' : '#e8f5e9') : pct >= 50 ? (dk ? 'rgba(230,81,0,0.15)' : '#fff3e0') : (dk ? 'rgba(198,40,40,0.12)' : '#fce4ec'),
                             color: pct === 100 ? '#2e7d32' : pct >= 50 ? '#e65100' : '#c62828',
                           }}
                         />
@@ -972,9 +976,9 @@ function DashboardTab() {
                           flex: 1,
                           height: 4,
                           borderRadius: 2,
-                          bgcolor: '#eeeeee',
+                          bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#eeeeee',
                           '& .MuiLinearProgress-bar': {
-                            bgcolor: cp.percent === 100 ? '#66bb6a' : '#9e9e9e',
+                            bgcolor: cp.percent === 100 ? '#66bb6a' : dk ? '#666' : '#9e9e9e',
                             borderRadius: 2,
                           },
                         }}
@@ -999,6 +1003,7 @@ function DashboardTab() {
 
 // --- Main Education Page ---
 export default function EducationPage() {
+  const dk = useTheme().palette.mode === 'dark';
   const navigate = useNavigate();
   const { user } = useAuth();
   const [search, setSearch] = useState('');
@@ -1066,8 +1071,8 @@ export default function EducationPage() {
           onClick={() => setCreateOpen(true)}
           sx={{
             textTransform: 'none',
-            bgcolor: '#616161',
-            '&:hover': { bgcolor: '#424242' },
+            bgcolor: dk ? '#1A2B3C' : '#616161',
+            '&:hover': { bgcolor: dk ? '#243B4F' : '#424242' },
             borderRadius: 2,
           }}
         >
@@ -1099,8 +1104,8 @@ export default function EducationPage() {
             sx: {
               borderRadius: 2,
               bgcolor: 'background.paper',
-              '& fieldset': { borderColor: '#e0e0e0' },
-              '&:hover fieldset': { borderColor: '#bdbdbd' },
+              '& fieldset': { borderColor: dk ? 'rgba(255,255,255,0.15)' : '#e0e0e0' },
+              '&:hover fieldset': { borderColor: dk ? 'rgba(255,255,255,0.25)' : '#bdbdbd' },
             },
           }}
         />
@@ -1131,7 +1136,7 @@ export default function EducationPage() {
             py: 8,
           }}
         >
-          <PlayCircleOutlineIcon sx={{ fontSize: 48, color: '#bdbdbd', mb: 2 }} />
+          <PlayCircleOutlineIcon sx={{ fontSize: 48, color: dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd', mb: 2 }} />
           <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
             {search ? 'No courses match your search' : 'No courses yet'}
           </Typography>
@@ -1140,7 +1145,7 @@ export default function EducationPage() {
               variant="outlined"
               startIcon={<AddIcon />}
               onClick={() => setCreateOpen(true)}
-              sx={{ textTransform: 'none', borderColor: '#e0e0e0', color: 'text.secondary' }}
+              sx={{ textTransform: 'none', borderColor: dk ? 'rgba(255,255,255,0.15)' : '#e0e0e0', color: 'text.secondary' }}
             >
               Create your first course
             </Button>

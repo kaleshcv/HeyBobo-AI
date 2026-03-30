@@ -96,15 +96,23 @@ const createApiInstance = (): AxiosInstance => {
         isRefreshing = true
 
         try {
-          const response = await axios.post(`${API_URL}/auth/refresh`, {}, {
-            withCredentials: true,
+          const { refreshToken } = useAuthStore.getState()
+          if (!refreshToken) throw new Error('No refresh token')
+          const response = await axios.post(`${API_URL}/auth/refresh`, {
+            refreshToken,
           })
-          const { accessToken } = response.data.data
+          // Handle TransformInterceptor wrapper: { success, data: { accessToken, refreshToken }, message }
+          const inner = response.data?.data ?? response.data
+          const newToken = inner.accessToken
+          const newRefresh = inner.refreshToken
 
-          useAuthStore.getState().setToken(accessToken)
-          originalRequest.headers.Authorization = `Bearer ${accessToken}`
+          useAuthStore.getState().setToken(newToken)
+          if (newRefresh) {
+            localStorage.setItem('auth_refresh_token', newRefresh)
+          }
+          originalRequest.headers.Authorization = `Bearer ${newToken}`
 
-          processQueue(null, accessToken)
+          processQueue(null, newToken)
           return instance(originalRequest)
         } catch (refreshError) {
           processQueue(refreshError as Error, null)
@@ -136,27 +144,33 @@ const api = createApiInstance()
 
 // Auth API
 export const authApi = {
-  login: (email: string, password: string) =>
-    api.post<ApiResponse<{ user: User; accessToken: string }>>('/auth/login', {
-      email,
+  login: (identifier: string, password: string) =>
+    api.post<{ user: User; accessToken: string; refreshToken: string }>('/auth/login', {
+      identifier,
       password,
     }),
 
-  register: (email: string, password: string, firstName: string, lastName: string, role: string) =>
-    api.post<ApiResponse<{ user: User; accessToken: string }>>('/auth/register', {
-      email,
-      password,
-      firstName,
-      lastName,
-      role,
-    }),
+  register: (data: {
+    email: string
+    password: string
+    firstName: string
+    lastName: string
+    username: string
+    role: string
+  }) =>
+    api.post<{ user: User; accessToken: string; refreshToken: string }>('/auth/register', data),
 
-  logout: () => api.post('/auth/logout'),
+  checkUsername: (username: string) =>
+    api.get<{ available: boolean }>(`/auth/check-username/${encodeURIComponent(username)}`),
 
-  refreshToken: () => api.post<ApiResponse<{ accessToken: string }>>('/auth/refresh'),
+  logout: (refreshToken?: string) =>
+    api.post('/auth/logout', { refreshToken }),
+
+  refreshToken: (refreshToken: string) =>
+    api.post<{ accessToken: string; refreshToken: string }>('/auth/refresh', { refreshToken }),
 
   googleAuth: (token: string) =>
-    api.post<ApiResponse<{ user: User; accessToken: string }>>('/auth/google', { token }),
+    api.post<{ user: User; accessToken: string; refreshToken: string }>('/auth/google', { token }),
 
   forgotPassword: (email: string) =>
     api.post<ApiResponse<null>>('/auth/forgot-password', { email }),

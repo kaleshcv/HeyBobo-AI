@@ -68,6 +68,7 @@ import {
   type Severity,
   type InjuryStatus,
 } from '@/store/injuryStore';
+import { aiApi } from '@/lib/api';
 import toast from 'react-hot-toast';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────────
@@ -296,37 +297,38 @@ export default function InjuryPage() {
     }
   };
 
-  // Tab 10: AI Coach
-  const COACH_RESPONSES = [
-    "Based on your pain logs, I recommend prioritising gentle mobility work today. Rest is a key part of recovery.",
-    "Great progress! Your average pain score dropped by 1.2 points this week. Keep up the consistency.",
-    "For your type of injury, I suggest 10 minutes of ice therapy followed by the pendulum exercise.",
-    "Remember: Recovery is not linear. Bad days don't erase the progress you've made.",
-    "Your rehab programme is on track! Make sure you're staying hydrated and getting 7-9 hours of sleep.",
-    "Anti-inflammatory foods like turmeric and ginger can complement your recovery plan significantly.",
-    "Have you done your breathing exercises today? They significantly aid pain management and stress reduction.",
-  ];
+  // Tab 10: AI Coach — real AI API
+  const [coachSending, setCoachSending] = useState(false);
+  const [coachConvId, setCoachConvId] = useState<string | null>(null);
 
-  const handleCoachSend = () => {
-    if (!chatInput.trim()) return;
-    store.sendCoachMessage(chatInput);
-    const reply = COACH_RESPONSES[Math.floor(Math.random() * COACH_RESPONSES.length)];
-    setTimeout(() => { store.receiveCoachMessage(reply); chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, 1000);
+  const handleCoachSend = async () => {
+    if (!chatInput.trim() || coachSending) return;
+    const msg = chatInput.trim();
+    store.sendCoachMessage(msg);
     setChatInput('');
+    setCoachSending(true);
+    try {
+      const ctx = `Injury rehab AI coach. Active injuries: ${activeInjuries.map(i => `${i.name} (${i.bodyPart}, ${i.severity})`).join(', ') || 'none'}. Avg pain: ${avgPain}/10. Streak: ${currentStreak} days.`;
+      const res = await aiApi.chat(coachConvId, `${ctx}\n\nUser: ${msg}`, undefined, undefined);
+      const inner = res.data?.data;
+      if (inner?.conversation?.id && !coachConvId) setCoachConvId(inner.conversation.id);
+      const reply = inner?.message?.content ?? 'I could not generate a response right now.';
+      store.receiveCoachMessage(reply);
+    } catch {
+      store.receiveCoachMessage('Sorry, I had trouble connecting. Please try again.');
+    } finally {
+      setCoachSending(false);
+      setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
+    }
   };
 
-  // Tab 12: Simulated posture analysis
+  // Tab 12: Posture analysis [*] — camera/CV not available; uses static guidance
   const [postureAnalysisDone, setPostureAnalysisDone] = useState(false);
   const [postureResult, setPostureResult] = useState<string | null>(null);
 
   const runPostureAnalysis = () => {
-    const results = [
-      'Forward head posture detected. Risk of neck strain elevated. Recommend chin tuck exercises daily.',
-      'Anterior pelvic tilt observed. Strengthening hip flexors and glutes recommended. Avoid sitting for >45 min.',
-      'Elevated right shoulder detected. May indicate muscle imbalance. Recommend one-sided mobility work.',
-      'Good upright posture detected. Continue current routine and focus on core strength maintenance.',
-    ];
-    setPostureResult(results[Math.floor(Math.random() * results.length)]);
+    // [*] Real-time computer vision is not available — showing general posture guidance
+    setPostureResult('📷 Live CV analysis not available in this environment. General guidance: Stand tall with ears over shoulders, shoulders over hips. Engage core gently. Check with a physiotherapist for a personalised posture assessment.');
     setPostureAnalysisDone(true);
   };
 
@@ -358,17 +360,17 @@ export default function InjuryPage() {
     setPainLogOpen(false);
   };
 
-  // Simulate wearable alert
+  // [*] Simulate wearable alert — demo only (no real BLE device connected)
   const simulateWearableAlert = () => {
     const alerts = [
-      { type: 'abnormal-hr' as const, message: 'Elevated heart rate (142 bpm) detected during rest — possible stress or pain response.' },
-      { type: 'low-hrv' as const, message: 'Low HRV detected. Your body may still be under significant recovery stress.' },
-      { type: 'poor-sleep' as const, message: 'Sleep quality score: 42/100. Poor sleep impairs injury recovery. Aim for 7-9 hours.' },
-      { type: 'inactivity' as const, message: '6+ hours of inactivity detected. Gentle movement is recommended for injury recovery.' },
+      { type: 'abnormal-hr' as const, message: '[* Demo] Elevated heart rate (142 bpm) detected during rest — possible stress or pain response.' },
+      { type: 'low-hrv' as const, message: '[* Demo] Low HRV detected. Your body may still be under significant recovery stress.' },
+      { type: 'poor-sleep' as const, message: '[* Demo] Sleep quality score: 42/100. Poor sleep impairs injury recovery. Aim for 7-9 hours.' },
+      { type: 'inactivity' as const, message: '[* Demo] 6+ hours of inactivity detected. Gentle movement is recommended for injury recovery.' },
     ];
-    const alert = alerts[Math.floor(Math.random() * alerts.length)];
+    const alert = alerts[Math.floor(Date.now() / 1000) % alerts.length];
     store.addWearableAlert({ ...alert, detectedAt: new Date().toISOString() });
-    toast('Wearable alert received', { icon: '⌚' });
+    toast('⌚ Demo alert added — connect a real wearable for live alerts', { icon: '⚠️' });
   };
 
   // Body map → open log dialog with pre-selected body part
@@ -822,8 +824,9 @@ export default function InjuryPage() {
               </Box>
               <Box sx={{ p: 1.5, borderTop: '1px solid', borderColor: 'divider', display: 'flex', gap: 1 }}>
                 <TextField fullWidth size="small" placeholder="Ask your coach…" value={chatInput} onChange={(e) => setChatInput(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleCoachSend(); } }} />
-                <IconButton color="primary" onClick={handleCoachSend} disabled={!chatInput.trim()}><SendIcon /></IconButton>
+                  disabled={coachSending}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); void handleCoachSend(); } }} />
+                <IconButton color="primary" onClick={() => void handleCoachSend()} disabled={!chatInput.trim() || coachSending}><SendIcon /></IconButton>
               </Box>
             </Paper>
           </TabPanel>

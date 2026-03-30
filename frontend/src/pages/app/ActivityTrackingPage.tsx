@@ -17,6 +17,7 @@ import {
   Alert,
   Tabs,
   Tab,
+  useTheme,
 } from '@mui/material';
 import DirectionsWalkIcon from '@mui/icons-material/DirectionsWalk';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
@@ -78,6 +79,7 @@ function MetricCard({
   color: string;
   onEdit: () => void;
 }) {
+  const dk = useTheme().palette.mode === 'dark';
   const pct = goal > 0 ? Math.min((value / goal) * 100, 100) : 0;
   const achieved = pct >= 100;
 
@@ -88,8 +90,8 @@ function MetricCard({
         p: 2,
         borderRadius: 2.5,
         border: '1px solid',
-        borderColor: achieved ? `${color}40` : '#e0e0e0',
-        bgcolor: achieved ? `${color}08` : '#fff',
+        borderColor: achieved ? `${color}40` : 'divider',
+        bgcolor: achieved ? `${color}08` : 'background.paper',
         minWidth: 140,
         flex: 1,
         position: 'relative',
@@ -119,7 +121,7 @@ function MetricCard({
           mt: 1,
           height: 4,
           borderRadius: 2,
-          bgcolor: '#e0e0e0',
+          bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#e0e0e0',
           '& .MuiLinearProgress-bar': { bgcolor: color, borderRadius: 2 },
         }}
       />
@@ -129,13 +131,14 @@ function MetricCard({
 
 // ─── Weekly Mini Bar Chart ──────────────────────────────
 function WeeklyChart({ selectedDate }: { selectedDate: string }) {
+  const dk = useTheme().palette.mode === 'dark';
   const { getWeeklyMetrics, goals } = useActivityTrackingStore();
   const week = useMemo(() => getWeeklyMetrics(selectedDate), [selectedDate, getWeeklyMetrics]);
 
   const maxSteps = Math.max(goals.steps, ...week.map((d) => d.steps));
 
   return (
-    <Paper elevation={0} sx={{ p: 2.5, borderRadius: 2.5, border: '1px solid #e0e0e0' }}>
+    <Paper elevation={0} sx={{ p: 2.5, borderRadius: 2.5, border: '1px solid', borderColor: 'divider' }}>
       <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 2 }}>
         Weekly Steps
       </Typography>
@@ -152,7 +155,7 @@ function WeeklyChart({ selectedDate }: { selectedDate: string }) {
                     width: '100%',
                     maxWidth: 32,
                     height: `${Math.max(h, 4)}%`,
-                    bgcolor: hitGoal ? '#4caf50' : isToday ? '#424242' : '#bdbdbd',
+                    bgcolor: hitGoal ? '#4caf50' : isToday ? (dk ? '#C9A84C' : '#424242') : (dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd'),
                     borderRadius: 1,
                     transition: 'height 0.3s',
                   }}
@@ -190,6 +193,7 @@ function EditMetricDialog({
   onSave: (v: number) => void;
   onClose: () => void;
 }) {
+  const dk = useTheme().palette.mode === 'dark';
   const [val, setVal] = useState(String(value));
 
   const handleSave = () => {
@@ -217,7 +221,7 @@ function EditMetricDialog({
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
         <Button onClick={onClose} sx={{ textTransform: 'none' }}>Cancel</Button>
-        <Button variant="contained" onClick={handleSave} sx={{ textTransform: 'none', bgcolor: '#424242', '&:hover': { bgcolor: '#212121' } }}>
+        <Button variant="contained" onClick={handleSave} sx={{ textTransform: 'none', bgcolor: dk ? '#1A2B3C' : '#424242', '&:hover': { bgcolor: dk ? '#243B4F' : '#212121' } }}>
           Save
         </Button>
       </DialogActions>
@@ -235,6 +239,7 @@ function LogWorkoutDialog({
   date: string;
   onClose: () => void;
 }) {
+  const dk = useTheme().palette.mode === 'dark';
   const { addWorkout } = useActivityTrackingStore();
   const [type, setType] = useState<WorkoutType>('running');
   const [name, setName] = useState('');
@@ -282,10 +287,10 @@ function LogWorkoutDialog({
                   variant={type === w.id ? 'filled' : 'outlined'}
                   sx={{
                     fontWeight: type === w.id ? 600 : 400,
-                    bgcolor: type === w.id ? '#424242' : 'transparent',
-                    color: type === w.id ? '#fff' : 'text.primary',
-                    borderColor: type === w.id ? '#424242' : '#bdbdbd',
-                    '&:hover': { bgcolor: type === w.id ? '#333' : '#f5f5f5' },
+                    bgcolor: type === w.id ? (dk ? '#C9A84C' : '#424242') : 'transparent',
+                    color: type === w.id ? (dk ? '#0D1B2A' : '#fff') : 'text.primary',
+                    borderColor: type === w.id ? (dk ? '#C9A84C' : '#424242') : 'divider',
+                    '&:hover': { bgcolor: type === w.id ? undefined : 'action.hover' },
                   }}
                 />
               ))}
@@ -339,7 +344,7 @@ function LogWorkoutDialog({
         <Button
           variant="contained"
           onClick={handleSave}
-          sx={{ textTransform: 'none', fontWeight: 600, bgcolor: '#424242', '&:hover': { bgcolor: '#212121' } }}
+          sx={{ textTransform: 'none', fontWeight: 600, bgcolor: dk ? '#1A2B3C' : '#424242', '&:hover': { bgcolor: dk ? '#243B4F' : '#212121' } }}
         >
           Log Workout
         </Button>
@@ -358,6 +363,7 @@ function LogCustomActivityDialog({
   date: string;
   onClose: () => void;
 }) {
+  const dk = useTheme().palette.mode === 'dark';
   const { addCustomActivity } = useActivityTrackingStore();
   const [name, setName] = useState('');
   const [duration, setDuration] = useState('15');
@@ -422,7 +428,7 @@ function LogCustomActivityDialog({
           variant="contained"
           onClick={handleSave}
           disabled={!name.trim()}
-          sx={{ textTransform: 'none', fontWeight: 600, bgcolor: '#424242', '&:hover': { bgcolor: '#212121' } }}
+          sx={{ textTransform: 'none', fontWeight: 600, bgcolor: dk ? '#1A2B3C' : '#424242', '&:hover': { bgcolor: dk ? '#243B4F' : '#212121' } }}
         >
           Log Activity
         </Button>
@@ -439,6 +445,7 @@ const DEVICE_META: Record<SyncDevice, { label: string; icon: React.ReactElement;
 };
 
 function DeviceCard({ deviceType }: { deviceType: SyncDevice }) {
+  const dk = useTheme().palette.mode === 'dark';
   const { connectedDevices, connectDevice, disconnectDevice, syncDevice } = useActivityTrackingStore();
   const device = connectedDevices.find((d) => d.type === deviceType);
   const meta = DEVICE_META[deviceType];
@@ -466,8 +473,8 @@ function DeviceCard({ deviceType }: { deviceType: SyncDevice }) {
         p: 2,
         borderRadius: 2.5,
         border: '1px solid',
-        borderColor: connected ? '#4caf5040' : '#e0e0e0',
-        bgcolor: connected ? '#4caf5008' : '#fff',
+        borderColor: connected ? '#4caf5040' : 'divider',
+        bgcolor: connected ? '#4caf5008' : 'background.paper',
         flex: 1,
         minWidth: 180,
       }}
@@ -475,7 +482,7 @@ function DeviceCard({ deviceType }: { deviceType: SyncDevice }) {
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
         <Avatar
           sx={{
-            bgcolor: connected ? '#4caf5018' : '#f5f5f5',
+            bgcolor: connected ? '#4caf5018' : (dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5'),
             color: connected ? '#4caf50' : '#757575',
             width: 36,
             height: 36,
@@ -504,12 +511,12 @@ function DeviceCard({ deviceType }: { deviceType: SyncDevice }) {
               size="small"
               startIcon={<SyncIcon />}
               onClick={handleSync}
-              sx={{ textTransform: 'none', fontSize: 12, borderRadius: 1.5, flex: 1, bgcolor: '#f5f5f5' }}
+              sx={{ textTransform: 'none', fontSize: 12, borderRadius: 1.5, flex: 1, bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5' }}
             >
               Sync
             </Button>
             <Tooltip title="Disconnect">
-              <IconButton size="small" onClick={handleDisconnect} sx={{ border: '1px solid #e0e0e0' }}>
+              <IconButton size="small" onClick={handleDisconnect} sx={{ border: '1px solid', borderColor: 'divider' }}>
                 <LinkOffIcon sx={{ fontSize: 16 }} />
               </IconButton>
             </Tooltip>
@@ -524,8 +531,7 @@ function DeviceCard({ deviceType }: { deviceType: SyncDevice }) {
               fontSize: 12,
               borderRadius: 1.5,
               flex: 1,
-              borderColor: '#bdbdbd',
-              color: 'text.primary',
+              borderColor: 'divider',
             }}
           >
             Connect
@@ -538,6 +544,7 @@ function DeviceCard({ deviceType }: { deviceType: SyncDevice }) {
 
 // ═══════════════════ MAIN PAGE ═══════════════════════════
 export default function ActivityTrackingPage() {
+  const dk = useTheme().palette.mode === 'dark';
   const {
     getDailyMetrics,
     updateDailyMetrics,
@@ -652,12 +659,13 @@ export default function ActivityTrackingPage() {
       </Box>
 
       {/* Tabs: Manual Entry / Auto Sync */}
-      <Paper elevation={0} sx={{ borderRadius: 3, border: '1px solid #e0e0e0', overflow: 'hidden' }}>
+      <Paper elevation={0} sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
         <Tabs
           value={tab}
           onChange={(_, v) => setTab(v)}
           sx={{
-            borderBottom: '1px solid #e0e0e0',
+            borderBottom: '1px solid',
+            borderBottomColor: 'divider',
             '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontSize: 14 },
           }}
         >
@@ -678,8 +686,8 @@ export default function ActivityTrackingPage() {
                   textTransform: 'none',
                   fontWeight: 600,
                   borderRadius: 2,
-                  bgcolor: '#424242',
-                  '&:hover': { bgcolor: '#212121' },
+                  bgcolor: dk ? '#1A2B3C' : '#424242',
+                  '&:hover': { bgcolor: dk ? '#243B4F' : '#212121' },
                 }}
               >
                 Log Workout
@@ -692,8 +700,7 @@ export default function ActivityTrackingPage() {
                   textTransform: 'none',
                   fontWeight: 600,
                   borderRadius: 2,
-                  borderColor: '#bdbdbd',
-                  color: 'text.primary',
+                  borderColor: 'divider',
                 }}
               >
                 Custom Activity
@@ -712,7 +719,7 @@ export default function ActivityTrackingPage() {
                     <Paper
                       key={w.id}
                       elevation={0}
-                      sx={{ p: 1.5, mb: 1, borderRadius: 2, border: '1px solid #eeeeee', display: 'flex', alignItems: 'center', gap: 1.5 }}
+                      sx={{ p: 1.5, mb: 1, borderRadius: 2, border: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center', gap: 1.5 }}
                     >
                       <Typography sx={{ fontSize: 22 }}>{wt?.emoji ?? '🎯'}</Typography>
                       <Box sx={{ flex: 1 }}>
@@ -743,7 +750,7 @@ export default function ActivityTrackingPage() {
                   <Paper
                     key={a.id}
                     elevation={0}
-                    sx={{ p: 1.5, mb: 1, borderRadius: 2, border: '1px solid #eeeeee', display: 'flex', alignItems: 'center', gap: 1.5 }}
+                    sx={{ p: 1.5, mb: 1, borderRadius: 2, border: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center', gap: 1.5 }}
                   >
                     <Typography sx={{ fontSize: 22 }}>🎯</Typography>
                     <Box sx={{ flex: 1 }}>

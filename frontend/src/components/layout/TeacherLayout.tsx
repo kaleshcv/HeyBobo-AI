@@ -3,9 +3,11 @@ import { Outlet } from 'react-router-dom'
 import { Home, BookOpen, BarChart3, Users } from 'lucide-react'
 import { Header } from './Header'
 import { Sidebar } from './Sidebar'
+import { useTheme } from '@mui/material'
 import { ErrorBoundary } from '@/components/common/ErrorBoundary'
 
 export default function TeacherLayout() {
+  const dk = useTheme().palette.mode === 'dark'
   const [sidebarOpen] = useState(true)
 
   const navItems = [
@@ -17,7 +19,7 @@ export default function TeacherLayout() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen" style={{ background: '#F8F6F1' }}>
+      <div className="min-h-screen" style={{ background: dk ? '#0D1B2A' : '#F8F6F1' }}>
         <Header />
         <div className="flex">
           <Sidebar items={navItems} isOpen={sidebarOpen} />

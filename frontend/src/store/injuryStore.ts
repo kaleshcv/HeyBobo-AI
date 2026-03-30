@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { createUserStorage } from '@/lib/userStorage';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 const genId = () => Math.random().toString(36).slice(2, 10);
@@ -641,6 +642,6 @@ export const useInjuryStore = create<InjuryStore>()(
         });
       },
     }),
-    { name: 'heybobo-injury' },
+    { name: 'heybobo-injury', storage: createUserStorage() },
   ),
 );

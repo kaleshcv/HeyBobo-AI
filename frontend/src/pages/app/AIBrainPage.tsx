@@ -15,6 +15,7 @@ import {
   Skeleton,
   Stack,
   Typography,
+  useTheme,
 } from '@mui/material';
 import PsychologyIcon from '@mui/icons-material/Psychology';
 import SchoolIcon from '@mui/icons-material/School';
@@ -70,7 +71,14 @@ import {
 } from '@/store/aiBrainStore';
 import { generateAIBrainDashboard } from '@/lib/gemini';
 import { useBrainData } from '@/hooks/useBrainData';
-import SimpleLifeDashboard from './SimpleLifeDashboard';
+import HybridDashboard from './HybridDashboard';
+import GameDashboard from './GameDashboard';
+
+type DashboardView = 'hybrid' | 'game';
+const DASH_VIEWS: { key: DashboardView; label: string; icon: string }[] = [
+  { key: 'hybrid', label: 'Hybrid', icon: '⚡' },
+  { key: 'game', label: 'Game', icon: '🎮' },
+];
 
 // ─── Module icon/color map ──────────────────────────────────────────────────
 
@@ -139,6 +147,7 @@ function SectionCard({
   defaultOpen?: boolean;
 }) {
   const [open, setOpen] = useState(defaultOpen);
+  const dk = useTheme().palette.mode === 'dark';
 
   return (
     <Paper variant="outlined" sx={{ borderRadius: 2.5, overflow: 'hidden' }}>
@@ -155,7 +164,7 @@ function SectionCard({
         onClick={collapsible ? () => setOpen(!open) : undefined}
       >
         {icon && (
-          <Box sx={{ color: '#616161', display: 'flex' }}>
+          <Box sx={{ color: dk ? '#aaa' : '#616161', display: 'flex' }}>
             {icon}
           </Box>
         )}
@@ -290,7 +299,7 @@ function ScheduleTimeline({ events, toggleComplete }: { events: ScheduleEvent[];
                 }}
               />
               {idx < events.length - 1 && (
-                <Box sx={{ width: 2, flex: 1, bgcolor: '#e0e0e0', minHeight: 20 }} />
+                <Box sx={{ width: 2, flex: 1, bgcolor: 'divider', minHeight: 20 }} />
               )}
             </Box>
             <Typography
@@ -487,6 +496,7 @@ const ENERGY_META: Record<'low' | 'medium' | 'high', { color: string; label: str
 
 function TodayFocusCard({ focus, nudge }: { focus: TodayFocus; nudge: string | null }) {
   const energy = ENERGY_META[focus.energyLevel] ?? ENERGY_META.medium;
+  const dk = useTheme().palette.mode === 'dark';
   return (
     <Paper
       variant="outlined"
@@ -507,8 +517,8 @@ function TodayFocusCard({ focus, nudge }: { focus: TodayFocus; nudge: string | n
             px: 1.5,
             py: 0.75,
             borderRadius: 1.5,
-            bgcolor: '#fff8e1',
-            border: '1px solid #ffe082',
+            bgcolor: dk ? '#3e2e00' : '#fff8e1',
+            border: dk ? '1px solid #5c4100' : '1px solid #ffe082',
           }}
         >
           <NotificationsActiveIcon sx={{ fontSize: 16, color: '#f57c00' }} />
@@ -519,7 +529,7 @@ function TodayFocusCard({ focus, nudge }: { focus: TodayFocus; nudge: string | n
       )}
 
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
-        <Avatar sx={{ bgcolor: '#f5f5f5', color: energy.color, width: 38, height: 38, mt: 0.25 }}>
+        <Avatar sx={{ bgcolor: dk ? '#2a2a2a' : '#f5f5f5', color: energy.color, width: 38, height: 38, mt: 0.25 }}>
           {energy.icon}
         </Avatar>
         <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -610,9 +620,18 @@ function DashboardSkeleton() {
 // ─── Main Dashboard ─────────────────────────────────────────────────────────
 
 export default function AIBrainPage() {
+  const dk = useTheme().palette.mode === 'dark';
   const navigate = useNavigate();
   const { user } = useAuth();
   const [error, setError] = useState<string | null>(null);
+  const [dashView, setDashView] = useState<DashboardView>(() => {
+    const stored = localStorage.getItem('bobo_dash_view') as DashboardView;
+    return stored === 'hybrid' || stored === 'game' ? stored : 'hybrid';
+  });
+  const switchView = useCallback((view: DashboardView) => {
+    setDashView(view);
+    localStorage.setItem('bobo_dash_view', view);
+  }, []);
 
   // Brain store
   const {
@@ -720,7 +739,7 @@ export default function AIBrainPage() {
       <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <Avatar sx={{ bgcolor: '#424242', width: 36, height: 36 }}>
+          <Avatar sx={{ bgcolor: dk ? '#1A2B3C' : '#424242', width: 36, height: 36 }}>
             <PsychologyIcon fontSize="small" />
           </Avatar>
           <Box>
@@ -746,9 +765,9 @@ export default function AIBrainPage() {
               borderRadius: 2,
               textTransform: 'none',
               fontWeight: 600,
-              borderColor: '#C9A84C',
-              color: '#C9A84C',
-              '&:hover': { borderColor: '#E5B84E', bgcolor: 'rgba(201,168,76,0.08)' },
+              borderColor: dk ? '#C9A84C' : '#00843D',
+              color: dk ? '#C9A84C' : '#00843D',
+              '&:hover': { borderColor: dk ? '#E5B84E' : '#00A650', bgcolor: dk ? 'rgba(201,168,76,0.08)' : 'rgba(0,132,61,0.08)' },
             }}
           >
             🏋️ Simulate Workout
@@ -766,9 +785,26 @@ export default function AIBrainPage() {
         </Box>
       </Box>
 
+      {/* Dashboard view toggle */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: .5, mb: 2, p: .5, borderRadius: 2.5, bgcolor: 'action.hover', width: 'fit-content' }}>
+        {DASH_VIEWS.map((v) => (
+          <Box key={v.key} onClick={() => switchView(v.key)} sx={{
+            display: 'flex', alignItems: 'center', gap: .5, px: 1.5, py: .5,
+            borderRadius: 2, cursor: 'pointer', transition: 'all .2s',
+            bgcolor: dashView === v.key ? 'background.paper' : 'transparent',
+            boxShadow: dashView === v.key ? '0 1px 4px rgba(0,0,0,.15)' : 'none',
+            '&:hover': dashView !== v.key ? { bgcolor: 'action.selected' } : {},
+          }}>
+            <Typography sx={{ fontSize: 13 }}>{v.icon}</Typography>
+            <Typography sx={{ fontSize: 12, fontWeight: dashView === v.key ? 700 : 500, color: dashView === v.key ? 'text.primary' : 'text.secondary' }}>{v.label}</Typography>
+          </Box>
+        ))}
+      </Box>
+
       </Box>{/* end maxWidth header wrapper */}
 
-      <SimpleLifeDashboard />
+      {dashView === 'hybrid' && <HybridDashboard />}
+      {dashView === 'game' && <GameDashboard />}
 
       {false && (
         <Box>
@@ -802,7 +838,7 @@ export default function AIBrainPage() {
             variant="contained"
             startIcon={<AutoAwesomeIcon />}
             onClick={refreshDashboard}
-            sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600, bgcolor: '#424242', '&:hover': { bgcolor: '#616161' } }}
+            sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600, bgcolor: dk ? '#1A2B3C' : '#424242', '&:hover': { bgcolor: dk ? '#243B4F' : '#616161' } }}
           >
             Activate Bobo
           </Button>
@@ -991,7 +1027,7 @@ export default function AIBrainPage() {
                         sx={{
                           height: 4,
                           borderRadius: 2,
-                          bgcolor: '#f5f5f5',
+                          bgcolor: 'action.hover',
                           '& .MuiLinearProgress-bar': {
                             bgcolor: pct >= 80 ? '#4caf50' : pct >= 50 ? '#f57c00' : '#d32f2f',
                             borderRadius: 2,

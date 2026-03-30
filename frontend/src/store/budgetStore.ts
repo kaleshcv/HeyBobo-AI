@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { createUserStorage } from '@/lib/userStorage';
 
 // ─── Helpers ──────────────────────────────────────────────
 const genId = () => Math.random().toString(36).slice(2, 10);
@@ -56,17 +57,7 @@ const DEFAULT_LIMITS: Record<ExpenseCategory, number> = {
   other: 80,
 };
 
-// Seed with a few sample expenses so the page isn't blank
-const SEED_EXPENSES: Expense[] = [
-  { id: 'exp-1', amount: 55, category: 'education', description: 'React Textbook (used)', date: '2026-03-05', source: 'Marketplace' },
-  { id: 'exp-2', amount: 12, category: 'food', description: 'Weekly groceries — fruits', date: '2026-03-07', source: 'Manual' },
-  { id: 'exp-3', amount: 25, category: 'fitness', description: 'Resistance bands set', date: '2026-03-10', source: 'Shopping List' },
-  { id: 'exp-4', amount: 8, category: 'food', description: 'Cafeteria lunch x2', date: '2026-03-12', source: 'Manual' },
-  { id: 'exp-5', amount: 15, category: 'grooming', description: 'Haircut', date: '2026-03-14', source: 'Manual' },
-  { id: 'exp-6', amount: 35, category: 'education', description: 'Lab supplies — goggles, gloves', date: '2026-03-16', source: 'Shopping List' },
-  { id: 'exp-7', amount: 22, category: 'entertainment', description: 'Movie night with study group', date: '2026-03-18', source: 'Manual' },
-  { id: 'exp-8', amount: 40, category: 'transport', description: 'Monthly bus pass', date: '2026-03-01', source: 'Manual' },
-];
+
 
 export const CATEGORY_COLORS: Record<ExpenseCategory, string> = {
   education: '#5c6bc0',
@@ -95,7 +86,7 @@ export const useBudgetStore = create<BudgetState>()(
     (set, get) => ({
       monthlyBudget: 900,
       categoryLimits: { ...DEFAULT_LIMITS },
-      expenses: SEED_EXPENSES,
+      expenses: [],
       priceAlerts: [],
 
       setMonthlyBudget: (amount) => set({ monthlyBudget: amount }),
@@ -140,6 +131,6 @@ export const useBudgetStore = create<BudgetState>()(
 
       getBudgetRemaining: () => get().monthlyBudget - get().getTotalSpent(),
     }),
-    { name: 'budget-tracker' },
+    { name: 'budget-tracker', storage: createUserStorage() },
   ),
 );

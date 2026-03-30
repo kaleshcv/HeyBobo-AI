@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { createUserStorage } from '@/lib/userStorage';
 import { syncWorkoutSession } from './fitnessSyncService';
 
 // ─── MoveNet Keypoint indices ───────────────────────────
@@ -532,6 +533,6 @@ export const useLiveWorkoutStore = create<LiveWorkoutState>()(
           };
         }),
     }),
-    { name: 'live-workout-store' },
+    { name: 'live-workout-store', storage: createUserStorage() },
   ),
 );

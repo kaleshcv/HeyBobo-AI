@@ -5,6 +5,7 @@ import {
   DialogTitle, DialogContent, DialogActions,
   Select, MenuItem, FormControl, InputLabel, Snackbar, Alert, Divider,
   Tooltip,
+  useTheme,
 } from '@mui/material';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -84,6 +85,7 @@ interface Profile {
 }
 
 export default function NutritionTrackerPage() {
+  const dk = useTheme().palette.mode === 'dark';
   const user = useAuthStore((s) => s.user);
   const userId = user?.id || 'anonymous';
 
@@ -349,7 +351,7 @@ export default function NutritionTrackerPage() {
                       dataKey="value"
                     >
                       {macroSplit.map((_, i) => (
-                        <Cell key={i} fill={[MACRO_COLORS.protein, MACRO_COLORS.carbs, MACRO_COLORS.fat, '#e0e0e0'][i]} />
+                        <Cell key={i} fill={[MACRO_COLORS.protein, MACRO_COLORS.carbs, MACRO_COLORS.fat, dk ? 'rgba(255,255,255,0.12)' : '#e0e0e0'][i]} />
                       ))}
                     </Pie>
                     <ReTooltip formatter={(v: number, n: string, p: any) => [`${v}% (${p.payload.grams}g)`, n]} />

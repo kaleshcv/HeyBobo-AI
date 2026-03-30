@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { createUserStorage } from '@/lib/userStorage';
 
 // ─── Helpers ──────────────────────────────────────────────
 const genId = () => Math.random().toString(36).slice(2, 10);
@@ -62,53 +63,6 @@ function buildTrackingSteps(status: OrderStatus): TrackingStep[] {
   }));
 }
 
-// ─── Seed orders ──────────────────────────────────────────
-const SEED_ORDERS: Order[] = [
-  {
-    id: 'ord-1',
-    items: [
-      { name: 'React Textbook (used)', quantity: 1, price: 22 },
-      { name: 'Notebook', quantity: 2, price: 8 },
-    ],
-    total: 38, status: 'shipped', source: 'marketplace',
-    placedAt: '2026-03-15T10:00:00Z', estimatedDelivery: '2026-03-25',
-    trackingSteps: buildTrackingSteps('shipped'),
-  },
-  {
-    id: 'ord-2',
-    items: [
-      { name: 'Resistance Bands Set', quantity: 1, price: 20 },
-      { name: 'Yoga Mat', quantity: 1, price: 25 },
-    ],
-    total: 45, status: 'delivered', source: 'shopping-list',
-    placedAt: '2026-03-08T14:30:00Z', estimatedDelivery: '2026-03-14',
-    trackingSteps: buildTrackingSteps('delivered'),
-  },
-  {
-    id: 'ord-3',
-    items: [
-      { name: 'Whey Protein (2 lb)', quantity: 1, price: 35 },
-      { name: 'Shaker Bottle', quantity: 1, price: 10 },
-    ],
-    total: 45, status: 'confirmed', source: 'external',
-    placedAt: '2026-03-20T09:00:00Z', estimatedDelivery: '2026-03-28',
-    trackingSteps: buildTrackingSteps('confirmed'),
-  },
-];
-
-const SEED_REVIEWS: ProductReview[] = [
-  {
-    id: 'rev-1', productName: 'Resistance Bands Set', rating: 5, title: 'Great for dorm workouts!',
-    body: 'These bands are perfect for quick workouts between classes. The light band is great for rehab exercises too.',
-    helpful: 3, createdAt: '2026-03-15T10:00:00Z', orderId: 'ord-2',
-  },
-  {
-    id: 'rev-2', productName: 'Yoga Mat', rating: 4, title: 'Good quality, slightly thin',
-    body: 'Works well for yoga and floor exercises. A bit thinner than expected but still comfortable.',
-    helpful: 1, createdAt: '2026-03-16T12:00:00Z', orderId: 'ord-2',
-  },
-];
-
 // ─── Store ────────────────────────────────────────────────
 interface OrdersReviewsState {
   orders: Order[];
@@ -129,8 +83,8 @@ export { STATUS_LABELS };
 export const useOrdersReviewsStore = create<OrdersReviewsState>()(
   persist(
     (set, get) => ({
-      orders: SEED_ORDERS,
-      reviews: SEED_REVIEWS,
+      orders: [],
+      reviews: [],
 
       placeOrder: (items, source) => {
         const id = genId();
@@ -188,6 +142,6 @@ export const useOrdersReviewsStore = create<OrdersReviewsState>()(
       getActiveOrders: () => get().orders.filter((o) => o.status !== 'delivered' && o.status !== 'cancelled'),
       getOrderHistory: () => get().orders.filter((o) => o.status === 'delivered' || o.status === 'cancelled'),
     }),
-    { name: 'orders-reviews' },
+    { name: 'orders-reviews', storage: createUserStorage() },
   ),
 );

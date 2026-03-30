@@ -11,6 +11,7 @@ import {
   LinearProgress,
   Paper,
   Typography,
+  useTheme,
 } from '@mui/material';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import StorefrontIcon from '@mui/icons-material/Storefront';
@@ -75,6 +76,7 @@ function StatCard({
   color: string;
   onClick?: () => void;
 }) {
+  const dk = useTheme().palette.mode === 'dark';
   return (
     <Paper
       variant="outlined"
@@ -91,7 +93,7 @@ function StatCard({
         }),
       }}
     >
-      <Avatar sx={{ bgcolor: '#f5f5f5', color: color, width: 42, height: 42 }}>{icon}</Avatar>
+      <Avatar sx={{ bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5', color: color, width: 42, height: 42 }}>{icon}</Avatar>
       <Box>
         <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
           {label}
@@ -134,6 +136,7 @@ function ProgressRow({ label, value, target, color }: { label: string; value: nu
 }
 
 export default function ShoppingPage() {
+  const dk = useTheme().palette.mode === 'dark';
   const navigate = useNavigate();
 
   const lists = useShoppingListStore((s) => s.lists);
@@ -525,7 +528,7 @@ export default function ShoppingPage() {
                           <Typography variant="body2" sx={{ fontWeight: 600 }} noWrap>{review.productName}</Typography>
                           <Box sx={{ display: 'flex', gap: 0.25 }}>
                             {Array.from({ length: 5 }).map((_, i) => (
-                              <CheckCircleIcon key={i} sx={{ fontSize: 12, color: i < review.rating ? '#ffc107' : '#e0e0e0' }} />
+                              <CheckCircleIcon key={i} sx={{ fontSize: 12, color: i < review.rating ? '#ffc107' : (dk ? 'rgba(255,255,255,0.12)' : '#e0e0e0') }} />
                             ))}
                           </Box>
                         </Box>

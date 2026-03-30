@@ -5,7 +5,7 @@ import {
   Dialog, DialogTitle, DialogContent, DialogActions, TextField, Chip, Avatar,
   AvatarGroup, List, ListItem, ListItemText, ListItemAvatar, ListItemSecondaryAction,
   Tooltip, Divider, Badge, LinearProgress, MenuItem, Select, FormControl,
-  InputLabel, Radio, Paper,
+  InputLabel, Radio, Paper, useTheme,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
@@ -43,6 +43,7 @@ import {
   useGroupStore,
   Group, MemberRole, MeetingStatus,
 } from '@/store/groupStore';
+import { aiApi } from '@/lib/api';
 import toast from 'react-hot-toast';
 
 // ─── Tab Panel ────────────────────────────────────────────
@@ -59,7 +60,7 @@ const SectionCard = ({ children, sx }: { children: React.ReactNode; sx?: object 
   </Card>
 );
 
-const btnSx = { textTransform: 'none', bgcolor: '#616161', '&:hover': { bgcolor: '#424242' } };
+const btnSx = { textTransform: 'none', bgcolor: (t: any) => t.palette.mode === 'dark' ? '#1A2B3C' : '#616161', '&:hover': { bgcolor: (t: any) => t.palette.mode === 'dark' ? '#243B4F' : '#424242' } };
 
 // =============================================================
 // 1. OVERVIEW & SETTINGS TAB
@@ -150,6 +151,7 @@ function OverviewTab({ group }: { group: Group }) {
 // 2. MEMBERS TAB
 // =============================================================
 function MembersTab({ group }: { group: Group }) {
+  const dk = useTheme().palette.mode === 'dark';
   const { addMember, removeMember, updateMemberRole, bulkAddMembers, resolveJoinRequest } = useGroupStore();
   const [addOpen, setAddOpen] = useState(false);
   const [bulkOpen, setBulkOpen] = useState(false);
@@ -180,8 +182,8 @@ function MembersTab({ group }: { group: Group }) {
   const pendingRequests = group.joinRequests.filter((r) => r.status === 'pending');
 
   const roleIcon = (r: MemberRole) => {
-    if (r === 'owner' || r === 'admin') return <AdminPanelSettingsIcon sx={{ fontSize: 16, color: '#757575' }} />;
-    return <PersonIcon sx={{ fontSize: 16, color: '#bdbdbd' }} />;
+    if (r === 'owner' || r === 'admin') return <AdminPanelSettingsIcon sx={{ fontSize: 16, color: 'text.secondary' }} />;
+    return <PersonIcon sx={{ fontSize: 16, color: dk ? 'rgba(255,255,255,0.3)' : '#bdbdbd' }} />;
   };
 
   return (
@@ -195,12 +197,12 @@ function MembersTab({ group }: { group: Group }) {
 
       {/* Pending Join Requests */}
       {pendingRequests.length > 0 && (
-        <SectionCard sx={{ mb: 2, borderColor: '#fff3e0' }}>
+        <SectionCard sx={{ mb: 2, borderColor: dk ? 'rgba(255,152,0,0.2)' : '#fff3e0' }}>
           <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>Join Requests ({pendingRequests.length})</Typography>
           <List dense sx={{ py: 0 }}>
             {pendingRequests.map((req) => (
               <ListItem key={req.id} sx={{ px: 0 }}>
-                <ListItemAvatar><Avatar sx={{ width: 32, height: 32, fontSize: 13, bgcolor: '#bdbdbd' }}>{req.name.charAt(0)}</Avatar></ListItemAvatar>
+                <ListItemAvatar><Avatar sx={{ width: 32, height: 32, fontSize: 13, bgcolor: dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd' }}>{req.name.charAt(0)}</Avatar></ListItemAvatar>
                 <ListItemText primary={req.name} secondary={req.email} primaryTypographyProps={{ fontSize: 13 }} secondaryTypographyProps={{ fontSize: 11 }} />
                 <ListItemSecondaryAction>
                   <IconButton size="small" onClick={() => { resolveJoinRequest(group.id, req.id, true); toast.success('Approved'); }} sx={{ color: 'success.main' }}><HowToRegIcon fontSize="small" /></IconButton>
@@ -221,7 +223,7 @@ function MembersTab({ group }: { group: Group }) {
             {group.members.map((m) => (
               <ListItem key={m.id} sx={{ px: 0, py: 0.5 }}>
                 <ListItemAvatar>
-                  <Avatar sx={{ width: 32, height: 32, fontSize: 13, bgcolor: '#9e9e9e' }}>{m.name.charAt(0).toUpperCase()}</Avatar>
+                  <Avatar sx={{ width: 32, height: 32, fontSize: 13, bgcolor: dk ? 'rgba(255,255,255,0.15)' : '#9e9e9e' }}>{m.name.charAt(0).toUpperCase()}</Avatar>
                 </ListItemAvatar>
                 <ListItemText
                   primary={<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>{m.name} {roleIcon(m.role)} <Chip label={m.role} size="small" sx={{ height: 18, fontSize: 10 }} /></Box>}
@@ -287,6 +289,7 @@ function MembersTab({ group }: { group: Group }) {
 // 3. CONTENT & LECTURES TAB
 // =============================================================
 function ContentTab({ group }: { group: Group }) {
+  const dk = useTheme().palette.mode === 'dark';
   const { addContent, removeContent, togglePinContent, removeCourse } = useGroupStore();
   const [addOpen, setAddOpen] = useState(false);
   const [title, setTitle] = useState('');
@@ -338,7 +341,7 @@ function ContentTab({ group }: { group: Group }) {
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <Chip label={c.type} size="small" sx={{ height: 20, fontSize: 10 }} />
                     <Typography variant="body2" sx={{ fontWeight: 600, flex: 1 }} noWrap>{c.title}</Typography>
-                    <IconButton size="small" onClick={() => togglePinContent(group.id, c.id)}><PushPinIcon sx={{ fontSize: 14, color: '#616161' }} /></IconButton>
+                    <IconButton size="small" onClick={() => togglePinContent(group.id, c.id)}><PushPinIcon sx={{ fontSize: 14, color: dk ? '#C9A84C' : '#616161' }} /></IconButton>
                     <IconButton size="small" onClick={() => { removeContent(group.id, c.id); toast.success('Removed'); }}><DeleteIcon sx={{ fontSize: 14 }} /></IconButton>
                   </Box>
                   {c.url && <Typography variant="caption" color="primary" component="a" href={c.url} target="_blank" rel="noopener noreferrer" sx={{ fontSize: 11 }}>{c.url}</Typography>}
@@ -364,7 +367,7 @@ function ContentTab({ group }: { group: Group }) {
                   primaryTypographyProps={{ fontSize: 13 }} secondaryTypographyProps={{ fontSize: 11 }}
                 />
                 <ListItemSecondaryAction>
-                  <IconButton size="small" onClick={() => togglePinContent(group.id, c.id)}><PushPinIcon sx={{ fontSize: 14, color: '#bdbdbd' }} /></IconButton>
+                  <IconButton size="small" onClick={() => togglePinContent(group.id, c.id)}><PushPinIcon sx={{ fontSize: 14, color: dk ? 'rgba(255,255,255,0.3)' : '#bdbdbd' }} /></IconButton>
                   <IconButton size="small" onClick={() => { removeContent(group.id, c.id); toast.success('Removed'); }}><DeleteIcon sx={{ fontSize: 14 }} /></IconButton>
                 </ListItemSecondaryAction>
               </ListItem>
@@ -445,7 +448,7 @@ function MeetingsTab({ group }: { group: Group }) {
               <Grid item xs={12} sm={6} key={m.id}>
                 <SectionCard>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                    <VideoCallIcon sx={{ fontSize: 18, color: '#757575' }} />
+                    <VideoCallIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
                     <Typography variant="body2" sx={{ fontWeight: 600, flex: 1 }}>{m.title}</Typography>
                     <Chip label={m.status} size="small" color={statusColor(m.status)} sx={{ height: 20, fontSize: 10 }} />
                   </Box>
@@ -522,39 +525,46 @@ function MeetingsTab({ group }: { group: Group }) {
 // 5. AI STUDY ASSISTANT TAB
 // =============================================================
 function AIStudyTab({ group }: { group: Group }) {
+  const dk = useTheme().palette.mode === 'dark';
   const [query, setQuery] = useState('');
+  const [sending, setSending] = useState(false);
   const [messages, setMessages] = useState<{ role: 'user' | 'ai'; text: string }[]>([
     { role: 'ai', text: `Hi! I'm the AI Study Assistant for "${group.name}". Ask me anything about the group's subjects, assignments, or topics.` },
   ]);
+  const [convId, setConvId] = useState<string | null>(null);
 
-  const handleSend = () => {
-    if (!query.trim()) return;
+  const handleSend = async () => {
+    if (!query.trim() || sending) return;
     const q = query.trim();
     setMessages((prev) => [...prev, { role: 'user', text: q }]);
     setQuery('');
-    // Simulated AI response
-    setTimeout(() => {
-      const responses = [
-        `Great question about "${q}"! Based on the group content, here's what I found:\n\n- Review the pinned materials in the Content tab\n- Check recent discussions for peer insights\n- The upcoming assignments cover related topics`,
-        `Let me help with "${q}". Here are some study tips:\n\n1. Break the topic into smaller concepts\n2. Use the group's resources for reference material\n3. Discuss with peers in the Discussion tab`,
-        `Regarding "${q}":\n\nThis topic connects to ${group.assignments.length} assignments in this group. I'd recommend starting with the foundational concepts and working through the practice problems.`,
-      ];
-      setMessages((prev) => [...prev, { role: 'ai', text: responses[Math.floor(Math.random() * responses.length)] }]);
-    }, 800);
+    setSending(true);
+    try {
+      const context = `Group: "${group.name}" (${group.category}). Assignments: ${group.assignments.length}. Members: ${group.members.length}.`;
+      const res = await aiApi.chat(convId, `${context}\n\nUser question: ${q}`, undefined, undefined);
+      const inner = res.data?.data;
+      if (inner?.conversation?.id && !convId) setConvId(inner.conversation.id);
+      const reply = inner?.message?.content ?? 'I could not generate a response right now.';
+      setMessages((prev) => [...prev, { role: 'ai', text: reply }]);
+    } catch {
+      setMessages((prev) => [...prev, { role: 'ai', text: 'Sorry, I had trouble connecting to the AI. Please try again.' }]);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: 500 }}>
       <SectionCard sx={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-          <SmartToyIcon sx={{ fontSize: 20, color: '#757575' }} />
+          <SmartToyIcon sx={{ fontSize: 20, color: 'text.secondary' }} />
           <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>AI Study Assistant</Typography>
         </Box>
         <Divider sx={{ mb: 1 }} />
         <Box sx={{ flex: 1, overflow: 'auto', display: 'flex', flexDirection: 'column', gap: 1, py: 1 }}>
           {messages.map((m, i) => (
             <Box key={i} sx={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
-              <Paper sx={{ px: 2, py: 1, maxWidth: '75%', bgcolor: m.role === 'user' ? '#616161' : '#f5f5f5', color: m.role === 'user' ? '#fff' : 'text.primary', borderRadius: 2 }}>
+              <Paper sx={{ px: 2, py: 1, maxWidth: '75%', bgcolor: m.role === 'user' ? (dk ? '#1A2B3C' : '#616161') : (dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5'), color: m.role === 'user' ? '#fff' : 'text.primary', borderRadius: 2 }}>
                 <Typography variant="body2" sx={{ fontSize: 13, whiteSpace: 'pre-line' }}>{m.text}</Typography>
               </Paper>
             </Box>
@@ -563,10 +573,10 @@ function AIStudyTab({ group }: { group: Group }) {
         <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
           <TextField
             fullWidth size="small" placeholder="Ask the AI study assistant..."
-            value={query} onChange={(e) => setQuery(e.target.value)}
+            value={query} onChange={(e) => setQuery(e.target.value)} disabled={sending}
             onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
           />
-          <IconButton onClick={handleSend} sx={{ bgcolor: '#616161', color: '#fff', '&:hover': { bgcolor: '#424242' }, borderRadius: 2 }}>
+          <IconButton onClick={handleSend} disabled={sending} sx={{ bgcolor: dk ? '#1A2B3C' : '#616161', color: '#fff', '&:hover': { bgcolor: dk ? '#243B4F' : '#424242' }, borderRadius: 2, '&.Mui-disabled': { bgcolor: 'action.disabledBackground' } }}>
             <SendIcon sx={{ fontSize: 18 }} />
           </IconButton>
         </Box>
@@ -579,6 +589,7 @@ function AIStudyTab({ group }: { group: Group }) {
 // 6. DISCUSSIONS & CHAT TAB
 // =============================================================
 function DiscussionsTab({ group }: { group: Group }) {
+  const dk = useTheme().palette.mode === 'dark';
   const { createDiscussion, replyToDiscussion, togglePinDiscussion, reactToDiscussion } = useGroupStore();
   const [newOpen, setNewOpen] = useState(false);
   const [title, setTitle] = useState('');
@@ -618,10 +629,10 @@ function DiscussionsTab({ group }: { group: Group }) {
       {[...pinned, ...regular].map((d) => (
         <SectionCard key={d.id} sx={{ mb: 1.5 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-            {d.pinned && <PushPinIcon sx={{ fontSize: 14, color: '#616161' }} />}
+            {d.pinned && <PushPinIcon sx={{ fontSize: 14, color: dk ? '#C9A84C' : '#616161' }} />}
             <Chip label={d.type} size="small" sx={{ height: 18, fontSize: 10 }} />
             <Typography variant="body2" sx={{ fontWeight: 600, flex: 1 }}>{d.title}</Typography>
-            <Tooltip title="Pin/Unpin"><IconButton size="small" onClick={() => togglePinDiscussion(group.id, d.id)}><PushPinIcon sx={{ fontSize: 14, color: d.pinned ? '#616161' : '#bdbdbd' }} /></IconButton></Tooltip>
+            <Tooltip title="Pin/Unpin"><IconButton size="small" onClick={() => togglePinDiscussion(group.id, d.id)}><PushPinIcon sx={{ fontSize: 14, color: d.pinned ? (dk ? '#C9A84C' : '#616161') : (dk ? 'rgba(255,255,255,0.3)' : '#bdbdbd') }} /></IconButton></Tooltip>
           </Box>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontSize: 13 }}>{d.content}</Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
@@ -633,7 +644,7 @@ function DiscussionsTab({ group }: { group: Group }) {
                   label={`${emoji} ${(d.reactions[emoji] || []).length || ''}`}
                   size="small"
                   onClick={() => reactToDiscussion(group.id, d.id, emoji, 'current-user')}
-                  sx={{ height: 22, fontSize: 11, cursor: 'pointer', bgcolor: (d.reactions[emoji] || []).includes('current-user') ? '#e0e0e0' : 'transparent' }}
+                  sx={{ height: 22, fontSize: 11, cursor: 'pointer', bgcolor: (d.reactions[emoji] || []).includes('current-user') ? (dk ? 'rgba(255,255,255,0.12)' : '#e0e0e0') : 'transparent' }}
                 />
               </Tooltip>
             ))}
@@ -644,7 +655,7 @@ function DiscussionsTab({ group }: { group: Group }) {
             {d.replies.length} replies {expanded === d.id ? '▲' : '▼'}
           </Button>
           {expanded === d.id && (
-            <Box sx={{ pl: 2, mt: 1, borderLeft: '2px solid #e0e0e0' }}>
+            <Box sx={{ pl: 2, mt: 1, borderLeft: '2px solid', borderColor: 'divider' }}>
               {d.replies.map((r) => (
                 <Box key={r.id} sx={{ mb: 1 }}>
                   <Typography variant="body2" sx={{ fontSize: 12 }}><strong>{r.authorName}</strong>: {r.content}</Typography>
@@ -657,7 +668,7 @@ function DiscussionsTab({ group }: { group: Group }) {
                   value={replyText[d.id] || ''} onChange={(e) => setReplyText((prev) => ({ ...prev, [d.id]: e.target.value }))}
                   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleReply(d.id))}
                 />
-                <IconButton onClick={() => handleReply(d.id)} size="small" sx={{ bgcolor: '#616161', color: '#fff', '&:hover': { bgcolor: '#424242' } }}>
+                <IconButton onClick={() => handleReply(d.id)} size="small" sx={{ bgcolor: dk ? '#1A2B3C' : '#616161', color: '#fff', '&:hover': { bgcolor: dk ? '#243B4F' : '#424242' } }}>
                   <SendIcon sx={{ fontSize: 16 }} />
                 </IconButton>
               </Box>
@@ -698,6 +709,7 @@ function DiscussionsTab({ group }: { group: Group }) {
 // 7. ASSIGNMENTS & TASKS TAB
 // =============================================================
 function AssignmentsTab({ group }: { group: Group }) {
+  const dk = useTheme().palette.mode === 'dark';
   const { createAssignment, gradeSubmission } = useGroupStore();
   const [createOpen, setCreateOpen] = useState(false);
   const [title, setTitle] = useState('');
@@ -736,7 +748,7 @@ function AssignmentsTab({ group }: { group: Group }) {
         return (
           <SectionCard key={a.id} sx={{ mb: 1.5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-              <AssignmentIcon sx={{ fontSize: 18, color: overdue ? '#f44336' : '#757575' }} />
+              <AssignmentIcon sx={{ fontSize: 18, color: overdue ? '#f44336' : (dk ? '#aaa' : '#757575') }} />
               <Typography variant="body2" sx={{ fontWeight: 600, flex: 1 }}>{a.title}</Typography>
               <Chip label={overdue ? 'Overdue' : 'Active'} size="small" color={overdue ? 'error' : 'success'} sx={{ height: 20, fontSize: 10 }} />
             </Box>
@@ -750,7 +762,7 @@ function AssignmentsTab({ group }: { group: Group }) {
             {expanded === a.id && (
               <Box sx={{ mt: 1 }}>
                 {a.instructions && (
-                  <Paper sx={{ p: 1.5, mb: 1, bgcolor: '#fafafa' }}>
+                  <Paper sx={{ p: 1.5, mb: 1, bgcolor: dk ? 'rgba(255,255,255,0.03)' : '#fafafa' }}>
                     <Typography variant="caption" sx={{ fontWeight: 600 }}>Instructions:</Typography>
                     <Typography variant="body2" sx={{ fontSize: 12 }}>{a.instructions}</Typography>
                   </Paper>
@@ -820,6 +832,7 @@ function AssignmentsTab({ group }: { group: Group }) {
 // 8. ATTENDANCE & PARTICIPATION TAB
 // =============================================================
 function AttendanceTab({ group }: { group: Group }) {
+  const dk = useTheme().palette.mode === 'dark';
   const { recordAttendance } = useGroupStore();
   const [selectedMeeting, setSelectedMeeting] = useState<string>('');
   const [checkedIds, setCheckedIds] = useState<string[]>([]);
@@ -858,7 +871,7 @@ function AttendanceTab({ group }: { group: Group }) {
                   {group.members.map((m) => (
                     <ListItem key={m.id} sx={{ px: 0, cursor: 'pointer' }} onClick={() => toggleMember(m.id)}>
                       <ListItemAvatar>
-                        <Avatar sx={{ width: 28, height: 28, fontSize: 12, bgcolor: checkedIds.includes(m.id) ? '#616161' : '#bdbdbd' }}>
+                        <Avatar sx={{ width: 28, height: 28, fontSize: 12, bgcolor: checkedIds.includes(m.id) ? (dk ? '#C9A84C' : '#616161') : (dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd') }}>
                           {checkedIds.includes(m.id) ? <CheckCircleIcon sx={{ fontSize: 16 }} /> : m.name.charAt(0)}
                         </Avatar>
                       </ListItemAvatar>
@@ -880,7 +893,7 @@ function AttendanceTab({ group }: { group: Group }) {
                 <ListItem key={m.id} sx={{ px: 0 }}>
                   <ListItemText primary={m.name} secondary={`Attendance: ${m.stats.attendance}%`} primaryTypographyProps={{ fontSize: 13 }} secondaryTypographyProps={{ fontSize: 11 }} />
                   <Box sx={{ width: 80 }}>
-                    <LinearProgress variant="determinate" value={m.stats.attendance} sx={{ height: 6, borderRadius: 3, bgcolor: '#f0f0f0', '& .MuiLinearProgress-bar': { bgcolor: m.stats.attendance >= 75 ? '#4caf50' : m.stats.attendance >= 50 ? '#ff9800' : '#f44336' } }} />
+                    <LinearProgress variant="determinate" value={m.stats.attendance} sx={{ height: 6, borderRadius: 3, bgcolor: dk ? 'rgba(255,255,255,0.06)' : '#f0f0f0', '& .MuiLinearProgress-bar': { bgcolor: m.stats.attendance >= 75 ? '#4caf50' : m.stats.attendance >= 50 ? '#ff9800' : '#f44336' } }} />
                   </Box>
                 </ListItem>
               ))}
@@ -897,6 +910,7 @@ function AttendanceTab({ group }: { group: Group }) {
 // 9. QUIZZES & POLLS TAB
 // =============================================================
 function QuizPollTab({ group }: { group: Group }) {
+  const dk = useTheme().palette.mode === 'dark';
   const { createQuiz, createPoll, votePoll } = useGroupStore();
   const [quizOpen, setQuizOpen] = useState(false);
   const [pollOpen, setPollOpen] = useState(false);
@@ -965,7 +979,7 @@ function QuizPollTab({ group }: { group: Group }) {
                             <Typography variant="body2" sx={{ fontSize: 12, fontWeight: voted ? 600 : 400 }}>{o.text}</Typography>
                             <Typography variant="caption">{pct}%</Typography>
                           </Box>
-                          <LinearProgress variant="determinate" value={pct} sx={{ height: 6, borderRadius: 3, bgcolor: '#f0f0f0', '& .MuiLinearProgress-bar': { bgcolor: voted ? '#616161' : '#bdbdbd' } }} />
+                          <LinearProgress variant="determinate" value={pct} sx={{ height: 6, borderRadius: 3, bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f0f0f0', '& .MuiLinearProgress-bar': { bgcolor: voted ? (dk ? '#C9A84C' : '#616161') : (dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd') } }} />
                         </Box>
                       );
                     })}
@@ -988,7 +1002,7 @@ function QuizPollTab({ group }: { group: Group }) {
             <Grid item xs={12} sm={6} key={q.id}>
               <SectionCard>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                  <QuizIcon sx={{ fontSize: 18, color: '#757575' }} />
+                  <QuizIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
                   <Typography variant="body2" sx={{ fontWeight: 600, flex: 1 }}>{q.title}</Typography>
                   {q.isLive && <Chip label="LIVE" size="small" color="error" sx={{ height: 18, fontSize: 10 }} />}
                 </Box>
@@ -1174,6 +1188,7 @@ function CalendarTab({ group }: { group: Group }) {
 // 11. NOTIFICATIONS TAB
 // =============================================================
 function NotificationsTab({ group }: { group: Group }) {
+  const dk = useTheme().palette.mode === 'dark';
   const { markNotificationRead, markAllNotificationsRead } = useGroupStore();
   const unread = group.notifications.filter((n) => !n.read).length;
 
@@ -1211,13 +1226,13 @@ function NotificationsTab({ group }: { group: Group }) {
                 onClick={() => markNotificationRead(group.id, n.id)}
               >
                 <ListItemAvatar sx={{ minWidth: 36 }}>
-                  <Box sx={{ color: !n.read ? '#616161' : '#bdbdbd' }}>{typeIcon(n.type)}</Box>
+                  <Box sx={{ color: !n.read ? (dk ? '#C9A84C' : '#616161') : (dk ? 'rgba(255,255,255,0.3)' : '#bdbdbd') }}>{typeIcon(n.type)}</Box>
                 </ListItemAvatar>
                 <ListItemText
                   primary={<Typography variant="body2" sx={{ fontSize: 13, fontWeight: !n.read ? 600 : 400 }}>{n.title}</Typography>}
                   secondary={<Typography variant="caption" color="text.secondary">{n.message} · {new Date(n.createdAt).toLocaleString()}</Typography>}
                 />
-                {!n.read && <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#616161', flexShrink: 0 }} />}
+                {!n.read && <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: dk ? '#C9A84C' : '#616161', flexShrink: 0 }} />}
               </ListItem>
             ))}
           </List>
@@ -1231,6 +1246,7 @@ function NotificationsTab({ group }: { group: Group }) {
 // 12. RESOURCE HUB TAB
 // =============================================================
 function ResourcesTab({ group }: { group: Group }) {
+  const dk = useTheme().palette.mode === 'dark';
   const { addResource, removeResource } = useGroupStore();
   const [addOpen, setAddOpen] = useState(false);
   const [title, setTitle] = useState('');
@@ -1256,7 +1272,7 @@ function ResourcesTab({ group }: { group: Group }) {
         <Button variant="contained" size="small" startIcon={<FolderIcon />} onClick={() => setAddOpen(true)} sx={btnSx}>Add Resource</Button>
         <Box sx={{ flex: 1 }} />
         {allTags.map((t) => (
-          <Chip key={t} label={t} size="small" onClick={() => setFilterTag(filterTag === t ? '' : t)} sx={{ cursor: 'pointer', bgcolor: filterTag === t ? '#616161' : '#f5f5f5', color: filterTag === t ? '#fff' : 'text.primary' }} />
+          <Chip key={t} label={t} size="small" onClick={() => setFilterTag(filterTag === t ? '' : t)} sx={{ cursor: 'pointer', bgcolor: filterTag === t ? (dk ? '#C9A84C' : '#616161') : (dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5'), color: filterTag === t ? '#fff' : 'text.primary' }} />
         ))}
       </Box>
 
@@ -1268,7 +1284,7 @@ function ResourcesTab({ group }: { group: Group }) {
             <Grid item xs={12} sm={6} md={4} key={r.id}>
               <SectionCard>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                  {r.type === 'link' ? <LinkIcon sx={{ fontSize: 18, color: '#757575' }} /> : <FolderIcon sx={{ fontSize: 18, color: '#757575' }} />}
+                  {r.type === 'link' ? <LinkIcon sx={{ fontSize: 18, color: 'text.secondary' }} /> : <FolderIcon sx={{ fontSize: 18, color: 'text.secondary' }} />}
                   <Typography variant="body2" sx={{ fontWeight: 600, flex: 1 }} noWrap>{r.title}</Typography>
                   <IconButton size="small" onClick={() => { removeResource(group.id, r.id); toast.success('Removed'); }}><DeleteIcon sx={{ fontSize: 14 }} /></IconButton>
                 </Box>
@@ -1316,6 +1332,7 @@ function ResourcesTab({ group }: { group: Group }) {
 // 13. LEADERBOARD & GAMIFICATION TAB
 // =============================================================
 function LeaderboardTab({ group }: { group: Group }) {
+  const dk = useTheme().palette.mode === 'dark';
   const getLeaderboard = useGroupStore((s) => s.getLeaderboard);
   const leaderboard = getLeaderboard(group.id);
 
@@ -1323,14 +1340,14 @@ function LeaderboardTab({ group }: { group: Group }) {
     if (i === 0) return '#FFD700';
     if (i === 1) return '#C0C0C0';
     if (i === 2) return '#CD7F32';
-    return '#bdbdbd';
+    return dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd';
   };
 
   return (
     <Box>
       <SectionCard>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-          <LeaderboardIcon sx={{ fontSize: 22, color: '#757575' }} />
+          <LeaderboardIcon sx={{ fontSize: 22, color: 'text.secondary' }} />
           <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>Leaderboard</Typography>
         </Box>
 
@@ -1348,14 +1365,14 @@ function LeaderboardTab({ group }: { group: Group }) {
                   )}
                 </Box>
                 <ListItemAvatar>
-                  <Avatar sx={{ width: 32, height: 32, fontSize: 13, bgcolor: '#9e9e9e' }}>{entry.memberName.charAt(0)}</Avatar>
+                  <Avatar sx={{ width: 32, height: 32, fontSize: 13, bgcolor: dk ? 'rgba(255,255,255,0.15)' : '#9e9e9e' }}>{entry.memberName.charAt(0)}</Avatar>
                 </ListItemAvatar>
                 <ListItemText
-                  primary={<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>{entry.memberName} {entry.badges.map((b) => <Chip key={b} label={b} size="small" sx={{ height: 18, fontSize: 9, bgcolor: '#f5f5f5' }} />)}</Box>}
+                  primary={<Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>{entry.memberName} {entry.badges.map((b) => <Chip key={b} label={b} size="small" sx={{ height: 18, fontSize: 9, bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5' }} />)}</Box>}
                   secondary={`Quiz: ${entry.quizScore} · Participation: ${entry.participation} · Streak: ${entry.streak}d`}
                   primaryTypographyProps={{ fontSize: 13, fontWeight: 600 }} secondaryTypographyProps={{ fontSize: 11 }}
                 />
-                <Typography variant="h6" sx={{ fontWeight: 700, color: '#616161', minWidth: 50, textAlign: 'right' }}>{entry.totalPoints}</Typography>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: dk ? '#C9A84C' : '#616161', minWidth: 50, textAlign: 'right' }}>{entry.totalPoints}</Typography>
               </ListItem>
             ))}
           </List>
@@ -1369,6 +1386,7 @@ function LeaderboardTab({ group }: { group: Group }) {
 // 14. ANALYTICS TAB
 // =============================================================
 function AnalyticsTab({ group }: { group: Group }) {
+  const dk = useTheme().palette.mode === 'dark';
   const getGroupAnalytics = useGroupStore((s) => s.getGroupAnalytics);
   const analytics = getGroupAnalytics(group.id);
 
@@ -1377,7 +1395,7 @@ function AnalyticsTab({ group }: { group: Group }) {
   const StatCard = ({ label, value, suffix }: { label: string; value: number; suffix?: string }) => (
     <Card sx={{ border: '1px solid', borderColor: 'divider', boxShadow: 'none' }}>
       <CardContent sx={{ p: 2, '&:last-child': { pb: 2 }, textAlign: 'center' }}>
-        <Typography variant="h5" sx={{ fontWeight: 700, color: '#616161' }}>{value}{suffix}</Typography>
+        <Typography variant="h5" sx={{ fontWeight: 700, color: dk ? '#C9A84C' : '#616161' }}>{value}{suffix}</Typography>
         <Typography variant="caption" color="text.secondary">{label}</Typography>
       </CardContent>
     </Card>
@@ -1404,7 +1422,7 @@ function AnalyticsTab({ group }: { group: Group }) {
               <List dense sx={{ py: 0 }}>
                 {analytics.topPerformers.map((p, i) => (
                   <ListItem key={i} sx={{ px: 0 }}>
-                    <ListItemAvatar><Avatar sx={{ width: 28, height: 28, fontSize: 12, bgcolor: '#9e9e9e' }}>{i + 1}</Avatar></ListItemAvatar>
+                    <ListItemAvatar><Avatar sx={{ width: 28, height: 28, fontSize: 12, bgcolor: dk ? 'rgba(255,255,255,0.15)' : '#9e9e9e' }}>{i + 1}</Avatar></ListItemAvatar>
                     <ListItemText primary={p.name} secondary={`Score: ${p.score}`} primaryTypographyProps={{ fontSize: 13 }} secondaryTypographyProps={{ fontSize: 11 }} />
                   </ListItem>
                 ))}
@@ -1439,6 +1457,7 @@ function AnalyticsTab({ group }: { group: Group }) {
 // MAIN GROUP DETAIL PAGE
 // =============================================================
 export default function GroupDetailPage() {
+  const dk = useTheme().palette.mode === 'dark';
   const { groupId } = useParams<{ groupId: string }>();
   const navigate = useNavigate();
   const group = useGroupStore((s) => s.groups.find((g) => g.id === groupId));
@@ -1484,7 +1503,7 @@ export default function GroupDetailPage() {
               {group.members.length} members · {group.category} · {group.groupType}
             </Typography>
           </Box>
-          <AvatarGroup max={4} sx={{ '& .MuiAvatar-root': { width: 28, height: 28, fontSize: 12, bgcolor: '#9e9e9e' } }}>
+          <AvatarGroup max={4} sx={{ '& .MuiAvatar-root': { width: 28, height: 28, fontSize: 12, bgcolor: dk ? 'rgba(255,255,255,0.15)' : '#9e9e9e' } }}>
             {group.members.slice(0, 5).map((m) => <Avatar key={m.id}>{m.name.charAt(0)}</Avatar>)}
           </AvatarGroup>
         </Box>
@@ -1497,7 +1516,7 @@ export default function GroupDetailPage() {
           sx={{
             minHeight: 40,
             '& .MuiTab-root': { minHeight: 40, py: 0, textTransform: 'none', fontSize: 12, minWidth: 'auto', px: 1.5 },
-            '& .MuiTabs-indicator': { bgcolor: '#616161' },
+            '& .MuiTabs-indicator': { bgcolor: dk ? '#C9A84C' : '#616161' },
           }}
         >
           {tabs.map((t, i) => (

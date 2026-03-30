@@ -26,6 +26,7 @@ import {
   Fab,
   Tabs,
   Tab,
+  useTheme,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -101,6 +102,7 @@ function getToday(): string {
 }
 
 export default function MealLogPage() {
+  const dk = useTheme().palette.mode === 'dark';
   const user = useAuthStore((s) => s.user);
   const userId = user?.id || 'anonymous';
 
@@ -651,7 +653,7 @@ export default function MealLogPage() {
             <Divider />
 
             {/* Auto-calc totals preview */}
-            <Paper sx={{ p: 2, bgcolor: '#f5f5f5', borderRadius: 2 }}>
+            <Paper sx={{ p: 2, bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5', borderRadius: 2 }}>
               <Typography variant="caption" sx={{ fontWeight: 600, mb: 1, display: 'block' }}>
                 Meal Totals (auto-calculated)
               </Typography>

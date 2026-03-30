@@ -15,6 +15,7 @@ import {
   Tab,
   LinearProgress,
   Tooltip,
+  useTheme,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
@@ -35,6 +36,7 @@ function CourseCard({
   onClick: () => void;
   onDelete: () => void;
 }) {
+  const dk = useTheme().palette.mode === 'dark';
   return (
     <Card
       sx={{
@@ -54,7 +56,7 @@ function CourseCard({
           height="140"
           image={course.thumbnail || ''}
           alt={course.title}
-          sx={{ objectFit: 'cover', bgcolor: '#f5f5f5' }}
+          sx={{ objectFit: 'cover', bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5' }}
           onError={(e: React.SyntheticEvent<HTMLImageElement>) => { e.currentTarget.style.display = 'none'; }}
         />
         <CardContent sx={{ p: 2 }}>
@@ -65,13 +67,13 @@ function CourseCard({
               <OndemandVideoIcon sx={{ fontSize: 14, color: '#9e9e9e' }} />
               <Typography variant="caption" color="text.secondary">{course.videos.length} videos</Typography>
             </Box>
-            <Chip label={course.level} size="small" sx={{ ml: 'auto', height: 20, fontSize: 11, bgcolor: '#f5f5f5', color: 'text.secondary' }} />
+            <Chip label={course.level} size="small" sx={{ ml: 'auto', height: 20, fontSize: 11, bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5', color: 'text.secondary' }} />
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <LinearProgress
               variant="determinate"
               value={progress.percent}
-              sx={{ flex: 1, height: 4, borderRadius: 2, bgcolor: '#eeeeee', '& .MuiLinearProgress-bar': { bgcolor: progress.percent === 100 ? '#66bb6a' : '#9e9e9e', borderRadius: 2 } }}
+              sx={{ flex: 1, height: 4, borderRadius: 2, bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#eeeeee', '& .MuiLinearProgress-bar': { bgcolor: progress.percent === 100 ? '#66bb6a' : '#9e9e9e', borderRadius: 2 } }}
             />
             <Typography variant="caption" color="text.secondary" sx={{ minWidth: 32 }}>{progress.percent}%</Typography>
           </Box>
@@ -92,6 +94,7 @@ function CourseCard({
 }
 
 export default function CoursesListPage() {
+  const dk = useTheme().palette.mode === 'dark';
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [tab, setTab] = useState(0); // 0 = All, 1 = My Courses
@@ -136,7 +139,7 @@ export default function CoursesListPage() {
         sx={{
           minHeight: 36,
           mb: 2,
-          '& .MuiTabs-indicator': { bgcolor: '#616161', height: 2 },
+          '& .MuiTabs-indicator': { bgcolor: dk ? '#C9A84C' : '#616161', height: 2 },
           '& .MuiTab-root': { textTransform: 'none', minHeight: 36, px: 2, py: 0.5, fontSize: 13, fontWeight: 600, color: 'text.secondary', '&.Mui-selected': { color: 'text.primary' } },
         }}
       >
@@ -159,7 +162,7 @@ export default function CoursesListPage() {
                 <SearchIcon sx={{ color: 'text.secondary', fontSize: 20 }} />
               </InputAdornment>
             ),
-            sx: { borderRadius: 2, bgcolor: 'background.paper', '& fieldset': { borderColor: '#e0e0e0' }, '&:hover fieldset': { borderColor: '#bdbdbd' } },
+            sx: { borderRadius: 2, bgcolor: 'background.paper', '& fieldset': { borderColor: 'divider' }, '&:hover fieldset': { borderColor: dk ? 'rgba(255,255,255,0.3)' : '#bdbdbd' } },
           }}
         />
       </Box>
@@ -180,7 +183,7 @@ export default function CoursesListPage() {
         </Grid>
       ) : (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', py: 8 }}>
-          <PlayCircleOutlineIcon sx={{ fontSize: 48, color: '#bdbdbd', mb: 2 }} />
+          <PlayCircleOutlineIcon sx={{ fontSize: 48, color: dk ? 'rgba(255,255,255,0.15)' : '#bdbdbd', mb: 2 }} />
           <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
             {search ? 'No courses match your search' : tab === 1 ? 'No courses started yet' : 'No courses yet'}
           </Typography>

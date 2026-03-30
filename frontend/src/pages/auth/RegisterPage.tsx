@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link as RouterLink, Navigate } from 'react-router-dom'
 import {
   Box,
@@ -11,47 +11,99 @@ import {
   IconButton,
   ToggleButtonGroup,
   ToggleButton,
+  CircularProgress,
+  Chip,
+  useTheme,
 } from '@mui/material'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import PersonIcon from '@mui/icons-material/Person'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import CancelIcon from '@mui/icons-material/Cancel'
 import { useAuth } from '@/hooks/useAuth'
+import { registerSchema } from '@/lib/validators'
+import { authApi } from '@/lib/api'
+import { useDebounce } from '@/hooks/useDebounce'
 
 export default function RegisterPage() {
-  const { register: registerUser, isAuthenticated } = useAuth()
+  const dk = useTheme().palette.mode === 'dark'
+  const { register: registerUser, isAuthenticated, registerLoading } = useAuth()
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+  const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [role, setRole] = useState<'student' | 'teacher'>('student')
   const [showPassword, setShowPassword] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle')
+
+  const debouncedUsername = useDebounce(username, 500)
+
+  // Check username availability
+  useEffect(() => {
+    if (!debouncedUsername || debouncedUsername.length < 3 || !/^[a-zA-Z0-9_-]+$/.test(debouncedUsername)) {
+      setUsernameStatus('idle')
+      return
+    }
+    let cancelled = false
+    setUsernameStatus('checking')
+    authApi.checkUsername(debouncedUsername)
+      .then((res) => {
+        if (!cancelled) {
+          // TransformInterceptor wraps: { success, data: { available }, message }
+          const inner = (res.data as any)?.data ?? res.data
+          setUsernameStatus(inner?.available ? 'available' : 'taken')
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setUsernameStatus('idle')
+      })
+    return () => { cancelled = true }
+  }, [debouncedUsername])
 
   if (isAuthenticated) {
     return <Navigate to="/app" replace />
   }
 
   const validate = () => {
-    const e: Record<string, string> = {}
-    if (!firstName.trim()) e.firstName = 'First name is required'
-    if (!lastName.trim()) e.lastName = 'Last name is required'
-    if (!email.trim()) e.email = 'Email is required'
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = 'Invalid email address'
-    if (!password) e.password = 'Password is required'
-    else if (password.length < 6) e.password = 'Must be at least 6 characters'
-    if (password !== confirmPassword) e.confirmPassword = 'Passwords do not match'
-    setErrors(e)
-    return Object.keys(e).length === 0
+    const result = registerSchema.safeParse({
+      firstName, lastName, username, email, password, confirmPassword, role,
+    })
+    if (!result.success) {
+      const fieldErrors: Record<string, string> = {}
+      result.error.errors.forEach((e) => {
+        const field = e.path[0] as string
+        if (!fieldErrors[field]) fieldErrors[field] = e.message
+      })
+      setErrors(fieldErrors)
+      return false
+    }
+    if (usernameStatus === 'taken') {
+      setErrors({ username: 'Username is already taken' })
+      return false
+    }
+    setErrors({})
+    return true
   }
 
-  const handleSubmit = (ev: React.FormEvent) => {
+  const handleSubmit = async (ev: React.FormEvent) => {
     ev.preventDefault()
     if (!validate()) return
-    registerUser(email, password, firstName, lastName, role)
+    await registerUser({ email, password, firstName, lastName, username, role })
   }
+
+  // Password strength
+  const pwChecks = [
+    { label: '8+ chars', pass: password.length >= 8 },
+    { label: 'Lowercase', pass: /[a-z]/.test(password) },
+    { label: 'Uppercase', pass: /[A-Z]/.test(password) },
+    { label: 'Number', pass: /\d/.test(password) },
+    { label: 'Special', pass: /[@$!%*?&]/.test(password) },
+  ]
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex' }}>
@@ -60,7 +112,7 @@ export default function RegisterPage() {
         sx={{
           display: { xs: 'none', md: 'flex' },
           width: '45%',
-          background: 'linear-gradient(135deg, #0a1628 0%, #152e4f 40%, #0D1B2A 100%)',
+          background: dk ? 'linear-gradient(135deg, #0a1628 0%, #152e4f 40%, #0D1B2A 100%)' : 'linear-gradient(135deg, #00843D 0%, #00A650 40%, #006B30 100%)',
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
@@ -72,36 +124,36 @@ export default function RegisterPage() {
         <Box sx={{
           position: 'absolute', top: '-15%', right: '-10%',
           width: 500, height: 500,
-          background: 'radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 60%)',
+          background: dk ? 'radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%)',
           pointerEvents: 'none',
         }} />
         <Box sx={{
           position: 'absolute', bottom: '-20%', left: '-10%',
           width: 400, height: 400,
-          background: 'radial-gradient(circle, rgba(45,74,110,0.5) 0%, transparent 60%)',
+          background: dk ? 'radial-gradient(circle, rgba(45,74,110,0.5) 0%, transparent 60%)' : 'radial-gradient(circle, rgba(0,80,30,0.3) 0%, transparent 60%)',
           pointerEvents: 'none',
         }} />
 
         <Box sx={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: 380 }}>
           <Box sx={{
             width: 72, height: 72, borderRadius: 3,
-            background: 'linear-gradient(135deg, #C9A84C 0%, #E5B84E 100%)',
+            background: dk ? 'linear-gradient(135deg, #C9A84C 0%, #E5B84E 100%)' : 'linear-gradient(135deg, #fff 0%, #E8F5E9 100%)',
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            mb: 3, boxShadow: '0 8px 32px rgba(201,168,76,0.3)',
+            mb: 3, boxShadow: dk ? '0 8px 32px rgba(201,168,76,0.3)' : '0 8px 32px rgba(0,132,61,0.3)',
           }}>
-            <AutoAwesomeIcon sx={{ color: '#0D1B2A', fontSize: 36 }} />
+            <AutoAwesomeIcon sx={{ color: dk ? '#0D1B2A' : '#00843D', fontSize: 36 }} />
           </Box>
-          <Typography variant="h3" sx={{ fontWeight: 800, color: '#F5F0E8', mb: 2 }}>
+          <Typography variant="h3" sx={{ fontWeight: 800, color: '#F5F0E8', mb: 2, textShadow: dk ? 'none' : '0 2px 8px rgba(0,0,0,0.15)' }}>
             HeyBobo
           </Typography>
           <Typography variant="h6" sx={{
-            background: 'linear-gradient(135deg, #C9A84C 0%, #E5B84E 100%)',
+            background: dk ? 'linear-gradient(135deg, #C9A84C 0%, #E5B84E 100%)' : 'linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%)',
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
             fontWeight: 600, mb: 3,
           }}>
             Join the Future of Learning
           </Typography>
-          <Typography sx={{ color: '#B8C8D8', lineHeight: 1.7, fontSize: 15 }}>
+          <Typography sx={{ color: dk ? '#B8C8D8' : '#E0F5EA', lineHeight: 1.7, fontSize: 15 }}>
             Create your account and unlock AI-powered education, fitness tracking, dietary planning, and lifestyle management.
           </Typography>
 
@@ -113,8 +165,8 @@ export default function RegisterPage() {
               { value: '4.9', label: 'Rating' },
             ].map((stat) => (
               <Box key={stat.label} sx={{ textAlign: 'center' }}>
-                <Typography sx={{ color: '#C9A84C', fontSize: 22, fontWeight: 700 }}>{stat.value}</Typography>
-                <Typography sx={{ color: '#B8C8D8', fontSize: 12 }}>{stat.label}</Typography>
+                <Typography sx={{ color: dk ? '#C9A84C' : '#fff', fontSize: 22, fontWeight: 700 }}>{stat.value}</Typography>
+                <Typography sx={{ color: dk ? '#B8C8D8' : '#E0F5EA', fontSize: 12 }}>{stat.label}</Typography>
               </Box>
             ))}
           </Box>
@@ -124,27 +176,27 @@ export default function RegisterPage() {
       {/* Right Panel — Register Form */}
       <Box sx={{
         flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        bgcolor: '#F8F6F1', px: 3, py: 4,
+        bgcolor: dk ? '#0D1B2A' : '#F8F6F1', px: 3, py: 4,
       }}>
         <Paper
           elevation={0}
           sx={{
             width: '100%', maxWidth: 480, p: 5, borderRadius: 4,
-            border: '1px solid rgba(201,168,76,0.15)',
-            boxShadow: '0 8px 40px rgba(0,0,0,0.06)',
+            border: dk ? '1px solid rgba(201,168,76,0.15)' : '1px solid rgba(0,132,61,0.15)',
+            boxShadow: dk ? '0 8px 40px rgba(0,0,0,0.3)' : '0 8px 40px rgba(0,0,0,0.06)',
           }}
         >
-          <Typography variant="h5" sx={{ fontWeight: 700, color: '#0D1B2A', mb: 0.5 }}>
+          <Typography variant="h5" sx={{ fontWeight: 700, color: dk ? '#F5F0E8' : '#0D1B2A', mb: 0.5 }}>
             Create your account
           </Typography>
-          <Typography variant="body2" sx={{ color: '#4A5568', mb: 3 }}>
+          <Typography variant="body2" sx={{ color: dk ? '#B8C8D8' : '#4A5568', mb: 3 }}>
             Join HeyBobo and start learning today
           </Typography>
 
           <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {/* Role selector */}
             <Box>
-              <Typography variant="caption" sx={{ mb: 0.75, display: 'block', fontWeight: 600, color: '#4A5568' }}>
+              <Typography variant="caption" sx={{ mb: 0.75, display: 'block', fontWeight: 600, color: dk ? '#B8C8D8' : '#4A5568' }}>
                 I am a...
               </Typography>
               <ToggleButtonGroup
@@ -158,10 +210,10 @@ export default function RegisterPage() {
                     textTransform: 'none', fontWeight: 600, borderRadius: 2.5,
                     py: 1, gap: 0.75,
                     '&.Mui-selected': {
-                      bgcolor: 'rgba(201,168,76,0.12)',
-                      borderColor: '#C9A84C',
-                      color: '#0D1B2A',
-                      '&:hover': { bgcolor: 'rgba(201,168,76,0.2)' },
+                      bgcolor: dk ? 'rgba(201,168,76,0.12)' : 'rgba(0,132,61,0.12)',
+                      borderColor: dk ? '#C9A84C' : '#00843D',
+                      color: dk ? '#F5F0E8' : '#0D1B2A',
+                      '&:hover': { bgcolor: dk ? 'rgba(201,168,76,0.2)' : 'rgba(0,132,61,0.2)' },
                     },
                   },
                 }}
@@ -177,6 +229,29 @@ export default function RegisterPage() {
               <TextField label="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)}
                 error={!!errors.lastName} helperText={errors.lastName} fullWidth size="small" autoComplete="family-name" />
             </Box>
+
+            {/* Username with availability check */}
+            <TextField
+              label="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value.replace(/[^a-zA-Z0-9_-]/g, ''))}
+              error={!!errors.username || usernameStatus === 'taken'}
+              helperText={
+                errors.username ||
+                (usernameStatus === 'taken' ? 'Username is already taken' : undefined)
+              }
+              fullWidth size="small" autoComplete="username"
+              placeholder="e.g. john_doe"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {usernameStatus === 'checking' && <CircularProgress size={18} sx={{ color: dk ? '#C9A84C' : '#00843D' }} />}
+                    {usernameStatus === 'available' && <CheckCircleIcon sx={{ fontSize: 18, color: '#00843D' }} />}
+                    {usernameStatus === 'taken' && <CancelIcon sx={{ fontSize: 18, color: '#d32f2f' }} />}
+                  </InputAdornment>
+                ),
+              }}
+            />
 
             <TextField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
               error={!!errors.email} helperText={errors.email} fullWidth size="small" autoComplete="email" />
@@ -199,6 +274,26 @@ export default function RegisterPage() {
               }}
             />
 
+            {/* Password strength */}
+            {password.length > 0 && (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {pwChecks.map((c) => (
+                  <Chip
+                    key={c.label}
+                    label={c.label}
+                    size="small"
+                    icon={c.pass ? <CheckCircleIcon sx={{ fontSize: '14px !important' }} /> : undefined}
+                    sx={{
+                      fontSize: 11, height: 22,
+                      bgcolor: c.pass ? 'rgba(0,132,61,0.1)' : dk ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+                      color: c.pass ? '#00843D' : dk ? '#888' : '#999',
+                      '& .MuiChip-icon': { color: '#00843D' },
+                    }}
+                  />
+                ))}
+              </Box>
+            )}
+
             <TextField
               label="Confirm Password"
               type={showPassword ? 'text' : 'password'}
@@ -210,25 +305,27 @@ export default function RegisterPage() {
 
             <Button
               type="submit" variant="contained" fullWidth
+              disabled={registerLoading}
               sx={{
                 mt: 1, py: 1.4, fontWeight: 700, borderRadius: 2.5,
-                background: 'linear-gradient(135deg, #C9A84C 0%, #E5B84E 100%)',
-                color: '#0D1B2A', fontSize: 15,
-                boxShadow: '0 4px 20px rgba(201,168,76,0.3)',
+                background: dk ? 'linear-gradient(135deg, #C9A84C 0%, #E5B84E 100%)' : 'linear-gradient(135deg, #00843D 0%, #00A650 100%)',
+                color: dk ? '#0D1B2A' : '#fff', fontSize: 15,
+                boxShadow: dk ? '0 4px 20px rgba(201,168,76,0.3)' : '0 4px 20px rgba(0,132,61,0.3)',
                 '&:hover': {
-                  background: 'linear-gradient(135deg, #B08A32 0%, #C9A84C 100%)',
-                  boxShadow: '0 6px 28px rgba(201,168,76,0.4)',
+                  background: dk ? 'linear-gradient(135deg, #B08A32 0%, #C9A84C 100%)' : 'linear-gradient(135deg, #006B30 0%, #00843D 100%)',
+                  boxShadow: dk ? '0 6px 28px rgba(201,168,76,0.4)' : '0 6px 28px rgba(0,132,61,0.4)',
                 },
+                '&.Mui-disabled': { opacity: 0.7 },
               }}
             >
-              Create Account
+              {registerLoading ? <CircularProgress size={22} sx={{ color: dk ? '#0D1B2A' : '#fff' }} /> : 'Create Account'}
             </Button>
           </Box>
 
-          <Typography variant="body2" sx={{ color: '#4A5568', textAlign: 'center', mt: 3 }}>
+          <Typography variant="body2" sx={{ color: dk ? '#B8C8D8' : '#4A5568', textAlign: 'center', mt: 3 }}>
             Already have an account?{' '}
             <Link component={RouterLink} to="/auth/login" sx={{
-              fontWeight: 600, color: '#C9A84C', '&:hover': { color: '#B08A32' },
+              fontWeight: 600, color: dk ? '#C9A84C' : '#00843D', '&:hover': { color: dk ? '#B08A32' : '#006B30' },
             }}>
               Sign in
             </Link>

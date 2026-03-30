@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { getUserScopedKey } from '@/lib/userStorage'
 import { syncDailyMetrics, syncWorkoutSession } from './fitnessSyncService'
 
 export interface DailyMetrics {
@@ -113,7 +114,7 @@ function toDateStr(d: Date): string {
 
 function loadState() {
   try {
-    const raw = localStorage.getItem('heybobo_activity_tracking')
+    const raw = localStorage.getItem(getUserScopedKey('heybobo_activity_tracking'))
     if (raw) return JSON.parse(raw)
   } catch { /* ignore */ }
   return null
@@ -121,7 +122,7 @@ function loadState() {
 
 function persist(state: Pick<ActivityTrackingState, 'dailyMetrics' | 'workouts' | 'customActivities' | 'connectedDevices' | 'goals'>) {
   localStorage.setItem(
-    'heybobo_activity_tracking',
+    getUserScopedKey('heybobo_activity_tracking'),
     JSON.stringify({
       dailyMetrics: state.dailyMetrics,
       workouts: state.workouts,
@@ -132,40 +133,16 @@ function persist(state: Pick<ActivityTrackingState, 'dailyMetrics' | 'workouts' 
   )
 }
 
-// Seed some sample data for today & last 6 days
-function seedData(): Record<string, DailyMetrics> {
-  const data: Record<string, DailyMetrics> = {}
-  const today = new Date()
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(today)
-    d.setDate(d.getDate() - i)
-    const ds = toDateStr(d)
-    data[ds] = {
-      date: ds,
-      steps: Math.floor(3000 + Math.random() * 9000),
-      distanceKm: Math.round((1.5 + Math.random() * 6) * 10) / 10,
-      caloriesBurned: Math.floor(200 + Math.random() * 500),
-      activeMinutes: Math.floor(10 + Math.random() * 60),
-      floorsClimbed: Math.floor(2 + Math.random() * 15),
-    }
-  }
-  return data
-}
-
 export const useActivityTrackingStore = create<ActivityTrackingState>((set, get) => {
   const saved = loadState()
-  const hasSaved = saved && Object.keys(saved.dailyMetrics || {}).length > 0
 
   const initial = {
-    dailyMetrics: hasSaved ? saved.dailyMetrics : seedData(),
+    dailyMetrics: saved?.dailyMetrics ?? {},
     workouts: saved?.workouts ?? [],
     customActivities: saved?.customActivities ?? [],
     connectedDevices: saved?.connectedDevices ?? [],
     goals: saved?.goals ?? DEFAULT_GOALS,
   }
-
-  // Persist seeded data
-  if (!hasSaved) persist(initial)
 
   return {
     ...initial,
@@ -253,20 +230,7 @@ export const useActivityTrackingStore = create<ActivityTrackingState>((set, get)
         d.type === type ? { ...d, lastSyncedAt: new Date().toISOString() } : d,
       )
       set({ connectedDevices })
-      // Simulate adding some data on sync
-      const today = toDateStr(new Date())
-      const dm = get().dailyMetrics[today] ?? emptyMetrics(today)
-      const bump = {
-        steps: dm.steps + Math.floor(200 + Math.random() * 800),
-        distanceKm: Math.round((dm.distanceKm + 0.1 + Math.random() * 0.5) * 10) / 10,
-        caloriesBurned: dm.caloriesBurned + Math.floor(20 + Math.random() * 80),
-        activeMinutes: dm.activeMinutes + Math.floor(2 + Math.random() * 10),
-        floorsClimbed: dm.floorsClimbed + Math.floor(Math.random() * 3),
-      }
-      const updated = { ...dm, ...bump }
-      const newMetrics = { ...get().dailyMetrics, [today]: updated }
-      set({ dailyMetrics: newMetrics })
-      persist({ ...get(), connectedDevices, dailyMetrics: newMetrics })
+      persist({ ...get(), connectedDevices })
     },
 
     setGoals: (partial) => {

@@ -5,6 +5,7 @@ import {
   UseGuards,
   Req,
   Get,
+  Param,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -104,6 +105,13 @@ export class AuthController {
   @ApiOperation({ summary: 'Google OAuth callback' })
   async googleAuthCallback(@Req() req: any): Promise<any> {
     return this.authService.googleLogin(req.user);
+  }
+
+  @Public()
+  @Get('check-username/:username')
+  @ApiOperation({ summary: 'Check if username is available' })
+  async checkUsername(@Param('username') username: string): Promise<any> {
+    return this.authService.checkUsername(username);
   }
 
   @Public()

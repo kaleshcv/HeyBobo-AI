@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { createUserStorage } from '@/lib/userStorage';
 
 // ─── Enums ──────────────────────────────────────────────
 export enum MealType {
@@ -94,6 +95,6 @@ export const useDietaryProfileStore = create<DietaryProfileState>()(
       completeOnboarding: () => set({ onboardingComplete: true }),
       resetProfile: () => set(defaultProfile),
     }),
-    { name: 'eduplatform-dietary-profile' },
+    { name: 'eduplatform-dietary-profile', storage: createUserStorage() },
   ),
 );

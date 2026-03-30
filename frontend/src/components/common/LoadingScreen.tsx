@@ -1,9 +1,11 @@
 import React from 'react'
+import { useTheme } from '@mui/material'
 import { Spinner } from '@/components/ui/Spinner'
 
 export const LoadingScreen: React.FC = () => {
+  const dk = useTheme().palette.mode === 'dark'
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen" style={{ background: 'linear-gradient(135deg, #F8F6F1 0%, #fef9ef 100%)' }}>
+    <div className="flex flex-col items-center justify-center min-h-screen" style={{ background: dk ? 'linear-gradient(135deg, #0D1B2A 0%, #132238 100%)' : 'linear-gradient(135deg, #F8F6F1 0%, #fef9ef 100%)' }}>
       <Spinner size="lg" />
       <p className="mt-4 text-navy-500 font-medium">Loading...</p>
     </div>

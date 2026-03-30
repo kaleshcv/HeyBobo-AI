@@ -1,12 +1,14 @@
 import { useNavigate } from 'react-router-dom'
 import { AlertCircle } from 'lucide-react'
+import { useTheme } from '@mui/material'
 import { Button } from '@/components/ui/Button'
 
 export default function NotFoundPage() {
+  const dk = useTheme().palette.mode === 'dark'
   const navigate = useNavigate()
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: '#F8F6F1' }}>
+    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: dk ? '#0D1B2A' : '#F8F6F1' }}>
       <div className="text-center">
         <AlertCircle className="w-24 h-24 text-gold-500 mx-auto mb-6" />
         <h1 className="text-5xl font-bold text-navy-800 mb-4">404</h1>

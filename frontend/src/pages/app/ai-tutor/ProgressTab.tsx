@@ -5,6 +5,7 @@ import {
   Paper,
   LinearProgress,
   Chip,
+  useTheme,
 } from '@mui/material';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export default function ProgressTab({ selectedBookId }: Props) {
+  const dk = useTheme().palette.mode === 'dark';
   const { textbooks, studyPlans, quizzes, quizAttempts, lessons } = useAITutorStore();
 
   const stats = useMemo(() => {
@@ -84,7 +86,7 @@ export default function ProgressTab({ selectedBookId }: Props) {
           <LinearProgress
             variant="determinate"
             value={chapterPct}
-            sx={{ height: 8, borderRadius: 4, bgcolor: '#f0f0f0', '& .MuiLinearProgress-bar': { bgcolor: '#7c4dff', borderRadius: 4 } }}
+            sx={{ height: 8, borderRadius: 4, bgcolor: dk ? 'rgba(255,255,255,0.06)' : '#f0f0f0', '& .MuiLinearProgress-bar': { bgcolor: '#7c4dff', borderRadius: 4 } }}
           />
         </Box>
         <Box>
@@ -97,7 +99,7 @@ export default function ProgressTab({ selectedBookId }: Props) {
           <LinearProgress
             variant="determinate"
             value={scorePct}
-            sx={{ height: 8, borderRadius: 4, bgcolor: '#f0f0f0', '& .MuiLinearProgress-bar': { bgcolor: scorePct >= 70 ? '#4caf50' : '#ff9800', borderRadius: 4 } }}
+            sx={{ height: 8, borderRadius: 4, bgcolor: dk ? 'rgba(255,255,255,0.06)' : '#f0f0f0', '& .MuiLinearProgress-bar': { bgcolor: scorePct >= 70 ? '#4caf50' : '#ff9800', borderRadius: 4 } }}
           />
         </Box>
       </Paper>
@@ -115,7 +117,7 @@ export default function ProgressTab({ selectedBookId }: Props) {
                   <LinearProgress
                     variant="determinate"
                     value={pct}
-                    sx={{ height: 6, borderRadius: 3, mb: 1, bgcolor: '#f0f0f0', '& .MuiLinearProgress-bar': { bgcolor: '#7c4dff', borderRadius: 3 } }}
+                    sx={{ height: 6, borderRadius: 3, mb: 1, bgcolor: dk ? 'rgba(255,255,255,0.06)' : '#f0f0f0', '& .MuiLinearProgress-bar': { bgcolor: '#7c4dff', borderRadius: 3 } }}
                   />
                   <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap' }}>
                     <Chip label={`${completedChapters}/${totalChapters} chapters`} size="small" sx={{ fontSize: 11 }} />
@@ -133,7 +135,7 @@ export default function ProgressTab({ selectedBookId }: Props) {
 
       {stats.books === 0 && (
         <Paper variant="outlined" sx={{ p: 3, textAlign: 'center', borderRadius: 2 }}>
-          <TrendingUpIcon sx={{ fontSize: 40, color: '#e0e0e0', mb: 1 }} />
+          <TrendingUpIcon sx={{ fontSize: 40, color: dk ? 'rgba(255,255,255,0.15)' : '#e0e0e0', mb: 1 }} />
           <Typography variant="body2" color="text.secondary">
             Upload textbooks and start studying to see your progress here.
           </Typography>

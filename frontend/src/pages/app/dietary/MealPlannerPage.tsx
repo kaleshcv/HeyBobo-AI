@@ -32,6 +32,7 @@ import {
   Tooltip,
   CircularProgress,
   Autocomplete,
+  useTheme,
 } from '@mui/material';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
@@ -140,6 +141,7 @@ const mealTypeColor: Record<string, string> = {
 // ─── Component ──────────────────────────────────────────
 
 export default function MealPlannerPage() {
+  const dk = useTheme().palette.mode === 'dark';
   const user = useAuthStore((s) => s.user);
   const userId = user?.id || 'anonymous';
 
@@ -449,8 +451,8 @@ export default function MealPlannerPage() {
         <Paper
           sx={{
             p: 2, mb: 3, borderRadius: 2,
-            bgcolor: '#e8f5e9',
-            border: '1px solid #a5d6a7',
+            bgcolor: dk ? 'rgba(76,175,80,0.12)' : '#e8f5e9',
+            border: `1px solid ${dk ? 'rgba(76,175,80,0.3)' : '#a5d6a7'}`,
             cursor: 'pointer',
           }}
           onClick={() => { setViewingPlan(activePlan); setPlanDayTab(0); setPlanViewTab(0); setView('plan'); }}

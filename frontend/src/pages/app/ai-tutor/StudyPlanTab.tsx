@@ -11,6 +11,7 @@ import {
   Tooltip,
   Chip,
   Collapse,
+  useTheme,
 } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -29,6 +30,7 @@ interface Props {
 }
 
 export default function StudyPlanTab({ selectedBookId, onTeach }: Props) {
+  const dk = useTheme().palette.mode === 'dark';
   const { textbooks, studyPlans, addStudyPlan, removeStudyPlan, toggleChapterComplete, addLesson } = useAITutorStore();
   const [days, setDays] = useState('14');
   const [hours, setHours] = useState('3');
@@ -118,7 +120,7 @@ export default function StudyPlanTab({ selectedBookId, onTeach }: Props) {
 
       {!activeBook ? (
         <Paper variant="outlined" sx={{ p: 3, textAlign: 'center', borderRadius: 2 }}>
-          <CalendarTodayIcon sx={{ fontSize: 40, color: '#e0e0e0', mb: 1 }} />
+          <CalendarTodayIcon sx={{ fontSize: 40, color: dk ? 'rgba(255,255,255,0.15)' : '#e0e0e0', mb: 1 }} />
           <Typography variant="body2" color="text.secondary">
             Select a textbook from the Textbooks tab to create a study plan.
           </Typography>
@@ -177,7 +179,7 @@ export default function StudyPlanTab({ selectedBookId, onTeach }: Props) {
                 return (
                   <Paper key={plan.id} variant="outlined" sx={{ borderRadius: 2, overflow: 'hidden' }}>
                     <Box
-                      sx={{ p: 2, cursor: 'pointer', '&:hover': { bgcolor: '#fafafa' } }}
+                      sx={{ p: 2, cursor: 'pointer', '&:hover': { bgcolor: dk ? 'rgba(255,255,255,0.03)' : '#fafafa' } }}
                       onClick={() => setExpandedPlan(isExpanded ? null : plan.id)}
                     >
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -208,7 +210,7 @@ export default function StudyPlanTab({ selectedBookId, onTeach }: Props) {
                       <LinearProgress
                         variant="determinate"
                         value={progress}
-                        sx={{ mt: 1, borderRadius: 1, height: 6, bgcolor: '#f5f5f5', '& .MuiLinearProgress-bar': { bgcolor: '#7c4dff' } }}
+                        sx={{ mt: 1, borderRadius: 1, height: 6, bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5', '& .MuiLinearProgress-bar': { bgcolor: '#7c4dff' } }}
                       />
                     </Box>
 
@@ -218,7 +220,7 @@ export default function StudyPlanTab({ selectedBookId, onTeach }: Props) {
                           <Paper
                             key={ch.id}
                             variant="outlined"
-                            sx={{ p: 1.5, mt: 1, borderRadius: 1.5, bgcolor: ch.completed ? '#f1f8e9' : 'transparent' }}
+                            sx={{ p: 1.5, mt: 1, borderRadius: 1.5, bgcolor: ch.completed ? (dk ? 'rgba(76,175,80,0.08)' : '#f1f8e9') : 'transparent' }}
                           >
                             <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
                               <Checkbox
