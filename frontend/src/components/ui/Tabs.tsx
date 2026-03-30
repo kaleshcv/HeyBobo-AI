@@ -23,7 +23,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, defaultTab, onChange }) => {
 
   return (
     <div className="w-full">
-      <div className="border-b border-gray-200 mb-6">
+      <div className="border-b border-gold-100/30 mb-6">
         <div className="flex gap-1 -mb-px">
           {tabs.map((tab) => (
             <button
@@ -33,7 +33,7 @@ export const Tabs: React.FC<TabsProps> = ({ tabs, defaultTab, onChange }) => {
                 'px-4 py-3 font-medium border-b-2 transition-colors duration-200',
                 activeTab === tab.id
                   ? 'border-primary-600 text-primary-600'
-                  : 'border-transparent text-gray-600 hover:text-gray-900'
+                  : 'border-transparent text-navy-500 hover:text-navy-800'
               )}
             >
               {tab.label}

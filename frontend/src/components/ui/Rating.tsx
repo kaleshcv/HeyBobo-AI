@@ -54,7 +54,7 @@ export const Rating: React.FC<RatingProps> = ({
                     ? 'fill-yellow-400 text-yellow-400'
                     : isHalf
                       ? 'fill-yellow-400 text-yellow-400 opacity-50'
-                      : 'text-gray-300'
+                      : 'text-navy-200'
                 )}
               />
             </button>
@@ -62,7 +62,7 @@ export const Rating: React.FC<RatingProps> = ({
         })}
       </div>
       {showLabel && (
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-navy-500">
           {value.toFixed(1)} {count && `(${count})`}
         </div>
       )}

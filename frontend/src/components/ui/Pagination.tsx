@@ -61,7 +61,7 @@ export const Pagination: React.FC<PaginationProps> = ({
               ? 'bg-primary-600 text-white'
               : page === '...'
                 ? 'cursor-default'
-                : 'hover:bg-gray-100 text-gray-900'
+                : 'hover:bg-gold-50 text-navy-800'
           )}
         >
           {page}

@@ -25,8 +25,8 @@ export default function CoursesPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Header */}
       <div className="mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Explore Courses</h1>
-        <p className="text-gray-600 text-lg">Find the perfect course to level up your skills</p>
+        <h1 className="text-4xl font-bold text-navy-800 mb-4">Explore Courses</h1>
+        <p className="text-navy-500 text-lg">Find the perfect course to level up your skills</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -35,26 +35,26 @@ export default function CoursesPage() {
           <Card className="sticky top-24">
             <div className="flex items-center gap-2 mb-6">
               <Filter size={20} />
-              <h3 className="font-semibold text-gray-900">Filters</h3>
+              <h3 className="font-semibold text-navy-800">Filters</h3>
             </div>
 
             <div className="space-y-6">
               {/* Search */}
               <div>
-                <label className="text-sm font-medium text-gray-900 block mb-2">
+                <label className="text-sm font-medium text-navy-800 block mb-2">
                   Search
                 </label>
                 <input
                   type="text"
                   placeholder="Course name..."
                   onChange={(e) => handleFilterChange({ search: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                  className="w-full px-3 py-2 border border-gold-100/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-gold-400"
                 />
               </div>
 
               {/* Level */}
               <div>
-                <label className="text-sm font-medium text-gray-900 block mb-2">
+                <label className="text-sm font-medium text-navy-800 block mb-2">
                   Level
                 </label>
                 <Select
@@ -69,7 +69,7 @@ export default function CoursesPage() {
 
               {/* Price */}
               <div>
-                <label className="text-sm font-medium text-gray-900 block mb-2">
+                <label className="text-sm font-medium text-navy-800 block mb-2">
                   Price
                 </label>
                 <div className="space-y-2">
@@ -100,7 +100,7 @@ export default function CoursesPage() {
 
               {/* Sort */}
               <div>
-                <label className="text-sm font-medium text-gray-900 block mb-2">
+                <label className="text-sm font-medium text-navy-800 block mb-2">
                   Sort By
                 </label>
                 <Select
@@ -146,7 +146,7 @@ export default function CoursesPage() {
             </>
           ) : (
             <Card className="text-center py-12">
-              <p className="text-gray-600">No courses found. Try adjusting your filters.</p>
+              <p className="text-navy-500">No courses found. Try adjusting your filters.</p>
             </Card>
           )}
         </div>

@@ -22,7 +22,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
       className="overflow-hidden"
     >
       {/* Thumbnail */}
-      <div className="relative h-48 mb-4 bg-gray-200 rounded-lg overflow-hidden">
+      <div className="relative h-48 mb-4 bg-navy-100 rounded-xl overflow-hidden">
         <img
           src={course.thumbnail}
           alt={course.title}
@@ -42,15 +42,15 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
         </Badge>
         <div className="flex items-center gap-1">
           <Star size={16} className="fill-yellow-400 text-yellow-400" />
-          <span className="text-sm font-semibold text-gray-900">
+          <span className="text-sm font-semibold text-navy-800">
             {course.rating.toFixed(1)}
           </span>
-          <span className="text-xs text-gray-600">({course.ratingCount})</span>
+          <span className="text-xs text-navy-500">({course.ratingCount})</span>
         </div>
       </div>
 
       {/* Title */}
-      <h3 className="font-semibold text-gray-900 line-clamp-2 mb-2">
+      <h3 className="font-semibold text-navy-800 line-clamp-2 mb-2">
         {course.title}
       </h3>
 
@@ -60,13 +60,13 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
           initials={getInitials(course.instructor.firstName, course.instructor.lastName)}
           size="sm"
         />
-        <span className="text-sm text-gray-600">
+        <span className="text-sm text-navy-500">
           {course.instructor.firstName} {course.instructor.lastName}
         </span>
       </div>
 
       {/* Course Info */}
-      <div className="flex items-center gap-4 text-sm text-gray-600 mb-4 pb-4 border-b border-gray-200">
+      <div className="flex items-center gap-4 text-sm text-navy-500 mb-4 pb-4 border-b border-gold-100/30">
         <div className="flex items-center gap-1">
           <Clock size={16} />
           <span>{(course.totalDuration / 3600).toFixed(1)}h</span>
@@ -82,11 +82,11 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
         {course.price === 0 ? (
           <Badge variant="success">FREE</Badge>
         ) : (
-          <span className="font-bold text-primary-600">
+          <span className="font-bold text-gold-600">
             {formatCurrency(course.price)}
           </span>
         )}
-        <span className="text-xs text-gray-500">
+        <span className="text-xs text-navy-400">
           {course.enrollmentCount} enrolled
         </span>
       </div>

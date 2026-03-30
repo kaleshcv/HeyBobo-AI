@@ -56,6 +56,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 import { useAuth } from '@/hooks/useAuth';
+import { runPostWorkoutSimulation } from '@/lib/simulatePostWorkout';
 import {
   useAIBrainStore,
   type PriorityItem,
@@ -737,6 +738,21 @@ export default function AIBrainPage() {
               {new Date(lastRefresh).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </Typography>
           )}
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={runPostWorkoutSimulation}
+            sx={{
+              borderRadius: 2,
+              textTransform: 'none',
+              fontWeight: 600,
+              borderColor: '#C9A84C',
+              color: '#C9A84C',
+              '&:hover': { borderColor: '#E5B84E', bgcolor: 'rgba(201,168,76,0.08)' },
+            }}
+          >
+            🏋️ Simulate Workout
+          </Button>
           <Button
             variant="outlined"
             size="small"

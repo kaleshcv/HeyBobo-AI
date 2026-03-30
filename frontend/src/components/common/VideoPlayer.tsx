@@ -46,7 +46,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
       />
       <button
         onClick={handleFullscreen}
-        className="absolute top-4 right-4 text-white hover:text-gray-300 z-10"
+        className="absolute top-4 right-4 text-white hover:text-gold-200 z-10"
         title="Fullscreen"
       >
         <Maximize2 size={24} />

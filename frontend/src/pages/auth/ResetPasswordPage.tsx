@@ -25,10 +25,10 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{ background: '#F8F6F1' }}>
       <Card className="w-full max-w-md">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Set New Password</h1>
-        <p className="text-gray-600 mb-8">Enter a new password for your account</p>
+        <h1 className="text-2xl font-bold text-navy-800 mb-2">Set New Password</h1>
+        <p className="text-navy-500 mb-8">Enter a new password for your account</p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mb-6">
           <Input
@@ -48,8 +48,8 @@ export default function ResetPasswordPage() {
           <Button fullWidth>Reset Password</Button>
         </form>
 
-        <p className="text-sm text-gray-600 text-center">
-          <a href="/auth/login" className="text-primary-600 hover:text-primary-700">
+        <p className="text-sm text-navy-500 text-center">
+          <a href="/auth/login" className="text-gold-600 hover:text-gold-700">
             Back to login
           </a>
         </p>

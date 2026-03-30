@@ -18,6 +18,9 @@ export type LearnStackParamList = {
   Assignment:    { courseId: string; assignmentId: string }
   Certificates:  undefined
   Search:        undefined
+  Groups:        undefined
+  GroupDetail:   { groupId: string }
+  Meetings:      undefined
 }
 
 // ── Health Stack ───────────────────────────────────────────
@@ -38,6 +41,13 @@ export type HealthStackParamList = {
   GroomingDashboard:  undefined
   VisualAnalysis:     undefined
   Recommendations:    undefined
+  InjuryTracking:     undefined
+  FitnessDashboard:   undefined
+  ShoppingHub:        undefined
+  ShoppingLists:      undefined
+  Marketplace:        undefined
+  BudgetExpenses:     undefined
+  OrdersReviews:      undefined
 }
 
 // ── Teacher Stack ──────────────────────────────────────────

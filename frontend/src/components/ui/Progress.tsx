@@ -35,7 +35,7 @@ export const Progress: React.FC<ProgressProps> = ({
 
   return (
     <div className="w-full">
-      <div className={cn('w-full bg-gray-200 rounded-full overflow-hidden', sizeStyles[size])}>
+      <div className={cn('w-full bg-navy-100 rounded-full overflow-hidden', sizeStyles[size])}>
         <div
           className={cn(
             'h-full rounded-full transition-all duration-500',
@@ -46,7 +46,7 @@ export const Progress: React.FC<ProgressProps> = ({
         />
       </div>
       {showLabel && (
-        <p className="text-sm text-gray-600 mt-1">{Math.round(percentage)}%</p>
+        <p className="text-sm text-navy-600 mt-1">{Math.round(percentage)}%</p>
       )}
     </div>
   )

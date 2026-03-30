@@ -29,7 +29,7 @@ export default function CourseDetailPage() {
     return (
       <div className="max-w-7xl mx-auto px-4 py-12">
         <Card className="text-center py-12">
-          <p className="text-gray-600">Course not found</p>
+          <p className="text-navy-500">Course not found</p>
           <Button onClick={() => navigate('/courses')} className="mt-6">
             Back to Courses
           </Button>
@@ -45,24 +45,24 @@ export default function CourseDetailPage() {
       content: (
         <div className="space-y-6">
           <div>
-            <h3 className="font-semibold text-lg text-gray-900 mb-4">About This Course</h3>
-            <p className="text-gray-600 leading-relaxed">{course.description}</p>
+            <h3 className="font-semibold text-lg text-navy-800 mb-4">About This Course</h3>
+            <p className="text-navy-600 leading-relaxed">{course.description}</p>
           </div>
 
           <div>
-            <h3 className="font-semibold text-lg text-gray-900 mb-4">What You'll Learn</h3>
+            <h3 className="font-semibold text-lg text-navy-800 mb-4">What You'll Learn</h3>
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {course.whatYouWillLearn?.map((item, idx) => (
                 <li key={idx} className="flex items-start gap-3">
-                  <span className="text-primary-600 font-bold mt-1">✓</span>
-                  <span className="text-gray-600">{item}</span>
+                  <span className="text-gold-500 font-bold mt-1">✓</span>
+                  <span className="text-navy-600">{item}</span>
                 </li>
               ))}
             </ul>
           </div>
 
           <div>
-            <h3 className="font-semibold text-lg text-gray-900 mb-4">Instructor</h3>
+            <h3 className="font-semibold text-lg text-navy-800 mb-4">Instructor</h3>
             <Card>
               <div className="flex items-center gap-4">
                 <Avatar
@@ -70,10 +70,10 @@ export default function CourseDetailPage() {
                   size="lg"
                 />
                 <div>
-                  <p className="font-semibold text-gray-900">
+                  <p className="font-semibold text-navy-800">
                     {course.instructor.firstName} {course.instructor.lastName}
                   </p>
-                  <p className="text-sm text-gray-600">{course.instructor.bio}</p>
+                  <p className="text-sm text-navy-500">{course.instructor.bio}</p>
                 </div>
               </div>
             </Card>
@@ -88,8 +88,8 @@ export default function CourseDetailPage() {
         <div className="space-y-4">
           {course.sections?.map((section) => (
             <Card key={section.id}>
-              <h4 className="font-semibold text-gray-900">{section.title}</h4>
-              <p className="text-sm text-gray-600 mt-2">
+              <h4 className="font-semibold text-navy-800">{section.title}</h4>
+              <p className="text-sm text-navy-500 mt-2">
                 {section.lessons?.length || 0} lessons
               </p>
             </Card>
@@ -104,12 +104,12 @@ export default function CourseDetailPage() {
         <div>
           <div className="flex items-center gap-6 mb-8">
             <div>
-              <p className="text-4xl font-bold text-gray-900">{course.rating.toFixed(1)}</p>
+              <p className="text-4xl font-bold text-navy-800">{course.rating.toFixed(1)}</p>
               <Rating value={course.rating} readOnly showLabel={false} />
-              <p className="text-sm text-gray-600 mt-2">{course.ratingCount} ratings</p>
+              <p className="text-sm text-navy-500 mt-2">{course.ratingCount} ratings</p>
             </div>
           </div>
-          <p className="text-gray-600">Reviews coming soon</p>
+          <p className="text-navy-500">Reviews coming soon</p>
         </div>
       ),
     },
@@ -120,20 +120,20 @@ export default function CourseDetailPage() {
       {/* Hero */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
         <div className="lg:col-span-2">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">{course.title}</h1>
-          <p className="text-xl text-gray-600 mb-6">{course.description}</p>
+          <h1 className="text-4xl font-bold text-navy-800 mb-4">{course.title}</h1>
+          <p className="text-xl text-navy-600 mb-6">{course.description}</p>
 
           <div className="flex flex-wrap gap-4 mb-6">
             <div className="flex items-center gap-2">
               <Star size={20} className="fill-yellow-400 text-yellow-400" />
               <span className="font-semibold">{course.rating.toFixed(1)}</span>
-              <span className="text-gray-600">({course.ratingCount} ratings)</span>
+              <span className="text-navy-500">({course.ratingCount} ratings)</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
+            <div className="flex items-center gap-2 text-navy-500">
               <Users size={20} />
               <span>{course.enrollmentCount} students</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
+            <div className="flex items-center gap-2 text-navy-500">
               <Clock size={20} />
               <span>{(course.totalDuration / 3600).toFixed(1)}h duration</span>
             </div>
@@ -153,8 +153,8 @@ export default function CourseDetailPage() {
 
         {/* Sticky Sidebar */}
         <Card className="lg:sticky lg:top-24 h-fit">
-          <div className="aspect-video bg-gray-200 rounded-lg mb-4" />
-          <div className="text-3xl font-bold text-primary-600 mb-4">
+          <div className="aspect-video bg-navy-100 rounded-xl mb-4" />
+          <div className="text-3xl font-bold text-gold-600 mb-4">
             {course.price === 0 ? 'FREE' : formatCurrency(course.price)}
           </div>
           <Button

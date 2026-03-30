@@ -31,24 +31,24 @@ export const Modal: React.FC<ModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
-        className="absolute inset-0 bg-black bg-opacity-50 transition-opacity"
+        className="absolute inset-0 bg-navy-900/50 backdrop-blur-sm transition-opacity"
         onClick={onClose}
         role="presentation"
       />
       <div
         className={cn(
-          'relative bg-white rounded-lg shadow-xl max-w-full mx-4',
+          'relative bg-white rounded-2xl shadow-xl max-w-full mx-4 border border-gold-100/30',
           'transform transition-all duration-300',
           sizeStyles[size]
         )}
       >
         {(title || closeButton) && (
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            {title && <h2 className="text-lg font-semibold text-gray-900">{title}</h2>}
+          <div className="flex items-center justify-between p-6 border-b border-gold-100/30">
+            {title && <h2 className="text-lg font-semibold text-navy-800">{title}</h2>}
             {closeButton && (
               <button
                 onClick={onClose}
-                className="ml-auto text-gray-400 hover:text-gray-600 transition-colors"
+                className="ml-auto text-navy-400 hover:text-gold-500 transition-colors"
               >
                 <X size={24} />
               </button>

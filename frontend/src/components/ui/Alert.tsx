@@ -70,7 +70,7 @@ export const Alert: React.FC<AlertProps> = ({
       {closeable && (
         <button
           onClick={onClose}
-          className="flex-shrink-0 text-gray-400 hover:text-gray-600"
+          className="flex-shrink-0 text-navy-400 hover:text-gold-500"
         >
           <X size={20} />
         </button>

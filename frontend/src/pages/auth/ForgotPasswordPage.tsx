@@ -21,10 +21,10 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{ background: '#F8F6F1' }}>
       <Card className="w-full max-w-md">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Reset Password</h1>
-        <p className="text-gray-600 mb-8">
+        <h1 className="text-2xl font-bold text-navy-800 mb-2">Reset Password</h1>
+        <p className="text-navy-500 mb-8">
           Enter your email address and we'll send you a link to reset your password.
         </p>
 
@@ -39,9 +39,9 @@ export default function ForgotPasswordPage() {
           <Button fullWidth>Send Reset Link</Button>
         </form>
 
-        <p className="text-sm text-gray-600 text-center">
+        <p className="text-sm text-navy-500 text-center">
           Remember your password?{' '}
-          <a href="/auth/login" className="text-primary-600 hover:text-primary-700">
+          <a href="/auth/login" className="text-gold-600 hover:text-gold-700">
             Sign in
           </a>
         </p>

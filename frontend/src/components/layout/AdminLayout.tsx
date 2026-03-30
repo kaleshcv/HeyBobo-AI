@@ -20,7 +20,7 @@ export default function AdminLayout() {
 
   return (
     <ErrorBoundary>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen" style={{ background: '#F8F6F1' }}>
         <Header />
         <div className="flex">
           <Sidebar items={navItems} isOpen={sidebarOpen} />

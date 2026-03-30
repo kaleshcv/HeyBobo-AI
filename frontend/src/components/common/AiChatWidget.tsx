@@ -47,7 +47,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 p-4 bg-primary-600 text-white rounded-full shadow-lg hover:bg-primary-700 transition-colors z-40"
+        className="fixed bottom-6 right-6 p-4 bg-gradient-to-r from-gold-500 to-gold-600 text-navy-900 rounded-full shadow-gold hover:shadow-gold-lg transition-all z-40"
         title="Open AI Tutor"
       >
         <MessageCircle size={24} />
@@ -56,16 +56,16 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
   }
 
   return (
-    <div className="fixed bottom-6 right-6 w-96 max-w-[calc(100%-2rem)] h-[600px] bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col z-50">
+    <div className="fixed bottom-6 right-6 w-96 max-w-[calc(100%-2rem)] h-[600px] bg-white rounded-2xl shadow-2xl border border-gold-100/30 flex flex-col z-50">
       {/* Header */}
-      <div className="bg-primary-600 text-white p-4 rounded-t-lg flex items-center justify-between">
+      <div className="bg-navy-800 text-white p-4 rounded-t-2xl flex items-center justify-between">
         <h3 className="font-semibold">AI Tutor</h3>
         <button
           onClick={() => {
             setIsOpen(false)
             onClose?.()
           }}
-          className="hover:bg-primary-700 p-1 rounded"
+          className="hover:bg-navy-700 p-1 rounded"
         >
           <X size={20} />
         </button>
@@ -74,7 +74,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 && (
-          <div className="text-center text-gray-500 py-8">
+          <div className="text-center text-navy-400 py-8">
             <MessageCircle size={32} className="mx-auto mb-2 opacity-50" />
             <p>Ask me anything about the course!</p>
           </div>
@@ -87,8 +87,8 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
             <div
               className={`max-w-xs px-4 py-2 rounded-lg ${
                 msg.role === 'user'
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-gray-100 text-gray-900'
+                  ? 'bg-gold-500 text-navy-900'
+                  : 'bg-navy-50 text-navy-800'
               }`}
             >
               {msg.content}
@@ -96,7 +96,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
           </div>
         ))}
         {aiChat.isPending && (
-          <div className="flex gap-2 items-center text-gray-600">
+          <div className="flex gap-2 items-center text-navy-500">
             <Loader size={16} className="animate-spin" />
             <span className="text-sm">Thinking...</span>
           </div>
@@ -105,7 +105,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
       </div>
 
       {/* Input */}
-      <div className="border-t border-gray-200 p-4">
+      <div className="border-t border-gold-100/30 p-4">
         <div className="flex gap-2">
           <input
             type="text"
@@ -113,7 +113,7 @@ export const AiChatWidget: React.FC<AiChatWidgetProps> = ({
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Type your question..."
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="flex-1 px-3 py-2 border border-gold-100/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-gold-400"
           />
           <Button
             size="md"

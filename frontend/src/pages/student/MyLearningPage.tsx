@@ -17,7 +17,7 @@ export default function MyLearningPage() {
   const EnrollmentCard = ({ enrollment }: any) => (
     <Card hover className="flex items-start justify-between p-6 mb-4">
       <div className="flex-1">
-        <h3 className="font-semibold text-gray-900 mb-2">
+        <h3 className="font-semibold text-navy-800 mb-2">
           {enrollment.course?.title}
         </h3>
         <CourseProgress
@@ -97,8 +97,8 @@ export default function MyLearningPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-4xl font-bold text-gray-900">My Learning</h1>
-        <p className="text-gray-600 mt-2">Track your progress and continue learning</p>
+        <h1 className="text-4xl font-bold text-navy-800">My Learning</h1>
+        <p className="text-navy-500 mt-2">Track your progress and continue learning</p>
       </div>
 
       <Tabs tabs={tabs} defaultTab="all" />

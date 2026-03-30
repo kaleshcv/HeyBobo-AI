@@ -54,14 +54,14 @@ export const Dropdown: React.FC<DropdownProps> = ({
       {isOpen && (
         <div
           className={cn(
-            'absolute top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50',
+            'absolute top-full mt-1 bg-white rounded-xl shadow-lg border border-gold-100/30 py-1 z-50',
             'min-w-48',
             align === 'right' ? 'right-0' : 'left-0'
           )}
         >
           {items.map((item) => {
             if (item.divider) {
-              return <div key={item.id} className="h-px bg-gray-200 my-1" />
+              return <div key={item.id} className="h-px bg-gold-100/30 my-1" />
             }
 
             return (
@@ -72,7 +72,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
                   setIsOpen(false)
                 }}
                 className={cn(
-                  'w-full px-4 py-2 text-left text-sm hover:bg-gray-100 transition-colors',
+                  'w-full px-4 py-2 text-left text-sm text-navy-700 hover:bg-gold-50 transition-colors',
                   item.danger && 'text-red-600 hover:bg-red-50'
                 )}
               >

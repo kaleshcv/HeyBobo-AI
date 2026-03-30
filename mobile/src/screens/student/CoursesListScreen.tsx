@@ -177,6 +177,29 @@ export function CoursesListScreen() {
           </View>
         )}
 
+        {/* Community */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Community</Text>
+          <View style={{ flexDirection: 'row', gap: 12 }}>
+            <TouchableOpacity
+              style={styles.communityCard}
+              onPress={() => navigation.navigate('Groups')}
+            >
+              <Ionicons name="people" size={28} color="#6366F1" />
+              <Text style={styles.communityTitle}>Study Groups</Text>
+              <Text style={styles.communityDesc}>Join or create learning groups</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.communityCard}
+              onPress={() => navigation.navigate('Meetings')}
+            >
+              <Ionicons name="videocam" size={28} color="#10B981" />
+              <Text style={styles.communityTitle}>Meetings</Text>
+              <Text style={styles.communityDesc}>Schedule & join video meetings</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
         {/* All Courses */}
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>
@@ -358,5 +381,27 @@ const styles = StyleSheet.create({
     width: 80,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  communityCard: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    gap: 8,
+  },
+  communityTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: COLORS.text,
+    textAlign: 'center',
+  },
+  communityDesc: {
+    fontSize: 12,
+    color: COLORS.secondaryText,
+    textAlign: 'center',
+    lineHeight: 16,
   },
 });
