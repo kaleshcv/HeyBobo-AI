@@ -1,5 +1,4 @@
 import * as Notifications from 'expo-notifications'
-import * as Device from 'expo-device'
 import { Platform } from 'react-native'
 import { authApi } from '@/api'
 
@@ -12,8 +11,6 @@ Notifications.setNotificationHandler({
 })
 
 export async function registerForPushNotifications(): Promise<string | null> {
-  if (!Device.isDevice) return null  // simulator — skip
-
   const { status: existingStatus } = await Notifications.getPermissionsAsync()
   let finalStatus = existingStatus
 
@@ -33,14 +30,14 @@ export async function registerForPushNotifications(): Promise<string | null> {
     })
   }
 
-  const token = (await Notifications.getExpoPushTokenAsync({
-    projectId: 'your-eas-project-id',
-  })).data
-
-  // Register token with backend
-  try { await authApi.updatePushToken(token) } catch { /* best-effort */ }
-
-  return token
+  try {
+    const token = (await Notifications.getExpoPushTokenAsync()).data
+    try { await authApi.updatePushToken(token) } catch { /* best-effort */ }
+    return token
+  } catch {
+    // Expo push tokens require a real device + EAS project — skip silently in dev
+    return null
+  }
 }
 
 export function setupNotificationListeners(

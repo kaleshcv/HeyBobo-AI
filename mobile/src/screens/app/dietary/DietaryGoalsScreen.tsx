@@ -11,16 +11,9 @@ import { useAppNavigation } from '@/navigation/useAppNavigation';
 import { Text } from 'react-native';
 import { Button } from '@/components/common/Button';
 import { AppHeader } from '@/components/layout/AppHeader';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-  success: '#10B981',
-  warning: '#F59E0B',
-};
+;
 
 const GOALS = [
   {
@@ -28,28 +21,28 @@ const GOALS = [
     title: 'Lose Weight',
     description: 'Reduce body weight and fat',
     icon: 'trending-down',
-    color: '#EF4444',
+    color: T.red,
   },
   {
     id: 'gain_weight',
     title: 'Gain Weight',
     description: 'Build muscle and mass',
     icon: 'trending-up',
-    color: COLORS.success,
+    color: T.green,
   },
   {
     id: 'maintain',
     title: 'Maintain Weight',
     description: 'Keep current weight stable',
     icon: 'swap-horizontal',
-    color: COLORS.warning,
+    color: T.orange,
   },
   {
     id: 'build_muscle',
     title: 'Build Muscle',
     description: 'Increase strength and mass',
     icon: 'fitness',
-    color: COLORS.primary,
+    color: T.primary2,
   },
 ];
 
@@ -116,7 +109,7 @@ export function DietaryGoalsScreen() {
         {/* Info Card */}
         <View style={styles.infoCard}>
           <View style={styles.infoHeader}>
-            <Ionicons name="information-circle" size={20} color={COLORS.primary} />
+            <Ionicons name="information-circle" size={20} color={T.primary2} />
             <Text style={styles.infoTitle}>How It Works</Text>
           </View>
           <Text style={styles.infoText}>
@@ -138,7 +131,7 @@ export function DietaryGoalsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   content: {
     flex: 1,
@@ -147,21 +140,21 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginBottom: 24,
     lineHeight: 20,
   },
   goalCard: {
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     borderWidth: 2,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   goalCardActive: {
-    borderColor: COLORS.primary,
-    backgroundColor: `${COLORS.primary}08`,
+    borderColor: T.primary2,
+    backgroundColor: `${T.primary2}08`,
   },
   goalCardContent: {
     flexDirection: 'row',
@@ -181,19 +174,19 @@ const styles = StyleSheet.create({
   goalTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 4,
   },
   goalDescription: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   goalCheckbox: {
     width: 24,
     height: 24,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -201,10 +194,10 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
   },
   infoCard: {
-    backgroundColor: `${COLORS.primary}08`,
+    backgroundColor: `${T.primary2}08`,
     borderRadius: 10,
     padding: 14,
     marginTop: 24,
@@ -219,11 +212,11 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontSize: 13,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   infoText: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     lineHeight: 16,
   },
 });

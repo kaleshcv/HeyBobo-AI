@@ -236,7 +236,9 @@ export default function GroceryPage() {
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <ShoppingCartIcon sx={{ fontSize: 28, color: '#ff9800' }} />
+          <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: '#f59e0b20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <ShoppingCartIcon sx={{ fontSize: 20, color: '#f59e0b' }} />
+          </Box>
           <Typography variant="h5" sx={{ fontWeight: 700 }}>Grocery & Food Ecosystem</Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>

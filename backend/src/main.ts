@@ -24,7 +24,7 @@ for (const sub of ['app', 'errors', 'http', 'general-log']) {
 async function bootstrap(): Promise<void> {
   // Validate required secrets before starting
   if (process.env.NODE_ENV === 'production') {
-    const required = ['JWT_SECRET', 'JWT_REFRESH_SECRET', 'MONGODB_URI', 'REDIS_PASSWORD'];
+    const required = ['JWT_SECRET', 'JWT_REFRESH_SECRET', 'MONGODB_URI'];
     const missing = required.filter((k) => !process.env[k]);
     if (missing.length) {
       console.error(`FATAL: Missing required environment variables: ${missing.join(', ')}`);

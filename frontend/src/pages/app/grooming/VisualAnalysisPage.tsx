@@ -282,7 +282,9 @@ export default function VisualAnalysisPage() {
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <CameraAltIcon sx={{ fontSize: 28, color: '#e91e63' }} />
+          <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: '#c084fc20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <CameraAltIcon sx={{ fontSize: 20, color: '#c084fc' }} />
+          </Box>
           <Typography variant="h5" sx={{ fontWeight: 700 }}>
             Visual Analysis
           </Typography>
@@ -308,11 +310,11 @@ export default function VisualAnalysisPage() {
         scrollButtons="auto"
         sx={{ mb: 2, '& .MuiTab-root': { minHeight: 40, textTransform: 'none' } }}
       >
-        <Tab icon={<FaceIcon />} iconPosition="start" label="Skin Analysis" />
-        <Tab icon={<ContentCutIcon />} iconPosition="start" label="Hair & Face" />
-        <Tab icon={<CheckroomIcon />} iconPosition="start" label="Body & Style" />
-        <Tab icon={<TimelineIcon />} iconPosition="start" label="Progress Tracking" />
-        <Tab icon={<ViewInArIcon />} iconPosition="start" label="Virtual Try-On" />
+        <Tab icon={<FaceIcon sx={{ fontSize: 18, color: '#ec4899' }} />} iconPosition="start" label="Skin Analysis" />
+        <Tab icon={<ContentCutIcon sx={{ fontSize: 18, color: '#c084fc' }} />} iconPosition="start" label="Hair &amp; Face" />
+        <Tab icon={<CheckroomIcon sx={{ fontSize: 18, color: '#f97316' }} />} iconPosition="start" label="Body &amp; Style" />
+        <Tab icon={<TimelineIcon sx={{ fontSize: 18, color: '#38bdf8' }} />} iconPosition="start" label="Progress Tracking" />
+        <Tab icon={<ViewInArIcon sx={{ fontSize: 18, color: '#7c4dff' }} />} iconPosition="start" label="Virtual Try-On" />
         <Tab icon={<VideocamIcon />} iconPosition="start" label="Live Analysis" sx={{ color: tab === 5 ? COLORS.live : undefined }} />
       </Tabs>
 

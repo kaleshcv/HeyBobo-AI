@@ -13,10 +13,12 @@ import { Input }             from '@/components/common/Input'
 import { Button }            from '@/components/common/Button'
 import { useRegister }       from '@/hooks/useAuth'
 import { UserRole }          from '@/types'
+import T from '@/theme'
 
 const schema = z.object({
   firstName: z.string().min(2, 'First name is required'),
   lastName:  z.string().min(2, 'Last name is required'),
+  username:  z.string().min(3, 'Username must be at least 3 characters').max(30).regex(/^[a-zA-Z0-9_-]+$/, 'Only letters, numbers, underscores, hyphens'),
   email:     z.string().email('Please enter a valid email'),
   password:  z.string().min(8, 'Password must be at least 8 characters'),
   role:      z.enum([UserRole.STUDENT, UserRole.TEACHER]),
@@ -43,11 +45,11 @@ export function RegisterScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color="#1E293B" />
+          <Ionicons name="arrow-back" size={24} color={T.text} />
         </TouchableOpacity>
 
         <Text style={styles.heading}>Create account</Text>
-        <Text style={styles.sub}>Start your learning journey today</Text>
+        <Text style={styles.sub}>Start your journey today</Text>
 
         {/* Role picker */}
         <Text style={styles.roleLabel}>I want to</Text>
@@ -61,7 +63,7 @@ export function RegisterScreen() {
               style={[styles.roleCard, selectedRole === role && styles.roleCardActive]}
               onPress={() => setValue('role', role as UserRole.STUDENT | UserRole.TEACHER)}
             >
-              <Ionicons name={icon as any} size={22} color={selectedRole === role ? '#6366F1' : '#94A3B8'} />
+              <Ionicons name={icon as any} size={22} color={selectedRole === role ? T.primary : T.muted2} />
               <Text style={[styles.roleCardText, selectedRole === role && styles.roleCardTextActive]}>
                 {label}
               </Text>
@@ -82,6 +84,12 @@ export function RegisterScreen() {
 
         <View style={{ height: 16 }} />
 
+        <Controller control={control} name="username" render={({ field: { onChange, value } }) => (
+          <Input label="Username" placeholder="john_doe" leftIcon="at-outline"
+            autoCapitalize="none" autoCorrect={false}
+            onChangeText={onChange} value={value} error={errors.username?.message} />
+        )} />
+
         <Controller control={control} name="email" render={({ field: { onChange, value } }) => (
           <Input label="Email" placeholder="you@example.com" leftIcon="mail-outline"
             keyboardType="email-address" autoCapitalize="none"
@@ -96,8 +104,15 @@ export function RegisterScreen() {
 
         {register.isError && (
           <View style={styles.errorBanner}>
-            <Text style={styles.errorText}>
-              {(register.error as any)?.response?.data?.message ?? 'Registration failed. Try again.'}
+            <Ionicons name="alert-circle" size={16} color={T.red} />
+            <Text style={[styles.errorText, { marginLeft: 8, flex: 1 }]}>
+              {(() => {
+                const err = register.error as any
+                if (!err?.response) return 'Cannot connect to server. Make sure the backend is running.'
+                const msg = err?.response?.data?.message
+                if (Array.isArray(msg)) return msg.join('. ')
+                return msg ?? 'Registration failed. Please try again.'
+              })()}
             </Text>
           </View>
         )}
@@ -117,21 +132,21 @@ export function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  scroll:       { flex: 1, backgroundColor: '#FFFFFF' },
-  content:      { paddingHorizontal: 24 },
-  backBtn:      { marginBottom: 24 },
-  heading:      { fontSize: 28, fontWeight: '800', color: '#1E293B', marginBottom: 8 },
-  sub:          { fontSize: 15, color: '#64748B', marginBottom: 24 },
-  roleLabel:    { fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 10 },
-  roleRow:      { flexDirection: 'row', gap: 12, marginBottom: 20 },
-  roleCard:     { flex: 1, borderWidth: 1.5, borderColor: '#E2E8F0', borderRadius: 12, padding: 14, alignItems: 'center', gap: 6 },
-  roleCardActive: { borderColor: '#6366F1', backgroundColor: '#EEF2FF' },
-  roleCardText: { fontSize: 14, fontWeight: '600', color: '#94A3B8' },
-  roleCardTextActive: { color: '#6366F1' },
-  nameRow:      { flexDirection: 'row' },
-  errorBanner:  { backgroundColor: '#FEF2F2', borderRadius: 10, padding: 12, marginBottom: 12 },
-  errorText:    { fontSize: 13, color: '#EF4444' },
-  loginRow:     { flexDirection: 'row', justifyContent: 'center', marginTop: 24 },
-  loginText:    { fontSize: 14, color: '#64748B' },
-  loginLink:    { fontSize: 14, fontWeight: '700', color: '#6366F1' },
+  scroll:              { flex: 1, backgroundColor: T.bg },
+  content:             { paddingHorizontal: 24 },
+  backBtn:             { marginBottom: 24 },
+  heading:             { fontSize: 28, fontWeight: '800', color: T.text, marginBottom: 8 },
+  sub:                 { fontSize: 15, color: T.muted, marginBottom: 24 },
+  roleLabel:           { fontSize: 14, fontWeight: '600', color: T.text2, marginBottom: 10 },
+  roleRow:             { flexDirection: 'row', gap: 12, marginBottom: 20 },
+  roleCard:            { flex: 1, borderWidth: 1.5, borderColor: T.border2, borderRadius: 12, padding: 14, alignItems: 'center', gap: 6 },
+  roleCardActive:      { borderColor: T.primary, backgroundColor: `${T.primary2}22` },
+  roleCardText:        { fontSize: 14, fontWeight: '600', color: T.muted },
+  roleCardTextActive:  { color: T.primary },
+  nameRow:             { flexDirection: 'row' },
+  errorBanner:         { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: `${T.red}22`, borderWidth: 1, borderColor: `${T.red}44`, borderRadius: 10, padding: 12, marginBottom: 12 },
+  errorText:           { fontSize: 13, color: T.red },
+  loginRow:            { flexDirection: 'row', justifyContent: 'center', marginTop: 24 },
+  loginText:           { fontSize: 14, color: T.muted },
+  loginLink:           { fontSize: 14, fontWeight: '700', color: T.primary },
 })

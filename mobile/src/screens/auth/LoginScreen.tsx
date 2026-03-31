@@ -12,10 +12,11 @@ import { Ionicons } from '@expo/vector-icons'
 import { Input }  from '@/components/common/Input'
 import { Button } from '@/components/common/Button'
 import { useLogin, useGoogleOAuth } from '@/hooks/useAuth'
+import T from '@/theme'
 
 const schema = z.object({
-  email:    z.string().email('Please enter a valid email'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  identifier: z.string().min(1, 'Please enter your email or username'),
+  password:   z.string().min(6, 'Password must be at least 6 characters'),
 })
 type FormData = z.infer<typeof schema>
 
@@ -44,9 +45,9 @@ export function LoginScreen() {
         {/* Logo / Brand */}
         <View style={styles.brandRow}>
           <View style={styles.logoBox}>
-            <Ionicons name="school" size={32} color="#FFFFFF" />
+            <Ionicons name="sparkles" size={28} color={T.white} />
           </View>
-          <Text style={styles.brandName}>EduPlatform</Text>
+          <Text style={styles.brandName}>Bobo</Text>
         </View>
 
         <Text style={styles.heading}>Welcome back</Text>
@@ -67,7 +68,7 @@ export function LoginScreen() {
         {/* Form */}
         <Controller
           control={control}
-          name="email"
+          name="identifier"
           render={({ field: { onChange, value, onBlur } }) => (
             <Input
               label="Email"
@@ -79,7 +80,7 @@ export function LoginScreen() {
               onChangeText={onChange}
               onBlur={onBlur}
               value={value}
-              error={errors.email?.message}
+              error={errors.identifier?.message}
             />
           )}
         />
@@ -110,9 +111,20 @@ export function LoginScreen() {
 
         {login.isError && (
           <View style={styles.errorBanner}>
-            <Ionicons name="alert-circle" size={16} color="#EF4444" />
+            <Ionicons name="alert-circle" size={16} color={T.red} />
             <Text style={styles.errorBannerText}>
-              {(login.error as any)?.response?.data?.message ?? 'Invalid email or password'}
+              {(() => {
+                const err = login.error as any
+                if (!err?.response) {
+                  const url = err?.config?.baseURL ?? 'unknown'
+                  const code = err?.code ?? 'UNKNOWN'
+                  const msg = err?.message ?? ''
+                  return `Network error [${code}]: ${msg}\nURL: ${url}`
+                }
+                const msg = err?.response?.data?.message
+                if (Array.isArray(msg)) return msg.join('. ')
+                return msg ?? `Error ${err?.response?.status}: Invalid email or password`
+              })()}
             </Text>
           </View>
         )}
@@ -138,24 +150,24 @@ export function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  scroll:        { flex: 1, backgroundColor: '#FFFFFF' },
-  content:       { paddingHorizontal: 24 },
-  brandRow:      { flexDirection: 'row', alignItems: 'center', marginBottom: 32 },
-  logoBox:       { width: 48, height: 48, borderRadius: 14, backgroundColor: '#6366F1', alignItems: 'center', justifyContent: 'center', marginRight: 12 },
-  brandName:     { fontSize: 22, fontWeight: '800', color: '#1E293B' },
-  heading:       { fontSize: 28, fontWeight: '800', color: '#1E293B', marginBottom: 8 },
-  subheading:    { fontSize: 15, color: '#64748B', marginBottom: 28 },
-  googleBtn:     { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: '#E2E8F0', borderRadius: 12, padding: 14, marginBottom: 20, backgroundColor: '#FAFAFA' },
-  googleText:    { fontSize: 15, fontWeight: '600', color: '#1E293B', marginLeft: 10 },
-  divider:       { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
-  dividerLine:   { flex: 1, height: 1, backgroundColor: '#E2E8F0' },
-  dividerText:   { paddingHorizontal: 12, fontSize: 13, color: '#94A3B8' },
-  forgotBtn:     { alignSelf: 'flex-end', marginBottom: 20, marginTop: -8 },
-  forgotText:    { fontSize: 13, fontWeight: '600', color: '#6366F1' },
-  errorBanner:   { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FEF2F2', borderRadius: 10, padding: 12, marginBottom: 16 },
-  errorBannerText:{ fontSize: 13, color: '#EF4444', marginLeft: 8, flex: 1 },
-  submitBtn:     { marginTop: 4 },
-  registerRow:   { flexDirection: 'row', justifyContent: 'center', marginTop: 24 },
-  registerText:  { fontSize: 14, color: '#64748B' },
-  registerLink:  { fontSize: 14, fontWeight: '700', color: '#6366F1' },
+  scroll:          { flex: 1, backgroundColor: T.bg },
+  content:         { paddingHorizontal: 24 },
+  brandRow:        { flexDirection: 'row', alignItems: 'center', marginBottom: 32 },
+  logoBox:         { width: 48, height: 48, borderRadius: 14, backgroundColor: T.primary2, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  brandName:       { fontSize: 24, fontWeight: '800', color: T.text },
+  heading:         { fontSize: 28, fontWeight: '800', color: T.text, marginBottom: 8 },
+  subheading:      { fontSize: 15, color: T.muted, marginBottom: 28 },
+  googleBtn:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: T.border2, borderRadius: 12, padding: 14, marginBottom: 20, backgroundColor: T.surface2 },
+  googleText:      { fontSize: 15, fontWeight: '600', color: T.text, marginLeft: 10 },
+  divider:         { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
+  dividerLine:     { flex: 1, height: 1, backgroundColor: T.border2 },
+  dividerText:     { paddingHorizontal: 12, fontSize: 13, color: T.muted2 },
+  forgotBtn:       { alignSelf: 'flex-end', marginBottom: 20, marginTop: -8 },
+  forgotText:      { fontSize: 13, fontWeight: '600', color: T.primary },
+  errorBanner:     { flexDirection: 'row', alignItems: 'center', backgroundColor: `${T.red}22`, borderWidth: 1, borderColor: `${T.red}44`, borderRadius: 10, padding: 12, marginBottom: 16 },
+  errorBannerText: { fontSize: 13, color: T.red, marginLeft: 8, flex: 1 },
+  submitBtn:       { marginTop: 4 },
+  registerRow:     { flexDirection: 'row', justifyContent: 'center', marginTop: 24 },
+  registerText:    { fontSize: 14, color: T.muted },
+  registerLink:    { fontSize: 14, fontWeight: '700', color: T.primary },
 })

@@ -14,7 +14,7 @@ export default function DietaryGoalsPage() {
         gap: 2,
       }}
     >
-      <FlagIcon sx={{ fontSize: 64, opacity: 0.3 }} />
+      <FlagIcon sx={{ fontSize: 64, color: '#f59e0b', opacity: 0.4 }} />
       <Typography variant="h5" sx={{ fontWeight: 600, color: 'text.primary' }}>
         Dietary Goals
       </Typography>

@@ -380,23 +380,23 @@ export default function InjuryPage() {
   };
 
   const TABS = [
-    { label: 'Dashboard', icon: <HealingIcon /> },
-    { label: 'Log Injury', icon: <AddIcon /> },
-    { label: 'Body Map', icon: <PersonIcon /> },
-    { label: 'AI Detection', icon: <SmartToyIcon /> },
-    { label: 'Recovery', icon: <DirectionsRunIcon /> },
-    { label: 'Workout Adapt', icon: <FitnessCenterIcon /> },
-    { label: 'Diet', icon: <RestaurantIcon /> },
-    { label: 'Prevention', icon: <ShieldIcon /> },
-    { label: 'Rehab', icon: <HealingIcon /> },
-    { label: 'AI Coach', icon: <SmartToyIcon /> },
-    { label: 'Wearables', icon: <MonitorHeartIcon /> },
-    { label: 'Posture AI', icon: <PhotoCameraIcon /> },
-    { label: 'Documents', icon: <DescriptionIcon /> },
-    { label: 'Notifications', icon: <Badge badgeContent={unreadCount} color="error"><NotificationsIcon /></Badge> },
-    { label: 'Analytics', icon: <AnalyticsIcon /> },
-    { label: 'Gamification', icon: <EmojiEventsIcon /> },
-    { label: 'Expert Connect', icon: <VideoCallIcon /> },
+    { label: 'Dashboard', icon: <HealingIcon sx={{ fontSize: 18, color: '#fb923c' }} /> },
+    { label: 'Log Injury', icon: <AddIcon sx={{ fontSize: 18, color: '#f43f5e' }} /> },
+    { label: 'Body Map', icon: <PersonIcon sx={{ fontSize: 18, color: '#a78bfa' }} /> },
+    { label: 'AI Detection', icon: <SmartToyIcon sx={{ fontSize: 18, color: '#7c4dff' }} /> },
+    { label: 'Recovery', icon: <DirectionsRunIcon sx={{ fontSize: 18, color: '#10b981' }} /> },
+    { label: 'Workout Adapt', icon: <FitnessCenterIcon sx={{ fontSize: 18, color: '#10b981' }} /> },
+    { label: 'Diet', icon: <RestaurantIcon sx={{ fontSize: 18, color: '#f59e0b' }} /> },
+    { label: 'Prevention', icon: <ShieldIcon sx={{ fontSize: 18, color: '#38bdf8' }} /> },
+    { label: 'Rehab', icon: <HealingIcon sx={{ fontSize: 18, color: '#fb923c' }} /> },
+    { label: 'AI Coach', icon: <SmartToyIcon sx={{ fontSize: 18, color: '#7c4dff' }} /> },
+    { label: 'Wearables', icon: <MonitorHeartIcon sx={{ fontSize: 18, color: '#f43f5e' }} /> },
+    { label: 'Posture AI', icon: <PhotoCameraIcon sx={{ fontSize: 18, color: '#ec4899' }} /> },
+    { label: 'Documents', icon: <DescriptionIcon sx={{ fontSize: 18, color: '#64748b' }} /> },
+    { label: 'Notifications', icon: <Badge badgeContent={unreadCount} color="error"><NotificationsIcon sx={{ fontSize: 18, color: '#f59e0b' }} /></Badge> },
+    { label: 'Analytics', icon: <AnalyticsIcon sx={{ fontSize: 18, color: '#38bdf8' }} /> },
+    { label: 'Gamification', icon: <EmojiEventsIcon sx={{ fontSize: 18, color: '#fbbf24' }} /> },
+    { label: 'Expert Connect', icon: <VideoCallIcon sx={{ fontSize: 18, color: '#ec4899' }} /> },
   ];
 
   return (
@@ -404,7 +404,9 @@ export default function InjuryPage() {
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <Avatar sx={{ bgcolor: 'error.main' }}><HealingIcon /></Avatar>
+          <Box sx={{ width: 44, height: 44, borderRadius: 2, bgcolor: '#fb923c20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <HealingIcon sx={{ fontSize: 24, color: '#fb923c' }} />
+          </Box>
           <Box>
             <Typography variant="h5" fontWeight={700}>Injury Tracker</Typography>
             <Typography variant="body2" color="text.secondary">Monitor, rehabilitate and prevent injuries with AI-powered insights</Typography>

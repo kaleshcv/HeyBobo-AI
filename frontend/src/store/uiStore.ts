@@ -32,7 +32,7 @@ export const useUIStore = create<UIState>((set) => {
     isMobileMenuOpen: false,
     setMobileMenuOpen: (open) => set({ isMobileMenuOpen: open }),
 
-    theme: savedTheme || 'light',
+    theme: savedTheme || 'dark',
     setTheme: (theme) => {
       localStorage.setItem('ui_theme', theme)
       set({ theme })

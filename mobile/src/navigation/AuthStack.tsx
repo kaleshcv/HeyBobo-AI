@@ -6,6 +6,7 @@ import { RegisterScreen }      from '@/screens/auth/RegisterScreen'
 import { ForgotPasswordScreen } from '@/screens/auth/ForgotPasswordScreen'
 import { ResetPasswordScreen } from '@/screens/auth/ResetPasswordScreen'
 import { OAuthCallbackScreen } from '@/screens/auth/OAuthCallbackScreen'
+import T from '@/theme'
 
 const Stack = createNativeStackNavigator<AuthStackParamList>()
 
@@ -16,7 +17,7 @@ export function AuthStack() {
       screenOptions={{
         headerShown:  false,
         animation:    'slide_from_right',
-        contentStyle: { backgroundColor: '#ffffff' },
+        contentStyle: { backgroundColor: T.surface },
       }}
     >
       <Stack.Screen name="Login"          component={LoginScreen} />

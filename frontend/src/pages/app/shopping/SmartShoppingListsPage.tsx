@@ -11,6 +11,7 @@ import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 import HealingIcon from '@mui/icons-material/Healing';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 
 import { useShoppingListStore } from '@/store/shoppingListStore';
 import { useCourseStore } from '@/store/courseStore';
@@ -127,11 +128,16 @@ export default function SmartShoppingListsPage() {
     <Box sx={{ flex: 1, px: 3, py: 3, overflow: 'auto' }}>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 3, flexWrap: 'wrap' }}>
-        <Box>
-          <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>Smart Shopping Lists</Typography>
-          <Typography variant="body2" color="text.secondary">
-            Auto-generate shopping lists from your courses, workouts, meal plans &amp; injuries — or create your own.
-          </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: '#a78bfa20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <ListAltIcon sx={{ fontSize: 20, color: '#a78bfa' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>Smart Shopping Lists</Typography>
+            <Typography variant="body2" color="text.secondary">
+              Auto-generate shopping lists from your courses, workouts, meal plans &amp; injuries — or create your own.
+            </Typography>
+          </Box>
         </Box>
       </Box>
 

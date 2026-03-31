@@ -91,25 +91,30 @@ export default function OrdersReviewsPage() {
     <Box sx={{ flex: 1, px: 3, py: 3, overflow: 'auto' }}>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 3, flexWrap: 'wrap' }}>
-        <Box>
-          <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>Orders &amp; Reviews</Typography>
-          <Typography variant="body2" color="text.secondary">
-            Track your orders, reorder favorites, and share reviews with the campus community.
-          </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: '#ec489920', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <ReceiptLongIcon sx={{ fontSize: 20, color: '#ec4899' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>Orders &amp; Reviews</Typography>
+            <Typography variant="body2" color="text.secondary">
+              Track your orders, reorder favorites, and share reviews with the campus community.
+            </Typography>
+          </Box>
         </Box>
       </Box>
 
       {/* Quick stats */}
       <Grid container spacing={1.5} sx={{ mb: 3 }}>
         {[
-          { label: 'Active Orders', value: activeOrders.length, color: '#42a5f5', icon: <LocalShippingIcon sx={{ fontSize: 20, color: '#fff' }} /> },
-          { label: 'Completed', value: orderHistory.filter((o) => o.status === 'delivered').length, color: '#43a047', icon: <ReceiptLongIcon sx={{ fontSize: 20, color: '#fff' }} /> },
-          { label: 'Reviews Written', value: reviews.length, color: '#ffa726', icon: <RateReviewIcon sx={{ fontSize: 20, color: '#fff' }} /> },
-          { label: 'Total Spent', value: `$${orders.reduce((s, o) => s + (o.status !== 'cancelled' ? o.total : 0), 0).toFixed(0)}`, color: '#ab47bc', icon: <ReceiptLongIcon sx={{ fontSize: 20, color: '#fff' }} /> },
+          { label: 'Active Orders', value: activeOrders.length, color: '#38bdf8', icon: <LocalShippingIcon sx={{ fontSize: 20 }} /> },
+          { label: 'Completed', value: orderHistory.filter((o) => o.status === 'delivered').length, color: '#10b981', icon: <ReceiptLongIcon sx={{ fontSize: 20 }} /> },
+          { label: 'Reviews Written', value: reviews.length, color: '#f59e0b', icon: <RateReviewIcon sx={{ fontSize: 20 }} /> },
+          { label: 'Total Spent', value: `$${orders.reduce((s, o) => s + (o.status !== 'cancelled' ? o.total : 0), 0).toFixed(0)}`, color: '#a78bfa', icon: <ReceiptLongIcon sx={{ fontSize: 20 }} /> },
         ].map((s) => (
           <Grid item xs={12} sm={6} md={3} key={s.label}>
             <Paper variant="outlined" sx={{ p: 2, borderRadius: 3, display: 'flex', gap: 1.5, alignItems: 'flex-start' }}>
-              <Avatar sx={{ bgcolor: s.color, width: 42, height: 42 }}>{s.icon}</Avatar>
+              <Avatar sx={{ bgcolor: `${s.color}20`, color: s.color, width: 42, height: 42 }}>{s.icon}</Avatar>
               <Box>
                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.3 }}>{s.label}</Typography>
                 <Typography variant="h5" sx={{ fontWeight: 700, lineHeight: 1.1 }}>{s.value}</Typography>

@@ -13,14 +13,9 @@ import { Text } from 'react-native';
 import { Card } from '@/components/common/Card';
 import { EmptyState } from '@/components/common/EmptyState';
 import { AppHeader } from '@/components/layout/AppHeader';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-};
+;
 
 // Mock certificates data
 const MOCK_CERTIFICATES = [
@@ -72,7 +67,7 @@ export function CertificatesScreen() {
   const renderCertificate = ({ item }: { item: any }) => (
     <TouchableOpacity style={styles.certificateCard}>
       <View style={styles.certificateIcon}>
-        <Ionicons name="ribbon" size={40} color={COLORS.primary} />
+        <Ionicons name="ribbon" size={40} color={T.primary2} />
       </View>
 
       <View style={styles.certificateContent}>
@@ -82,7 +77,7 @@ export function CertificatesScreen() {
 
         <View style={styles.metaRow}>
           <View style={styles.metaItem}>
-            <Ionicons name="calendar" size={14} color={COLORS.secondaryText} />
+            <Ionicons name="calendar" size={14} color={T.muted} />
             <Text style={styles.metaText}>
               {item.issueDate.toLocaleDateString('en-US', {
                 month: 'short',
@@ -106,13 +101,13 @@ export function CertificatesScreen() {
           style={styles.actionButton}
           onPress={() => handleShare(item)}
         >
-          <Ionicons name="share-social" size={18} color={COLORS.primary} />
+          <Ionicons name="share-social" size={18} color={T.primary2} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.actionButton}
           onPress={() => handleDownload(item)}
         >
-          <Ionicons name="download" size={18} color={COLORS.primary} />
+          <Ionicons name="download" size={18} color={T.primary2} />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -147,7 +142,7 @@ export function CertificatesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   listContent: {
     paddingHorizontal: 16,
@@ -161,19 +156,19 @@ const styles = StyleSheet.create({
   certificateCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     gap: 16,
   },
   certificateIcon: {
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: `${COLORS.primary}15`,
+    backgroundColor: `${T.primary2}15`,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -183,7 +178,7 @@ const styles = StyleSheet.create({
   courseName: {
     fontSize: 15,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 8,
   },
   metaRow: {
@@ -198,11 +193,11 @@ const styles = StyleSheet.create({
   },
   metaText: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   certNumber: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
     fontWeight: '500',
   },
   actions: {
@@ -213,7 +208,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: `${COLORS.primary}15`,
+    backgroundColor: `${T.primary2}15`,
     justifyContent: 'center',
     alignItems: 'center',
   },

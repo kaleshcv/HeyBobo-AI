@@ -13,16 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { useBudgetStore } from '@/store/budgetStore'
 import { AppHeader } from '@/components/layout/AppHeader'
-
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  card: '#FFFFFF',
-  border: '#E2E8F0',
-  danger: '#EF4444',
-}
+import T from '@/theme'
 
 export function BudgetExpensesScreen() {
   const insets = useSafeAreaInsets()
@@ -41,15 +32,15 @@ export function BudgetExpensesScreen() {
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
       education: '#3B82F6',
-      fitness: '#10B981',
-      food: '#F59E0B',
+      fitness: T.green,
+      food: T.orange,
       grooming: '#EC4899',
       health: '#8B5CF6',
       transport: '#06B6D4',
-      entertainment: '#EF4444',
-      other: '#6B7280',
+      entertainment: T.red,
+      other: T.muted,
     }
-    return colors[category] || COLORS.primary
+    return colors[category] || T.primary2
   }
 
   const handleAddExpense = () => {
@@ -97,7 +88,7 @@ export function BudgetExpensesScreen() {
             </View>
             <View>
               <Text style={styles.budgetLabel}>Remaining</Text>
-              <Text style={[styles.budgetAmount, { color: budgetRemaining > 0 ? '#10B981' : '#EF4444' }]}>
+              <Text style={[styles.budgetAmount, { color: budgetRemaining > 0 ? T.green : T.red }]}>
                 ${budgetRemaining.toFixed(2)}
               </Text>
             </View>
@@ -191,7 +182,7 @@ export function BudgetExpensesScreen() {
                 <Ionicons
                   name={alert.active ? 'eye' : 'eye-off'}
                   size={20}
-                  color={COLORS.primary}
+                  color={T.primary2}
                 />
               </View>
             ))
@@ -218,7 +209,7 @@ export function BudgetExpensesScreen() {
             <TextInput
               style={styles.input}
               placeholder="Amount"
-              placeholderTextColor={COLORS.secondaryText}
+              placeholderTextColor={T.muted}
               keyboardType="decimal-pad"
               value={newExpense.amount}
               onChangeText={(text) => setNewExpense({ ...newExpense, amount: text })}
@@ -226,7 +217,7 @@ export function BudgetExpensesScreen() {
             <TextInput
               style={styles.input}
               placeholder="Description"
-              placeholderTextColor={COLORS.secondaryText}
+              placeholderTextColor={T.muted}
               value={newExpense.description}
               onChangeText={(text) => setNewExpense({ ...newExpense, description: text })}
             />
@@ -248,14 +239,14 @@ export function BudgetExpensesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   content: {
     flex: 1,
     padding: 16,
   },
   budgetOverview: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     borderRadius: 12,
     padding: 16,
     marginBottom: 20,
@@ -285,7 +276,7 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#FFF',
+    backgroundColor: '#111827',
   },
   progressLabel: {
     color: '#FFF',
@@ -304,11 +295,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   seeAllText: {
     fontSize: 12,
-    color: COLORS.primary,
+    color: T.primary2,
     fontWeight: '600',
   },
   categoryRow: {
@@ -328,16 +319,16 @@ const styles = StyleSheet.create({
   categoryName: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   categoryLimit: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 2,
   },
   categoryBar: {
     height: 6,
-    backgroundColor: COLORS.border,
+    backgroundColor: T.border2,
     borderRadius: 3,
     overflow: 'hidden',
   },
@@ -349,7 +340,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   expenseIcon: {
     width: 40,
@@ -365,20 +356,20 @@ const styles = StyleSheet.create({
   expenseDescription: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   expenseCategory: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 2,
   },
   expenseAmount: {
     fontSize: 13,
     fontWeight: '700',
-    color: COLORS.danger,
+    color: T.red,
   },
   alertCard: {
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderRadius: 8,
     padding: 12,
     marginBottom: 8,
@@ -386,7 +377,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   alertInfo: {
     flex: 1,
@@ -394,16 +385,16 @@ const styles = StyleSheet.create({
   alertProduct: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   alertPrice: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 2,
   },
   emptyText: {
     fontSize: 13,
-    color: COLORS.secondaryText,
+    color: T.muted,
     textAlign: 'center',
     paddingVertical: 16,
   },
@@ -413,7 +404,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 4,
@@ -428,7 +419,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
@@ -436,17 +427,17 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 16,
   },
   input: {
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 12,
     fontSize: 14,
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 12,
   },
   modalButtons: {
@@ -460,14 +451,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelButton: {
-    backgroundColor: COLORS.border,
+    backgroundColor: T.border2,
   },
   cancelButtonText: {
-    color: COLORS.text,
+    color: T.text,
     fontWeight: '600',
   },
   addButton: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
   },
   addButtonText: {
     color: '#FFF',

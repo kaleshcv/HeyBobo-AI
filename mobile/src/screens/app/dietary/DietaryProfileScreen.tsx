@@ -14,14 +14,9 @@ import { useAppNavigation } from '@/navigation/useAppNavigation';
 import { Text } from 'react-native';
 import { Button } from '@/components/common/Button';
 import { Card } from '@/components/common/Card';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-};
+;
 
 const DIET_TYPES = ['Omnivore', 'Vegetarian', 'Vegan', 'Keto', 'Paleo'];
 const ALLERGIES = ['Nuts', 'Dairy', 'Gluten', 'Shellfish', 'Soy', 'Fish'];
@@ -52,7 +47,7 @@ export function DietaryProfileScreen() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+          <Ionicons name="arrow-back" size={24} color={T.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Dietary Profile</Text>
         <View style={{ width: 24 }} />
@@ -67,7 +62,7 @@ export function DietaryProfileScreen() {
             onPress={() => setShowDietPicker(true)}
           >
             <Text style={styles.selectorText}>{dietType}</Text>
-            <Ionicons name="chevron-down" size={20} color={COLORS.primary} />
+            <Ionicons name="chevron-down" size={20} color={T.primary2} />
           </TouchableOpacity>
 
           <View style={styles.dietTypesGrid}>
@@ -164,7 +159,7 @@ export function DietaryProfileScreen() {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Select Diet Type</Text>
               <TouchableOpacity onPress={() => setShowDietPicker(false)}>
-                <Ionicons name="close" size={24} color={COLORS.text} />
+                <Ionicons name="close" size={24} color={T.text} />
               </TouchableOpacity>
             </View>
             {DIET_TYPES.map((diet) => (
@@ -178,7 +173,7 @@ export function DietaryProfileScreen() {
               >
                 <Text style={styles.modalOptionText}>{diet}</Text>
                 {dietType === diet && (
-                  <Ionicons name="checkmark" size={20} color={COLORS.primary} />
+                  <Ionicons name="checkmark" size={20} color={T.primary2} />
                 )}
               </TouchableOpacity>
             ))}
@@ -192,7 +187,7 @@ export function DietaryProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   header: {
     flexDirection: 'row',
@@ -200,14 +195,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   content: {
     flex: 1,
@@ -217,7 +212,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 10,
   },
   selector: {
@@ -227,15 +222,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 12,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     borderRadius: 8,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     marginBottom: 12,
   },
   selectorText: {
     fontSize: 14,
     fontWeight: '500',
-    color: COLORS.text,
+    color: T.text,
   },
   dietTypesGrid: {
     flexDirection: 'row',
@@ -249,18 +244,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: '#fff',
+    borderColor: T.border2,
+    backgroundColor: '#111827',
     alignItems: 'center',
   },
   dietTypeButtonActive: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
+    backgroundColor: T.primary2,
+    borderColor: T.primary2,
   },
   dietTypeText: {
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   dietTypeTextActive: {
     color: '#fff',
@@ -275,37 +270,37 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: '#fff',
+    borderColor: T.border2,
+    backgroundColor: '#111827',
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
   },
   allergyChipActive: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
+    backgroundColor: T.primary2,
+    borderColor: T.primary2,
   },
   allergyChipText: {
     fontSize: 12,
     fontWeight: '500',
-    color: COLORS.text,
+    color: T.text,
   },
   allergyChipTextActive: {
     color: '#fff',
   },
   input: {
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 14,
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 8,
   },
   helperText: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   preferenceItem: {
     flexDirection: 'row',
@@ -316,29 +311,29 @@ const styles = StyleSheet.create({
   preferenceName: {
     fontSize: 14,
     fontWeight: '500',
-    color: COLORS.text,
+    color: T.text,
   },
   toggle: {
     width: 44,
     height: 24,
     borderRadius: 12,
-    backgroundColor: COLORS.border,
+    backgroundColor: T.border2,
     justifyContent: 'center',
     paddingHorizontal: 2,
   },
   toggleActive: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
   },
   toggleSwitch: {
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     position: 'absolute',
   },
   divider: {
     height: 1,
-    backgroundColor: COLORS.border,
+    backgroundColor: T.border2,
   },
   modalOverlay: {
     flex: 1,
@@ -346,7 +341,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modal: {
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     maxHeight: '80%',
@@ -358,12 +353,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   modalTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   modalOption: {
     flexDirection: 'row',
@@ -372,10 +367,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   modalOptionText: {
     fontSize: 14,
-    color: COLORS.text,
+    color: T.text,
   },
 });

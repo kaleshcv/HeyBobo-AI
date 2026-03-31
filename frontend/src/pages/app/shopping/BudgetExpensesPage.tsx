@@ -102,11 +102,16 @@ export default function BudgetExpensesPage() {
     <Box sx={{ flex: 1, px: 3, py: 3, overflow: 'auto' }}>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 3, flexWrap: 'wrap' }}>
-        <Box>
-          <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>Budget &amp; Expenses</Typography>
-          <Typography variant="body2" color="text.secondary">
-            Track your monthly spending, set category limits, and get alerts when prices drop.
-          </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: '#a78bfa20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <AccountBalanceWalletIcon sx={{ fontSize: 20, color: '#a78bfa' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>Budget &amp; Expenses</Typography>
+            <Typography variant="body2" color="text.secondary">
+              Track your monthly spending, set category limits, and get alerts when prices drop.
+            </Typography>
+          </Box>
         </Box>
       </Box>
 
@@ -145,10 +150,10 @@ export default function BudgetExpensesPage() {
           {/* Quick stats */}
           <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
             {[
-              { label: 'Avg/day', value: `$${avgDaily.toFixed(0)}`, icon: <TrendingUpIcon fontSize="small" /> },
-              { label: 'Days left', value: `${daysLeft}`, icon: <TrendingDownIcon fontSize="small" /> },
-              { label: 'Top spend', value: CATEGORY_LABELS[topCategory], icon: <WarningIcon fontSize="small" /> },
-              { label: 'Expenses', value: `${monthExpenses.length}`, icon: <AccountBalanceWalletIcon fontSize="small" /> },
+              { label: 'Avg/day', value: `$${avgDaily.toFixed(0)}`, icon: <TrendingUpIcon fontSize="small" sx={{ color: '#10b981' }} /> },
+              { label: 'Days left', value: `${daysLeft}`, icon: <TrendingDownIcon fontSize="small" sx={{ color: '#f43f5e' }} /> },
+              { label: 'Top spend', value: CATEGORY_LABELS[topCategory], icon: <WarningIcon fontSize="small" sx={{ color: '#f59e0b' }} /> },
+              { label: 'Expenses', value: `${monthExpenses.length}`, icon: <AccountBalanceWalletIcon fontSize="small" sx={{ color: '#a78bfa' }} /> },
             ].map((s) => (
               <Paper key={s.label} variant="outlined" sx={{ p: 1.5, minWidth: 100, textAlign: 'center', borderRadius: 3 }}>
                 <Box sx={{ color: 'text.secondary', mb: 0.3 }}>{s.icon}</Box>

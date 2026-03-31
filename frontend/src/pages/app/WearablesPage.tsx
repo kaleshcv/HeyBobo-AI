@@ -742,11 +742,16 @@ export default function WearablesPage() {
   return (
     <Box sx={{ py: 1.5, px: 1.5 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
-        <Box>
-          <Typography variant="h5" sx={{ fontWeight: 700, fontSize: 20 }}>Wearables</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ fontSize: 13 }}>
-            Connect and monitor health devices for real-time tracking.
-          </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: '#22d3ee20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <BluetoothIcon sx={{ fontSize: 22, color: '#22d3ee' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" sx={{ fontWeight: 700, fontSize: 20 }}>Wearables</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ fontSize: 13 }}>
+              Connect and monitor health devices for real-time tracking.
+            </Typography>
+          </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>
           {devices.length > 0 && (
@@ -781,17 +786,17 @@ export default function WearablesPage() {
             '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontSize: 13 },
           }}
         >
-          <Tab icon={<BluetoothConnectedIcon sx={{ fontSize: 16 }} />} iconPosition="start" label={`My Devices (${devices.length})`} />
+          <Tab icon={<BluetoothConnectedIcon sx={{ fontSize: 16, color: '#22d3ee' }} />} iconPosition="start" label={`My Devices (${devices.length})`} />
           <Tab
             icon={
               <Badge badgeContent={alerts.length} color="error" sx={{ '& .MuiBadge-badge': { fontSize: 9, height: 14, minWidth: 14 } }}>
-                <NotificationsActiveIcon sx={{ fontSize: 16 }} />
+                <NotificationsActiveIcon sx={{ fontSize: 16, color: '#f59e0b' }} />
               </Badge>
             }
             iconPosition="start"
             label="Alerts"
           />
-          <Tab icon={<PeopleIcon sx={{ fontSize: 16 }} />} iconPosition="start" label="Student Monitor (Admin)" />
+          <Tab icon={<PeopleIcon sx={{ fontSize: 16, color: '#ec4899' }} />} iconPosition="start" label="Student Monitor (Admin)" />
         </Tabs>
 
         <Box sx={{ p: 2 }}>

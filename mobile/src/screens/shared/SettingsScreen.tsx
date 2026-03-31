@@ -6,14 +6,9 @@ import { useAppNavigation } from '@/navigation/useAppNavigation';
 import { Text } from 'react-native';
 import { Card } from '@/components/common/Card';
 import { AppHeader } from '@/components/layout/AppHeader';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-};
+;
 
 const THEMES = ['Light', 'Dark', 'System'];
 
@@ -66,13 +61,13 @@ export function SettingsScreen() {
             onPress={() => setShowThemePicker(true)}
           >
             <View style={styles.settingContent}>
-              <Ionicons name="contrast" size={20} color={COLORS.primary} />
+              <Ionicons name="contrast" size={20} color={T.primary2} />
               <View style={styles.settingText}>
                 <Text style={styles.settingLabel}>Theme</Text>
                 <Text style={styles.settingValue}>{theme}</Text>
               </View>
             </View>
-            <Ionicons name="chevron-forward" size={20} color={COLORS.border} />
+            <Ionicons name="chevron-forward" size={20} color={T.border2} />
           </TouchableOpacity>
         </Card>
 
@@ -82,7 +77,7 @@ export function SettingsScreen() {
 
           <View style={styles.settingItem}>
             <View style={styles.settingContent}>
-              <Ionicons name="notifications" size={20} color={COLORS.primary} />
+              <Ionicons name="notifications" size={20} color={T.primary2} />
               <View style={styles.settingText}>
                 <Text style={styles.settingLabel}>Push Notifications</Text>
                 <Text style={styles.settingValue}>Get real-time alerts</Text>
@@ -97,7 +92,7 @@ export function SettingsScreen() {
 
           <View style={styles.settingItem}>
             <View style={styles.settingContent}>
-              <Ionicons name="mail" size={20} color={COLORS.primary} />
+              <Ionicons name="mail" size={20} color={T.primary2} />
               <View style={styles.settingText}>
                 <Text style={styles.settingLabel}>Email Notifications</Text>
                 <Text style={styles.settingValue}>Receive updates via email</Text>
@@ -112,7 +107,7 @@ export function SettingsScreen() {
 
           <View style={styles.settingItem}>
             <View style={styles.settingContent}>
-              <Ionicons name="alarm" size={20} color={COLORS.primary} />
+              <Ionicons name="alarm" size={20} color={T.primary2} />
               <View style={styles.settingText}>
                 <Text style={styles.settingLabel}>Course Reminders</Text>
                 <Text style={styles.settingValue}>Remind me to learn</Text>
@@ -137,30 +132,30 @@ export function SettingsScreen() {
 
           <TouchableOpacity style={styles.settingItem}>
             <View style={styles.settingContent}>
-              <Ionicons name="help-circle" size={20} color={COLORS.primary} />
+              <Ionicons name="help-circle" size={20} color={T.primary2} />
               <Text style={styles.settingLabel}>Help & Support</Text>
             </View>
-            <Ionicons name="arrow-forward" size={20} color={COLORS.border} />
+            <Ionicons name="arrow-forward" size={20} color={T.border2} />
           </TouchableOpacity>
 
           <View style={styles.divider} />
 
           <TouchableOpacity style={styles.settingItem}>
             <View style={styles.settingContent}>
-              <Ionicons name="document-text" size={20} color={COLORS.primary} />
+              <Ionicons name="document-text" size={20} color={T.primary2} />
               <Text style={styles.settingLabel}>Privacy Policy</Text>
             </View>
-            <Ionicons name="arrow-forward" size={20} color={COLORS.border} />
+            <Ionicons name="arrow-forward" size={20} color={T.border2} />
           </TouchableOpacity>
 
           <View style={styles.divider} />
 
           <TouchableOpacity style={styles.settingItem}>
             <View style={styles.settingContent}>
-              <Ionicons name="checkmark-done" size={20} color={COLORS.primary} />
+              <Ionicons name="checkmark-done" size={20} color={T.primary2} />
               <Text style={styles.settingLabel}>Terms of Service</Text>
             </View>
-            <Ionicons name="arrow-forward" size={20} color={COLORS.border} />
+            <Ionicons name="arrow-forward" size={20} color={T.border2} />
           </TouchableOpacity>
         </Card>
       </ScrollView>
@@ -172,7 +167,7 @@ export function SettingsScreen() {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Select Theme</Text>
               <TouchableOpacity onPress={() => setShowThemePicker(false)}>
-                <Ionicons name="close" size={24} color={COLORS.text} />
+                <Ionicons name="close" size={24} color={T.text} />
               </TouchableOpacity>
             </View>
             {THEMES.map((t) => (
@@ -186,7 +181,7 @@ export function SettingsScreen() {
               >
                 <Text style={styles.modalOptionText}>{t}</Text>
                 {theme === t && (
-                  <Ionicons name="checkmark" size={20} color={COLORS.primary} />
+                  <Ionicons name="checkmark" size={20} color={T.primary2} />
                 )}
               </TouchableOpacity>
             ))}
@@ -200,7 +195,7 @@ export function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   content: {
     flex: 1,
@@ -210,7 +205,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 13,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 14,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -233,16 +228,16 @@ const styles = StyleSheet.create({
   settingLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   settingValue: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 2,
   },
   divider: {
     height: 1,
-    backgroundColor: COLORS.border,
+    backgroundColor: T.border2,
   },
   infoItem: {
     flexDirection: 'row',
@@ -252,29 +247,29 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 14,
-    color: COLORS.text,
+    color: T.text,
   },
   infoValue: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: T.primary2,
   },
   toggle: {
     width: 44,
     height: 24,
     borderRadius: 12,
-    backgroundColor: COLORS.border,
+    backgroundColor: T.border2,
     justifyContent: 'center',
     paddingHorizontal: 2,
   },
   toggleActive: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
   },
   toggleSwitch: {
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     position: 'absolute',
   },
   modalOverlay: {
@@ -283,7 +278,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modal: {
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
   },
@@ -294,12 +289,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   modalTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   modalOption: {
     flexDirection: 'row',
@@ -308,10 +303,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   modalOptionText: {
     fontSize: 14,
-    color: COLORS.text,
+    color: T.text,
   },
 });

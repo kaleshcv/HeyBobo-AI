@@ -15,14 +15,9 @@ import { Card } from '@/components/common/Card';
 import { CameraView } from 'expo-camera';
 import { useGroomingStore } from '@/store/groomingStore';
 import type { SkinType } from '@/store/groomingStore';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-};
+;
 
 export function VisualAnalysisScreen() {
   const insets = useSafeAreaInsets();
@@ -61,9 +56,9 @@ export function VisualAnalysisScreen() {
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => { setResults(null); navigation.goBack(); }}>
-            <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+            <Ionicons name="arrow-back" size={24} color={T.text} />
           </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: COLORS.text }]}>Analysis Results</Text>
+          <Text style={[styles.headerTitle, { color: T.text }]}>Analysis Results</Text>
           <View style={{ width: 24 }} />
         </View>
 
@@ -72,8 +67,8 @@ export function VisualAnalysisScreen() {
           <Card padding="lg" style={{ marginBottom: 20 }}>
             <Text style={styles.resultLabel}>Skin Score</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <Text style={[styles.resultValue, { color: COLORS.primary }]}>{results.skinScore}</Text>
-              <Text style={{ fontSize: 14, color: COLORS.secondaryText }}>/100</Text>
+              <Text style={[styles.resultValue, { color: T.primary2 }]}>{results.skinScore}</Text>
+              <Text style={{ fontSize: 14, color: T.muted }}>/100</Text>
             </View>
           </Card>
 
@@ -94,7 +89,7 @@ export function VisualAnalysisScreen() {
                   idx > 0 && { marginTop: 8 },
                 ]}
               >
-                <Ionicons name="alert-circle" size={16} color={COLORS.primary} />
+                <Ionicons name="alert-circle" size={16} color={T.primary2} />
                 <Text style={styles.concernText}>{concern}</Text>
               </View>
             ))}
@@ -114,7 +109,7 @@ export function VisualAnalysisScreen() {
                 <Ionicons
                   name="checkmark-circle"
                   size={16}
-                  color={COLORS.primary}
+                  color={T.primary2}
                 />
                 <Text style={styles.recommendationText}>{rec}</Text>
               </View>
@@ -135,7 +130,7 @@ export function VisualAnalysisScreen() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+          <Ionicons name="arrow-back" size={24} color={T.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Visual Analysis</Text>
         <View style={{ width: 24 }} />
@@ -143,7 +138,7 @@ export function VisualAnalysisScreen() {
 
       {isAnalyzing ? (
         <View style={styles.analyzingContainer}>
-          <ActivityIndicator size="large" color={COLORS.primary} />
+          <ActivityIndicator size="large" color={T.primary2} />
           <Text style={styles.analyzingText}>Analyzing your photo...</Text>
         </View>
       ) : (
@@ -204,7 +199,7 @@ const styles = StyleSheet.create({
     height: 280,
     borderRadius: 140,
     borderWidth: 3,
-    borderColor: COLORS.primary,
+    borderColor: T.primary2,
   },
   footer: {
     paddingVertical: 20,
@@ -215,7 +210,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -237,25 +232,25 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingVertical: 16,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   resultLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginBottom: 8,
   },
   resultValue: {
     fontSize: 20,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   concernChip: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 8,
-    backgroundColor: `${COLORS.primary}08`,
+    backgroundColor: `${T.primary2}08`,
     borderRadius: 6,
     gap: 8,
   },
@@ -263,7 +258,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 13,
     fontWeight: '500',
-    color: COLORS.text,
+    color: T.text,
   },
   recommendationItem: {
     flexDirection: 'row',
@@ -273,7 +268,7 @@ const styles = StyleSheet.create({
   recommendationText: {
     flex: 1,
     fontSize: 13,
-    color: COLORS.secondaryText,
+    color: T.muted,
     lineHeight: 18,
   },
 });

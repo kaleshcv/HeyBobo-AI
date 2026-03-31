@@ -1,27 +1,38 @@
-import { MMKV } from 'react-native-mmkv'
+/**
+ * Storage layer — in-memory implementation for Expo Go compatibility.
+ * react-native-mmkv requires a native build (npx expo run:android).
+ * For Expo Go dev testing, we use a simple Map-based store.
+ */
 
-export const storage = new MMKV({ id: 'eduplatform-storage' })
+const memStore = new Map<string, string>()
 
 export const Storage = {
   get: <T>(key: string): T | null => {
-    const raw = storage.getString(key)
+    const raw = memStore.get(key)
     if (!raw) return null
     try { return JSON.parse(raw) as T } catch { return null }
   },
   set: (key: string, value: unknown): void => {
-    storage.set(key, JSON.stringify(value))
+    memStore.set(key, JSON.stringify(value))
   },
   delete: (key: string): void => {
-    storage.delete(key)
+    memStore.delete(key)
   },
   clearAll: (): void => {
-    storage.clearAll()
+    memStore.clear()
   },
 }
 
-// Async-compatible wrapper for React Query persister
+// Async wrapper — used by React Query persister & Zustand persist middleware
 export const asyncStorage = {
-  getItem:    (key: string) => Promise.resolve(storage.getString(key) ?? null),
-  setItem:    (key: string, value: string) => { storage.set(key, value); return Promise.resolve() },
-  removeItem: (key: string) => { storage.delete(key); return Promise.resolve() },
+  getItem:    (key: string): Promise<string | null> =>
+    Promise.resolve(memStore.get(key) ?? null),
+  setItem:    (key: string, value: string): Promise<void> => {
+    memStore.set(key, value)
+    return Promise.resolve()
+  },
+  removeItem: (key: string): Promise<void> => {
+    memStore.delete(key)
+    return Promise.resolve()
+  },
 }

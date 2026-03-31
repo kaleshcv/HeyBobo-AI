@@ -113,7 +113,12 @@ export default function StudyPlanTab({ selectedBookId, onTeach }: Props) {
 
   return (
     <Box sx={{ maxWidth: 700, mx: 'auto', p: 3 }}>
-      <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>Study Plans</Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
+        <Box sx={{ width: 32, height: 32, borderRadius: 2, bgcolor: '#7c4dff20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <CalendarTodayIcon sx={{ fontSize: 18, color: '#7c4dff' }} />
+        </Box>
+        <Typography variant="h6" sx={{ fontWeight: 600 }}>Study Plans</Typography>
+      </Box>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
         AI generates a personalized study plan from your textbook. Track your progress through each chapter.
       </Typography>

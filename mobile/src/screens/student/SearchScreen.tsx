@@ -12,14 +12,9 @@ import { useAppNavigation } from '@/navigation/useAppNavigation';
 import { Text } from 'react-native';
 import { EmptyState } from '@/components/common/EmptyState';
 import { useCourses } from '@/hooks/useCourses';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-};
+;
 
 const PRICE_FILTERS = [
   { label: 'All', value: null },
@@ -87,7 +82,7 @@ export function SearchScreen() {
       }
     >
       <View style={styles.resultThumbnail}>
-        <Ionicons name="play-circle" size={32} color={COLORS.primary} />
+        <Ionicons name="play-circle" size={32} color={T.primary2} />
       </View>
 
       <View style={styles.resultContent}>
@@ -113,7 +108,7 @@ export function SearchScreen() {
         </View>
       </View>
 
-      <Ionicons name="chevron-forward" size={20} color={COLORS.secondaryText} />
+      <Ionicons name="chevron-forward" size={20} color={T.muted} />
     </TouchableOpacity>
   );
 
@@ -122,7 +117,7 @@ export function SearchScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+          <Ionicons name="arrow-back" size={24} color={T.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Search Courses</Text>
         <View style={{ width: 24 }} />
@@ -131,17 +126,17 @@ export function SearchScreen() {
       {/* Search & Filters */}
       <View style={styles.searchBarContainer}>
         <View style={styles.searchBar}>
-          <Ionicons name="search" size={18} color={COLORS.secondaryText} />
+          <Ionicons name="search" size={18} color={T.muted} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search courses..."
             value={searchQuery}
             onChangeText={setSearchQuery}
-            placeholderTextColor={COLORS.secondaryText}
+            placeholderTextColor={T.muted}
           />
           {searchQuery ? (
             <TouchableOpacity onPress={() => setSearchQuery('')}>
-              <Ionicons name="close" size={18} color={COLORS.secondaryText} />
+              <Ionicons name="close" size={18} color={T.muted} />
             </TouchableOpacity>
           ) : null}
         </View>
@@ -150,7 +145,7 @@ export function SearchScreen() {
           style={styles.filterButton}
           onPress={() => setShowFilters(!showFilters)}
         >
-          <Ionicons name="funnel" size={20} color={COLORS.primary} />
+          <Ionicons name="funnel" size={20} color={T.primary2} />
         </TouchableOpacity>
       </View>
 
@@ -244,7 +239,7 @@ export function SearchScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   header: {
     flexDirection: 'row',
@@ -252,14 +247,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   searchBarContainer: {
     flexDirection: 'row',
@@ -271,38 +266,38 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderRadius: 8,
     paddingHorizontal: 12,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   searchInput: {
     flex: 1,
     paddingVertical: 10,
     fontSize: 14,
-    color: COLORS.text,
+    color: T.text,
     marginHorizontal: 8,
   },
   filterButton: {
     width: 40,
     height: 40,
     borderRadius: 8,
-    backgroundColor: `${COLORS.primary}15`,
+    backgroundColor: `${T.primary2}15`,
     justifyContent: 'center',
     alignItems: 'center',
   },
   filterPanel: {
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   filterTitle: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 8,
   },
   filterOptions: {
@@ -314,25 +309,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     borderRadius: 6,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
   },
   filterOptionActive: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
+    backgroundColor: T.primary2,
+    borderColor: T.primary2,
   },
   filterOptionText: {
     fontSize: 12,
     fontWeight: '500',
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   filterOptionTextActive: {
     color: '#fff',
   },
   resultsCount: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     paddingHorizontal: 16,
     paddingTop: 12,
     fontWeight: '500',
@@ -344,19 +339,19 @@ const styles = StyleSheet.create({
   resultCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderRadius: 8,
     padding: 12,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     gap: 12,
   },
   resultThumbnail: {
     width: 60,
     height: 60,
     borderRadius: 8,
-    backgroundColor: `${COLORS.primary}15`,
+    backgroundColor: `${T.primary2}15`,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -366,12 +361,12 @@ const styles = StyleSheet.create({
   resultTitle: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 4,
   },
   resultInstructor: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginBottom: 6,
   },
   resultFooter: {
@@ -387,16 +382,16 @@ const styles = StyleSheet.create({
   rating: {
     fontSize: 11,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   reviews: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   resultPrice: {
     fontSize: 12,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: T.primary2,
   },
   emptyContainer: {
     flex: 1,

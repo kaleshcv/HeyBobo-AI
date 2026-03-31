@@ -15,16 +15,9 @@ import { AppHeader } from '@/components/layout/AppHeader';
 import { useNutritionSummary, useMealLogs } from '@/hooks/useDietary';
 import { useDietaryProfileStore } from '@/store/dietaryProfileStore';
 import Svg, { Circle } from 'react-native-svg';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-  success: '#10B981',
-  warning: '#F59E0B',
-};
+;
 
 export function DietaryDashboardScreen() {
   const insets = useSafeAreaInsets();
@@ -48,7 +41,7 @@ export function DietaryDashboardScreen() {
             cx="70"
             cy="70"
             r={radius}
-            stroke={COLORS.border}
+            stroke={T.border2}
             strokeWidth="8"
             fill="none"
           />
@@ -56,7 +49,7 @@ export function DietaryDashboardScreen() {
             cx="70"
             cy="70"
             r={radius}
-            stroke={COLORS.primary}
+            stroke={T.primary2}
             strokeWidth="8"
             fill="none"
             strokeDasharray={circumference}
@@ -99,7 +92,7 @@ export function DietaryDashboardScreen() {
       onPress={() => navigation.navigate('MealLog')}
     >
       <View style={styles.mealIcon}>
-        <Ionicons name="fast-food" size={20} color={COLORS.primary} />
+        <Ionicons name="fast-food" size={20} color={T.primary2} />
       </View>
       <View style={styles.mealContent}>
         <Text style={styles.mealName}>{item.name}</Text>
@@ -129,7 +122,7 @@ export function DietaryDashboardScreen() {
                 <Text
                   style={[
                     styles.calorieInfoValue,
-                    { color: Math.max(0, calorieGoal - caloriesBurned) > 0 ? COLORS.success : COLORS.warning },
+                    { color: Math.max(0, calorieGoal - caloriesBurned) > 0 ? T.green : T.orange },
                   ]}
                 >
                   {Math.max(0, calorieGoal - caloriesBurned)}
@@ -143,8 +136,8 @@ export function DietaryDashboardScreen() {
         <Card padding="lg" style={{ marginBottom: 24 }}>
           <Text style={styles.sectionTitle}>Macronutrients</Text>
           {renderMacroBar('Protein', nutrition?.totalProtein || 45, 150, '#3B82F6')}
-          {renderMacroBar('Carbs', nutrition?.totalCarbs || 180, 250, '#F59E0B')}
-          {renderMacroBar('Fat', nutrition?.totalFat || 55, 70, '#EF4444')}
+          {renderMacroBar('Carbs', nutrition?.totalCarbs || 180, 250, T.orange)}
+          {renderMacroBar('Fat', nutrition?.totalFat || 55, 70, T.red)}
         </Card>
 
         {/* Water Tracker */}
@@ -170,7 +163,7 @@ export function DietaryDashboardScreen() {
                 <Ionicons
                   name="water"
                   size={14}
-                  color={idx < 6 ? '#3B82F6' : COLORS.border}
+                  color={idx < 6 ? '#3B82F6' : T.border2}
                 />
               </View>
             ))}
@@ -205,7 +198,7 @@ export function DietaryDashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   content: {
     flex: 1,
@@ -215,7 +208,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 12,
   },
   calorieSection: {
@@ -235,11 +228,11 @@ const styles = StyleSheet.create({
   calorieValue: {
     fontSize: 22,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   calorieLabel: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 2,
   },
   calorieInfo: {
@@ -253,12 +246,12 @@ const styles = StyleSheet.create({
   },
   calorieInfoLabel: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   calorieInfoValue: {
     fontSize: 14,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   macroBar: {
     marginBottom: 16,
@@ -272,16 +265,16 @@ const styles = StyleSheet.create({
   macroLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   macroValue: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   macroBarTrack: {
     height: 8,
-    backgroundColor: COLORS.border,
+    backgroundColor: T.border2,
     borderRadius: 4,
     overflow: 'hidden',
     marginBottom: 4,
@@ -292,7 +285,7 @@ const styles = StyleSheet.create({
   },
   macroGoal: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   waterHeader: {
     flexDirection: 'row',
@@ -303,14 +296,14 @@ const styles = StyleSheet.create({
   waterCount: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: T.primary2,
     marginTop: 4,
   },
   addWaterButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -323,7 +316,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -343,24 +336,24 @@ const styles = StyleSheet.create({
   addMealButton: {
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: T.primary2,
   },
   mealItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderRadius: 10,
     padding: 12,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     gap: 12,
   },
   mealIcon: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: `${COLORS.primary}15`,
+    backgroundColor: `${T.primary2}15`,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -370,16 +363,16 @@ const styles = StyleSheet.create({
   mealName: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   mealTime: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 2,
   },
   mealCalories: {
     fontSize: 13,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: T.primary2,
   },
 });

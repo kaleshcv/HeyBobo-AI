@@ -253,7 +253,12 @@ export default function QuizTab({ selectedBookId }: Props) {
   // Quiz list view
   return (
     <Box sx={{ maxWidth: 700, mx: 'auto', p: 3 }}>
-      <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>Quizzes</Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
+        <Box sx={{ width: 32, height: 32, borderRadius: 2, bgcolor: '#f59e0b20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <QuizIcon sx={{ fontSize: 18, color: '#f59e0b' }} />
+        </Box>
+        <Typography variant="h6" sx={{ fontWeight: 600 }}>Quizzes</Typography>
+      </Box>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
         AI generates quizzes from your textbook to test your understanding.
       </Typography>

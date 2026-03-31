@@ -12,15 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { useShoppingListStore } from '@/store/shoppingListStore'
 import { AppHeader } from '@/components/layout/AppHeader'
-
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  card: '#FFFFFF',
-  border: '#E2E8F0',
-}
+import T from '@/theme'
 
 export function ShoppingListsScreen() {
   const insets = useSafeAreaInsets()
@@ -63,7 +55,7 @@ export function ShoppingListsScreen() {
               {item.items.length} items • ${totalPrice.toFixed(2)}
             </Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={COLORS.secondaryText} />
+          <Ionicons name="chevron-forward" size={20} color={T.muted} />
         </View>
 
         {item.items.length > 0 && (
@@ -98,7 +90,7 @@ export function ShoppingListsScreen() {
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
           <View style={styles.emptyState}>
-            <Ionicons name="list-outline" size={48} color={COLORS.secondaryText} />
+            <Ionicons name="list-outline" size={48} color={T.muted} />
             <Text style={styles.emptyText}>No shopping lists yet</Text>
             <Text style={styles.emptySubtext}>Create one to get started</Text>
           </View>
@@ -124,7 +116,7 @@ export function ShoppingListsScreen() {
             <TextInput
               style={styles.input}
               placeholder="List name"
-              placeholderTextColor={COLORS.secondaryText}
+              placeholderTextColor={T.muted}
               value={newListName}
               onChangeText={setNewListName}
             />
@@ -152,18 +144,18 @@ export function ShoppingListsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   listContent: {
     padding: 16,
   },
   listCard: {
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   listHeader: {
     flexDirection: 'row',
@@ -181,11 +173,11 @@ const styles = StyleSheet.create({
   listName: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   listDetail: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 4,
     marginLeft: 28,
   },
@@ -194,17 +186,17 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 6,
-    backgroundColor: COLORS.border,
+    backgroundColor: T.border2,
     borderRadius: 3,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
   },
   progressText: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 6,
   },
   fab: {
@@ -213,7 +205,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 4,
@@ -230,12 +222,12 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginTop: 16,
   },
   emptySubtext: {
     fontSize: 14,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 8,
   },
   modalOverlay: {
@@ -244,7 +236,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
@@ -252,17 +244,17 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 16,
   },
   input: {
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 12,
     fontSize: 14,
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 20,
   },
   modalButtons: {
@@ -276,14 +268,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelButton: {
-    backgroundColor: COLORS.border,
+    backgroundColor: T.border2,
   },
   cancelButtonText: {
-    color: COLORS.text,
+    color: T.text,
     fontWeight: '600',
   },
   createButton: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
   },
   createButtonText: {
     color: '#FFF',

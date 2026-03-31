@@ -7,14 +7,9 @@ import { Text } from 'react-native';
 import { Card } from '@/components/common/Card';
 import { Button } from '@/components/common/Button';
 import { AppHeader } from '@/components/layout/AppHeader';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-};
+;
 
 const WEEK_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
@@ -32,7 +27,7 @@ export function MealPlannerScreen() {
     >
       <View style={styles.mealSlotHeader}>
         <Text style={styles.mealTypeLabel}>{mealType}</Text>
-        <Ionicons name="add" size={20} color={COLORS.primary} />
+        <Ionicons name="add" size={20} color={T.primary2} />
       </View>
       <Text style={styles.mealPlaceholder}>No meal planned</Text>
     </TouchableOpacity>
@@ -100,7 +95,7 @@ export function MealPlannerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   content: {
     flex: 1,
@@ -115,18 +110,18 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     marginRight: 8,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   dayButtonActive: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
+    backgroundColor: T.primary2,
+    borderColor: T.primary2,
   },
   dayText: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   dayTextActive: {
     color: '#fff',
@@ -137,11 +132,11 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   mealSlot: {
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderRadius: 12,
     padding: 14,
     borderWidth: 2,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     borderStyle: 'dashed',
   },
   mealSlotHeader: {
@@ -153,16 +148,16 @@ const styles = StyleSheet.create({
   mealTypeLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   mealPlaceholder: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 12,
   },
   summaryGrid: {
@@ -174,12 +169,12 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginBottom: 6,
   },
   summaryValue: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
 });

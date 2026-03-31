@@ -278,7 +278,9 @@ export default function NutritionTrackerPage() {
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <MonitorHeartIcon sx={{ fontSize: 28, color: '#4caf50' }} />
+          <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: '#f59e0b20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <MonitorHeartIcon sx={{ fontSize: 20, color: '#f59e0b' }} />
+          </Box>
           <Typography variant="h5" sx={{ fontWeight: 700 }}>Nutrition Tracker</Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
@@ -293,9 +295,9 @@ export default function NutritionTrackerPage() {
 
       {/* Tabs */}
       <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 2, '& .MuiTab-root': { minHeight: 40, textTransform: 'none' } }}>
-        <Tab icon={<TrendingUpIcon sx={{ fontSize: 18 }} />} iconPosition="start" label="Dashboard" />
-        <Tab icon={<RestaurantIcon sx={{ fontSize: 18 }} />} iconPosition="start" label="Food Diary" />
-        <Tab icon={<MedicationIcon sx={{ fontSize: 18 }} />} iconPosition="start" label="Supplements" />
+        <Tab icon={<TrendingUpIcon sx={{ fontSize: 18, color: '#10b981' }} />} iconPosition="start" label="Dashboard" />
+        <Tab icon={<RestaurantIcon sx={{ fontSize: 18, color: '#f59e0b' }} />} iconPosition="start" label="Food Diary" />
+        <Tab icon={<MedicationIcon sx={{ fontSize: 18, color: '#a78bfa' }} />} iconPosition="start" label="Supplements" />
       </Tabs>
 
       {loading && <LinearProgress sx={{ mb: 2 }} />}

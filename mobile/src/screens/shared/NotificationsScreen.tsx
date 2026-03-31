@@ -7,14 +7,9 @@ import { Text } from 'react-native';
 import { Button } from '@/components/common/Button';
 import { EmptyState } from '@/components/common/EmptyState';
 import { AppHeader } from '@/components/layout/AppHeader';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-};
+;
 
 const MOCK_NOTIFICATIONS = [
   {
@@ -83,7 +78,7 @@ export function NotificationsScreen() {
       onPress={() => handleMarkAsRead(item.id)}
     >
       <View style={styles.notificationIcon}>
-        <Ionicons name={item.icon as any} size={20} color={COLORS.primary} />
+        <Ionicons name={item.icon as any} size={20} color={T.primary2} />
         {!item.read && <View style={styles.unreadDot} />}
       </View>
 
@@ -149,7 +144,7 @@ export function NotificationsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   header: {
     flexDirection: 'row',
@@ -157,18 +152,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   unreadBadge: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 4,
   },
   listContent: {
@@ -183,23 +178,23 @@ const styles = StyleSheet.create({
   notificationCard: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderRadius: 10,
     padding: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     gap: 12,
   },
   notificationCardUnread: {
-    backgroundColor: `${COLORS.primary}08`,
-    borderColor: COLORS.primary,
+    backgroundColor: `${T.primary2}08`,
+    borderColor: T.primary2,
   },
   notificationIcon: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: `${COLORS.primary}15`,
+    backgroundColor: `${T.primary2}15`,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -208,7 +203,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     right: -2,
     top: -2,
   },
@@ -218,7 +213,7 @@ const styles = StyleSheet.create({
   notificationTitle: {
     fontSize: 13,
     fontWeight: '500',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 4,
   },
   notificationTitleUnread: {
@@ -226,17 +221,17 @@ const styles = StyleSheet.create({
   },
   notificationMessage: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginBottom: 4,
   },
   notificationTime: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   unreadIndicator: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
   },
 });

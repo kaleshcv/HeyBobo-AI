@@ -98,7 +98,6 @@ function StatCard({
   color: string;
   onClick?: () => void;
 }) {
-  const dk = useTheme().palette.mode === 'dark';
   return (
     <Paper
       variant="outlined"
@@ -115,7 +114,7 @@ function StatCard({
         }),
       }}
     >
-      <Avatar sx={{ bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5', color: color, width: 42, height: 42 }}>{icon}</Avatar>
+      <Avatar sx={{ bgcolor: `${color}22`, color: color, width: 42, height: 42 }}>{icon}</Avatar>
       <Box>
         <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
           {label}
@@ -274,13 +273,18 @@ export default function FitnessDashboardPage() {
   return (
     <Box sx={{ flex: 1, px: 3, py: 3, overflow: 'auto' }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 3, flexWrap: 'wrap' }}>
-        <Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box sx={{ width: 44, height: 44, borderRadius: 2, bgcolor: '#10b98120', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <FitnessCenterIcon sx={{ fontSize: 24, color: '#10b981' }} />
+          </Box>
+          <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>
             Fitness Dashboard
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Standalone training overview built only from Fitness module data: plans, logs, custom workouts, library coverage, and live workout sessions.
           </Typography>
+          </Box>
         </Box>
 
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
@@ -299,40 +303,40 @@ export default function FitnessDashboardPage() {
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            icon={<FitnessCenterIcon sx={{ color: '#fff', fontSize: 20 }} />}
+            icon={<FitnessCenterIcon sx={{ color: '#10b981', fontSize: 20 }} />}
             label="Training Load"
             value={`${trainingLoadScore}%`}
             sub={`${weeklyLogs.length} workouts · ${weeklyMinutes} min this week`}
-            color="#455a64"
+            color="#10b981"
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            icon={<CalendarMonthIcon sx={{ color: '#fff', fontSize: 20 }} />}
+            icon={<CalendarMonthIcon sx={{ color: '#38bdf8', fontSize: 20 }} />}
             label="Active Plan"
             value={activePlan ? activePlan.daysPerWeek : 0}
             sub={activePlan ? `${activePlan.name}` : 'No plan selected'}
-            color="#1e88e5"
+            color="#38bdf8"
             onClick={() => navigate('/app/fitness/workouts')}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            icon={<AutoFixHighIcon sx={{ color: '#fff', fontSize: 20 }} />}
+            icon={<AutoFixHighIcon sx={{ color: '#a78bfa', fontSize: 20 }} />}
             label="Custom Workouts"
             value={customWorkouts.length}
             sub={customWorkouts.length > 0 ? `${customWorkouts.reduce((sum, workout) => sum + workout.timesUsed, 0)} total uses` : 'Build your own templates'}
-            color="#8e24aa"
+            color="#a78bfa"
             onClick={() => navigate('/app/fitness/workouts')}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            icon={<PlayArrowIcon sx={{ color: '#fff', fontSize: 20 }} />}
+            icon={<PlayArrowIcon sx={{ color: '#06b6d4', fontSize: 20 }} />}
             label="Live Sessions"
             value={liveSessions.length}
             sub={`${totalReps} reps · ${Math.round(totalWorkoutSeconds / 60)} min total`}
-            color="#2e7d32"
+            color="#06b6d4"
             onClick={() => navigate('/app/fitness/workouts')}
           />
         </Grid>

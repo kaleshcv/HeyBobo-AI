@@ -1,13 +1,11 @@
 import React, { useEffect } from 'react'
+import { Platform } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
+import { QueryClientProvider } from '@tanstack/react-query'
 import * as Notifications from 'expo-notifications'
-import * as Device from 'expo-device'
-import Constants from 'expo-constants'
 
-// Use the MMKV-backed queryClient + persister (no AsyncStorage dependency)
-import { queryClient, persister } from '@/lib/queryClient'
+import { queryClient } from '@/lib/queryClient'
 import { RootNavigator } from '@/navigation/RootNavigator'
 
 Notifications.setNotificationHandler({
@@ -18,54 +16,33 @@ Notifications.setNotificationHandler({
   }),
 })
 
-async function registerForPushNotifications() {
-  if (!Device.isDevice) return // emulator — skip silently
-
+async function setupNotifications() {
   try {
     const { status: existing } = await Notifications.getPermissionsAsync()
     const { status } = existing !== 'granted'
       ? await Notifications.requestPermissionsAsync()
       : { status: existing }
-
     if (status !== 'granted') return
-
-    const projectId =
-      Constants.expoConfig?.extra?.eas?.projectId ??
-      Constants.easConfig?.projectId
-
-    if (!projectId) return
-
-    const token = await Notifications.getExpoPushTokenAsync({ projectId })
-    console.log('[Push] token:', token.data)
-
-    if (Device.osName === 'Android') {
+    if (Platform.OS === 'android') {
       await Notifications.setNotificationChannelAsync('default', {
-        name:             'default',
-        importance:       Notifications.AndroidImportance.MAX,
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
         vibrationPattern: [0, 250, 250, 250],
-        lightColor:       '#6366F1',
+        lightColor: '#6366F1',
       })
     }
-  } catch (err) {
-    // best-effort — don't crash the app
-    console.warn('[Push] registration skipped:', err)
-  }
+  } catch { /* best-effort */ }
 }
 
 export default function App() {
-  useEffect(() => {
-    registerForPushNotifications()
-  }, [])
+  useEffect(() => { setupNotifications() }, [])
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <PersistQueryClientProvider
-          client={queryClient}
-          persistOptions={{ persister }}
-        >
+        <QueryClientProvider client={queryClient}>
           <RootNavigator />
-        </PersistQueryClientProvider>
+        </QueryClientProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   )

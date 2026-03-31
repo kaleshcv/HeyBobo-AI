@@ -12,17 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { useCampusMarketplaceStore } from '@/store/campusMarketplaceStore'
 import { AppHeader } from '@/components/layout/AppHeader'
-
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  card: '#FFFFFF',
-  border: '#E2E8F0',
-  success: '#10B981',
-  warning: '#F59E0B',
-}
+import T from '@/theme'
 
 const CATEGORIES = ['all', 'textbooks', 'electronics', 'fitness-equipment', 'study-supplies', 'lab-materials', 'other'] as const
 
@@ -59,7 +49,7 @@ export function CampusMarketplaceScreen() {
   const renderListingCard = ({ item }: { item: any }) => (
     <TouchableOpacity style={styles.listingCard}>
       <View style={styles.imagePlaceholder}>
-        <Ionicons name="image-outline" size={32} color={COLORS.border} />
+        <Ionicons name="image-outline" size={32} color={T.border2} />
       </View>
       <View style={styles.listingInfo}>
         <Text style={styles.listingTitle} numberOfLines={2}>
@@ -73,7 +63,7 @@ export function CampusMarketplaceScreen() {
           <Text style={styles.originalPrice}>${item.originalPrice}</Text>
         </View>
         <View style={styles.sellerRow}>
-          <Ionicons name="person-circle" size={16} color={COLORS.secondaryText} />
+          <Ionicons name="person-circle" size={16} color={T.muted} />
           <Text style={styles.sellerName} numberOfLines={1}>
             {item.seller.name}
           </Text>
@@ -91,11 +81,11 @@ export function CampusMarketplaceScreen() {
       <AppHeader title="Campus Marketplace" />
 
       <View style={styles.searchContainer}>
-        <Ionicons name="search" size={20} color={COLORS.secondaryText} />
+        <Ionicons name="search" size={20} color={T.muted} />
         <TextInput
           style={styles.searchInput}
           placeholder="Search listings..."
-          placeholderTextColor={COLORS.secondaryText}
+          placeholderTextColor={T.muted}
           value={searchQuery}
           onChangeText={setSearch}
         />
@@ -119,7 +109,7 @@ export function CampusMarketplaceScreen() {
         columnWrapperStyle={styles.columnWrapper}
         ListEmptyComponent={
           <View style={styles.emptyState}>
-            <Ionicons name="storefront-outline" size={48} color={COLORS.secondaryText} />
+            <Ionicons name="storefront-outline" size={48} color={T.muted} />
             <Text style={styles.emptyText}>No listings found</Text>
           </View>
         }
@@ -135,25 +125,25 @@ export function CampusMarketplaceScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderRadius: 8,
     paddingHorizontal: 12,
     marginHorizontal: 16,
     marginVertical: 12,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   searchInput: {
     flex: 1,
     paddingVertical: 10,
     marginLeft: 8,
     fontSize: 14,
-    color: COLORS.text,
+    color: T.text,
   },
   categoryScroll: {
     paddingHorizontal: 16,
@@ -166,18 +156,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 6,
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   categoryChipActive: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
+    backgroundColor: T.primary2,
+    borderColor: T.primary2,
   },
   categoryChipText: {
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   categoryChipTextActive: {
     color: '#FFF',
@@ -192,16 +182,16 @@ const styles = StyleSheet.create({
   },
   listingCard: {
     flex: 1,
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderRadius: 10,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   imagePlaceholder: {
     width: '100%',
     height: 120,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -211,12 +201,12 @@ const styles = StyleSheet.create({
   listingTitle: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 6,
   },
   conditionBadge: {
     alignSelf: 'flex-start',
-    backgroundColor: COLORS.warning,
+    backgroundColor: T.orange,
     borderRadius: 4,
     paddingHorizontal: 6,
     paddingVertical: 2,
@@ -236,11 +226,11 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: T.primary2,
   },
   originalPrice: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     textDecorationLine: 'line-through',
   },
   sellerRow: {
@@ -251,7 +241,7 @@ const styles = StyleSheet.create({
   sellerName: {
     flex: 1,
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   ratingBadge: {
     flexDirection: 'row',
@@ -260,7 +250,7 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     fontSize: 10,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   fab: {
     position: 'absolute',
@@ -268,7 +258,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 4,
@@ -285,7 +275,7 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginTop: 16,
   },
 })

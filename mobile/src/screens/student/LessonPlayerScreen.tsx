@@ -15,16 +15,11 @@ import { Button } from '@/components/common/Button';
 import { Card } from '@/components/common/Card';
 import { useUpdateProgress, useCompleteLesson, useToggleBookmark } from '@/hooks/useProgress';
 import { useCourseContent } from '@/hooks/useCourses';
+import T from '@/theme'
 // expo-video Video component - use VideoView in newer Expo SDK
 // import { VideoView } from 'expo-video'; // uncomment when upgrading
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-};
+;
 
 export function LessonPlayerScreen() {
   const insets = useSafeAreaInsets();
@@ -98,7 +93,7 @@ export function LessonPlayerScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+          <Ionicons name="arrow-back" size={24} color={T.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle} numberOfLines={1}>
           {lesson.title}
@@ -107,7 +102,7 @@ export function LessonPlayerScreen() {
           <Ionicons
             name={isBookmarked ? 'bookmark' : 'bookmark-outline'}
             size={24}
-            color={COLORS.primary}
+            color={T.primary2}
           />
         </TouchableOpacity>
       </View>
@@ -137,7 +132,7 @@ export function LessonPlayerScreen() {
             <View>
               <Text style={styles.lessonTitle}>{lesson.title}</Text>
               <View style={styles.lessonMeta}>
-                <Ionicons name="time" size={14} color={COLORS.secondaryText} />
+                <Ionicons name="time" size={14} color={T.muted} />
                 <Text style={styles.metaText}>{lesson.duration || 'N/A'}</Text>
               </View>
             </View>
@@ -175,13 +170,13 @@ export function LessonPlayerScreen() {
                         : 'download'
                   }
                   size={18}
-                  color={COLORS.primary}
+                  color={T.primary2}
                 />
                 <View style={styles.resourceContent}>
                   <Text style={styles.resourceName}>{resource.name}</Text>
                   <Text style={styles.resourceType}>{resource.type?.toUpperCase()}</Text>
                 </View>
-                <Ionicons name="download" size={18} color={COLORS.primary} />
+                <Ionicons name="download" size={18} color={T.primary2} />
               </TouchableOpacity>
             ))}
           </View>
@@ -215,7 +210,7 @@ export function LessonPlayerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   header: {
     flexDirection: 'row',
@@ -223,15 +218,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   headerTitle: {
     flex: 1,
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginHorizontal: 12,
   },
   content: {
@@ -241,7 +236,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 16,
-    color: COLORS.secondaryText,
+    color: T.muted,
     textAlign: 'center',
     marginTop: 20,
   },
@@ -257,11 +252,11 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 3,
-    backgroundColor: `${COLORS.primary}20`,
+    backgroundColor: `${T.primary2}20`,
   },
   progressFill: {
     height: '100%',
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
   },
   lessonHeader: {
     flexDirection: 'row',
@@ -272,7 +267,7 @@ const styles = StyleSheet.create({
   lessonTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 8,
   },
   lessonMeta: {
@@ -282,14 +277,14 @@ const styles = StyleSheet.create({
   },
   metaText: {
     fontSize: 14,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   completedBadge: {
     padding: 8,
   },
   description: {
     fontSize: 14,
-    color: COLORS.secondaryText,
+    color: T.muted,
     lineHeight: 20,
     marginBottom: 16,
   },
@@ -299,19 +294,19 @@ const styles = StyleSheet.create({
   resourcesTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 12,
   },
   resourceItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 8,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     gap: 12,
   },
   resourceContent: {
@@ -320,31 +315,31 @@ const styles = StyleSheet.create({
   resourceName: {
     fontSize: 14,
     fontWeight: '500',
-    color: COLORS.text,
+    color: T.text,
   },
   resourceType: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 2,
   },
   notesTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 12,
   },
   notesInput: {
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 16,
-    backgroundColor: `${COLORS.primary}05`,
+    backgroundColor: `${T.primary2}05`,
     minHeight: 100,
   },
   placeholderText: {
     fontSize: 14,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   navigationContainer: {
     marginBottom: 32,

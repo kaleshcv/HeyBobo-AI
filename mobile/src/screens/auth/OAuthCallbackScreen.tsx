@@ -4,6 +4,7 @@ import { useNavigation, useRoute } from '@react-navigation/native'
 import * as Linking from 'expo-linking'
 import { useAuthStore }  from '@/store/authStore'
 import { authApi }       from '@/api'
+import T from '@/theme'
 
 export function OAuthCallbackScreen() {
   const navigation = useNavigation<any>()
@@ -41,6 +42,6 @@ export function OAuthCallbackScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF' },
-  text:      { marginTop: 16, fontSize: 15, color: '#64748B' },
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: T.surface },
+  text:      { marginTop: 16, fontSize: 15, color: T.muted },
 })

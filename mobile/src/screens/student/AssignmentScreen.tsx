@@ -14,16 +14,9 @@ import { Text } from 'react-native';
 import { Button } from '@/components/common/Button';
 import { Card } from '@/components/common/Card';
 import * as DocumentPicker from 'expo-document-picker';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-  success: '#10B981',
-  warning: '#F59E0B',
-};
+;
 
 export function AssignmentScreen() {
   const insets = useSafeAreaInsets();
@@ -113,7 +106,7 @@ export function AssignmentScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+          <Ionicons name="arrow-back" size={24} color={T.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Assignment</Text>
         <View style={{ width: 24 }} />
@@ -129,20 +122,20 @@ export function AssignmentScreen() {
             </View>
             {assignment.submitted ? (
               <View style={styles.submittedBadge}>
-                <Ionicons name="checkmark-circle" size={24} color={COLORS.success} />
+                <Ionicons name="checkmark-circle" size={24} color={T.green} />
               </View>
             ) : null}
           </View>
 
           <View style={styles.detailsGrid}>
             <View style={styles.detailItem}>
-              <Ionicons name="calendar" size={16} color={COLORS.primary} />
+              <Ionicons name="calendar" size={16} color={T.primary2} />
               <View style={{ flex: 1, marginLeft: 12 }}>
                 <Text style={styles.detailLabel}>Due Date</Text>
                 <Text
                   style={[
                     styles.detailValue,
-                    isDueSoon && { color: COLORS.warning },
+                    isDueSoon && { color: T.orange },
                   ]}
                 >
                   {formatDate(assignment.dueDate)}
@@ -151,7 +144,7 @@ export function AssignmentScreen() {
             </View>
 
             <View style={styles.detailItem}>
-              <Ionicons name="document" size={16} color={COLORS.primary} />
+              <Ionicons name="document" size={16} color={T.primary2} />
               <View style={{ flex: 1, marginLeft: 12 }}>
                 <Text style={styles.detailLabel}>Status</Text>
                 <Text style={styles.detailValue}>
@@ -179,7 +172,7 @@ export function AssignmentScreen() {
                 onChangeText={setSubmissionText}
                 multiline
                 numberOfLines={8}
-                placeholderTextColor={COLORS.secondaryText}
+                placeholderTextColor={T.muted}
                 textAlignVertical="top"
               />
 
@@ -192,7 +185,7 @@ export function AssignmentScreen() {
                     style={styles.attachButton}
                     onPress={handleAttachFile}
                   >
-                    <Ionicons name="attach" size={16} color={COLORS.primary} />
+                    <Ionicons name="attach" size={16} color={T.primary2} />
                     <Text style={styles.attachButtonText}>Add File</Text>
                   </TouchableOpacity>
                 </View>
@@ -204,7 +197,7 @@ export function AssignmentScreen() {
                         <Ionicons
                           name="document"
                           size={16}
-                          color={COLORS.primary}
+                          color={T.primary2}
                         />
                         <View style={styles.fileInfo}>
                           <Text style={styles.fileName}>{file.name}</Text>
@@ -215,7 +208,7 @@ export function AssignmentScreen() {
                         <TouchableOpacity
                           onPress={() => handleRemoveFile(file.id)}
                         >
-                          <Ionicons name="close" size={20} color={COLORS.primary} />
+                          <Ionicons name="close" size={20} color={T.primary2} />
                         </TouchableOpacity>
                       </View>
                     ))}
@@ -225,7 +218,7 @@ export function AssignmentScreen() {
                     style={styles.uploadPlaceholder}
                     onPress={handleAttachFile}
                   >
-                    <Ionicons name="cloud-upload" size={24} color={COLORS.primary} />
+                    <Ionicons name="cloud-upload" size={24} color={T.primary2} />
                     <Text style={styles.uploadText}>Tap to attach files</Text>
                   </TouchableOpacity>
                 )}
@@ -249,7 +242,7 @@ export function AssignmentScreen() {
 
             <Card padding="lg">
               <View style={styles.submissionItem}>
-                <Ionicons name="checkmark-circle" size={24} color={COLORS.success} />
+                <Ionicons name="checkmark-circle" size={24} color={T.green} />
                 <View style={{ flex: 1, marginLeft: 12 }}>
                   <Text style={styles.submissionDate}>
                     Submitted on {formatDate(new Date(assignment.submissionDate!))}
@@ -279,7 +272,7 @@ export function AssignmentScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   header: {
     flexDirection: 'row',
@@ -287,14 +280,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   content: {
     flex: 1,
@@ -310,13 +303,13 @@ const styles = StyleSheet.create({
   assignmentTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 6,
   },
   pointsText: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: T.primary2,
   },
   submittedBadge: {
     padding: 8,
@@ -327,7 +320,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   detailItem: {
     flexDirection: 'row',
@@ -335,24 +328,24 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginBottom: 4,
   },
   detailValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   descriptionTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 8,
     marginTop: 16,
   },
   description: {
     fontSize: 14,
-    color: COLORS.secondaryText,
+    color: T.muted,
     lineHeight: 20,
   },
   formSection: {
@@ -362,28 +355,28 @@ const styles = StyleSheet.create({
   formTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 16,
   },
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 12,
   },
   textArea: {
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 12,
-    color: COLORS.text,
+    color: T.text,
     fontSize: 14,
     fontFamily: 'System',
   },
   divider: {
     height: 1,
-    backgroundColor: COLORS.border,
+    backgroundColor: T.border2,
     marginVertical: 16,
   },
   filesSection: {
@@ -400,14 +393,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: `${COLORS.primary}15`,
+    backgroundColor: `${T.primary2}15`,
     borderRadius: 6,
     gap: 6,
   },
   attachButtonText: {
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: T.primary2,
   },
   filesList: {
     gap: 8,
@@ -418,9 +411,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     borderRadius: 8,
-    backgroundColor: `${COLORS.primary}05`,
+    backgroundColor: `${T.primary2}05`,
     gap: 10,
   },
   fileInfo: {
@@ -429,25 +422,25 @@ const styles = StyleSheet.create({
   fileName: {
     fontSize: 13,
     fontWeight: '500',
-    color: COLORS.text,
+    color: T.text,
   },
   fileSize: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 2,
   },
   uploadPlaceholder: {
     alignItems: 'center',
     paddingVertical: 32,
     borderWidth: 2,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     borderRadius: 8,
     borderStyle: 'dashed',
-    backgroundColor: `${COLORS.primary}05`,
+    backgroundColor: `${T.primary2}05`,
   },
   uploadText: {
     fontSize: 14,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 8,
   },
   historySection: {
@@ -461,28 +454,28 @@ const styles = StyleSheet.create({
   submissionDate: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 6,
   },
   grade: {
     fontSize: 13,
-    color: COLORS.primary,
+    color: T.primary2,
     fontWeight: '600',
   },
   feedbackBox: {
     paddingTop: 16,
     borderTopWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   feedbackTitle: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 8,
   },
   feedbackText: {
     fontSize: 13,
-    color: COLORS.secondaryText,
+    color: T.muted,
     lineHeight: 20,
   },
 });

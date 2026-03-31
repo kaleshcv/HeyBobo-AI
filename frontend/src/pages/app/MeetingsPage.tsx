@@ -969,9 +969,14 @@ export default function MeetingsPage() {
     <Box sx={{ p: 3, px: 4 }}>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-        <Box>
-          <Typography variant="h5" fontWeight={700}>Meetings</Typography>
-          <Typography variant="body2" color="text.secondary">Create, schedule and join live meetings</Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: '#ec489920', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <VideocamIcon sx={{ fontSize: 22, color: '#ec4899' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" fontWeight={700}>Meetings</Typography>
+            <Typography variant="body2" color="text.secondary">Create, schedule and join live meetings</Typography>
+          </Box>
         </Box>
         <Stack direction="row" spacing={1}>
           <Button variant="outlined" startIcon={<KeyboardIcon />} onClick={() => setJoinCodeOpen(true)}>

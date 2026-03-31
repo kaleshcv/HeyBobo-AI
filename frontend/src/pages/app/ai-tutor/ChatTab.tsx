@@ -92,7 +92,7 @@ function MessageBubble({ message, isSpeaking, onSpeak, onStopSpeaking }: { messa
   const isUser = message.role === 'user';
   return (
     <Box sx={{ display: 'flex', gap: 1.5, py: 2, px: { xs: 2, md: 0 }, maxWidth: 768, mx: 'auto', width: '100%' }}>
-      <Avatar sx={{ width: 28, height: 28, bgcolor: isUser ? (dk ? 'rgba(255,255,255,0.15)' : '#9e9e9e') : (dk ? '#1A2B3C' : '#616161'), fontSize: 12, fontWeight: 600, flexShrink: 0, mt: 0.5 }}>
+      <Avatar sx={{ width: 28, height: 28, bgcolor: isUser ? (dk ? 'rgba(255,255,255,0.15)' : '#9e9e9e') : '#7c4dff20', fontSize: 12, fontWeight: 600, flexShrink: 0, mt: 0.5, color: isUser ? '#fff' : '#7c4dff' }}>
         {isUser ? 'U' : <SmartToyIcon sx={{ fontSize: 16 }} />}
       </Avatar>
       <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -251,7 +251,8 @@ export default function ChatTab({ selectedBookId, injectedLesson, onLessonConsum
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, py: 1, borderBottom: '1px solid', borderColor: 'divider' }}>
         <Tooltip title="Chat history"><IconButton size="small" onClick={() => setHistoryOpen(true)} sx={{ color: 'text.secondary' }}><HistoryIcon fontSize="small" /></IconButton></Tooltip>
         <Tooltip title="New chat"><IconButton size="small" onClick={handleNewChat} sx={{ color: 'text.secondary' }}><AddIcon fontSize="small" /></IconButton></Tooltip>
-        <Typography variant="subtitle2" sx={{ color: 'text.primary', fontWeight: 600, flex: 1 }}>Chat</Typography>
+        <SmartToyIcon sx={{ fontSize: 18, color: '#7c4dff' }} />
+        <Typography variant="subtitle2" sx={{ color: 'text.primary', fontWeight: 600, flex: 1 }}>AI Tutor</Typography>
         {activeBook && <Chip icon={<PictureAsPdfIcon sx={{ fontSize: 14 }} />} label={activeBook.name} size="small" sx={{ fontSize: 11, maxWidth: 180 }} />}
       </Box>
 

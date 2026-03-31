@@ -20,11 +20,11 @@ import ProgressTab from './ai-tutor/ProgressTab';
 import ChatTab from './ai-tutor/ChatTab';
 
 const tabs = [
-  { label: 'Textbooks', icon: <MenuBookIcon sx={{ fontSize: 18 }} /> },
-  { label: 'Study Plans', icon: <EventNoteIcon sx={{ fontSize: 18 }} /> },
-  { label: 'Quizzes', icon: <QuizIcon sx={{ fontSize: 18 }} /> },
-  { label: 'Progress', icon: <TrendingUpIcon sx={{ fontSize: 18 }} /> },
-  { label: 'Chat', icon: <ChatIcon sx={{ fontSize: 18 }} /> },
+  { label: 'Textbooks', icon: <MenuBookIcon sx={{ fontSize: 18, color: '#38bdf8' }} /> },
+  { label: 'Study Plans', icon: <EventNoteIcon sx={{ fontSize: 18, color: '#a78bfa' }} /> },
+  { label: 'Quizzes', icon: <QuizIcon sx={{ fontSize: 18, color: '#f59e0b' }} /> },
+  { label: 'Progress', icon: <TrendingUpIcon sx={{ fontSize: 18, color: '#10b981' }} /> },
+  { label: 'Chat', icon: <ChatIcon sx={{ fontSize: 18, color: '#7c4dff' }} /> },
 ];
 
 export default function AITutorPage() {
@@ -46,8 +46,10 @@ export default function AITutorPage() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: '100vh' }}>
       {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2.5, pt: 2, pb: 0.5 }}>
-        <SmartToyIcon sx={{ fontSize: 24, color: '#7c4dff' }} />
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 2.5, pt: 2, pb: 0.5 }}>
+        <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: '#7c4dff20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <SmartToyIcon sx={{ fontSize: 22, color: '#7c4dff' }} />
+        </Box>
         <Typography variant="h6" sx={{ fontWeight: 700 }}>AI Tutor</Typography>
       </Box>
 

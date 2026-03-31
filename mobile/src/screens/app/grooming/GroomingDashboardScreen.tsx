@@ -9,23 +9,15 @@ import { Card } from '@/components/common/Card';
 import { AppHeader } from '@/components/layout/AppHeader';
 import { useGroomingStore } from '@/store/groomingStore';
 import type { RecommendationCategory } from '@/store/groomingStore';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-  success: '#10B981',
-  warning: '#F59E0B',
-  error: '#EF4444',
-};
+;
 
 const CATEGORY_COLORS: Record<RecommendationCategory, string> = {
   Skincare: '#EC4899',
-  Haircare: '#F97316',
-  Lifestyle: '#10B981',
-  Grooming: '#6366F1',
+  Haircare: T.orange,
+  Lifestyle: T.green,
+  Grooming: T.primary2,
 };
 
 const CATEGORY_ICONS: Record<RecommendationCategory, any> = {
@@ -39,12 +31,12 @@ function ScoreRing({ score }: { score: number }) {
   const radius = 42;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (score / 100) * circumference;
-  const color = score >= 75 ? COLORS.success : score >= 50 ? COLORS.warning : COLORS.error;
+  const color = score >= 75 ? T.green : score >= 50 ? T.orange : T.red;
 
   return (
     <View style={styles.scoreRingWrapper}>
       <Svg width={100} height={100} viewBox="0 0 100 100">
-        <Circle cx="50" cy="50" r={radius} stroke={COLORS.border} strokeWidth="6" fill="none" />
+        <Circle cx="50" cy="50" r={radius} stroke={T.border2} strokeWidth="6" fill="none" />
         <Circle
           cx="50" cy="50" r={radius}
           stroke={color} strokeWidth="6" fill="none"
@@ -114,7 +106,7 @@ export function GroomingDashboardScreen() {
               { icon: 'person-outline', label: 'Face', value: profile.faceShape },
             ].map((item) => (
               <View key={item.label} style={styles.profileChip}>
-                <Ionicons name={item.icon as any} size={16} color={COLORS.primary} />
+                <Ionicons name={item.icon as any} size={16} color={T.primary2} />
                 <View>
                   <Text style={styles.profileChipLabel}>{item.label}</Text>
                   <Text style={styles.profileChipValue}>{item.value}</Text>
@@ -137,10 +129,10 @@ export function GroomingDashboardScreen() {
         {/* ── Quick Stats ───────────────────────────────────────────────────── */}
         <View style={styles.statsGrid}>
           {[
-            { label: 'Tips', value: stats.total, icon: 'bulb', color: COLORS.primary },
+            { label: 'Tips', value: stats.total, icon: 'bulb', color: T.primary2 },
             { label: 'Saved', value: stats.saved, icon: 'bookmark', color: '#EC4899' },
-            { label: 'Analyses', value: analysisHistory.length, icon: 'scan', color: COLORS.success },
-            { label: 'Skin Score', value: latestAnalysis?.skinScore ?? '—', icon: 'star', color: COLORS.warning },
+            { label: 'Analyses', value: analysisHistory.length, icon: 'scan', color: T.green },
+            { label: 'Skin Score', value: latestAnalysis?.skinScore ?? '—', icon: 'star', color: T.orange },
           ].map((stat) => (
             <Card key={stat.label} padding="md" style={styles.statCard}>
               <View style={[styles.statIcon, { backgroundColor: `${stat.color}18` }]}>
@@ -170,7 +162,7 @@ export function GroomingDashboardScreen() {
                 <View style={styles.concernsRow}>
                   {latestAnalysis.concerns.slice(0, 3).map((c) => (
                     <View key={c} style={[styles.concernChip, { backgroundColor: '#EF444415' }]}>
-                      <Text style={[styles.concernChipText, { color: COLORS.error }]}>{c}</Text>
+                      <Text style={[styles.concernChipText, { color: T.red }]}>{c}</Text>
                     </View>
                   ))}
                 </View>
@@ -181,9 +173,9 @@ export function GroomingDashboardScreen() {
               style={styles.noAnalysisCTA}
               onPress={() => navigation.navigate('VisualAnalysis')}
             >
-              <Ionicons name="camera-outline" size={28} color={COLORS.primary} />
+              <Ionicons name="camera-outline" size={28} color={T.primary2} />
               <Text style={styles.noAnalysisText}>Take your first skin analysis</Text>
-              <Ionicons name="arrow-forward" size={16} color={COLORS.primary} />
+              <Ionicons name="arrow-forward" size={16} color={T.primary2} />
             </TouchableOpacity>
           )}
         </Card>
@@ -213,7 +205,7 @@ export function GroomingDashboardScreen() {
                   <Text style={styles.recCategory}>{rec.category}</Text>
                 </View>
                 <View style={[styles.priorityBadge, { backgroundColor: '#EF444418' }]}>
-                  <Text style={[styles.priorityText, { color: COLORS.error }]}>High</Text>
+                  <Text style={[styles.priorityText, { color: T.red }]}>High</Text>
                 </View>
               </TouchableOpacity>
             );
@@ -227,8 +219,8 @@ export function GroomingDashboardScreen() {
             {(
               [
                 ['Skincare', stats.skincare, '#EC4899'],
-                ['Haircare', stats.haircare, '#F97316'],
-                ['Lifestyle', stats.lifestyle, '#10B981'],
+                ['Haircare', stats.haircare, T.orange],
+                ['Lifestyle', stats.lifestyle, T.green],
               ] as [string, number, string][]
             ).map(([label, count, color]) => (
               <TouchableOpacity
@@ -250,7 +242,7 @@ export function GroomingDashboardScreen() {
           {/* Morning */}
           <View style={styles.routineHeader}>
             <View style={styles.routinePeriodRow}>
-              <Ionicons name="sunny" size={16} color={COLORS.warning} />
+              <Ionicons name="sunny" size={16} color={T.orange} />
               <Text style={styles.routinePeriodLabel}>Morning</Text>
             </View>
             <Text style={styles.routineProgress}>
@@ -266,7 +258,7 @@ export function GroomingDashboardScreen() {
               <Ionicons
                 name={step.done ? 'checkmark-circle' : 'ellipse-outline'}
                 size={20}
-                color={step.done ? COLORS.success : COLORS.border}
+                color={step.done ? T.green : T.border2}
               />
               <Text style={[styles.routineStepLabel, step.done && styles.routineStepDone]}>
                 {step.label}
@@ -293,7 +285,7 @@ export function GroomingDashboardScreen() {
               <Ionicons
                 name={step.done ? 'checkmark-circle' : 'ellipse-outline'}
                 size={20}
-                color={step.done ? COLORS.success : COLORS.border}
+                color={step.done ? T.green : T.border2}
               />
               <Text style={[styles.routineStepLabel, step.done && styles.routineStepDone]}>
                 {step.label}
@@ -307,7 +299,7 @@ export function GroomingDashboardScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.background },
+  container: { flex: 1, backgroundColor: T.bg },
   content: { flex: 1, paddingHorizontal: 16, paddingVertical: 16 },
   card: { marginBottom: 20 },
 
@@ -320,11 +312,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   linkText: {
     fontSize: 13,
-    color: COLORS.primary,
+    color: T.primary2,
     fontWeight: '600',
   },
 
@@ -338,20 +330,20 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderRadius: 8,
-    backgroundColor: `${COLORS.primary}08`,
+    backgroundColor: `${T.primary2}08`,
     borderWidth: 1,
-    borderColor: `${COLORS.primary}20`,
+    borderColor: `${T.primary2}20`,
   },
-  profileChipLabel: { fontSize: 10, color: COLORS.secondaryText },
-  profileChipValue: { fontSize: 12, fontWeight: '700', color: COLORS.text },
+  profileChipLabel: { fontSize: 10, color: T.muted },
+  profileChipValue: { fontSize: 12, fontWeight: '700', color: T.text },
   concernsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   concernChip: {
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
-    backgroundColor: `${COLORS.error}12`,
+    backgroundColor: `${T.red}12`,
   },
-  concernChipText: { fontSize: 11, color: COLORS.error, fontWeight: '500' },
+  concernChipText: { fontSize: 11, color: T.red, fontWeight: '500' },
 
   // Stats
   statsGrid: {
@@ -361,8 +353,8 @@ const styles = StyleSheet.create({
   },
   statCard: { flex: 1, alignItems: 'center', paddingVertical: 14 },
   statIcon: { width: 36, height: 36, borderRadius: 18, justifyContent: 'center', alignItems: 'center', marginBottom: 6 },
-  statValue: { fontSize: 18, fontWeight: '800', color: COLORS.text },
-  statLabel: { fontSize: 10, color: COLORS.secondaryText, marginTop: 2 },
+  statValue: { fontSize: 18, fontWeight: '800', color: T.text },
+  statLabel: { fontSize: 10, color: T.muted, marginTop: 2 },
 
   // Analysis
   analysisRow: { flexDirection: 'row', alignItems: 'center', gap: 16 },
@@ -372,25 +364,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center', alignItems: 'center',
   },
   scoreNumber: { fontSize: 22, fontWeight: '800' },
-  scoreLabel: { fontSize: 10, color: COLORS.secondaryText },
+  scoreLabel: { fontSize: 10, color: T.muted },
   analysisInfo: { flex: 1 },
-  analysisSkinType: { fontSize: 15, fontWeight: '700', color: COLORS.text, marginBottom: 4 },
-  analysisDate: { fontSize: 12, color: COLORS.secondaryText, marginBottom: 8 },
+  analysisSkinType: { fontSize: 15, fontWeight: '700', color: T.text, marginBottom: 4 },
+  analysisDate: { fontSize: 12, color: T.muted, marginBottom: 8 },
   noAnalysisCTA: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
     paddingVertical: 14, paddingHorizontal: 16,
-    backgroundColor: `${COLORS.primary}08`,
-    borderRadius: 10, borderWidth: 1, borderColor: `${COLORS.primary}30`,
+    backgroundColor: `${T.primary2}08`,
+    borderRadius: 10, borderWidth: 1, borderColor: `${T.primary2}30`,
     borderStyle: 'dashed',
   },
-  noAnalysisText: { flex: 1, fontSize: 14, color: COLORS.primary, fontWeight: '500' },
+  noAnalysisText: { flex: 1, fontSize: 14, color: T.primary2, fontWeight: '500' },
 
   // Recommendations
   recRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   recIcon: { width: 40, height: 40, borderRadius: 20, justifyContent: 'center', alignItems: 'center' },
   recContent: { flex: 1 },
-  recTitle: { fontSize: 13, fontWeight: '600', color: COLORS.text },
-  recCategory: { fontSize: 11, color: COLORS.secondaryText, marginTop: 2 },
+  recTitle: { fontSize: 13, fontWeight: '600', color: T.text },
+  recCategory: { fontSize: 11, color: T.muted, marginTop: 2 },
   priorityBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 4 },
   priorityText: { fontSize: 10, fontWeight: '600' },
 
@@ -408,14 +400,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10,
   },
   routinePeriodRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  routinePeriodLabel: { fontSize: 14, fontWeight: '600', color: COLORS.text },
-  routineProgress: { fontSize: 12, color: COLORS.secondaryText },
+  routinePeriodLabel: { fontSize: 14, fontWeight: '600', color: T.text },
+  routineProgress: { fontSize: 12, color: T.muted },
   routineStep: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
     paddingVertical: 7,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
-  routineStepLabel: { fontSize: 13, color: COLORS.text, flex: 1 },
-  routineStepDone: { textDecorationLine: 'line-through', color: COLORS.secondaryText },
+  routineStepLabel: { fontSize: 13, color: T.text, flex: 1 },
+  routineStepDone: { textDecorationLine: 'line-through', color: T.muted },
 });

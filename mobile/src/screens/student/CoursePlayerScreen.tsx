@@ -15,14 +15,9 @@ import { Card } from '@/components/common/Card';
 import { useRoute } from '@react-navigation/native';
 import { useCourse, useCourseContent } from '@/hooks/useCourses';
 import { useEnrollment, useEnroll } from '@/hooks/useEnrollment';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-};
+;
 
 export function CoursePlayerScreen() {
   const insets = useSafeAreaInsets();
@@ -62,7 +57,7 @@ export function CoursePlayerScreen() {
         <Ionicons
           name={expandedSection === section.id ? 'chevron-down' : 'chevron-forward'}
           size={20}
-          color={COLORS.primary}
+          color={T.primary2}
         />
         <Text style={styles.sectionTitle}>{section.title}</Text>
         <Text style={styles.lessonCount}>{section.lessons?.length || 0} lessons</Text>
@@ -86,7 +81,7 @@ export function CoursePlayerScreen() {
       <Ionicons
         name={lesson.type === 'video' ? 'play-circle-outline' : 'document-text-outline'}
         size={18}
-        color={COLORS.primary}
+        color={T.primary2}
       />
       <View style={styles.lessonContent}>
         <Text style={styles.lessonTitle}>{lesson.title}</Text>
@@ -110,7 +105,7 @@ export function CoursePlayerScreen() {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+          <Ionicons name="arrow-back" size={24} color={T.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Course Details</Text>
         <View style={{ width: 24 }} />
@@ -122,7 +117,7 @@ export function CoursePlayerScreen() {
           <Ionicons
             name="film"
             size={80}
-            color={COLORS.primary}
+            color={T.primary2}
             style={{ alignSelf: 'center' }}
           />
         </View>
@@ -147,13 +142,13 @@ export function CoursePlayerScreen() {
 
           <View style={styles.statsRow}>
             <View style={styles.stat}>
-              <Ionicons name="people" size={16} color={COLORS.primary} />
+              <Ionicons name="people" size={16} color={T.primary2} />
               <Text style={styles.statText}>
                 {course?.enrollmentCount || 0} enrolled
               </Text>
             </View>
             <View style={styles.stat}>
-              <Ionicons name="time" size={16} color={COLORS.primary} />
+              <Ionicons name="time" size={16} color={T.primary2} />
               <Text style={styles.statText}>{course?.totalDuration || 0} hours</Text>
             </View>
             <View style={styles.stat}>
@@ -203,7 +198,7 @@ export function CoursePlayerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   header: {
     flexDirection: 'row',
@@ -215,7 +210,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   content: {
     flex: 1,
@@ -223,14 +218,14 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 16,
-    color: COLORS.secondaryText,
+    color: T.muted,
     textAlign: 'center',
     marginTop: 20,
   },
   thumbnailContainer: {
     width: '100%',
     height: 200,
-    backgroundColor: `${COLORS.primary}15`,
+    backgroundColor: `${T.primary2}15`,
     borderRadius: 12,
     marginBottom: 20,
     justifyContent: 'center',
@@ -239,7 +234,7 @@ const styles = StyleSheet.create({
   courseTitle: {
     fontSize: 24,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 16,
   },
   instructorInfo: {
@@ -251,7 +246,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -264,11 +259,11 @@ const styles = StyleSheet.create({
   instructorName: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   instructorRole: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   statsRow: {
     flexDirection: 'row',
@@ -276,7 +271,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     marginBottom: 16,
   },
   stat: {
@@ -285,18 +280,18 @@ const styles = StyleSheet.create({
   },
   statText: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     fontWeight: '500',
   },
   descriptionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 8,
   },
   description: {
     fontSize: 14,
-    color: COLORS.secondaryText,
+    color: T.muted,
     lineHeight: 20,
   },
   sectionsContainer: {
@@ -306,15 +301,15 @@ const styles = StyleSheet.create({
   sectionsTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 16,
   },
   sectionWrapper: {
     marginBottom: 12,
     borderRadius: 8,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     overflow: 'hidden',
   },
   sectionHeader: {
@@ -330,16 +325,16 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   lessonCount: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   lessonsContainer: {
     backgroundColor: 'rgba(99, 102, 241, 0.05)',
     borderTopWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   lessonItem: {
     flexDirection: 'row',
@@ -347,7 +342,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     gap: 12,
   },
   lessonContent: {
@@ -356,12 +351,12 @@ const styles = StyleSheet.create({
   lessonTitle: {
     fontSize: 14,
     fontWeight: '500',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 4,
   },
   lessonDuration: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   enrollButtonContainer: {
     paddingBottom: 32,

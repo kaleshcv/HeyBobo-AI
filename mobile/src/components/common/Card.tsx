@@ -1,5 +1,6 @@
 import React from 'react'
 import { View, StyleSheet, type ViewProps } from 'react-native'
+import T from '@/theme'
 
 const PADDING_MAP: Record<string, number> = { xs: 8, sm: 12, md: 16, lg: 20, xl: 24 }
 
@@ -8,7 +9,7 @@ interface CardProps extends ViewProps {
   shadow?:  boolean
 }
 
-export function Card({ style, padding = 16, shadow = true, children, ...rest }: CardProps) {
+export function Card({ style, padding = 16, shadow = false, children, ...rest }: CardProps) {
   const resolvedPadding = typeof padding === 'string' ? (PADDING_MAP[padding] ?? 16) : padding
   return (
     <View
@@ -27,16 +28,16 @@ export function Card({ style, padding = 16, shadow = true, children, ...rest }: 
 
 const styles = StyleSheet.create({
   base: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: T.surface,
     borderRadius:    16,
     borderWidth:     1,
-    borderColor:     '#F1F5F9',
+    borderColor:     T.border,
   },
   shadow: {
-    shadowColor:   '#000',
-    shadowOffset:  { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius:  8,
-    elevation:     3,
+    shadowColor:   T.black,
+    shadowOffset:  { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius:  12,
+    elevation:     6,
   },
 })

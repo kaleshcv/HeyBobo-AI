@@ -508,7 +508,9 @@ export default function GroomingRecommendationPage() {
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <SpaIcon sx={{ fontSize: 28, color: '#9c27b0' }} />
+          <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: '#c084fc20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <SpaIcon sx={{ fontSize: 20, color: '#c084fc' }} />
+          </Box>
           <Typography variant="h5" sx={{ fontWeight: 700 }}>
             Grooming Recommendations
           </Typography>
@@ -534,9 +536,9 @@ export default function GroomingRecommendationPage() {
         onChange={(_, v) => setTab(v)}
         sx={{ mb: 2, '& .MuiTab-root': { minHeight: 40, textTransform: 'none' } }}
       >
-        <Tab icon={<FaceIcon />} iconPosition="start" label="Skincare" />
-        <Tab icon={<ContentCutIcon />} iconPosition="start" label="Haircare" />
-        <Tab icon={<CheckroomIcon />} iconPosition="start" label="Outfit Styling" />
+        <Tab icon={<FaceIcon sx={{ fontSize: 18, color: '#ec4899' }} />} iconPosition="start" label="Skincare" />
+        <Tab icon={<ContentCutIcon sx={{ fontSize: 18, color: '#c084fc' }} />} iconPosition="start" label="Haircare" />
+        <Tab icon={<CheckroomIcon sx={{ fontSize: 18, color: '#f97316' }} />} iconPosition="start" label="Outfit Styling" />
       </Tabs>
 
       {/* Profile Card + Actions */}

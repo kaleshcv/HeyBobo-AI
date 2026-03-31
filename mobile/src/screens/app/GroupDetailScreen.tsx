@@ -13,17 +13,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { useRoute } from '@react-navigation/native'
 import { useGroupStore } from '@/store/groupStore'
 import { AppHeader } from '@/components/layout/AppHeader'
-
-const COLORS = {
-  danger: '#EF4444',
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  card: '#FFFFFF',
-  border: '#E2E8F0',
-  success: '#10B981',
-}
+import T from '@/theme'
 
 type TabType = 'feed' | 'members' | 'assignments' | 'about'
 
@@ -83,7 +73,7 @@ export function GroupDetailScreen() {
       <Text style={styles.postContent}>{item.content}</Text>
       <View style={styles.postFooter}>
         <TouchableOpacity style={styles.likeButton} onPress={() => likePost(group.id, item.id)}>
-          <Ionicons name="heart" size={16} color={COLORS.primary} />
+          <Ionicons name="heart" size={16} color={T.primary2} />
           <Text style={styles.likeCount}>{item.likes}</Text>
         </TouchableOpacity>
       </View>
@@ -141,7 +131,7 @@ export function GroupDetailScreen() {
             <Text
               style={[
                 styles.tabLabel,
-                { color: activeTab === tab ? COLORS.primary : COLORS.secondaryText },
+                { color: activeTab === tab ? T.primary2 : T.muted },
               ]}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -157,7 +147,7 @@ export function GroupDetailScreen() {
               <TextInput
                 style={styles.postInput}
                 placeholder="Share your thoughts..."
-                placeholderTextColor={COLORS.secondaryText}
+                placeholderTextColor={T.muted}
                 value={newPostContent}
                 onChangeText={setNewPostContent}
                 multiline
@@ -195,7 +185,7 @@ export function GroupDetailScreen() {
             contentContainerStyle={styles.listPadding}
             ListEmptyComponent={
               <View style={styles.emptyState}>
-                <Ionicons name="document-text-outline" size={40} color={COLORS.secondaryText} />
+                <Ionicons name="document-text-outline" size={40} color={T.muted} />
                 <Text style={styles.emptyText}>No assignments yet</Text>
               </View>
             }
@@ -234,13 +224,13 @@ export function GroupDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   tabBar: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-    backgroundColor: COLORS.card,
+    borderBottomColor: T.border2,
+    backgroundColor: T.surface2,
   },
   tab: {
     flex: 1,
@@ -249,7 +239,7 @@ const styles = StyleSheet.create({
   },
   tabActive: {
     borderBottomWidth: 2,
-    borderBottomColor: COLORS.primary,
+    borderBottomColor: T.primary2,
   },
   tabLabel: {
     fontSize: 13,
@@ -261,21 +251,21 @@ const styles = StyleSheet.create({
   postInputSection: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-    backgroundColor: COLORS.card,
+    borderBottomColor: T.border2,
+    backgroundColor: T.surface2,
   },
   postInput: {
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 14,
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 12,
     maxHeight: 80,
   },
   postButton: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 12,
@@ -287,23 +277,23 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   postCard: {
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderRadius: 12,
     padding: 16,
     marginHorizontal: 16,
     marginVertical: 8,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   pinnedPost: {
-    borderColor: COLORS.primary,
+    borderColor: T.primary2,
     borderWidth: 2,
   },
   pinnedBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
@@ -321,16 +311,16 @@ const styles = StyleSheet.create({
   authorName: {
     fontSize: 13,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   postTime: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 2,
   },
   postContent: {
     fontSize: 13,
-    color: COLORS.text,
+    color: T.text,
     lineHeight: 18,
     marginBottom: 12,
   },
@@ -345,17 +335,17 @@ const styles = StyleSheet.create({
   },
   likeCount: {
     fontSize: 12,
-    color: COLORS.primary,
+    color: T.primary2,
     fontWeight: '600',
   },
   memberCard: {
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderRadius: 12,
     padding: 16,
     marginHorizontal: 16,
     marginVertical: 8,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   memberInfo: {
     flexDirection: 'row',
@@ -366,7 +356,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -381,7 +371,7 @@ const styles = StyleSheet.create({
   memberName: {
     fontSize: 14,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   roleAndStats: {
     flexDirection: 'row',
@@ -390,31 +380,31 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   roleBadge: {
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
   },
   roleOwner: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
   },
   roleText: {
     fontSize: 10,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: T.primary2,
   },
   memberStats: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   assignmentCard: {
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderRadius: 12,
     padding: 16,
     marginHorizontal: 16,
     marginVertical: 8,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   assignmentHeader: {
     flexDirection: 'row',
@@ -426,44 +416,44 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   assignmentDue: {
     fontSize: 11,
-    color: COLORS.danger,
+    color: T.red,
   },
   assignmentDesc: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginBottom: 8,
   },
   maxScore: {
     fontSize: 11,
-    color: COLORS.primary,
+    color: T.primary2,
     fontWeight: '600',
   },
   aboutSection: {
     padding: 16,
   },
   aboutCard: {
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   aboutLabel: {
     fontSize: 11,
     fontWeight: '600',
-    color: COLORS.secondaryText,
+    color: T.muted,
     textTransform: 'uppercase',
     marginBottom: 6,
   },
   aboutValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   listPadding: {
     paddingVertical: 8,
@@ -476,7 +466,7 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginTop: 12,
   },
 })

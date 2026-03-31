@@ -14,14 +14,9 @@ import { useAppNavigation } from '@/navigation/useAppNavigation';
 import { Text } from 'react-native';
 import { Button } from '@/components/common/Button';
 import { Card } from '@/components/common/Card';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-};
+;
 
 const FITNESS_GOALS = ['Lose Weight', 'Gain Muscle', 'Get Fit', 'Maintain Health'];
 const ACTIVITY_LEVELS = ['Sedentary', 'Light', 'Moderate', 'Very Active'];
@@ -76,7 +71,7 @@ export function FitnessProfileScreen() {
       onPress={() => handlePickerSelect(item)}
     >
       <Text style={styles.pickerOptionText}>{item}</Text>
-      <Ionicons name="checkmark" size={20} color={COLORS.primary} />
+      <Ionicons name="checkmark" size={20} color={T.primary2} />
     </TouchableOpacity>
   );
 
@@ -109,7 +104,7 @@ export function FitnessProfileScreen() {
                             : 'shield-checkmark'
                     }
                     size={24}
-                    color={fitnessGoal === goal ? '#fff' : COLORS.primary}
+                    color={fitnessGoal === goal ? '#fff' : T.primary2}
                   />
                 </View>
                 <View style={styles.goalContent}>
@@ -233,7 +228,7 @@ export function FitnessProfileScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+          <Ionicons name="arrow-back" size={24} color={T.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Fitness Profile</Text>
         <View style={{ width: 24 }} />
@@ -287,7 +282,7 @@ export function FitnessProfileScreen() {
             <View style={styles.pickerHeader}>
               <Text style={styles.pickerTitle}>Select an option</Text>
               <TouchableOpacity onPress={() => setShowPicker(false)}>
-                <Ionicons name="close" size={24} color={COLORS.text} />
+                <Ionicons name="close" size={24} color={T.text} />
               </TouchableOpacity>
             </View>
             <FlatList
@@ -305,7 +300,7 @@ export function FitnessProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   header: {
     flexDirection: 'row',
@@ -313,14 +308,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   progressContainer: {
     paddingHorizontal: 16,
@@ -328,18 +323,18 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 4,
-    backgroundColor: COLORS.border,
+    backgroundColor: T.border2,
     borderRadius: 2,
     overflow: 'hidden',
     marginBottom: 8,
   },
   progressFill: {
     height: '100%',
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
   },
   progressText: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   stepHeader: {
     paddingHorizontal: 16,
@@ -348,11 +343,11 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: 24,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   stepDescription: {
     fontSize: 14,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginBottom: 20,
     lineHeight: 20,
   },
@@ -366,23 +361,23 @@ const styles = StyleSheet.create({
   goalCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     borderWidth: 2,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     gap: 12,
   },
   goalCardActive: {
-    borderColor: COLORS.primary,
-    backgroundColor: `${COLORS.primary}08`,
+    borderColor: T.primary2,
+    backgroundColor: `${T.primary2}08`,
   },
   goalIcon: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: `${COLORS.primary}15`,
+    backgroundColor: `${T.primary2}15`,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -392,7 +387,7 @@ const styles = StyleSheet.create({
   goalTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   goalTitleActive: {
     color: '#fff',
@@ -400,39 +395,39 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 8,
   },
   input: {
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 14,
-    color: COLORS.text,
+    color: T.text,
   },
   optionCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderRadius: 10,
     padding: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     gap: 12,
   },
   optionCardActive: {
-    borderColor: COLORS.primary,
-    backgroundColor: `${COLORS.primary}08`,
+    borderColor: T.primary2,
+    backgroundColor: `${T.primary2}08`,
   },
   optionRadio: {
     width: 20,
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -440,16 +435,16 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
   },
   optionText: {
     flex: 1,
     fontSize: 14,
     fontWeight: '500',
-    color: COLORS.text,
+    color: T.text,
   },
   optionTextActive: {
-    color: COLORS.primary,
+    color: T.primary2,
     fontWeight: '600',
   },
   footer: {
@@ -458,9 +453,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16,
     paddingBottom: 24,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderTopWidth: 1,
-    borderTopColor: COLORS.border,
+    borderTopColor: T.border2,
   },
   pickerModalOverlay: {
     flex: 1,
@@ -468,7 +463,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   pickerModal: {
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: '80%',
@@ -480,12 +475,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   pickerTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   pickerOption: {
     flexDirection: 'row',
@@ -494,10 +489,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   pickerOptionText: {
     fontSize: 14,
-    color: COLORS.text,
+    color: T.text,
   },
 });

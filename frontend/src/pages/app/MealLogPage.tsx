@@ -14,7 +14,7 @@ export default function MealLogPage() {
         gap: 2,
       }}
     >
-      <SetMealIcon sx={{ fontSize: 64, opacity: 0.3 }} />
+      <SetMealIcon sx={{ fontSize: 64, color: '#f59e0b', opacity: 0.4 }} />
       <Typography variant="h5" sx={{ fontWeight: 600, color: 'text.primary' }}>
         Meal Log
       </Typography>

@@ -561,7 +561,7 @@ export interface CourseFilter {
 
 // ─── Auth ─────────────────────────────────────────────────
 export interface LoginDto {
-  email: string
+  identifier: string
   password: string
 }
 
@@ -570,6 +570,7 @@ export interface RegisterDto {
   password: string
   firstName: string
   lastName: string
+  username: string
   role?: UserRole
 }
 

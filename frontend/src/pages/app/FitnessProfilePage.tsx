@@ -436,7 +436,7 @@ function ProfileSummary({ onEdit }: { onEdit: () => void }) {
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <Avatar sx={{ bgcolor: dk ? '#C9A84C' : '#424242', width: 44, height: 44 }}>
+          <Avatar sx={{ bgcolor: '#10b98120', color: '#10b981', width: 44, height: 44 }}>
             <SelfImprovementIcon />
           </Avatar>
           <Box>

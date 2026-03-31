@@ -12,6 +12,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import SendIcon from '@mui/icons-material/Send';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SellIcon from '@mui/icons-material/Sell';
+import StorefrontIcon from '@mui/icons-material/Storefront';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 import {
@@ -106,11 +107,16 @@ export default function CampusMarketplacePage() {
     <Box sx={{ flex: 1, px: 3, py: 3, overflow: 'auto' }}>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 3, flexWrap: 'wrap' }}>
-        <Box>
-          <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>Campus Marketplace</Typography>
-          <Typography variant="body2" color="text.secondary">
-            Buy &amp; sell textbooks, equipment, and supplies with fellow students on campus.
-          </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: '#06b6d420', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <StorefrontIcon sx={{ fontSize: 20, color: '#06b6d4' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>Campus Marketplace</Typography>
+            <Typography variant="body2" color="text.secondary">
+              Buy &amp; sell textbooks, equipment, and supplies with fellow students on campus.
+            </Typography>
+          </Box>
         </Box>
       </Box>
 

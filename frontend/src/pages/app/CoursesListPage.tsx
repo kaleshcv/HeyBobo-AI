@@ -21,6 +21,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
+import SchoolIcon from '@mui/icons-material/School';
 import { useCourseStore, LocalCourse, VideoProgress } from '@/store/courseStore';
 import toast from 'react-hot-toast';
 
@@ -127,7 +128,12 @@ export default function CoursesListPage() {
 
   return (
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', px: 3, py: 3, overflow: 'auto' }}>
-      <Typography variant="h5" sx={{ fontWeight: 600, mb: 0.5 }}>Courses</Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
+        <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: '#38bdf820', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <SchoolIcon sx={{ fontSize: 20, color: '#38bdf8' }} />
+        </Box>
+        <Typography variant="h5" sx={{ fontWeight: 600 }}>Courses</Typography>
+      </Box>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
         Browse and manage your course library
       </Typography>

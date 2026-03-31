@@ -15,15 +15,9 @@ import { Button } from '@/components/common/Button';
 import { Card } from '@/components/common/Card';
 import { AppHeader } from '@/components/layout/AppHeader';
 import { useWearablesStore } from '@/store/wearablesStore';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-  success: '#10B981',
-};
+;
 
 const MOCK_DEVICES = [
   {
@@ -73,7 +67,7 @@ export function WearablesScreen() {
                   : 'headset'
             }
             size={24}
-            color={COLORS.primary}
+            color={T.primary2}
           />
         </View>
 
@@ -84,7 +78,7 @@ export function WearablesScreen() {
 
         {item.connected && (
           <View style={styles.connectedBadge}>
-            <Ionicons name="checkmark-circle" size={20} color={COLORS.success} />
+            <Ionicons name="checkmark-circle" size={20} color={T.green} />
           </View>
         )}
       </View>
@@ -92,7 +86,7 @@ export function WearablesScreen() {
       {item.connected && (
         <View style={styles.deviceFooter}>
           <View style={styles.batteryContainer}>
-            <Ionicons name="battery-half" size={16} color={COLORS.primary} />
+            <Ionicons name="battery-half" size={16} color={T.primary2} />
             <Text style={styles.batteryText}>{item.batteryLevel}%</Text>
           </View>
           <TouchableOpacity style={styles.disconnectButton}>
@@ -126,7 +120,7 @@ export function WearablesScreen() {
                 {isScanning ? 'Scanning for devices...' : 'Ready to scan'}
               </Text>
             </View>
-            {isScanning && <ActivityIndicator size="small" color={COLORS.primary} />}
+            {isScanning && <ActivityIndicator size="small" color={T.primary2} />}
           </View>
 
           <Button
@@ -188,7 +182,7 @@ export function WearablesScreen() {
         {/* Permissions Info */}
         <Card padding="lg" style={{ marginBottom: 32 }}>
           <View style={styles.infoHeader}>
-            <Ionicons name="information-circle" size={20} color={COLORS.primary} />
+            <Ionicons name="information-circle" size={20} color={T.primary2} />
             <Text style={styles.infoTitle}>Permissions Required</Text>
           </View>
           <Text style={styles.infoText}>
@@ -203,7 +197,7 @@ export function WearablesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   content: {
     flex: 1,
@@ -219,11 +213,11 @@ const styles = StyleSheet.create({
   scannerTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   scannerSubtitle: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 4,
   },
   heartRateContainer: {
@@ -245,13 +239,13 @@ const styles = StyleSheet.create({
   },
   heartRateLabel: {
     fontSize: 13,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginBottom: 6,
   },
   heartRateValue: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#EF4444',
+    color: T.red,
   },
   heartRateUnit: {
     fontSize: 16,
@@ -259,7 +253,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: COLORS.border,
+    backgroundColor: T.border2,
     marginVertical: 12,
   },
   healthMetrics: {
@@ -271,13 +265,13 @@ const styles = StyleSheet.create({
   },
   metricLabel: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginBottom: 6,
   },
   metricValue: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   sectionContainer: {
     marginBottom: 24,
@@ -285,15 +279,15 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 12,
   },
   deviceCard: {
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderRadius: 12,
     padding: 14,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   deviceHeader: {
     flexDirection: 'row',
@@ -305,7 +299,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: `${COLORS.primary}15`,
+    backgroundColor: `${T.primary2}15`,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -315,11 +309,11 @@ const styles = StyleSheet.create({
   deviceName: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   deviceType: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 2,
   },
   connectedBadge: {
@@ -331,7 +325,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: COLORS.border,
+    borderTopColor: T.border2,
   },
   batteryContainer: {
     flexDirection: 'row',
@@ -341,7 +335,7 @@ const styles = StyleSheet.create({
   batteryText: {
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: T.primary2,
   },
   disconnectButton: {
     paddingHorizontal: 12,
@@ -351,7 +345,7 @@ const styles = StyleSheet.create({
   disconnectButtonText: {
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: T.primary2,
   },
   infoHeader: {
     flexDirection: 'row',
@@ -362,11 +356,11 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   infoText: {
     fontSize: 13,
-    color: COLORS.secondaryText,
+    color: T.muted,
     lineHeight: 18,
   },
 });

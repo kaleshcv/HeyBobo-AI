@@ -221,7 +221,7 @@ function StatCard({
         }),
       }}
     >
-      <Avatar sx={{ bgcolor: color, width: 42, height: 42 }}>{icon}</Avatar>
+      <Avatar sx={{ bgcolor: `${color}20`, color: color, width: 42, height: 42 }}>{icon}</Avatar>
       <Box>
         <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
           {label}
@@ -570,13 +570,18 @@ export default function DietaryDashboardPage() {
   return (
     <Box sx={{ flex: 1, px: 3, py: 3, overflow: 'auto' }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 3, flexWrap: 'wrap' }}>
-        <Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box sx={{ width: 44, height: 44, borderRadius: 2, bgcolor: '#f59e0b20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <RestaurantMenuIcon sx={{ fontSize: 24, color: '#f59e0b' }} />
+          </Box>
+          <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>
             Dietary Dashboard
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Cross-module dietary overview built from meal logs, nutrition tracking, supplements, active meal plans, grocery execution, and your dietary profile.
           </Typography>
+          </Box>
         </Box>
 
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
@@ -600,40 +605,40 @@ export default function DietaryDashboardPage() {
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            icon={<DashboardIcon sx={{ color: '#fff', fontSize: 20 }} />}
+            icon={<DashboardIcon sx={{ color: '#f59e0b', fontSize: 20 }} />}
             label="Daily Nutrition Score"
             value={formatPercent(dailyScore)}
             sub={`${today.totalCalories} kcal · ${today.mealsLogged || meals.length} meals today`}
-            color="#455a64"
+            color="#f59e0b"
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            icon={<TrendingUpIcon sx={{ color: '#fff', fontSize: 20 }} />}
+            icon={<TrendingUpIcon sx={{ color: '#10b981', fontSize: 20 }} />}
             label="Weekly Consistency"
             value={formatPercent(weeklyConsistencyScore)}
             sub={`${totalMealsLoggedThisWeek} meals logged across 7 days`}
-            color="#1e88e5"
+            color="#10b981"
             onClick={() => navigate('/app/dietary/nutrition')}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            icon={<EventNoteIcon sx={{ color: '#fff', fontSize: 20 }} />}
+            icon={<EventNoteIcon sx={{ color: '#a78bfa', fontSize: 20 }} />}
             label="Meal Plans"
             value={mealPlans.length}
             sub={activePlan ? `${activePlan.title}` : 'No active plan'}
-            color="#ef6c00"
+            color="#a78bfa"
             onClick={() => navigate('/app/dietary/meal-planner')}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            icon={<ShoppingCartIcon sx={{ color: '#fff', fontSize: 20 }} />}
+            icon={<ShoppingCartIcon sx={{ color: '#38bdf8', fontSize: 20 }} />}
             label="Grocery Readiness"
             value={formatPercent(grocerySummary.completionRate)}
             sub={`${grocerySummary.completedItems}/${grocerySummary.totalItems} items done`}
-            color="#2e7d32"
+            color="#38bdf8"
             onClick={() => navigate('/app/dietary/grocery')}
           />
         </Grid>

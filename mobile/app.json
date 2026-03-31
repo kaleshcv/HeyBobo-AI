@@ -10,7 +10,7 @@
     "splash": {
       "image": "./src/assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#6366F1"
+      "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
@@ -28,6 +28,7 @@
       "associatedDomains": ["applinks:yourdomain.com"]
     },
     "android": {
+      "usesCleartextTraffic": true,
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/images/adaptive-icon.png",
         "backgroundColor": "#6366F1"
@@ -35,15 +36,9 @@
       "package": "com.eduplatform.app",
       "versionCode": 1,
       "permissions": [
-        "android.permission.BLUETOOTH",
-        "android.permission.BLUETOOTH_ADMIN",
-        "android.permission.BLUETOOTH_SCAN",
-        "android.permission.BLUETOOTH_CONNECT",
-        "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.CAMERA",
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.ACTIVITY_RECOGNITION",
         "android.permission.RECORD_AUDIO",
         "android.permission.VIBRATE"
       ],
@@ -63,7 +58,6 @@
       ]
     },
     "web": {
-      "favicon": "./src/assets/images/favicon.png",
       "bundler": "metro"
     },
     "plugins": [
@@ -71,7 +65,6 @@
       ["expo-camera", { "cameraPermission": "Allow EduPlatform to access your camera" }],
       ["expo-image-picker", { "photosPermission": "Allow EduPlatform to access your photos" }],
       ["expo-notifications", { "icon": "./src/assets/images/notification-icon.png", "color": "#6366F1" }],
-      ["react-native-ble-plx", { "isBackgroundEnabled": false }],
       "expo-font"
     ],
     "extra": {

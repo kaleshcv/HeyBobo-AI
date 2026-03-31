@@ -13,15 +13,9 @@ import { useAppNavigation } from '@/navigation/useAppNavigation';
 import { Text } from 'react-native';
 import { Button } from '@/components/common/Button';
 import { AppHeader } from '@/components/layout/AppHeader';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-  success: '#10B981',
-};
+;
 
 const MOCK_ITEMS = [
   {
@@ -92,7 +86,7 @@ export function GroceryScreen() {
         {item.name}
       </Text>
       <TouchableOpacity style={styles.itemRemove}>
-        <Ionicons name="close" size={16} color={COLORS.secondaryText} />
+        <Ionicons name="close" size={16} color={T.muted} />
       </TouchableOpacity>
     </TouchableOpacity>
   );
@@ -116,13 +110,13 @@ export function GroceryScreen() {
 
       <View style={styles.header}>
         <View style={styles.addItemInput}>
-          <Ionicons name="add" size={20} color={COLORS.primary} />
+          <Ionicons name="add" size={20} color={T.primary2} />
           <TextInput
             style={styles.input}
             placeholder="Add item..."
             value={newItem}
             onChangeText={setNewItem}
-            placeholderTextColor={COLORS.secondaryText}
+            placeholderTextColor={T.muted}
           />
         </View>
         <Button
@@ -151,32 +145,32 @@ export function GroceryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   header: {
     flexDirection: 'row',
     paddingHorizontal: 16,
     paddingVertical: 12,
     gap: 10,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   addItemInput: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     borderRadius: 8,
     paddingHorizontal: 10,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
     gap: 8,
   },
   input: {
     flex: 1,
     fontSize: 14,
-    color: COLORS.text,
+    color: T.text,
     paddingVertical: 8,
   },
   listContent: {
@@ -193,11 +187,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   itemCount: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     fontWeight: '600',
   },
   groceryItem: {
@@ -205,7 +199,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 10,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderRadius: 8,
     marginBottom: 6,
     gap: 10,
@@ -215,23 +209,23 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     justifyContent: 'center',
     alignItems: 'center',
   },
   checkboxChecked: {
-    backgroundColor: COLORS.success,
-    borderColor: COLORS.success,
+    backgroundColor: T.green,
+    borderColor: T.green,
   },
   itemName: {
     flex: 1,
     fontSize: 13,
     fontWeight: '500',
-    color: COLORS.text,
+    color: T.text,
   },
   itemNameChecked: {
     textDecorationLine: 'line-through',
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   itemRemove: {
     padding: 4,

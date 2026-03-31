@@ -21,33 +21,38 @@ export type LearnStackParamList = {
   Groups:        undefined
   GroupDetail:   { groupId: string }
   Meetings:      undefined
+  AITutor:       undefined
 }
 
 // ── Health Stack ───────────────────────────────────────────
 export type HealthStackParamList = {
-  HealthHub:          undefined
-  FitnessProfile:     undefined
-  Workouts:           undefined
-  LiveWorkout:        { planId?: string }
-  ActivityTracking:   undefined
-  Wearables:          undefined
-  DietaryDashboard:   undefined
-  MealLog:            { date?: string }
-  NutritionTracker:   { date?: string }
-  MealPlanner:        undefined
-  DietaryProfile:     undefined
-  DietaryGoals:       undefined
-  Grocery:            undefined
-  GroomingDashboard:  undefined
-  VisualAnalysis:     undefined
-  Recommendations:    undefined
-  InjuryTracking:     undefined
-  FitnessDashboard:   undefined
-  ShoppingHub:        undefined
-  ShoppingLists:      undefined
-  Marketplace:        undefined
-  BudgetExpenses:     undefined
-  OrdersReviews:      undefined
+  HealthHub:        undefined
+  FitnessProfile:   undefined
+  Workouts:         undefined
+  LiveWorkout:      { planId?: string }
+  ActivityTracking: undefined
+  Wearables:        undefined
+  InjuryTracking:   undefined
+  FitnessDashboard: undefined
+}
+
+// ── Dietary Stack ──────────────────────────────────────────
+export type DietaryStackParamList = {
+  DietaryDashboard:  undefined
+  MealLog:           { date?: string }
+  NutritionTracker:  { date?: string }
+  MealPlanner:       undefined
+  DietaryProfile:    undefined
+  DietaryGoals:      undefined
+  Grocery:           undefined
+  GroomingDashboard: undefined
+  VisualAnalysis:    undefined
+  Recommendations:   undefined
+  ShoppingHub:       undefined
+  ShoppingLists:     undefined
+  Marketplace:       undefined
+  BudgetExpenses:    undefined
+  OrdersReviews:     undefined
 }
 
 // ── Teacher Stack ──────────────────────────────────────────
@@ -85,11 +90,11 @@ export type ProfileStackParamList = {
 
 // ── Bottom Tabs ────────────────────────────────────────────
 export type MainTabsParamList = {
-  Home:    undefined
-  Learn:   NavigatorScreenParams<LearnStackParamList>
-  AITutor: undefined
-  Health:  NavigatorScreenParams<HealthStackParamList>
-  Account: NavigatorScreenParams<ProfileStackParamList>
+  Home:      undefined
+  Education: NavigatorScreenParams<LearnStackParamList>
+  Health:    NavigatorScreenParams<HealthStackParamList>
+  Dietary:   NavigatorScreenParams<DietaryStackParamList>
+  Account:   NavigatorScreenParams<ProfileStackParamList>
 }
 
 // ── Root ───────────────────────────────────────────────────

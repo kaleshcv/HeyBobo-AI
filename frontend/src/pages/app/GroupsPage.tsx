@@ -134,11 +134,16 @@ export default function GroupsPage() {
     <Box sx={{ flex: 1, px: 3, py: 3, overflow: 'auto' }}>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
-        <Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: '#ec489920', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <GroupIcon sx={{ fontSize: 20, color: '#ec4899' }} />
+          </Box>
+          <Box>
           <Typography variant="h5" sx={{ fontWeight: 600 }}>Community Groups</Typography>
           <Typography variant="body2" color="text.secondary">
             {groups.length} group{groups.length !== 1 ? 's' : ''} &middot; Collaborate, learn &amp; grow together
           </Typography>
+          </Box>
         </Box>
         <Button variant="contained" startIcon={<AddIcon />} onClick={() => setCreateOpen(true)} sx={{ textTransform: 'none', bgcolor: dk ? '#1A2B3C' : '#616161', '&:hover': { bgcolor: dk ? '#243B4F' : '#424242' }, borderRadius: 2 }}>
           New Group
@@ -178,10 +183,10 @@ export default function GroupsPage() {
       {groups.length > 0 && (
         <Grid container spacing={2} sx={{ mb: 3 }}>
           {[
-            { icon: <GroupIcon sx={{ fontSize: 28, color: dk ? '#aaa' : '#757575', mb: 0.5 }} />, value: groups.length, label: 'Total Groups' },
-            { icon: <SchoolIcon sx={{ fontSize: 28, color: dk ? '#aaa' : '#757575', mb: 0.5 }} />, value: groups.reduce((s, g) => s + g.members.length, 0), label: 'Total Members' },
-            { icon: <TrendingUpIcon sx={{ fontSize: 28, color: dk ? '#aaa' : '#757575', mb: 0.5 }} />, value: groups.reduce((s, g) => s + g.discussions.length, 0), label: 'Discussions' },
-            { icon: <NotificationsIcon sx={{ fontSize: 28, color: dk ? '#aaa' : '#757575', mb: 0.5 }} />, value: groups.reduce((s, g) => s + g.meetings.filter((m) => m.status === 'scheduled').length, 0), label: 'Upcoming Meetings' },
+            { icon: <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: '#ec489920', display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 1 }}><GroupIcon sx={{ fontSize: 22, color: '#ec4899' }} /></Box>, value: groups.length, label: 'Total Groups' },
+            { icon: <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: '#38bdf820', display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 1 }}><SchoolIcon sx={{ fontSize: 22, color: '#38bdf8' }} /></Box>, value: groups.reduce((s, g) => s + g.members.length, 0), label: 'Total Members' },
+            { icon: <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: '#10b98120', display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 1 }}><TrendingUpIcon sx={{ fontSize: 22, color: '#10b981' }} /></Box>, value: groups.reduce((s, g) => s + g.discussions.length, 0), label: 'Discussions' },
+            { icon: <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: '#f59e0b20', display: 'flex', alignItems: 'center', justifyContent: 'center', mx: 'auto', mb: 1 }}><NotificationsIcon sx={{ fontSize: 22, color: '#f59e0b' }} /></Box>, value: groups.reduce((s, g) => s + g.meetings.filter((m) => m.status === 'scheduled').length, 0), label: 'Upcoming Meetings' },
           ].map((stat, i) => (
             <Grid item xs={6} sm={3} key={i}>
               <Card sx={{ border: '1px solid', borderColor: 'divider', boxShadow: 'none' }}>
@@ -211,11 +216,11 @@ export default function GroupsPage() {
                     '&:hover': { bgcolor: 'action.hover' },
                   }}
                 >
-                  <Box sx={{ height: 4, bgcolor: '#9e9e9e', borderRadius: '12px 12px 0 0' }} />
+                    <Box sx={{ height: 4, bgcolor: '#ec4899', borderRadius: '12px 12px 0 0' }} />
                   <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                       <Badge badgeContent={unread} color="error" max={9} sx={{ '& .MuiBadge-badge': { fontSize: 10, height: 16, minWidth: 16 } }}>
-                        <GroupIcon sx={{ fontSize: 22, color: dk ? '#aaa' : '#757575' }} />
+                        <GroupIcon sx={{ fontSize: 22, color: '#ec4899' }} />
                       </Badge>
                       <Typography variant="subtitle2" sx={{ fontWeight: 600, flex: 1 }} noWrap>{group.name}</Typography>
                       <Tooltip title={group.groupType}>{typeIcon(group.groupType)}</Tooltip>
@@ -232,7 +237,7 @@ export default function GroupsPage() {
                       {group.assignments.length > 0 && <Chip label={`${group.assignments.length} tasks`} size="small" sx={{ height: 20, fontSize: 10, bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5' }} />}
                     </Box>
                     <Box sx={{ mb: 1 }}>
-                      <LinearProgress variant="determinate" value={memberFill} sx={{ height: 3, borderRadius: 2, bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#f0f0f0', '& .MuiLinearProgress-bar': { bgcolor: '#9e9e9e' } }} />
+                      <LinearProgress variant="determinate" value={memberFill} sx={{ height: 3, borderRadius: 2, bgcolor: dk ? 'rgba(255,255,255,0.08)' : '#f0f0f0', '& .MuiLinearProgress-bar': { bgcolor: '#ec4899' } }} />
                     </Box>
                     {group.members.length > 0 && (
                       <AvatarGroup max={5} sx={{ justifyContent: 'flex-start', '& .MuiAvatar-root': { width: 24, height: 24, fontSize: 11, bgcolor: dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd' } }}>
@@ -255,7 +260,7 @@ export default function GroupsPage() {
         </Grid>
       ) : groups.length === 0 ? (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', py: 8 }}>
-          <GroupIcon sx={{ fontSize: 48, color: dk ? 'rgba(255,255,255,0.15)' : '#bdbdbd', mb: 2 }} />
+          <GroupIcon sx={{ fontSize: 48, color: '#ec489940', mb: 2 }} />
           <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>No groups yet</Typography>
           <Button variant="outlined" startIcon={<AddIcon />} onClick={() => setCreateOpen(true)} sx={{ textTransform: 'none', borderColor: 'divider', color: 'text.secondary' }}>
             Create your first group

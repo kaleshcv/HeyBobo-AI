@@ -8,6 +8,7 @@ import { z }                    from 'zod'
 import { Input }                from '@/components/common/Input'
 import { Button }               from '@/components/common/Button'
 import { useResetPassword }     from '@/hooks/useAuth'
+import T from '@/theme'
 
 const schema = z.object({
   password: z.string().min(8, 'At least 8 characters'),
@@ -35,7 +36,7 @@ export function ResetPasswordScreen() {
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: '#FFF' }}
+      style={{ flex: 1, backgroundColor: '#111827' }}
       contentContainerStyle={[styles.content, { paddingTop: insets.top + 40, paddingBottom: 40 }]}
     >
       <Text style={styles.heading}>Set new password</Text>
@@ -61,7 +62,7 @@ export function ResetPasswordScreen() {
 
 const styles = StyleSheet.create({
   content: { paddingHorizontal: 24 },
-  heading: { fontSize: 26, fontWeight: '800', color: '#1E293B', marginBottom: 8 },
-  sub:     { fontSize: 15, color: '#64748B', marginBottom: 28 },
-  err:     { fontSize: 13, color: '#EF4444', marginBottom: 12 },
+  heading: { fontSize: 26, fontWeight: '800', color: T.text, marginBottom: 8 },
+  sub:     { fontSize: 15, color: T.muted, marginBottom: 28 },
+  err:     { fontSize: 13, color: T.red, marginBottom: 12 },
 })

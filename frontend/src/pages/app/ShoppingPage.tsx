@@ -76,7 +76,6 @@ function StatCard({
   color: string;
   onClick?: () => void;
 }) {
-  const dk = useTheme().palette.mode === 'dark';
   return (
     <Paper
       variant="outlined"
@@ -93,7 +92,7 @@ function StatCard({
         }),
       }}
     >
-      <Avatar sx={{ bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5', color: color, width: 42, height: 42 }}>{icon}</Avatar>
+      <Avatar sx={{ bgcolor: `${color}20`, color: color, width: 42, height: 42 }}>{icon}</Avatar>
       <Box>
         <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
           {label}
@@ -211,13 +210,18 @@ export default function ShoppingPage() {
     <Box sx={{ flex: 1, px: 3, py: 3, overflow: 'auto' }}>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 3, flexWrap: 'wrap' }}>
-        <Box>
-          <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>
-            Shopping Dashboard
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Unified overview of shopping lists, campus marketplace, budget tracking, and order management.
-          </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: '#a78bfa20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <LocalMallIcon sx={{ fontSize: 22, color: '#a78bfa' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>
+              Shopping Dashboard
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Unified overview of shopping lists, campus marketplace, budget tracking, and order management.
+            </Typography>
+          </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
           <Button variant="outlined" startIcon={<ListAltIcon />} onClick={() => navigate('/app/shopping/lists')}>
@@ -239,41 +243,41 @@ export default function ShoppingPage() {
       <Grid container spacing={2} sx={{ mb: 2.5 }}>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            icon={<AccountBalanceWalletIcon sx={{ color: '#fff', fontSize: 20 }} />}
+            icon={<AccountBalanceWalletIcon sx={{ fontSize: 20 }} />}
             label="Monthly Budget Used"
             value={`${Math.round(budgetPct)}%`}
             sub={`$${totalSpent.toFixed(0)} spent · $${remaining.toFixed(0)} left`}
-            color="#455a64"
+            color="#a78bfa"
             onClick={() => navigate('/app/shopping/budget')}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            icon={<ListAltIcon sx={{ color: '#fff', fontSize: 20 }} />}
+            icon={<ListAltIcon sx={{ fontSize: 20 }} />}
             label="Shopping Lists"
             value={lists.length}
             sub={`${checkedItems}/${totalListItems} items checked · ${Math.round(listCompletionRate)}% done`}
-            color="#5c6bc0"
+            color="#38bdf8"
             onClick={() => navigate('/app/shopping/lists')}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            icon={<StorefrontIcon sx={{ color: '#fff', fontSize: 20 }} />}
+            icon={<StorefrontIcon sx={{ fontSize: 20 }} />}
             label="Marketplace"
             value={availableListings.length}
             sub={`listings available · avg ${avgDiscount}% off`}
-            color="#26a69a"
+            color="#06b6d4"
             onClick={() => navigate('/app/shopping/marketplace')}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            icon={<ReceiptLongIcon sx={{ color: '#fff', fontSize: 20 }} />}
+            icon={<ReceiptLongIcon sx={{ fontSize: 20 }} />}
             label="Active Orders"
             value={activeOrders.length}
             sub={`${deliveredOrders.length} delivered · $${totalOrderValue.toFixed(0)} total`}
-            color="#ab47bc"
+            color="#ec4899"
             onClick={() => navigate('/app/shopping/orders')}
           />
         </Grid>

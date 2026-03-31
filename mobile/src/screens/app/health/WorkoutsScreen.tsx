@@ -8,14 +8,9 @@ import { Button } from '@/components/common/Button';
 import { Card } from '@/components/common/Card';
 import { AppHeader } from '@/components/layout/AppHeader';
 import { useWorkoutPlans } from '@/hooks/useFitness';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-};
+;
 
 const MOCK_WORKOUTS = [
   {
@@ -58,9 +53,9 @@ export function WorkoutsScreen() {
 
   const renderDifficultyBadge = (difficulty: string) => {
     const colors: Record<string, string> = {
-      Beginner: '#10B981',
-      Intermediate: '#F59E0B',
-      Hard: '#EF4444',
+      Beginner: T.green,
+      Intermediate: T.orange,
+      Hard: T.red,
     };
     return (
       <View
@@ -85,7 +80,7 @@ export function WorkoutsScreen() {
     >
       <View style={styles.workoutHeader}>
         <View style={styles.workoutIcon}>
-          <Ionicons name="fitness" size={28} color={COLORS.primary} />
+          <Ionicons name="fitness" size={28} color={T.primary2} />
         </View>
         {renderDifficultyBadge(item.difficulty)}
       </View>
@@ -97,11 +92,11 @@ export function WorkoutsScreen() {
 
       <View style={styles.workoutMeta}>
         <View style={styles.metaItem}>
-          <Ionicons name="time" size={14} color={COLORS.secondaryText} />
+          <Ionicons name="time" size={14} color={T.muted} />
           <Text style={styles.metaText}>{item.duration}</Text>
         </View>
         <View style={styles.metaItem}>
-          <Ionicons name="repeat" size={14} color={COLORS.secondaryText} />
+          <Ionicons name="repeat" size={14} color={T.muted} />
           <Text style={styles.metaText}>{item.exercises} exercises</Text>
         </View>
       </View>
@@ -120,9 +115,9 @@ export function WorkoutsScreen() {
       <AppHeader title="Workouts" subtitle="Choose a workout plan" />
 
       <View style={styles.headerCard}>
-        <Ionicons name="sparkles" size={20} color={COLORS.primary} />
+        <Ionicons name="sparkles" size={20} color={T.primary2} />
         <Text style={styles.headerCardText}>Generate AI Workout Plan</Text>
-        <Ionicons name="arrow-forward" size={16} color={COLORS.primary} />
+        <Ionicons name="arrow-forward" size={16} color={T.primary2} />
       </View>
 
       <FlatList
@@ -139,12 +134,12 @@ export function WorkoutsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   headerCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: `${COLORS.primary}15`,
+    backgroundColor: `${T.primary2}15`,
     marginHorizontal: 16,
     marginVertical: 12,
     paddingHorizontal: 16,
@@ -156,19 +151,19 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: T.primary2,
   },
   listContent: {
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
   workoutCard: {
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   workoutHeader: {
     flexDirection: 'row',
@@ -180,7 +175,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: `${COLORS.primary}15`,
+    backgroundColor: `${T.primary2}15`,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -196,12 +191,12 @@ const styles = StyleSheet.create({
   workoutName: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 6,
   },
   workoutDescription: {
     fontSize: 13,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginBottom: 12,
   },
   workoutMeta: {
@@ -215,6 +210,6 @@ const styles = StyleSheet.create({
   },
   metaText: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
 });

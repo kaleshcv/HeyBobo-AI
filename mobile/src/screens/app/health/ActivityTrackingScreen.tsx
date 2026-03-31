@@ -6,17 +6,9 @@ import { useAppNavigation } from '@/navigation/useAppNavigation';
 import { Text } from 'react-native';
 import { Card } from '@/components/common/Card';
 import { AppHeader } from '@/components/layout/AppHeader';
-import Svg, { BarChart, XAxis, YAxis } from 'react-native-svg-charts';
-import * as scale from 'd3-scale';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-  success: '#10B981',
-};
+;
 
 export function ActivityTrackingScreen() {
   const insets = useSafeAreaInsets();
@@ -43,7 +35,7 @@ export function ActivityTrackingScreen() {
           <View style={styles.summaryGrid}>
             <View style={styles.summaryCard}>
               <View style={styles.summaryIcon}>
-                <Ionicons name="footsteps" size={20} color={COLORS.primary} />
+                <Ionicons name="footsteps" size={20} color={T.primary2} />
               </View>
               <Text style={styles.summaryLabel}>Total Steps</Text>
               <Text style={styles.summaryValue}>
@@ -63,7 +55,7 @@ export function ActivityTrackingScreen() {
 
             <View style={styles.summaryCard}>
               <View style={styles.summaryIcon}>
-                <Ionicons name="trending-up" size={20} color={COLORS.success} />
+                <Ionicons name="trending-up" size={20} color={T.green} />
               </View>
               <Text style={styles.summaryLabel}>Avg Daily Steps</Text>
               <Text style={styles.summaryValue}>
@@ -120,7 +112,7 @@ export function ActivityTrackingScreen() {
           <Text style={styles.sectionTitle}>Insights</Text>
 
           <View style={styles.insightItem}>
-            <Ionicons name="checkmark-circle" size={20} color={COLORS.success} />
+            <Ionicons name="checkmark-circle" size={20} color={T.green} />
             <View style={{ flex: 1, marginLeft: 12 }}>
               <Text style={styles.insightTitle}>Goal Achievement</Text>
               <Text style={styles.insightText}>
@@ -132,7 +124,7 @@ export function ActivityTrackingScreen() {
           <View style={styles.divider} />
 
           <View style={styles.insightItem}>
-            <Ionicons name="trending-up" size={20} color={COLORS.primary} />
+            <Ionicons name="trending-up" size={20} color={T.primary2} />
             <View style={{ flex: 1, marginLeft: 12 }}>
               <Text style={styles.insightTitle}>Best Day</Text>
               <Text style={styles.insightText}>
@@ -161,7 +153,7 @@ export function ActivityTrackingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   content: {
     flex: 1,
@@ -171,7 +163,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 16,
   },
   summaryGrid: {
@@ -180,7 +172,7 @@ const styles = StyleSheet.create({
   },
   summaryCard: {
     flex: 1,
-    backgroundColor: `${COLORS.primary}08`,
+    backgroundColor: `${T.primary2}08`,
     borderRadius: 10,
     padding: 12,
     alignItems: 'center',
@@ -189,20 +181,20 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: `${COLORS.primary}20`,
+    backgroundColor: `${T.primary2}20`,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 8,
   },
   summaryLabel: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginBottom: 6,
   },
   summaryValue: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   chartContainer: {
     height: 180,
@@ -222,12 +214,12 @@ const styles = StyleSheet.create({
   },
   bar: {
     width: '70%',
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     borderRadius: 4,
   },
   barLabel: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
     fontWeight: '500',
   },
   calorieRow: {
@@ -240,29 +232,29 @@ const styles = StyleSheet.create({
     width: 40,
     fontSize: 12,
     fontWeight: '500',
-    color: COLORS.text,
+    color: T.text,
   },
   calorieBar: {
     flex: 1,
     height: 6,
-    backgroundColor: COLORS.border,
+    backgroundColor: T.border2,
     borderRadius: 3,
     overflow: 'hidden',
   },
   calorieBarFill: {
     height: '100%',
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
   },
   calorieValue: {
     width: 60,
     textAlign: 'right',
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   divider: {
     height: 1,
-    backgroundColor: COLORS.border,
+    backgroundColor: T.border2,
     marginVertical: 12,
   },
   insightItem: {
@@ -273,12 +265,12 @@ const styles = StyleSheet.create({
   insightTitle: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 4,
   },
   insightText: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     lineHeight: 16,
   },
 });

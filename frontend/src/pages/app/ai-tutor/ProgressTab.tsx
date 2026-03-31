@@ -63,16 +63,21 @@ export default function ProgressTab({ selectedBookId }: Props) {
 
   return (
     <Box sx={{ maxWidth: 700, mx: 'auto', p: 3 }}>
-      <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>Progress Overview</Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
+        <Box sx={{ width: 32, height: 32, borderRadius: 2, bgcolor: '#10b98120', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <TrendingUpIcon sx={{ fontSize: 18, color: '#10b981' }} />
+        </Box>
+        <Typography variant="h6" sx={{ fontWeight: 600 }}>Progress Overview</Typography>
+      </Box>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
         {selectedBookId ? `Showing stats for selected textbook` : 'Showing stats across all textbooks'}
       </Typography>
 
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, mb: 3 }}>
-        <StatCard icon={<MenuBookIcon sx={{ fontSize: 20 }} />} label="Textbooks" value={stats.books} />
-        <StatCard icon={<CheckCircleIcon sx={{ fontSize: 20 }} />} label="Chapters Done" value={`${stats.completedChapters}/${stats.totalChapters}`} color="#4caf50" />
-        <StatCard icon={<QuizIcon sx={{ fontSize: 20 }} />} label="Quiz Attempts" value={stats.attempts} color="#ff9800" />
-        <StatCard icon={<SchoolIcon sx={{ fontSize: 20 }} />} label="Lessons Taken" value={stats.lessons} color="#2196f3" />
+        <StatCard icon={<MenuBookIcon sx={{ fontSize: 20 }} />} label="Textbooks" value={stats.books} color="#7c4dff" />
+        <StatCard icon={<CheckCircleIcon sx={{ fontSize: 20 }} />} label="Chapters Done" value={`${stats.completedChapters}/${stats.totalChapters}`} color="#10b981" />
+        <StatCard icon={<QuizIcon sx={{ fontSize: 20 }} />} label="Quiz Attempts" value={stats.attempts} color="#f59e0b" />
+        <StatCard icon={<SchoolIcon sx={{ fontSize: 20 }} />} label="Lessons Taken" value={stats.lessons} color="#38bdf8" />
       </Box>
 
       {/* Progress bars */}

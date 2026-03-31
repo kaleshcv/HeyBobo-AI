@@ -586,9 +586,14 @@ export default function ActivityTrackingPage() {
     <Box sx={{ maxWidth: 820, mx: 'auto', py: 3, px: 2 }}>
       {/* Header + Date Nav */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>
-          Activity Tracking
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: '#10b98120', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <DirectionsWalkIcon sx={{ fontSize: 22, color: '#10b981' }} />
+          </Box>
+          <Typography variant="h5" sx={{ fontWeight: 700 }}>
+            Activity Tracking
+          </Typography>
+        </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <IconButton size="small" onClick={() => navigateDay(-1)}>
             <ArrowBackIosNewIcon sx={{ fontSize: 14 }} />
@@ -607,7 +612,7 @@ export default function ActivityTrackingPage() {
       {/* Metric Cards */}
       <Box sx={{ display: 'flex', gap: 1.5, mb: 3, flexWrap: 'wrap' }}>
         <MetricCard
-          icon={<DirectionsWalkIcon sx={{ fontSize: 18 }} />}
+          icon={<DirectionsWalkIcon sx={{ fontSize: 18, color: '#10b981' }} />}
           label="Steps"
           value={metrics.steps}
           unit="steps"
@@ -616,7 +621,7 @@ export default function ActivityTrackingPage() {
           onEdit={() => setEditMetric({ label: 'Steps', field: 'steps', value: metrics.steps })}
         />
         <MetricCard
-          icon={<RouteIcon sx={{ fontSize: 18 }} />}
+          icon={<RouteIcon sx={{ fontSize: 18, color: '#38bdf8' }} />}
           label="Distance"
           value={metrics.distanceKm}
           unit="km"
@@ -625,7 +630,7 @@ export default function ActivityTrackingPage() {
           onEdit={() => setEditMetric({ label: 'Distance (km)', field: 'distanceKm', value: metrics.distanceKm })}
         />
         <MetricCard
-          icon={<LocalFireDepartmentIcon sx={{ fontSize: 18 }} />}
+          icon={<LocalFireDepartmentIcon sx={{ fontSize: 18, color: '#f43f5e' }} />}
           label="Calories"
           value={metrics.caloriesBurned}
           unit="kcal"
@@ -634,7 +639,7 @@ export default function ActivityTrackingPage() {
           onEdit={() => setEditMetric({ label: 'Calories Burned', field: 'caloriesBurned', value: metrics.caloriesBurned })}
         />
         <MetricCard
-          icon={<TimerIcon sx={{ fontSize: 18 }} />}
+          icon={<TimerIcon sx={{ fontSize: 18, color: '#a78bfa' }} />}
           label="Active Min"
           value={metrics.activeMinutes}
           unit="min"
@@ -643,7 +648,7 @@ export default function ActivityTrackingPage() {
           onEdit={() => setEditMetric({ label: 'Active Minutes', field: 'activeMinutes', value: metrics.activeMinutes })}
         />
         <MetricCard
-          icon={<StairsIcon sx={{ fontSize: 18 }} />}
+          icon={<StairsIcon sx={{ fontSize: 18, color: '#ec4899' }} />}
           label="Floors"
           value={metrics.floorsClimbed}
           unit="floors"
@@ -669,8 +674,8 @@ export default function ActivityTrackingPage() {
             '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontSize: 14 },
           }}
         >
-          <Tab label="Manual Entry" />
-          <Tab label="Auto Sync" />
+          <Tab icon={<FitnessCenterIcon sx={{ fontSize: 16, color: '#10b981' }} />} iconPosition="start" label="Manual Entry" />
+          <Tab icon={<SyncIcon sx={{ fontSize: 16, color: '#38bdf8' }} />} iconPosition="start" label="Auto Sync" />
         </Tabs>
 
         {/* ── Manual Entry Tab ──────────────────── */}

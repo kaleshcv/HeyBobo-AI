@@ -416,7 +416,9 @@ export default function MealPlannerPage() {
               <ArrowBackIcon />
             </IconButton>
           )}
-          <AutoAwesomeIcon sx={{ color: '#ff9800' }} />
+          <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: '#f59e0b20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <AutoAwesomeIcon sx={{ color: '#f59e0b', fontSize: 20 }} />
+          </Box>
           <Typography variant="h5" sx={{ fontWeight: 700 }}>
             {view === 'generator' ? 'AI Meal Planner' : view === 'history' ? 'Saved Plans' : currentPlanTitle}
           </Typography>
@@ -700,10 +702,10 @@ export default function MealPlannerPage() {
               scrollButtons="auto"
               sx={{ borderBottom: 1, borderColor: 'divider', px: 1 }}
             >
-              <Tab icon={<CalendarTodayIcon />} iconPosition="start" label="Meal Schedule" sx={{ fontSize: 13 }} />
-              <Tab icon={<MenuBookIcon />} iconPosition="start" label="Prep Guide" sx={{ fontSize: 13 }} />
-              <Tab icon={<ShoppingCartIcon />} iconPosition="start" label="Shopping List" sx={{ fontSize: 13 }} />
-              <Tab icon={<AutoAwesomeIcon />} iconPosition="start" label="AI Insights" sx={{ fontSize: 13 }} />
+              <Tab icon={<CalendarTodayIcon sx={{ fontSize: 16, color: '#f59e0b' }} />} iconPosition="start" label="Meal Schedule" sx={{ fontSize: 13 }} />
+              <Tab icon={<MenuBookIcon sx={{ fontSize: 16, color: '#38bdf8' }} />} iconPosition="start" label="Prep Guide" sx={{ fontSize: 13 }} />
+              <Tab icon={<ShoppingCartIcon sx={{ fontSize: 16, color: '#a78bfa' }} />} iconPosition="start" label="Shopping List" sx={{ fontSize: 13 }} />
+              <Tab icon={<AutoAwesomeIcon sx={{ fontSize: 16, color: '#7c4dff' }} />} iconPosition="start" label="AI Insights" sx={{ fontSize: 13 }} />
             </Tabs>
 
             <Box sx={{ p: 2 }}>

@@ -11,17 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { useOrdersReviewsStore } from '@/store/ordersReviewsStore'
 import { AppHeader } from '@/components/layout/AppHeader'
-
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  card: '#FFFFFF',
-  border: '#E2E8F0',
-  success: '#10B981',
-  warning: '#F59E0B',
-}
+import T from '@/theme'
 
 const TAB_ICONS = {
   orders: 'package',
@@ -36,14 +26,14 @@ export function OrdersReviewsScreen() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'delivered':
-        return COLORS.success
+        return T.green
       case 'shipped':
-        return COLORS.warning
+        return T.orange
       case 'placed':
       case 'confirmed':
-        return COLORS.primary
+        return T.primary2
       default:
-        return COLORS.secondaryText
+        return T.muted
     }
   }
 
@@ -93,7 +83,7 @@ export function OrdersReviewsScreen() {
         <Text style={styles.trackingTitle}>Tracking</Text>
         {item.trackingSteps.slice(0, 3).map((step: any, idx: number) => (
           <View key={idx} style={styles.trackingStep}>
-            <View style={[styles.stepDot, { backgroundColor: step.done ? COLORS.success : COLORS.border }]} />
+            <View style={[styles.stepDot, { backgroundColor: step.done ? T.green : T.border2 }]} />
             <View style={styles.stepInfo}>
               <Text style={styles.stepLabel}>{step.label}</Text>
               {step.date && <Text style={styles.stepDate}>{new Date(step.date).toLocaleDateString()}</Text>}
@@ -150,12 +140,12 @@ export function OrdersReviewsScreen() {
             <Ionicons
               name={TAB_ICONS[tab] as any}
               size={20}
-              color={activeTab === tab ? COLORS.primary : COLORS.secondaryText}
+              color={activeTab === tab ? T.primary2 : T.muted}
             />
             <Text
               style={[
                 styles.tabLabel,
-                { color: activeTab === tab ? COLORS.primary : COLORS.secondaryText },
+                { color: activeTab === tab ? T.primary2 : T.muted },
               ]}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -172,7 +162,7 @@ export function OrdersReviewsScreen() {
             keyExtractor={(item) => item.id}
             ListEmptyComponent={
               <View style={styles.emptyState}>
-                <Ionicons name="cube-outline" size={48} color={COLORS.secondaryText} />
+                <Ionicons name="cube-outline" size={48} color={T.muted} />
                 <Text style={styles.emptyText}>No orders yet</Text>
               </View>
             }
@@ -184,7 +174,7 @@ export function OrdersReviewsScreen() {
             keyExtractor={(item) => item.id}
             ListEmptyComponent={
               <View style={styles.emptyState}>
-                <Ionicons name="star-outline" size={48} color={COLORS.secondaryText} />
+                <Ionicons name="star-outline" size={48} color={T.muted} />
                 <Text style={styles.emptyText}>No reviews yet</Text>
               </View>
             }
@@ -198,13 +188,13 @@ export function OrdersReviewsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   tabBar: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-    backgroundColor: COLORS.card,
+    borderBottomColor: T.border2,
+    backgroundColor: T.surface2,
   },
   tab: {
     flex: 1,
@@ -216,7 +206,7 @@ const styles = StyleSheet.create({
   },
   tabActive: {
     borderBottomWidth: 2,
-    borderBottomColor: COLORS.primary,
+    borderBottomColor: T.primary2,
   },
   tabLabel: {
     fontSize: 13,
@@ -226,13 +216,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   orderCard: {
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderRadius: 12,
     padding: 16,
     marginHorizontal: 16,
     marginVertical: 8,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   orderHeader: {
     flexDirection: 'row',
@@ -243,11 +233,11 @@ const styles = StyleSheet.create({
   orderId: {
     fontSize: 14,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   orderDate: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 2,
   },
   statusBadge: {
@@ -267,12 +257,12 @@ const styles = StyleSheet.create({
   },
   itemText: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginBottom: 4,
   },
   moreItems: {
     fontSize: 11,
-    color: COLORS.primary,
+    color: T.primary2,
     fontWeight: '600',
   },
   trackingSection: {
@@ -281,7 +271,7 @@ const styles = StyleSheet.create({
   trackingTitle: {
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 8,
   },
   trackingStep: {
@@ -302,11 +292,11 @@ const styles = StyleSheet.create({
   stepLabel: {
     fontSize: 12,
     fontWeight: '500',
-    color: COLORS.text,
+    color: T.text,
   },
   stepDate: {
     fontSize: 10,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 2,
   },
   orderFooter: {
@@ -314,25 +304,25 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingTop: 1,
-    borderTopColor: COLORS.border,
+    borderTopColor: T.border2,
   },
   orderTotal: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: T.primary2,
   },
   estimatedDelivery: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   reviewCard: {
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderRadius: 12,
     padding: 16,
     marginHorizontal: 16,
     marginVertical: 8,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   reviewHeader: {
     flexDirection: 'row',
@@ -343,7 +333,7 @@ const styles = StyleSheet.create({
   reviewProduct: {
     fontSize: 13,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   ratingRow: {
     flexDirection: 'row',
@@ -352,17 +342,17 @@ const styles = StyleSheet.create({
   },
   reviewDate: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   reviewTitle: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 6,
   },
   reviewBody: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     lineHeight: 18,
   },
   emptyState: {
@@ -373,7 +363,7 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginTop: 16,
   },
 })

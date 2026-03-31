@@ -8,6 +8,7 @@ import {
   type TextInputProps,
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import T from '@/theme'
 
 interface InputProps extends TextInputProps {
   label?:        string
@@ -35,7 +36,6 @@ export function Input({
   const [isFocused, setIsFocused] = useState(false)
 
   const isPassword = secureTextEntry
-  const showText   = isPassword ? !showPassword : false
 
   return (
     <View style={[styles.wrapper, containerStyle]}>
@@ -50,14 +50,14 @@ export function Input({
           <Ionicons
             name={leftIcon as any}
             size={18}
-            color={error ? '#EF4444' : isFocused ? '#6366F1' : '#94A3B8'}
+            color={error ? T.red : isFocused ? T.primary : T.muted}
             style={styles.leftIcon}
           />
         )}
 
         <TextInput
           style={[styles.input, style]}
-          placeholderTextColor="#94A3B8"
+          placeholderTextColor={T.muted2}
           secureTextEntry={isPassword ? !showPassword : false}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
@@ -74,7 +74,7 @@ export function Input({
                 ? showPassword ? 'eye-off' : 'eye'
                 : rightIcon) as any}
               size={18}
-              color="#94A3B8"
+              color={T.muted}
             />
           </TouchableOpacity>
         )}
@@ -88,27 +88,27 @@ export function Input({
 
 const styles = StyleSheet.create({
   wrapper:   { marginBottom: 16 },
-  label:     { fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 6 },
+  label:     { fontSize: 14, fontWeight: '600', color: T.text2, marginBottom: 6 },
   inputRow:  {
-    flexDirection:   'row',
-    alignItems:      'center',
-    borderWidth:     1.5,
-    borderColor:     '#E2E8F0',
-    borderRadius:    12,
-    backgroundColor: '#F8FAFC',
+    flexDirection:     'row',
+    alignItems:        'center',
+    borderWidth:       1.5,
+    borderColor:       T.border2,
+    borderRadius:      12,
+    backgroundColor:   T.surface2,
     paddingHorizontal: 14,
-    minHeight:       52,
+    minHeight:         52,
   },
-  focused:  { borderColor: '#6366F1', backgroundColor: '#FFFFFF' },
-  errored:  { borderColor: '#EF4444' },
+  focused:  { borderColor: T.primary, backgroundColor: T.surface2 },
+  errored:  { borderColor: T.red },
   input: {
-    flex:       1,
-    fontSize:   15,
-    color:      '#1E293B',
+    flex:            1,
+    fontSize:        15,
+    color:           T.text,
     paddingVertical: 12,
   },
   leftIcon:  { marginRight: 10 },
   rightIcon: { padding: 4 },
-  error:     { fontSize: 12, color: '#EF4444', marginTop: 4 },
-  hint:      { fontSize: 12, color: '#94A3B8', marginTop: 4 },
+  error:     { fontSize: 12, color: T.red,  marginTop: 4 },
+  hint:      { fontSize: 12, color: T.muted, marginTop: 4 },
 })

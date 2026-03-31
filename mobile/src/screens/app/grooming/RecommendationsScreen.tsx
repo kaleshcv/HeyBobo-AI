@@ -7,23 +7,15 @@ import { Card } from '@/components/common/Card';
 import { AppHeader } from '@/components/layout/AppHeader';
 import { useGroomingStore } from '@/store/groomingStore';
 import type { RecommendationCategory } from '@/store/groomingStore';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-  warning: '#F59E0B',
-  error: '#EF4444',
-  success: '#10B981',
-};
+;
 
 const CATEGORY_COLORS: Record<RecommendationCategory, string> = {
   Skincare: '#EC4899',
-  Haircare: '#F97316',
-  Lifestyle: '#10B981',
-  Grooming: '#6366F1',
+  Haircare: T.orange,
+  Lifestyle: T.green,
+  Grooming: T.primary2,
 };
 
 const CATEGORY_ICONS: Record<RecommendationCategory, any> = {
@@ -46,7 +38,7 @@ export function RecommendationsScreen() {
     [recommendations, activeTab],
   );
 
-  const priorityColor = (p: string) => p === 'High' ? COLORS.error : p === 'Medium' ? COLORS.warning : COLORS.success;
+  const priorityColor = (p: string) => p === 'High' ? T.red : p === 'Medium' ? T.orange : T.green;
   const priorityBg = (p: string) => p === 'High' ? '#EF444415' : p === 'Medium' ? '#F59E0B15' : '#10B98115';
 
   return (
@@ -62,7 +54,7 @@ export function RecommendationsScreen() {
       >
         {TABS.map((tab) => {
           const active = activeTab === tab;
-          const color = tab === 'All' ? COLORS.primary : CATEGORY_COLORS[tab as RecommendationCategory] ?? COLORS.primary;
+          const color = tab === 'All' ? T.primary2 : CATEGORY_COLORS[tab as RecommendationCategory] ?? T.primary2;
           const count = tab === 'All' ? recommendations.length : recommendations.filter((r) => r.category === tab).length;
           return (
             <TouchableOpacity
@@ -88,7 +80,7 @@ export function RecommendationsScreen() {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {filtered.length === 0 && (
           <View style={styles.empty}>
-            <Ionicons name="search-outline" size={40} color={COLORS.border} />
+            <Ionicons name="search-outline" size={40} color={T.border2} />
             <Text style={styles.emptyText}>No recommendations in this category</Text>
           </View>
         )}
@@ -119,7 +111,7 @@ export function RecommendationsScreen() {
                     <Ionicons
                       name={item.saved ? 'bookmark' : 'bookmark-outline'}
                       size={18}
-                      color={item.saved ? COLORS.primary : COLORS.secondaryText}
+                      color={item.saved ? T.primary2 : T.muted}
                     />
                   </TouchableOpacity>
                 </View>
@@ -133,7 +125,7 @@ export function RecommendationsScreen() {
                   <Text style={styles.productsLabel}>Recommended Products</Text>
                   {item.products.map((product, i) => (
                     <View key={i} style={styles.productRow}>
-                      <Ionicons name="checkmark-circle" size={15} color={COLORS.primary} />
+                      <Ionicons name="checkmark-circle" size={15} color={T.primary2} />
                       <Text style={styles.productName}>{product}</Text>
                     </View>
                   ))}
@@ -150,11 +142,11 @@ export function RecommendationsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.background },
+  container: { flex: 1, backgroundColor: T.bg },
   content: { flex: 1, paddingHorizontal: 16 },
   card: { marginBottom: 12 },
   empty: { alignItems: 'center', paddingTop: 60, gap: 12 },
-  emptyText: { fontSize: 14, color: COLORS.secondaryText },
+  emptyText: { fontSize: 14, color: T.muted },
 
   // Tabs
   tabsBar: { flexGrow: 0, marginBottom: 4 },
@@ -162,8 +154,8 @@ const styles = StyleSheet.create({
   tab: {
     flexDirection: 'row', alignItems: 'center', gap: 5,
     paddingHorizontal: 12, paddingVertical: 7,
-    borderRadius: 20, borderWidth: 1.5, borderColor: COLORS.border,
-    backgroundColor: '#fff',
+    borderRadius: 20, borderWidth: 1.5, borderColor: T.border2,
+    backgroundColor: '#111827',
   },
   tabText: { fontSize: 12, fontWeight: '600' },
 
@@ -172,16 +164,16 @@ const styles = StyleSheet.create({
   catIcon: { width: 38, height: 38, borderRadius: 19, justifyContent: 'center', alignItems: 'center' },
   recMeta: { flex: 1 },
   catLabel: { fontSize: 10, fontWeight: '700', marginBottom: 2 },
-  recTitle: { fontSize: 14, fontWeight: '700', color: COLORS.text },
+  recTitle: { fontSize: 14, fontWeight: '700', color: T.text },
   recActions: { alignItems: 'flex-end', gap: 6 },
   priorityBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 4 },
   priorityText: { fontSize: 10, fontWeight: '700' },
   saveBtn: { padding: 2 },
 
-  description: { fontSize: 13, color: COLORS.secondaryText, lineHeight: 19 },
-  divider: { height: 1, backgroundColor: COLORS.border, marginVertical: 12 },
-  productsLabel: { fontSize: 11, fontWeight: '700', color: COLORS.text, marginBottom: 8 },
+  description: { fontSize: 13, color: T.muted, lineHeight: 19 },
+  divider: { height: 1, backgroundColor: T.border2, marginVertical: 12 },
+  productsLabel: { fontSize: 11, fontWeight: '700', color: T.text, marginBottom: 8 },
   productRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 4 },
-  productName: { fontSize: 12, color: COLORS.secondaryText, flex: 1 },
+  productName: { fontSize: 12, color: T.muted, flex: 1 },
 });
 

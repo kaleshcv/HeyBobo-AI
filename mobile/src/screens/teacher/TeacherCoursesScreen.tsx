@@ -6,8 +6,9 @@ import { useAppNavigation } from '@/navigation/useAppNavigation';
 import { Text } from 'react-native';
 import { Button } from '@/components/common/Button';
 import { AppHeader } from '@/components/layout/AppHeader';
+import T from '@/theme'
 
-const COLORS = { primary: '#6366F1', text: '#1E293B', secondaryText: '#64748B', background: '#F8FAFC', border: '#E2E8F0' };
+;
 
 const COURSES = [
   { id: '1', title: 'React Basics', students: 45, published: true },
@@ -26,7 +27,7 @@ export function TeacherCoursesScreen() {
       </View>
       <View style={styles.courseActions}>
         <View style={[styles.badge, { backgroundColor: item.published ? '#10B98120' : '#F59E0B20' }]}>
-          <Text style={{ color: item.published ? '#10B981' : '#F59E0B', fontSize: 10, fontWeight: '600' }}>
+          <Text style={{ color: item.published ? T.green : T.orange, fontSize: 10, fontWeight: '600' }}>
             {item.published ? 'Published' : 'Draft'}
           </Text>
         </View>
@@ -44,11 +45,11 @@ export function TeacherCoursesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.background },
+  container: { flex: 1, backgroundColor: T.bg },
   listContent: { paddingHorizontal: 16, paddingVertical: 16 },
-  courseCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#fff', borderRadius: 10, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: COLORS.border },
-  courseTitle: { fontSize: 14, fontWeight: '700', color: COLORS.text },
-  courseInfo: { fontSize: 12, color: COLORS.secondaryText, marginTop: 4 },
+  courseCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#111827', borderRadius: 10, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: T.border2 },
+  courseTitle: { fontSize: 14, fontWeight: '700', color: T.text },
+  courseInfo: { fontSize: 12, color: T.muted, marginTop: 4 },
   courseActions: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   badge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 4 },
 });

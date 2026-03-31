@@ -1475,20 +1475,20 @@ export default function GroupDetailPage() {
   const unread = group.notifications.filter((n) => !n.read).length;
 
   const tabs = [
-    { label: 'Overview', icon: <SettingsIcon sx={{ fontSize: 18 }} /> },
-    { label: 'Members', icon: <GroupIcon sx={{ fontSize: 18 }} /> },
-    { label: 'Content', icon: <MenuBookIcon sx={{ fontSize: 18 }} /> },
-    { label: 'Meetings', icon: <VideoCallIcon sx={{ fontSize: 18 }} /> },
-    { label: 'AI Study', icon: <SmartToyIcon sx={{ fontSize: 18 }} /> },
-    { label: 'Discussion', icon: <ChatIcon sx={{ fontSize: 18 }} /> },
-    { label: 'Assignments', icon: <AssignmentIcon sx={{ fontSize: 18 }} /> },
-    { label: 'Attendance', icon: <HowToRegIcon sx={{ fontSize: 18 }} /> },
-    { label: 'Quizzes', icon: <QuizIcon sx={{ fontSize: 18 }} /> },
-    { label: 'Calendar', icon: <CalendarMonthIcon sx={{ fontSize: 18 }} /> },
-    { label: 'Notifications', icon: <Badge badgeContent={unread} color="error" max={9}><NotificationsIcon sx={{ fontSize: 18 }} /></Badge> },
-    { label: 'Resources', icon: <FolderIcon sx={{ fontSize: 18 }} /> },
-    { label: 'Leaderboard', icon: <LeaderboardIcon sx={{ fontSize: 18 }} /> },
-    { label: 'Analytics', icon: <BarChartIcon sx={{ fontSize: 18 }} /> },
+    { label: 'Overview', icon: <SettingsIcon sx={{ fontSize: 18, color: '#9e9e9e' }} /> },
+    { label: 'Members', icon: <GroupIcon sx={{ fontSize: 18, color: '#ec4899' }} /> },
+    { label: 'Content', icon: <MenuBookIcon sx={{ fontSize: 18, color: '#38bdf8' }} /> },
+    { label: 'Meetings', icon: <VideoCallIcon sx={{ fontSize: 18, color: '#06b6d4' }} /> },
+    { label: 'AI Study', icon: <SmartToyIcon sx={{ fontSize: 18, color: '#7c4dff' }} /> },
+    { label: 'Discussion', icon: <ChatIcon sx={{ fontSize: 18, color: '#ec4899' }} /> },
+    { label: 'Assignments', icon: <AssignmentIcon sx={{ fontSize: 18, color: '#f59e0b' }} /> },
+    { label: 'Attendance', icon: <HowToRegIcon sx={{ fontSize: 18, color: '#10b981' }} /> },
+    { label: 'Quizzes', icon: <QuizIcon sx={{ fontSize: 18, color: '#f43f5e' }} /> },
+    { label: 'Calendar', icon: <CalendarMonthIcon sx={{ fontSize: 18, color: '#a78bfa' }} /> },
+    { label: 'Notifications', icon: <Badge badgeContent={unread} color="error" max={9}><NotificationsIcon sx={{ fontSize: 18, color: '#f43f5e' }} /></Badge> },
+    { label: 'Resources', icon: <FolderIcon sx={{ fontSize: 18, color: '#fb923c' }} /> },
+    { label: 'Leaderboard', icon: <LeaderboardIcon sx={{ fontSize: 18, color: '#f59e0b' }} /> },
+    { label: 'Analytics', icon: <BarChartIcon sx={{ fontSize: 18, color: '#38bdf8' }} /> },
   ];
 
   return (

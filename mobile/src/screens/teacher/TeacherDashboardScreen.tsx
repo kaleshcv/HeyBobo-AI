@@ -6,14 +6,9 @@ import { useAppNavigation } from '@/navigation/useAppNavigation';
 import { Text } from 'react-native';
 import { Card } from '@/components/common/Card';
 import { AppHeader } from '@/components/layout/AppHeader';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-};
+;
 
 export function TeacherDashboardScreen() {
   const insets = useSafeAreaInsets();
@@ -34,7 +29,7 @@ export function TeacherDashboardScreen() {
         <View style={styles.statsGrid}>
           {stats.map((stat) => (
             <Card key={stat.label} padding="lg" style={styles.statCard}>
-              <Ionicons name={stat.icon as any} size={24} color={COLORS.primary} />
+              <Ionicons name={stat.icon as any} size={24} color={T.primary2} />
               <Text style={styles.statValue}>{stat.value}</Text>
               <Text style={styles.statLabel}>{stat.label}</Text>
             </Card>
@@ -47,7 +42,7 @@ export function TeacherDashboardScreen() {
           style={styles.actionCard}
           onPress={() => navigation.navigate('CourseBuilder')}
         >
-          <Ionicons name="add-circle" size={24} color={COLORS.primary} />
+          <Ionicons name="add-circle" size={24} color={T.primary2} />
           <Text style={styles.actionText}>Create New Course</Text>
         </TouchableOpacity>
 
@@ -55,12 +50,12 @@ export function TeacherDashboardScreen() {
           style={styles.actionCard}
           onPress={() => navigation.navigate('TeacherCourses')}
         >
-          <Ionicons name="list" size={24} color={COLORS.primary} />
+          <Ionicons name="list" size={24} color={T.primary2} />
           <Text style={styles.actionText}>My Courses</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.actionCard}>
-          <Ionicons name="analytics" size={24} color={COLORS.primary} />
+          <Ionicons name="analytics" size={24} color={T.primary2} />
           <Text style={styles.actionText}>View Analytics</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -71,7 +66,7 @@ export function TeacherDashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   content: {
     flex: 1,
@@ -91,34 +86,34 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginTop: 8,
   },
   statLabel: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 4,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 12,
   },
   actionCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderRadius: 10,
     padding: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     gap: 12,
   },
   actionText: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
 });

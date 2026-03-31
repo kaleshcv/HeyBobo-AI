@@ -15,16 +15,9 @@ import { AppHeader } from '@/components/layout/AppHeader';
 import { useTodayActivity } from '@/hooks/useFitness';
 import { useWearablesStore } from '@/store/wearablesStore';
 import Svg, { Circle, Path } from 'react-native-svg';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-  success: '#10B981',
-  warning: '#F59E0B',
-};
+;
 
 export function HealthFitnessScreen() {
   const insets = useSafeAreaInsets();
@@ -48,7 +41,7 @@ export function HealthFitnessScreen() {
             cx="80"
             cy="80"
             r={radius}
-            stroke={COLORS.border}
+            stroke={T.border2}
             strokeWidth="8"
             fill="none"
           />
@@ -56,7 +49,7 @@ export function HealthFitnessScreen() {
             cx="80"
             cy="80"
             r={radius}
-            stroke={COLORS.primary}
+            stroke={T.primary2}
             strokeWidth="8"
             fill="none"
             strokeDasharray={circumference}
@@ -85,13 +78,13 @@ export function HealthFitnessScreen() {
   ) => (
     <TouchableOpacity style={styles.quickAccessCard} onPress={onPress}>
       <View style={styles.quickAccessIcon}>
-        <Ionicons name={icon as any} size={28} color={COLORS.primary} />
+        <Ionicons name={icon as any} size={28} color={T.primary2} />
       </View>
       <View style={styles.quickAccessContent}>
         <Text style={styles.quickAccessTitle}>{title}</Text>
         <Text style={styles.quickAccessSubtitle}>{subtitle}</Text>
       </View>
-      <Ionicons name="arrow-forward" size={18} color={COLORS.primary} />
+      <Ionicons name="arrow-forward" size={18} color={T.primary2} />
     </TouchableOpacity>
   );
 
@@ -122,7 +115,7 @@ export function HealthFitnessScreen() {
               <Text style={styles.stepGoal}>Goal: 8,000</Text>
             </View>
             <View style={styles.stepCountIcon}>
-              <Ionicons name="footsteps" size={48} color={COLORS.primary} />
+              <Ionicons name="footsteps" size={48} color={T.primary2} />
             </View>
           </View>
 
@@ -177,14 +170,14 @@ export function HealthFitnessScreen() {
           'nutrition',
           'Dietary Tracking',
           'Log your meals',
-          () => navigation.navigate('DietaryDashboard')
+          () => navigation.navigate('Dietary', { screen: 'DietaryDashboard' } as any)
         )}
 
         {renderQuickAccessCard(
           'people',
           'Grooming',
           'Personal care tips',
-          () => navigation.navigate('GroomingDashboard')
+          () => navigation.navigate('Dietary', { screen: 'GroomingDashboard' } as any)
         )}
 
         {renderQuickAccessCard(
@@ -200,7 +193,7 @@ export function HealthFitnessScreen() {
           onPress={() => navigation.navigate('ActivityTracking')}
         >
           <Text style={styles.activityLinkText}>View Detailed Activity Log</Text>
-          <Ionicons name="arrow-forward" size={16} color={COLORS.primary} />
+          <Ionicons name="arrow-forward" size={16} color={T.primary2} />
         </TouchableOpacity>
       </ScrollView>
     </View>
@@ -210,7 +203,7 @@ export function HealthFitnessScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   content: {
     flex: 1,
@@ -226,11 +219,11 @@ const styles = StyleSheet.create({
   statsTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   statsDate: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   stepCountContainer: {
     flexDirection: 'row',
@@ -244,16 +237,16 @@ const styles = StyleSheet.create({
   stepCount: {
     fontSize: 32,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: T.primary2,
   },
   stepLabel: {
     fontSize: 14,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 4,
   },
   stepGoal: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 2,
   },
   stepCountIcon: {
@@ -261,7 +254,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: COLORS.border,
+    backgroundColor: T.border2,
     marginVertical: 16,
   },
   calorieSection: {
@@ -281,11 +274,11 @@ const styles = StyleSheet.create({
   calorieValue: {
     fontSize: 24,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   calorieLabel: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 2,
   },
   calorieInfo: {
@@ -299,12 +292,12 @@ const styles = StyleSheet.create({
   },
   calorieInfoLabel: {
     fontSize: 13,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   calorieInfoValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   heartRateHeader: {
     flexDirection: 'row',
@@ -314,47 +307,47 @@ const styles = StyleSheet.create({
   },
   heartRateLabel: {
     fontSize: 14,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginBottom: 4,
   },
   heartRateValue: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#EF4444',
+    color: T.red,
   },
   heartRateRange: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: COLORS.border,
+    borderTopColor: T.border2,
   },
   heartRateRangeLabel: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 12,
   },
   quickAccessCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderRadius: 10,
     padding: 14,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     gap: 12,
   },
   quickAccessIcon: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: `${COLORS.primary}15`,
+    backgroundColor: `${T.primary2}15`,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -364,11 +357,11 @@ const styles = StyleSheet.create({
   quickAccessTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   quickAccessSubtitle: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 2,
   },
   activityLink: {
@@ -379,12 +372,12 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 32,
     borderTopWidth: 1,
-    borderTopColor: COLORS.border,
+    borderTopColor: T.border2,
     gap: 8,
   },
   activityLinkText: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: T.primary2,
   },
 });

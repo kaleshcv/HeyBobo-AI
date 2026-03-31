@@ -13,16 +13,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { useAppNavigation } from '@/navigation/useAppNavigation'
 import { useWorkoutSystemStore, EXERCISE_DATABASE, PRESET_PLANS } from '@/store/workoutSystemStore'
 import { AppHeader } from '@/components/layout/AppHeader'
-
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  card: '#FFFFFF',
-  border: '#E2E8F0',
-  success: '#10B981',
-}
+import T from '@/theme'
 
 const DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
 
@@ -130,7 +121,7 @@ export function FitnessDashboardScreen() {
 
         {!activePlan && (
           <View style={styles.noActivePlanCard}>
-            <Ionicons name="checkmark-circle" size={48} color={COLORS.secondaryText} />
+            <Ionicons name="checkmark-circle" size={48} color={T.muted} />
             <Text style={styles.noActivePlanText}>No active plan</Text>
             <Text style={styles.noActivePlanSubtext}>Select a preset plan below</Text>
           </View>
@@ -209,14 +200,14 @@ export function FitnessDashboardScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   content: {
     flex: 1,
     padding: 16,
   },
   activePlanCard: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     borderRadius: 16,
     padding: 20,
     marginBottom: 24,
@@ -282,11 +273,11 @@ const styles = StyleSheet.create({
     width: 4,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#FFF',
+    backgroundColor: '#111827',
     marginTop: 4,
   },
   startButton: {
-    backgroundColor: '#FFF',
+    backgroundColor: '#111827',
     borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
@@ -295,28 +286,28 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   startButtonText: {
-    color: COLORS.primary,
+    color: T.primary2,
     fontWeight: '700',
     fontSize: 14,
   },
   noActivePlanCard: {
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderRadius: 12,
     padding: 24,
     alignItems: 'center',
     marginBottom: 24,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   noActivePlanText: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginTop: 12,
   },
   noActivePlanSubtext: {
     fontSize: 13,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 4,
   },
   section: {
@@ -325,7 +316,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 12,
   },
   categoryScroll: {
@@ -338,29 +329,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 6,
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   categoryChipActive: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
+    backgroundColor: T.primary2,
+    borderColor: T.primary2,
   },
   categoryChipText: {
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   categoryChipTextActive: {
     color: '#FFF',
   },
   presetPlanCard: {
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   planHeader: {
     flexDirection: 'row',
@@ -371,15 +362,15 @@ const styles = StyleSheet.create({
   planName: {
     fontSize: 14,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   planGoal: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 2,
   },
   planDaysPerWeek: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 6,
@@ -396,15 +387,15 @@ const styles = StyleSheet.create({
   },
   planDesc: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   exerciseCard: {
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderRadius: 12,
     padding: 12,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   exerciseHeader: {
     flexDirection: 'row',
@@ -416,10 +407,10 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   difficultyBadge: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
@@ -436,19 +427,19 @@ const styles = StyleSheet.create({
   },
   exerciseDetail: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   muscleGroups: {
     flexDirection: 'row',
     gap: 4,
   },
   muscleTag: {
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
     fontSize: 10,
-    color: COLORS.primary,
+    color: T.primary2,
     fontWeight: '500',
   },
 })

@@ -9,6 +9,7 @@ import { Ionicons }          from '@expo/vector-icons'
 import { Input }             from '@/components/common/Input'
 import { Button }            from '@/components/common/Button'
 import { useForgotPassword } from '@/hooks/useAuth'
+import T from '@/theme'
 
 const schema = z.object({ email: z.string().email('Please enter a valid email') })
 type FormData = z.infer<typeof schema>
@@ -67,13 +68,13 @@ export function ForgotPasswordScreen() {
 }
 
 const styles = StyleSheet.create({
-  scroll:       { flex: 1, backgroundColor: '#FFFFFF' },
+  scroll:       { flex: 1, backgroundColor: T.surface },
   content:      { paddingHorizontal: 24 },
   backBtn:      { marginBottom: 32 },
-  iconWrap:     { width: 80, height: 80, borderRadius: 24, backgroundColor: '#EEF2FF', alignItems: 'center', justifyContent: 'center', marginBottom: 24 },
-  heading:      { fontSize: 26, fontWeight: '800', color: '#1E293B', marginBottom: 8 },
-  sub:          { fontSize: 15, color: '#64748B', marginBottom: 28, lineHeight: 22 },
-  successCard:  { alignItems: 'center', padding: 24, backgroundColor: '#F0FDF4', borderRadius: 16 },
+  iconWrap:     { width: 80, height: 80, borderRadius: 24, backgroundColor: '#1e293b', alignItems: 'center', justifyContent: 'center', marginBottom: 24 },
+  heading:      { fontSize: 26, fontWeight: '800', color: T.text, marginBottom: 8 },
+  sub:          { fontSize: 15, color: T.muted, marginBottom: 28, lineHeight: 22 },
+  successCard:  { alignItems: 'center', padding: 24, backgroundColor: T.surface2, borderRadius: 16 },
   successTitle: { fontSize: 18, fontWeight: '700', color: '#15803D', marginTop: 12, marginBottom: 8 },
   successText:  { fontSize: 14, color: '#166534', textAlign: 'center' },
 })

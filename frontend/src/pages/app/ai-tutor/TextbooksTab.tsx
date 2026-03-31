@@ -96,9 +96,14 @@ export default function TextbooksTab({ onSelectBook, selectedBookId }: Props) {
 
   return (
     <Box sx={{ maxWidth: 700, mx: 'auto', p: 3 }}>
-      <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
-        My Textbooks
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
+        <Box sx={{ width: 32, height: 32, borderRadius: 2, bgcolor: '#38bdf820', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <MenuBookIcon sx={{ fontSize: 18, color: '#38bdf8' }} />
+        </Box>
+        <Typography variant="h6" sx={{ fontWeight: 600 }}>
+          My Textbooks
+        </Typography>
+      </Box>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
         Upload your university textbooks. The AI will study them and help you learn.
       </Typography>

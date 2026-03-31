@@ -425,13 +425,18 @@ export default function HealthFitnessPage() {
   return (
     <Box sx={{ flex: 1, px: 3, py: 3, overflow: 'auto' }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 3, flexWrap: 'wrap' }}>
-        <Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box sx={{ width: 44, height: 44, borderRadius: 2, bgcolor: '#f43f5e20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <MonitorHeartIcon sx={{ fontSize: 24, color: '#f43f5e' }} />
+          </Box>
+          <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>
             Health Dashboard
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Unified health view across profile, activity tracking, wearables, and injury recovery.
           </Typography>
+          </Box>
         </Box>
 
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
@@ -463,7 +468,7 @@ export default function HealthFitnessPage() {
             label="Overall Health Score"
             value={`${overallHealthScore}%`}
             sub={`Activity ${activityScore}% · Recovery ${recoveryScore}%`}
-            color="#455a64"
+            color="#f43f5e"
             detail={
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                 <Box>
@@ -502,7 +507,7 @@ export default function HealthFitnessPage() {
             label="Connected Devices"
             value={devices.length}
             sub={`${activeAlerts.length} active alert${activeAlerts.length !== 1 ? 's' : ''}`}
-            color="#1e88e5"
+            color="#22d3ee"
             detail={
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                 {devices.length > 0 ? devices.map((device) => (
@@ -535,7 +540,7 @@ export default function HealthFitnessPage() {
             label="Active Injuries"
             value={activeInjuries.length}
             sub={activeInjuries.length > 0 ? `Avg recovery ${recoveryScore}%` : 'No active injury load'}
-            color="#e53935"
+            color="#fb923c"
             detail={
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                 {activeInjuries.length > 0 ? activeInjuries.slice(0, 3).map((injury) => (
@@ -562,7 +567,7 @@ export default function HealthFitnessPage() {
             label="Daily Activity"
             value={`${activityScore}%`}
             sub={`${todayMetrics.steps.toLocaleString()} steps · ${todayMetrics.activeMinutes} active min`}
-            color="#43a047"
+            color="#10b981"
             detail={
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                 {[

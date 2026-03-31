@@ -16,14 +16,9 @@ import { EmptyState } from '@/components/common/EmptyState';
 import { AppHeader } from '@/components/layout/AppHeader';
 import { useFeaturedCourses, useCourses, useCategories } from '@/hooks/useCourses';
 import { Text } from 'react-native';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-};
+;
 
 export function CoursesListScreen() {
   const insets = useSafeAreaInsets();
@@ -53,7 +48,7 @@ export function CoursesListScreen() {
       }
     >
       <View style={styles.courseImage}>
-        <Ionicons name="play-circle-outline" size={40} color={COLORS.primary} />
+        <Ionicons name="play-circle-outline" size={40} color={T.primary2} />
       </View>
       <View style={styles.courseContent}>
         <Text style={styles.courseTitle} numberOfLines={2}>
@@ -94,7 +89,7 @@ export function CoursesListScreen() {
         </Text>
       </View>
       <View style={styles.featuredIcon}>
-        <Ionicons name="arrow-forward" size={24} color={COLORS.primary} />
+        <Ionicons name="arrow-forward" size={24} color={T.primary2} />
       </View>
     </TouchableOpacity>
   );
@@ -104,12 +99,30 @@ export function CoursesListScreen() {
       <AppHeader title="Explore Courses" />
 
       <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* AI Tutor Banner */}
+        <TouchableOpacity
+          style={styles.tutorBanner}
+          onPress={() => navigation.navigate('AITutor')}
+          activeOpacity={0.8}
+        >
+          <View style={styles.tutorBannerLeft}>
+            <View style={styles.tutorBannerIcon}>
+              <Ionicons name="sparkles" size={20} color="#818cf8" />
+            </View>
+            <View>
+              <Text style={styles.tutorBannerTitle}>AI Tutor</Text>
+              <Text style={styles.tutorBannerSub}>Textbooks · Study Plans · Quizzes · Chat</Text>
+            </View>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color="#818cf8" />
+        </TouchableOpacity>
+
         {/* Search Bar */}
         <View style={styles.searchContainer}>
           <Ionicons
             name="search"
             size={20}
-            color={COLORS.secondaryText}
+            color={T.muted}
             style={styles.searchIcon}
           />
           <TextInput
@@ -117,7 +130,7 @@ export function CoursesListScreen() {
             placeholder="Search courses..."
             value={searchQuery}
             onChangeText={setSearchQuery}
-            placeholderTextColor={COLORS.secondaryText}
+            placeholderTextColor={T.muted}
           />
         </View>
 
@@ -230,7 +243,7 @@ export function CoursesListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   scrollContent: {
     flex: 1,
@@ -239,10 +252,10 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     marginVertical: 16,
     paddingHorizontal: 12,
   },
@@ -253,7 +266,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 12,
     fontSize: 16,
-    color: COLORS.text,
+    color: T.text,
   },
   categoriesContainer: {
     marginBottom: 24,
@@ -263,17 +276,17 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     marginRight: 12,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
   },
   categoryChipActive: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
+    backgroundColor: T.primary2,
+    borderColor: T.primary2,
   },
   categoryChipText: {
     fontSize: 14,
-    color: COLORS.secondaryText,
+    color: T.muted,
     fontWeight: '500',
   },
   categoryChipTextActive: {
@@ -285,7 +298,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 16,
   },
   courseGrid: {
@@ -294,17 +307,17 @@ const styles = StyleSheet.create({
   },
   courseCard: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderRadius: 12,
     marginHorizontal: 6,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   courseImage: {
     width: '100%',
     height: 120,
-    backgroundColor: `${COLORS.primary}15`,
+    backgroundColor: `${T.primary2}15`,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -314,12 +327,12 @@ const styles = StyleSheet.create({
   courseTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 6,
   },
   courseInstructor: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginBottom: 8,
   },
   courseFooter: {
@@ -330,7 +343,7 @@ const styles = StyleSheet.create({
   coursePrice: {
     fontSize: 14,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: T.primary2,
   },
   ratingContainer: {
     flexDirection: 'row',
@@ -339,11 +352,11 @@ const styles = StyleSheet.create({
   },
   rating: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   featuredCard: {
     flexDirection: 'row',
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     borderRadius: 12,
     overflow: 'hidden',
     marginBottom: 16,
@@ -384,24 +397,60 @@ const styles = StyleSheet.create({
   },
   communityCard: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     gap: 8,
   },
   communityTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     textAlign: 'center',
   },
   communityDesc: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     textAlign: 'center',
     lineHeight: 16,
+  },
+  tutorBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: T.text,
+    borderRadius: 12,
+    padding: 14,
+    marginHorizontal: 16,
+    marginTop: 12,
+    marginBottom: 4,
+    borderWidth: 1,
+    borderColor: '#6366f133',
+  },
+  tutorBannerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  tutorBannerIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    backgroundColor: '#6366f133',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tutorBannerTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: T.bg,
+  },
+  tutorBannerSub: {
+    fontSize: 11,
+    color: T.muted2,
+    marginTop: 2,
   },
 });

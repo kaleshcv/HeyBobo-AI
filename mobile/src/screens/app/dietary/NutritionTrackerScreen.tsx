@@ -13,14 +13,9 @@ import { Card } from '@/components/common/Card';
 import { AppHeader } from '@/components/layout/AppHeader';
 import { useNutritionSummary } from '@/hooks/useDietary';
 import Svg, { Polyline, G, Text as SvgText } from 'react-native-svg';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-};
+;
 
 const DAILY_DATA = [
   { day: 'Mon', calories: 1800 },
@@ -104,8 +99,8 @@ export function NutritionTrackerScreen() {
         <Card padding="lg" style={{ marginBottom: 24 }}>
           <Text style={styles.sectionTitle}>Weekly Macro Breakdown</Text>
           {renderMacroBreakdown('Protein', 1050, '#3B82F6')}
-          {renderMacroBreakdown('Carbs', 1260, '#F59E0B')}
-          {renderMacroBreakdown('Fat', 490, '#EF4444')}
+          {renderMacroBreakdown('Carbs', 1260, T.orange)}
+          {renderMacroBreakdown('Fat', 490, T.red)}
         </Card>
 
         {/* Nutrition Goals */}
@@ -154,7 +149,7 @@ export function NutritionTrackerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   content: {
     flex: 1,
@@ -164,7 +159,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 16,
   },
   chartContainer: {
@@ -178,7 +173,7 @@ const styles = StyleSheet.create({
   },
   axisLabel: {
     fontSize: 10,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   barChart: {
     flex: 1,
@@ -194,19 +189,19 @@ const styles = StyleSheet.create({
   },
   bar: {
     width: '70%',
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     borderRadius: 4,
   },
   barLabel: {
     fontSize: 10,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   statsRow: {
     flexDirection: 'row',
     gap: 12,
     paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: COLORS.border,
+    borderTopColor: T.border2,
   },
   statBox: {
     flex: 1,
@@ -214,13 +209,13 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginBottom: 6,
   },
   statValue: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   macroBreakdownItem: {
     flexDirection: 'row',
@@ -239,21 +234,21 @@ const styles = StyleSheet.create({
   macroBreakdownLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   macroBreakdownValue: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 2,
   },
   macroBreakdownPercent: {
     fontSize: 13,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: T.primary2,
   },
   divider: {
     height: 1,
-    backgroundColor: COLORS.border,
+    backgroundColor: T.border2,
     marginVertical: 12,
   },
   goalItem: {
@@ -268,22 +263,22 @@ const styles = StyleSheet.create({
   goalLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 6,
   },
   goalBar: {
     height: 6,
-    backgroundColor: COLORS.border,
+    backgroundColor: T.border2,
     borderRadius: 3,
     overflow: 'hidden',
   },
   goalBarFill: {
     height: '100%',
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
   },
   goalPercent: {
     fontSize: 13,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: T.primary2,
   },
 });

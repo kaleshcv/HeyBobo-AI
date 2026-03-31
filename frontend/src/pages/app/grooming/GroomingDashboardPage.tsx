@@ -109,7 +109,7 @@ function StatCard({
         ...(onClick && { cursor: 'pointer', '&:hover': { borderColor: dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd', boxShadow: '0 2px 10px rgba(0,0,0,0.06)' } }),
       }}
     >
-      <Avatar sx={{ bgcolor: color, width: 42, height: 42 }}>{icon}</Avatar>
+      <Avatar sx={{ bgcolor: `${color}20`, color: color, width: 42, height: 42 }}>{icon}</Avatar>
       <Box>
         <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>{label}</Typography>
         <Typography variant="h5" sx={{ fontWeight: 700, lineHeight: 1.1 }}>{value}</Typography>
@@ -213,13 +213,18 @@ export default function GroomingDashboardPage() {
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 3, flexWrap: 'wrap', gap: 2 }}>
-        <Box>
-          <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>
-            Grooming & Lifestyle Dashboard
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Personal care overview — insights from skin analysis, recommendations, and your daily routine tracker.
-          </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: '#c084fc20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <SpaIcon sx={{ fontSize: 22, color: '#c084fc' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>
+              Grooming &amp; Lifestyle Dashboard
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Personal care overview — insights from skin analysis, recommendations, and your daily routine tracker.
+            </Typography>
+          </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
           <Button variant="outlined" startIcon={<AutoAwesomeIcon />} onClick={() => navigate('/app/grooming/recommendations')}>
@@ -239,7 +244,7 @@ export default function GroomingDashboardPage() {
             label="Total Tips"
             value={stats.total}
             sub={`${stats.saved} saved to favourites`}
-            color="#6366F1"
+            color="#c084fc"
             onClick={() => navigate('/app/grooming/recommendations')}
           />
         </Grid>
@@ -249,7 +254,7 @@ export default function GroomingDashboardPage() {
             label="Skincare Tips"
             value={stats.skincare}
             sub="AI-generated skincare advice"
-            color="#e91e63"
+            color="#f43f5e"
             onClick={() => navigate('/app/grooming/recommendations')}
           />
         </Grid>
@@ -259,7 +264,7 @@ export default function GroomingDashboardPage() {
             label="Haircare Tips"
             value={stats.haircare}
             sub="Hair & scalp recommendations"
-            color="#ff9800"
+            color="#f59e0b"
             onClick={() => navigate('/app/grooming/recommendations')}
           />
         </Grid>
@@ -269,7 +274,7 @@ export default function GroomingDashboardPage() {
             label="Skin Score"
             value={LAST_ANALYSIS ? `${LAST_ANALYSIS.skinScore}/100` : '--'}
             sub={LAST_ANALYSIS ? `Last scan: ${formatDate(LAST_ANALYSIS.date)}` : 'No scan yet'}
-            color="#4caf50"
+            color="#10b981"
             onClick={() => navigate('/app/grooming/visual-analysis')}
           />
         </Grid>

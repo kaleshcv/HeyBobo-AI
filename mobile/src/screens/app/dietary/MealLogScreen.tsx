@@ -17,14 +17,9 @@ import { Card } from '@/components/common/Card';
 import { useLogMeal, useSearchFood } from '@/hooks/useDietary';
 import { MealType } from '@/types';
 import * as DocumentPicker from 'expo-document-picker';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-};
+;
 
 const MEAL_TYPES: { label: string; value: MealType }[] = [
   { label: 'Breakfast', value: MealType.BREAKFAST },
@@ -83,7 +78,7 @@ export function MealLogScreen() {
         </Text>
       </View>
       {selectedFood?.id === item.id && (
-        <Ionicons name="checkmark" size={20} color={COLORS.primary} />
+        <Ionicons name="checkmark" size={20} color={T.primary2} />
       )}
     </TouchableOpacity>
   );
@@ -105,7 +100,7 @@ export function MealLogScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+          <Ionicons name="arrow-back" size={24} color={T.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Log Meal</Text>
         <View style={{ width: 24 }} />
@@ -120,7 +115,7 @@ export function MealLogScreen() {
             onPress={() => setShowMealTypePicker(true)}
           >
             <Text style={styles.selectorText}>{selectedMealType}</Text>
-            <Ionicons name="chevron-down" size={20} color={COLORS.primary} />
+            <Ionicons name="chevron-down" size={20} color={T.primary2} />
           </TouchableOpacity>
         </Card>
 
@@ -130,17 +125,17 @@ export function MealLogScreen() {
 
           <View style={styles.searchRow}>
             <View style={styles.searchInput}>
-              <Ionicons name="search" size={18} color={COLORS.secondaryText} />
+              <Ionicons name="search" size={18} color={T.muted} />
               <TextInput
                 style={styles.searchField}
                 placeholder="Search for food..."
                 value={foodSearch}
                 onChangeText={setFoodSearch}
-                placeholderTextColor={COLORS.secondaryText}
+                placeholderTextColor={T.muted}
               />
             </View>
             <TouchableOpacity style={styles.barcodeButton}>
-              <Ionicons name="barcode" size={20} color={COLORS.primary} />
+              <Ionicons name="barcode" size={20} color={T.primary2} />
             </TouchableOpacity>
           </View>
 
@@ -151,7 +146,7 @@ export function MealLogScreen() {
                 <Text style={styles.selectedFoodDetails}>100g</Text>
               </View>
               <TouchableOpacity onPress={() => setSelectedFood(null)}>
-                <Ionicons name="close" size={20} color={COLORS.primary} />
+                <Ionicons name="close" size={20} color={T.primary2} />
               </TouchableOpacity>
             </View>
           )}
@@ -161,7 +156,7 @@ export function MealLogScreen() {
               style={styles.foodPickerButton}
               onPress={() => setShowFoodPicker(true)}
             >
-              <Ionicons name="list" size={18} color={COLORS.primary} />
+              <Ionicons name="list" size={18} color={T.primary2} />
               <Text style={styles.foodPickerButtonText}>Browse Foods</Text>
             </TouchableOpacity>
           )}
@@ -208,7 +203,7 @@ export function MealLogScreen() {
         {/* Photo Analysis */}
         <Card padding="lg" style={{ marginBottom: 32 }}>
           <TouchableOpacity style={styles.photoButton}>
-            <Ionicons name="camera" size={24} color={COLORS.primary} />
+            <Ionicons name="camera" size={24} color={T.primary2} />
             <Text style={styles.photoButtonText}>AI Analyze Photo</Text>
           </TouchableOpacity>
           <Text style={styles.photoNote}>
@@ -233,7 +228,7 @@ export function MealLogScreen() {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Select Meal Type</Text>
               <TouchableOpacity onPress={() => setShowMealTypePicker(false)}>
-                <Ionicons name="close" size={24} color={COLORS.text} />
+                <Ionicons name="close" size={24} color={T.text} />
               </TouchableOpacity>
             </View>
             {MEAL_TYPES.map((type) => (
@@ -247,7 +242,7 @@ export function MealLogScreen() {
               >
                 <Text style={styles.modalOptionText}>{type.label}</Text>
                 {selectedMealType === type.value && (
-                  <Ionicons name="checkmark" size={20} color={COLORS.primary} />
+                  <Ionicons name="checkmark" size={20} color={T.primary2} />
                 )}
               </TouchableOpacity>
             ))}
@@ -262,7 +257,7 @@ export function MealLogScreen() {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Select Food</Text>
               <TouchableOpacity onPress={() => setShowFoodPicker(false)}>
-                <Ionicons name="close" size={24} color={COLORS.text} />
+                <Ionicons name="close" size={24} color={T.text} />
               </TouchableOpacity>
             </View>
             <FlatList
@@ -280,7 +275,7 @@ export function MealLogScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   header: {
     flexDirection: 'row',
@@ -288,14 +283,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   content: {
     flex: 1,
@@ -305,7 +300,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 10,
   },
   selector: {
@@ -315,14 +310,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 12,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     borderRadius: 8,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
   },
   selectorText: {
     fontSize: 14,
     fontWeight: '500',
-    color: COLORS.text,
+    color: T.text,
   },
   searchRow: {
     flexDirection: 'row',
@@ -334,24 +329,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     borderRadius: 8,
     paddingHorizontal: 10,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
     gap: 8,
   },
   searchField: {
     flex: 1,
     paddingVertical: 10,
     fontSize: 14,
-    color: COLORS.text,
+    color: T.text,
   },
   barcodeButton: {
     width: 44,
     height: 44,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -362,19 +357,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 12,
     borderRadius: 8,
-    backgroundColor: `${COLORS.primary}08`,
+    backgroundColor: `${T.primary2}08`,
     borderWidth: 1,
-    borderColor: COLORS.primary,
+    borderColor: T.primary2,
     marginBottom: 12,
   },
   selectedFoodName: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   selectedFoodDetails: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 2,
   },
   foodPickerButton: {
@@ -384,23 +379,23 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: COLORS.primary,
+    borderColor: T.primary2,
     borderStyle: 'dashed',
     gap: 8,
   },
   foodPickerButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: T.primary2,
   },
   input: {
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 14,
-    color: COLORS.text,
+    color: T.text,
   },
   nutritionGrid: {
     flexDirection: 'row',
@@ -411,17 +406,17 @@ const styles = StyleSheet.create({
   },
   nutritionLabel: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginBottom: 6,
   },
   nutritionValue: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   nutritionUnit: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 2,
   },
   photoButton: {
@@ -429,7 +424,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: COLORS.primary,
+    borderColor: T.primary2,
     borderStyle: 'dashed',
     marginBottom: 12,
     gap: 8,
@@ -437,11 +432,11 @@ const styles = StyleSheet.create({
   photoButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: T.primary2,
   },
   photoNote: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     textAlign: 'center',
     marginTop: 8,
   },
@@ -451,7 +446,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modal: {
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     maxHeight: '80%',
@@ -463,12 +458,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   modalTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   modalOption: {
     flexDirection: 'row',
@@ -477,11 +472,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   modalOptionText: {
     fontSize: 14,
-    color: COLORS.text,
+    color: T.text,
   },
   foodOption: {
     flexDirection: 'row',
@@ -490,16 +485,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   foodName: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 4,
   },
   foodNutrients: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
 });

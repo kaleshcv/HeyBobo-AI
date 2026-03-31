@@ -12,18 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { useInjuryStore } from '@/store/injuryStore'
 import { AppHeader } from '@/components/layout/AppHeader'
-
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  card: '#FFFFFF',
-  border: '#E2E8F0',
-  danger: '#EF4444',
-  warning: '#F59E0B',
-  success: '#10B981',
-}
+import T from '@/theme'
 
 const BODY_PARTS = [
   'head', 'neck', 'shoulder-left', 'shoulder-right', 'upper-back', 'lower-back', 'chest',
@@ -49,13 +38,13 @@ export function InjuryTrackingScreen() {
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'mild':
-        return COLORS.warning
+        return T.orange
       case 'moderate':
-        return COLORS.danger
+        return T.red
       case 'severe':
         return '#991B1B'
       default:
-        return COLORS.secondaryText
+        return T.muted
     }
   }
 
@@ -99,11 +88,11 @@ export function InjuryTrackingScreen() {
               style={{
                 flex: 1, height: 28, borderRadius: 4, alignItems: 'center', justifyContent: 'center',
                 backgroundColor: level <= item.painLevel
-                  ? level <= 3 ? '#10B981' : level <= 6 ? '#F59E0B' : '#EF4444'
-                  : COLORS.border,
+                  ? level <= 3 ? T.green : level <= 6 ? T.orange : T.red
+                  : T.border2,
               }}
             >
-              <Text style={{ fontSize: 10, fontWeight: '700', color: level <= item.painLevel ? '#fff' : COLORS.secondaryText }}>
+              <Text style={{ fontSize: 10, fontWeight: '700', color: level <= item.painLevel ? '#fff' : T.muted }}>
                 {level}
               </Text>
             </TouchableOpacity>
@@ -113,13 +102,13 @@ export function InjuryTrackingScreen() {
 
       <View style={styles.statusRow}>
         <View style={styles.statusBadge}>
-          <Ionicons name={getStatusIcon(item.status) as any} size={14} color={COLORS.primary} />
+          <Ionicons name={getStatusIcon(item.status) as any} size={14} color={T.primary2} />
           <Text style={styles.statusText}>{item.status.charAt(0).toUpperCase() + item.status.slice(1)}</Text>
         </View>
         {item.affectsWorkout && (
-          <View style={[styles.statusBadge, { backgroundColor: '#FEE2E2' }]}>
-            <Ionicons name="warning" size={14} color={COLORS.danger} />
-            <Text style={[styles.statusText, { color: COLORS.danger }]}>Affects Workout</Text>
+          <View style={[styles.statusBadge, { backgroundColor: '#ef444422' }]}>
+            <Ionicons name="warning" size={14} color={T.red} />
+            <Text style={[styles.statusText, { color: T.red }]}>Affects Workout</Text>
           </View>
         )}
       </View>
@@ -155,7 +144,7 @@ export function InjuryTrackingScreen() {
           </>
         ) : (
           <View style={styles.emptyState}>
-            <Ionicons name="checkmark-circle" size={48} color={COLORS.success} />
+            <Ionicons name="checkmark-circle" size={48} color={T.green} />
             <Text style={styles.emptyText}>No active injuries</Text>
             <Text style={styles.emptySubtext}>Stay healthy!</Text>
           </View>
@@ -224,7 +213,7 @@ export function InjuryTrackingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   content: {
     flex: 1,
@@ -233,17 +222,17 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 12,
     marginTop: 8,
   },
   injuryCard: {
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -254,11 +243,11 @@ const styles = StyleSheet.create({
   injuryBody: {
     fontSize: 14,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   injuryType: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 2,
   },
   severityBadge: {
@@ -281,12 +270,12 @@ const styles = StyleSheet.create({
   painLabel: {
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
   },
   painValue: {
     fontSize: 14,
     fontWeight: '700',
-    color: COLORS.danger,
+    color: T.red,
   },
   slider: {
     width: '100%',
@@ -301,7 +290,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: '#EEF2FF',
+    backgroundColor: '#1e293b',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
@@ -309,32 +298,32 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 11,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: T.primary2,
   },
   description: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     fontStyle: 'italic',
     marginBottom: 8,
   },
   notesSection: {
     borderTopWidth: 1,
-    borderTopColor: COLORS.border,
+    borderTopColor: T.border2,
     paddingTop: 8,
   },
   notesTitle: {
     fontSize: 11,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 6,
   },
   note: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginBottom: 4,
   },
   tipsCard: {
-    backgroundColor: '#EEF2FF',
+    backgroundColor: '#1e293b',
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,
@@ -342,12 +331,12 @@ const styles = StyleSheet.create({
   tipTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: T.primary2,
     marginBottom: 8,
   },
   tipText: {
     fontSize: 12,
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 6,
   },
   fab: {
@@ -356,7 +345,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 4,
@@ -373,12 +362,12 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginTop: 16,
   },
   emptySubtext: {
     fontSize: 13,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 6,
   },
   modalOverlay: {
@@ -387,7 +376,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: '80%',
@@ -396,21 +385,21 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     padding: 20,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   bodyPartOption: {
     paddingHorizontal: 20,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   bodyPartText: {
     fontSize: 14,
-    color: COLORS.text,
+    color: T.text,
     fontWeight: '500',
   },
 })

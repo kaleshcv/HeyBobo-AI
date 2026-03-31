@@ -847,9 +847,12 @@ function DashboardTab() {
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
         <Grid item xs={12} md={6}>
           <Paper variant="outlined" onClick={() => navigate('/app/courses')} sx={{ p: 2, borderRadius: 3, borderColor: 'divider', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5 }}>
-              Course Progress
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+              <TrendingUpIcon sx={{ fontSize: 16, color: '#38bdf8' }} />
+              <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                Course Progress
+              </Typography>
+            </Box>
             {courses.length === 0 ? (
               <Typography variant="body2" color="text.secondary">
                 No courses yet
@@ -943,9 +946,12 @@ function DashboardTab() {
       {/* Continue learning */}
       {recentCourses.length > 0 && (
         <Box>
-          <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
-            Continue Learning
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+            <SchoolIcon sx={{ fontSize: 16, color: '#38bdf8' }} />
+            <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+              Continue Learning
+            </Typography>
+          </Box>
           <Grid container spacing={1.5}>
             {recentCourses.map((course) => {
               const cp = getCourseProgress(course.id);
@@ -1057,13 +1063,18 @@ export default function EducationPage() {
     >
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-        <Box>
-          <Typography variant="h5" sx={{ fontWeight: 600, color: 'text.primary' }}>
-            {greeting()}{user ? `, ${user.firstName}` : ''}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {courses.length} course{courses.length !== 1 ? 's' : ''} · Continue your learning journey
-          </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: '#38bdf820', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <SchoolIcon sx={{ fontSize: 22, color: '#38bdf8' }} />
+          </Box>
+          <Box>
+            <Typography variant="h5" sx={{ fontWeight: 600, color: 'text.primary' }}>
+              {greeting()}{user ? `, ${user.firstName}` : ''}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {courses.length} course{courses.length !== 1 ? 's' : ''} · Continue your learning journey
+            </Typography>
+          </Box>
         </Box>
         <Button
           variant="contained"

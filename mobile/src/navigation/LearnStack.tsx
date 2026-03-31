@@ -11,6 +11,7 @@ import { SearchScreen }        from '@/screens/student/SearchScreen'
 import { GroupsScreen }        from '@/screens/app/GroupsScreen'
 import { GroupDetailScreen }   from '@/screens/app/GroupDetailScreen'
 import { MeetingsScreen }      from '@/screens/app/MeetingsScreen'
+import { AITutorScreen }       from '@/screens/app/AITutorScreen'
 
 const Stack = createNativeStackNavigator<LearnStackParamList>()
 
@@ -29,6 +30,7 @@ export function LearnStack() {
       <Stack.Screen name="Groups"       component={GroupsScreen} />
       <Stack.Screen name="GroupDetail"  component={GroupDetailScreen} />
       <Stack.Screen name="Meetings"     component={MeetingsScreen} />
+      <Stack.Screen name="AITutor"      component={AITutorScreen} />
     </Stack.Navigator>
   )
 }

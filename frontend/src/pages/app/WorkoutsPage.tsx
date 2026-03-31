@@ -752,15 +752,21 @@ function CustomWorkouts() {
 
 // ═══════════════════ MAIN PAGE ═══════════════════════════
 export default function WorkoutsPage() {
-  const dk = useTheme().palette.mode === 'dark';
   const [tab, setTab] = useState(0);
 
   return (
     <Box sx={{ py: 2, px: 2 }}>
-      <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5, fontSize: 20 }}>Workouts</Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5, fontSize: 13 }}>
-        Browse exercises, follow plans, or build your own routines.
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
+        <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: '#10b98120', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <FitnessCenterIcon sx={{ fontSize: 22, color: '#10b981' }} />
+        </Box>
+        <Box>
+          <Typography variant="h5" sx={{ fontWeight: 700, mb: 0, fontSize: 20 }}>Workouts</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ fontSize: 13 }}>
+            Browse exercises, follow plans, or build your own routines.
+          </Typography>
+        </Box>
+      </Box>
 
       <Paper elevation={0} sx={{ borderRadius: 2, border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
         <Tabs
@@ -772,10 +778,10 @@ export default function WorkoutsPage() {
             '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontSize: 14 },
           }}
         >
-          <Tab label="🏋️ Exercise Library" />
-          <Tab label="📋 Workout Plans" />
-          <Tab label="✏️ Custom Workouts" />
-          <Tab label="📹 Live Workout" sx={{ color: tab === 3 ? (dk ? '#C9A84C' : '#00c853') : undefined }} />
+          <Tab icon={<FitnessCenterIcon sx={{ fontSize: 16, color: '#10b981' }} />} iconPosition="start" label="Exercise Library" />
+          <Tab icon={<CalendarMonthIcon sx={{ fontSize: 16, color: '#38bdf8' }} />} iconPosition="start" label="Workout Plans" />
+          <Tab icon={<AutoFixHighIcon sx={{ fontSize: 16, color: '#a78bfa' }} />} iconPosition="start" label="Custom Workouts" />
+          <Tab icon={<PlayArrowIcon sx={{ fontSize: 16, color: '#06b6d4' }} />} iconPosition="start" label="Live Workout" sx={{ color: tab === 3 ? '#06b6d4' : undefined }} />
         </Tabs>
 
         <Box sx={{ p: 1.5 }}>

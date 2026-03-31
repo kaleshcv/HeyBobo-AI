@@ -5,8 +5,9 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Text } from 'react-native';
 import { Card } from '@/components/common/Card';
 import { AppHeader } from '@/components/layout/AppHeader';
+import T from '@/theme'
 
-const COLORS = { primary: '#6366F1', text: '#1E293B', secondaryText: '#64748B', background: '#F8FAFC', border: '#E2E8F0' };
+;
 
 export function AdminDashboardScreen() {
   const insets = useSafeAreaInsets();
@@ -23,7 +24,7 @@ export function AdminDashboardScreen() {
       <ScrollView style={styles.content}>
         {stats.map((stat) => (
           <Card key={stat.label} padding="lg" style={styles.statCard}>
-            <Ionicons name={stat.icon as any} size={24} color={COLORS.primary} />
+            <Ionicons name={stat.icon as any} size={24} color={T.primary2} />
             <Text style={styles.statValue}>{stat.value}</Text>
             <Text style={styles.statLabel}>{stat.label}</Text>
           </Card>
@@ -34,9 +35,9 @@ export function AdminDashboardScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.background },
+  container: { flex: 1, backgroundColor: T.bg },
   content: { flex: 1, paddingHorizontal: 16, paddingVertical: 16 },
   statCard: { marginBottom: 12, flexDirection: 'row', alignItems: 'center', gap: 16 },
-  statValue: { fontSize: 18, fontWeight: '700', color: COLORS.text },
-  statLabel: { fontSize: 12, color: COLORS.secondaryText, marginTop: 4 },
+  statValue: { fontSize: 18, fontWeight: '700', color: T.text },
+  statLabel: { fontSize: 12, color: T.muted, marginTop: 4 },
 });

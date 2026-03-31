@@ -14,15 +14,9 @@ import { Button } from '@/components/common/Button';
 import { CameraView } from 'expo-camera';
 import { useLiveWorkoutStore } from '@/store/liveWorkoutStore';
 import { useWearablesStore } from '@/store/wearablesStore';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  success: '#10B981',
-  warning: '#F59E0B',
-};
+;
 
 export function LiveWorkoutScreen() {
   const insets = useSafeAreaInsets();
@@ -112,7 +106,7 @@ export function LiveWorkoutScreen() {
             </View>
 
             <View style={styles.statBox}>
-              <Ionicons name="repeat" size={20} color={COLORS.success} />
+              <Ionicons name="repeat" size={20} color={T.green} />
               <Text style={styles.statValue}>{repCount}</Text>
             </View>
           </View>
@@ -256,7 +250,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   repButton: {
-    backgroundColor: COLORS.success,
+    backgroundColor: T.green,
   },
   repButtonText: {
     color: '#fff',
@@ -265,10 +259,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   startButton: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
   },
   pauseButton: {
-    backgroundColor: COLORS.success,
+    backgroundColor: T.green,
   },
   bottomActions: {
     paddingHorizontal: 0,

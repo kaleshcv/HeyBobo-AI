@@ -13,16 +13,9 @@ import { Text } from 'react-native';
 import { Button } from '@/components/common/Button';
 import { Card } from '@/components/common/Card';
 import { useQuiz, useSubmitQuiz } from '@/hooks/useQuiz';
+import T from '@/theme'
 
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-  success: '#10B981',
-  error: '#EF4444',
-};
+;
 
 export function QuizScreen() {
   const insets = useSafeAreaInsets();
@@ -113,7 +106,7 @@ export function QuizScreen() {
   if (isLoading) {
     return (
       <View style={[styles.container, { paddingTop: insets.top }]}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color={T.primary2} />
       </View>
     );
   }
@@ -132,7 +125,7 @@ export function QuizScreen() {
           <View
             style={[
               styles.resultsBadge,
-              { backgroundColor: isPassed ? COLORS.success : COLORS.error },
+              { backgroundColor: isPassed ? T.green : T.red },
             ]}
           >
             <Ionicons
@@ -161,7 +154,7 @@ export function QuizScreen() {
               </View>
               <View style={styles.statItem}>
                 <Text style={styles.statLabel}>Correct</Text>
-                <Text style={[styles.statValue, { color: COLORS.success }]}>
+                <Text style={[styles.statValue, { color: T.green }]}>
                   {Math.round((score / 100) * (quiz?.questions?.length || 0))}
                 </Text>
               </View>
@@ -196,11 +189,11 @@ export function QuizScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+          <Ionicons name="arrow-back" size={24} color={T.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{quiz?.title}</Text>
         <View style={styles.timer}>
-          <Ionicons name="time" size={18} color={COLORS.error} />
+          <Ionicons name="time" size={18} color={T.red} />
           <Text style={styles.timerText}>{formatTime(timeLeft)}</Text>
         </View>
       </View>
@@ -282,7 +275,7 @@ export function QuizScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   header: {
     flexDirection: 'row',
@@ -290,15 +283,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border2,
   },
   headerTitle: {
     flex: 1,
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginHorizontal: 12,
   },
   timer: {
@@ -307,13 +300,13 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: `${COLORS.error}15`,
+    backgroundColor: `${T.red}15`,
     borderRadius: 6,
   },
   timerText: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.error,
+    color: T.red,
   },
   progressContainer: {
     paddingHorizontal: 16,
@@ -321,18 +314,18 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 6,
-    backgroundColor: COLORS.border,
+    backgroundColor: T.border2,
     borderRadius: 3,
     overflow: 'hidden',
     marginBottom: 8,
   },
   progressFill: {
     height: '100%',
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
   },
   progressText: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   content: {
     flex: 1,
@@ -343,7 +336,7 @@ const styles = StyleSheet.create({
   questionText: {
     fontSize: 18,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 24,
     lineHeight: 26,
   },
@@ -356,38 +349,38 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 16,
     borderWidth: 2,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     borderRadius: 8,
-    backgroundColor: '#fff',
+    backgroundColor: '#111827',
   },
   optionSelected: {
-    borderColor: COLORS.primary,
-    backgroundColor: `${COLORS.primary}08`,
+    borderColor: T.primary2,
+    backgroundColor: `${T.primary2}08`,
   },
   optionRadio: {
     width: 20,
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     marginRight: 12,
     marginTop: 2,
     justifyContent: 'center',
     alignItems: 'center',
   },
   optionRadioSelected: {
-    borderColor: COLORS.primary,
+    borderColor: T.primary2,
   },
   optionRadioInner: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
   },
   optionText: {
     flex: 1,
     fontSize: 15,
-    color: COLORS.text,
+    color: T.text,
     lineHeight: 20,
   },
   navigationContainer: {
@@ -410,7 +403,7 @@ const styles = StyleSheet.create({
   resultStatus: {
     fontSize: 24,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     textAlign: 'center',
     marginBottom: 8,
   },
@@ -420,17 +413,17 @@ const styles = StyleSheet.create({
   },
   scoreLabel: {
     fontSize: 14,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginBottom: 8,
   },
   scoreValue: {
     fontSize: 48,
     fontWeight: '700',
-    color: COLORS.primary,
+    color: T.primary2,
   },
   divider: {
     height: 1,
-    backgroundColor: COLORS.border,
+    backgroundColor: T.border2,
     marginVertical: 16,
   },
   statsGrid: {
@@ -442,12 +435,12 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginBottom: 6,
   },
   statValue: {
     fontSize: 20,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
 });

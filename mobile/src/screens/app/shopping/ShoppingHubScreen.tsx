@@ -12,15 +12,7 @@ import { useAppNavigation } from '@/navigation/useAppNavigation'
 import { useShoppingListStore } from '@/store/shoppingListStore'
 import { useBudgetStore } from '@/store/budgetStore'
 import { AppHeader } from '@/components/layout/AppHeader'
-
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  card: '#FFFFFF',
-  border: '#E2E8F0',
-}
+import T from '@/theme'
 
 export function ShoppingHubScreen() {
   const insets = useSafeAreaInsets()
@@ -45,7 +37,7 @@ export function ShoppingHubScreen() {
       title: 'Marketplace',
       count: 0,
       icon: 'storefront',
-      color: '#10B981',
+      color: T.green,
       route: 'Marketplace' as const,
     },
     {
@@ -53,7 +45,7 @@ export function ShoppingHubScreen() {
       title: 'Budget & Expenses',
       count: expenses.length,
       icon: 'wallet',
-      color: '#F59E0B',
+      color: T.orange,
       route: 'BudgetExpenses' as const,
     },
     {
@@ -115,14 +107,14 @@ export function ShoppingHubScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   content: {
     flex: 1,
     padding: 16,
   },
   budgetCard: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     borderRadius: 12,
     padding: 20,
     marginBottom: 24,
@@ -148,7 +140,7 @@ const styles = StyleSheet.create({
   },
   budgetFill: {
     height: '100%',
-    backgroundColor: '#FFF',
+    backgroundColor: '#111827',
   },
   budgetDetail: {
     color: '#FFF',
@@ -163,13 +155,13 @@ const styles = StyleSheet.create({
   },
   hubCard: {
     width: '48%',
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
   },
   cardIcon: {
     width: 56,
@@ -182,11 +174,11 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     textAlign: 'center',
   },
   badge: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 2,

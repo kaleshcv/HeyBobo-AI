@@ -7,6 +7,7 @@ import {
   View,
   type TouchableOpacityProps,
 } from 'react-native'
+import T from '@/theme'
 
 type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive'
 type Size    = 'sm' | 'md' | 'lg'
@@ -22,25 +23,25 @@ interface ButtonProps extends TouchableOpacityProps {
 }
 
 const BG: Record<Variant, string> = {
-  primary:     '#6366F1',
-  secondary:   '#F1F5F9',
+  primary:     T.primary2,
+  secondary:   T.surface2,
   outline:     'transparent',
   ghost:       'transparent',
-  destructive: '#EF4444',
+  destructive: T.red,
 }
 
-const TEXT: Record<Variant, string> = {
-  primary:     '#FFFFFF',
-  secondary:   '#1E293B',
-  outline:     '#6366F1',
-  ghost:       '#6366F1',
-  destructive: '#FFFFFF',
+const TEXT_COLOR: Record<Variant, string> = {
+  primary:     T.white,
+  secondary:   T.text,
+  outline:     T.primary,
+  ghost:       T.primary,
+  destructive: T.white,
 }
 
-const BORDER: Record<Variant, string> = {
+const BORDER_COLOR: Record<Variant, string> = {
   primary:     'transparent',
-  secondary:   'transparent',
-  outline:     '#6366F1',
+  secondary:   T.border2,
+  outline:     T.primary,
   ghost:       'transparent',
   destructive: 'transparent',
 }
@@ -76,9 +77,9 @@ export function Button({
         PADDING[size],
         {
           backgroundColor: BG[variant],
-          borderColor:     BORDER[variant],
-          borderWidth:     variant === 'outline' ? 1.5 : 0,
-          opacity:         isDisabled ? 0.5 : 1,
+          borderColor:     BORDER_COLOR[variant],
+          borderWidth:     variant === 'outline' || variant === 'secondary' ? 1.5 : 0,
+          opacity:         isDisabled ? 0.45 : 1,
           alignSelf:       fullWidth ? 'stretch' : 'auto',
         },
         style,
@@ -86,11 +87,11 @@ export function Button({
       {...rest}
     >
       {loading ? (
-        <ActivityIndicator size="small" color={TEXT[variant]} />
+        <ActivityIndicator size="small" color={TEXT_COLOR[variant]} />
       ) : (
         <View style={styles.content}>
           {icon && !iconRight && <View style={styles.iconLeft}>{icon}</View>}
-          <Text style={[styles.text, { color: TEXT[variant], fontSize: FONT[size] }]}>
+          <Text style={[styles.text, { color: TEXT_COLOR[variant], fontSize: FONT[size] }]}>
             {title}
           </Text>
           {icon && iconRight && <View style={styles.iconRight}>{icon}</View>}
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontWeight: '600',
-    letterSpacing: 0.1,
+    letterSpacing: 0.2,
   },
   iconLeft:  { marginRight: 8 },
   iconRight: { marginLeft:  8 },

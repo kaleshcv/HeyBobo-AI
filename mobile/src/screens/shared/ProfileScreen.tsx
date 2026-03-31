@@ -1,77 +1,102 @@
-import React from 'react';
+import React from 'react'
 import {
   View,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
   FlatList,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { useAppNavigation } from '@/navigation/useAppNavigation';
-import { UserRole } from '@/types';
-import { Text } from 'react-native';
-import { Card } from '@/components/common/Card';
-import { Avatar } from '@/components/common/Avatar';
-import { Button } from '@/components/common/Button';
-import { useAuthStore } from '@/store/authStore';
-
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  border: '#E2E8F0',
-  error: '#EF4444',
-};
+  Alert,
+} from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import Ionicons from '@expo/vector-icons/Ionicons'
+import { useAppNavigation } from '@/navigation/useAppNavigation'
+import { UserRole } from '@/types'
+import { Text } from 'react-native'
+import { Card } from '@/components/common/Card'
+import { Avatar } from '@/components/common/Avatar'
+import { useAuthStore } from '@/store/authStore'
+import { useLogout, useProfile } from '@/hooks/useAuth'
+import T from '@/theme'
 
 export function ProfileScreen() {
-  const insets = useSafeAreaInsets();
-  const navigation = useAppNavigation();
-  const { user, hasRole } = useAuthStore();
+  const insets         = useSafeAreaInsets()
+  const navigation     = useAppNavigation()
+  const { user: storedUser, hasRole } = useAuthStore()
+  const logoutMutation = useLogout()
+
+  // Fetch fresh profile from API, fall back to stored user while loading
+  const { data: freshUser } = useProfile()
+  const user = freshUser ?? storedUser
+
+  // Display name with graceful fallbacks for missing fields
+  const displayName = user
+    ? [user.firstName, user.lastName].filter(Boolean).join(' ') || user.email?.split('@')[0] || 'User'
+    : 'User'
+
+  const initials = displayName
+    .split(' ')
+    .map((w: string) => w[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
 
   const stats = [
-    { label: 'Courses', value: '12', icon: 'school' },
-    { label: 'Certificates', value: '5', icon: 'ribbon' },
-    { label: 'Streak', value: '14 days', icon: 'flame' },
-  ];
+    { label: 'Courses',      value: '12',      icon: 'school-outline'  as const },
+    { label: 'Certificates', value: '5',       icon: 'ribbon-outline'  as const },
+    { label: 'Streak',       value: '14 days', icon: 'flame-outline'   as const },
+  ]
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Log out',
+      'Are you sure you want to log out?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Log out',
+          style: 'destructive',
+          onPress: () => {
+            // Calls API logout then clears the store (sets isAuthenticated: false).
+            // RootNavigator automatically switches to AuthStack — no manual navigate needed.
+            logoutMutation.mutate()
+          },
+        },
+      ],
+    )
+  }
 
   const renderStat = ({ item }: { item: (typeof stats)[0] }) => (
     <View style={styles.statCard}>
-      <Ionicons name={item.icon as any} size={20} color={COLORS.primary} />
+      <Ionicons name={item.icon} size={20} color={T.primary} />
       <Text style={styles.statValue}>{item.value}</Text>
       <Text style={styles.statLabel}>{item.label}</Text>
     </View>
-  );
-
-  const handleLogout = () => {
-    alert('Logged out!');
-    navigation.navigate('Login');
-  };
+  )
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Profile</Text>
         <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
-          <Ionicons name="settings" size={24} color={COLORS.text} />
+          <Ionicons name="settings-outline" size={22} color={T.text} />
         </TouchableOpacity>
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Profile Header */}
-        <Card padding="lg" style={{ marginBottom: 24, alignItems: 'center' }}>
-          <Avatar name={user ? `${user.firstName} ${user.lastName}` : 'U'} size="lg" />
-          <Text style={styles.userName}>{user ? `${user.firstName} ${user.lastName}` : ''}</Text>
-          <Text style={styles.userEmail}>{user?.email}</Text>
-          <View style={styles.roleBadge}>
-            <Text style={styles.roleBadgeText}>
-              {user?.role?.toUpperCase()}
-            </Text>
-          </View>
+        {/* Profile card */}
+        <Card padding="lg" style={styles.profileCard}>
+          <Avatar name={initials || displayName} size="lg" />
+          <Text style={styles.userName}>{displayName}</Text>
+          {user?.email ? <Text style={styles.userEmail}>{user.email}</Text> : null}
+          {user?.role ? (
+            <View style={styles.roleBadge}>
+              <Text style={styles.roleBadgeText}>{user.role.toUpperCase()}</Text>
+            </View>
+          ) : null}
         </Card>
 
-        {/* Stats */}
+        {/* Stats row */}
         <FlatList
           data={stats}
           renderItem={renderStat}
@@ -82,168 +107,220 @@ export function ProfileScreen() {
           contentContainerStyle={{ marginBottom: 24 }}
         />
 
-        {/* Portal Links */}
+        {/* Portal links */}
         {hasRole(UserRole.TEACHER) && (
           <TouchableOpacity
-            style={styles.portalButton}
+            style={styles.portalBtn}
             onPress={() => navigation.navigate('TeacherDashboard')}
           >
-            <Ionicons name="people" size={20} color={COLORS.primary} />
-            <Text style={styles.portalButtonText}>Teacher Portal</Text>
-            <Ionicons name="arrow-forward" size={16} color={COLORS.primary} />
+            <Ionicons name="people-outline" size={20} color={T.primary} />
+            <Text style={styles.portalBtnText}>Teacher Portal</Text>
+            <Ionicons name="arrow-forward-outline" size={16} color={T.primary} />
           </TouchableOpacity>
         )}
 
         {hasRole(UserRole.ADMIN) && (
           <TouchableOpacity
-            style={styles.portalButton}
+            style={styles.portalBtn}
             onPress={() => navigation.navigate('AdminDashboard')}
           >
-            <Ionicons name="shield-checkmark" size={20} color={COLORS.primary} />
-            <Text style={styles.portalButtonText}>Admin Portal</Text>
-            <Ionicons name="arrow-forward" size={16} color={COLORS.primary} />
+            <Ionicons name="shield-checkmark-outline" size={20} color={T.primary} />
+            <Text style={styles.portalBtnText}>Admin Portal</Text>
+            <Ionicons name="arrow-forward-outline" size={16} color={T.primary} />
           </TouchableOpacity>
         )}
 
-        {/* Menu Items */}
-        <Card padding="lg" style={{ marginBottom: 24 }}>
+        {/* Menu items */}
+        <Card padding="lg" style={styles.menuCard}>
           <TouchableOpacity style={styles.menuItem}>
-            <Ionicons name="person" size={20} color={COLORS.secondaryText} />
+            <View style={styles.menuIcon}>
+              <Ionicons name="person-outline" size={18} color={T.primary} />
+            </View>
             <Text style={styles.menuItemText}>Edit Profile</Text>
-            <Ionicons name="chevron-forward" size={20} color={COLORS.border} />
+            <Ionicons name="chevron-forward" size={18} color={T.muted2} />
           </TouchableOpacity>
 
           <View style={styles.divider} />
 
           <TouchableOpacity style={styles.menuItem}>
-            <Ionicons name="lock-closed" size={20} color={COLORS.secondaryText} />
+            <View style={styles.menuIcon}>
+              <Ionicons name="lock-closed-outline" size={18} color={T.primary} />
+            </View>
             <Text style={styles.menuItemText}>Change Password</Text>
-            <Ionicons name="chevron-forward" size={20} color={COLORS.border} />
+            <Ionicons name="chevron-forward" size={18} color={T.muted2} />
           </TouchableOpacity>
 
           <View style={styles.divider} />
 
           <TouchableOpacity style={styles.menuItem}>
-            <Ionicons name="bookmark" size={20} color={COLORS.secondaryText} />
+            <View style={styles.menuIcon}>
+              <Ionicons name="bookmark-outline" size={18} color={T.primary} />
+            </View>
             <Text style={styles.menuItemText}>Saved Courses</Text>
-            <Ionicons name="chevron-forward" size={20} color={COLORS.border} />
+            <Ionicons name="chevron-forward" size={18} color={T.muted2} />
           </TouchableOpacity>
         </Card>
 
         {/* Logout */}
-        <Button
-          title="Logout"
-          variant="outline"
+        <TouchableOpacity
+          style={[styles.logoutBtn, logoutMutation.isPending && styles.logoutBtnDisabled]}
           onPress={handleLogout}
-          fullWidth
-          style={{ marginBottom: 32 }}
-        />
+          disabled={logoutMutation.isPending}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="log-out-outline" size={18} color={T.red} />
+          <Text style={styles.logoutText}>
+            {logoutMutation.isPending ? 'Logging out\u2026' : 'Log out'}
+          </Text>
+        </TouchableOpacity>
+
+        <View style={{ height: 48 }} />
       </ScrollView>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: COLORS.background,
+    flex:            1,
+    backgroundColor: T.bg,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#fff',
+    flexDirection:     'row',
+    justifyContent:    'space-between',
+    alignItems:        'center',
+    paddingHorizontal: 20,
+    paddingVertical:   14,
+    backgroundColor:   T.bg2,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: T.border,
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize:   19,
     fontWeight: '700',
-    color: COLORS.text,
+    color:      T.text,
   },
   content: {
-    flex: 1,
+    flex:              1,
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingTop:        16,
+  },
+  profileCard: {
+    alignItems:   'center',
+    marginBottom: 20,
   },
   userName: {
-    fontSize: 20,
+    fontSize:   20,
     fontWeight: '700',
-    color: COLORS.text,
-    marginTop: 12,
+    color:      T.text,
+    marginTop:  12,
   },
   userEmail: {
-    fontSize: 13,
-    color: COLORS.secondaryText,
+    fontSize:  13,
+    color:     T.muted,
     marginTop: 4,
   },
   roleBadge: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 6,
-    backgroundColor: `${COLORS.primary}20`,
-    marginTop: 12,
+    paddingHorizontal: 14,
+    paddingVertical:   5,
+    borderRadius:      20,
+    backgroundColor:   T.primary2 + '25',
+    borderWidth:       1,
+    borderColor:       T.primary2 + '40',
+    marginTop:         10,
   },
   roleBadgeText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: COLORS.primary,
+    fontSize:      11,
+    fontWeight:    '700',
+    color:         T.primary,
+    letterSpacing: 1,
   },
   statsGrid: {
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+    gap:            8,
   },
   statCard: {
-    flex: 1,
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    paddingVertical: 12,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    marginHorizontal: 4,
+    flex:            1,
+    alignItems:      'center',
+    backgroundColor: T.surface,
+    borderRadius:    12,
+    paddingVertical: 14,
+    borderWidth:     1,
+    borderColor:     T.border2,
   },
   statValue: {
-    fontSize: 16,
+    fontSize:   16,
     fontWeight: '700',
-    color: COLORS.text,
-    marginTop: 8,
+    color:      T.text,
+    marginTop:  8,
   },
   statLabel: {
-    fontSize: 10,
-    color: COLORS.secondaryText,
-    marginTop: 2,
+    fontSize:  10,
+    color:     T.muted,
+    marginTop: 3,
   },
-  portalButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: `${COLORS.primary}15`,
-    borderRadius: 10,
-    padding: 14,
-    marginBottom: 12,
-    gap: 12,
+  portalBtn: {
+    flexDirection:   'row',
+    alignItems:      'center',
+    backgroundColor: T.primary2 + '15',
+    borderRadius:    12,
+    padding:         14,
+    marginBottom:    10,
+    gap:             12,
+    borderWidth:     1,
+    borderColor:     T.primary2 + '30',
   },
-  portalButtonText: {
-    flex: 1,
-    fontSize: 14,
+  portalBtnText: {
+    flex:       1,
+    fontSize:   14,
     fontWeight: '600',
-    color: COLORS.primary,
+    color:      T.primary,
+  },
+  menuCard: {
+    marginBottom: 16,
   },
   menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection:   'row',
+    alignItems:      'center',
     paddingVertical: 14,
-    gap: 12,
+    gap:             12,
+  },
+  menuIcon: {
+    width:           34,
+    height:          34,
+    borderRadius:    10,
+    backgroundColor: T.primary2 + '18',
+    alignItems:      'center',
+    justifyContent:  'center',
   },
   menuItemText: {
-    flex: 1,
-    fontSize: 14,
+    flex:       1,
+    fontSize:   14,
     fontWeight: '500',
-    color: COLORS.text,
+    color:      T.text,
   },
   divider: {
-    height: 1,
-    backgroundColor: COLORS.border,
+    height:          1,
+    backgroundColor: T.border,
+    marginLeft:      46,
   },
-});
+  logoutBtn: {
+    flexDirection:   'row',
+    alignItems:      'center',
+    justifyContent:  'center',
+    gap:             8,
+    borderWidth:     1.5,
+    borderColor:     T.red + '50',
+    borderRadius:    12,
+    paddingVertical: 14,
+    backgroundColor: T.red + '10',
+  },
+  logoutBtnDisabled: {
+    opacity: 0.5,
+  },
+  logoutText: {
+    fontSize:   15,
+    fontWeight: '600',
+    color:      T.red,
+  },
+})

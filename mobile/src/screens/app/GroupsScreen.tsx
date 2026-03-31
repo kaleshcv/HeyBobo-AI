@@ -13,15 +13,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { useAppNavigation } from '@/navigation/useAppNavigation'
 import { useGroupStore } from '@/store/groupStore'
 import { AppHeader } from '@/components/layout/AppHeader'
-
-const COLORS = {
-  primary: '#6366F1',
-  text: '#1E293B',
-  secondaryText: '#64748B',
-  background: '#F8FAFC',
-  card: '#FFFFFF',
-  border: '#E2E8F0',
-}
+import T from '@/theme'
 
 const generateColorForName = (name: string) => {
   const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE']
@@ -80,11 +72,11 @@ export function GroupsScreen() {
           </Text>
           <View style={styles.groupMeta}>
             <View style={styles.metaItem}>
-              <Ionicons name="people" size={14} color={COLORS.secondaryText} />
+              <Ionicons name="people" size={14} color={T.muted} />
               <Text style={styles.metaText}>{item.members.length} members</Text>
             </View>
             <View style={styles.metaItem}>
-              <Ionicons name="chatbubble" size={14} color={COLORS.secondaryText} />
+              <Ionicons name="chatbubble" size={14} color={T.muted} />
               <Text style={styles.metaText}>{item.posts.length} posts</Text>
             </View>
           </View>
@@ -110,7 +102,7 @@ export function GroupsScreen() {
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
           <View style={styles.emptyState}>
-            <Ionicons name="people-outline" size={48} color={COLORS.secondaryText} />
+            <Ionicons name="people-outline" size={48} color={T.muted} />
             <Text style={styles.emptyText}>No groups yet</Text>
             <Text style={styles.emptySubtext}>Create or join a study group to get started</Text>
           </View>
@@ -136,7 +128,7 @@ export function GroupsScreen() {
             <TextInput
               style={styles.input}
               placeholder="Group name"
-              placeholderTextColor={COLORS.secondaryText}
+              placeholderTextColor={T.muted}
               value={newGroupName}
               onChangeText={setNewGroupName}
             />
@@ -164,17 +156,17 @@ export function GroupsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: T.bg,
   },
   listContent: {
     padding: 16,
   },
   groupCard: {
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderRadius: 12,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     overflow: 'hidden',
   },
   groupCardContent: {
@@ -201,11 +193,11 @@ const styles = StyleSheet.create({
   groupName: {
     fontSize: 15,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
   },
   groupDesc: {
     fontSize: 12,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 4,
   },
   groupMeta: {
@@ -220,10 +212,10 @@ const styles = StyleSheet.create({
   },
   metaText: {
     fontSize: 11,
-    color: COLORS.secondaryText,
+    color: T.muted,
   },
   categoryBadge: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     width: 32,
     height: 32,
     borderRadius: 16,
@@ -241,7 +233,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 4,
@@ -258,12 +250,12 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.text,
+    color: T.text,
     marginTop: 16,
   },
   emptySubtext: {
     fontSize: 13,
-    color: COLORS.secondaryText,
+    color: T.muted,
     marginTop: 8,
     textAlign: 'center',
     paddingHorizontal: 24,
@@ -274,7 +266,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: COLORS.card,
+    backgroundColor: T.surface2,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
@@ -282,17 +274,17 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 16,
   },
   input: {
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: T.border2,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 12,
     fontSize: 14,
-    color: COLORS.text,
+    color: T.text,
     marginBottom: 20,
   },
   modalButtons: {
@@ -306,14 +298,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelButton: {
-    backgroundColor: COLORS.border,
+    backgroundColor: T.border2,
   },
   cancelButtonText: {
-    color: COLORS.text,
+    color: T.text,
     fontWeight: '600',
   },
   createButton: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: T.primary2,
   },
   createButtonText: {
     color: '#FFF',
