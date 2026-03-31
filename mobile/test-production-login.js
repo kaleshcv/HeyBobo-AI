@@ -9,8 +9,8 @@
 const API_URL = 'https://app.heybobo.ai/api/v1'
 
 // ── CONFIGURE YOUR TEST CREDENTIALS HERE ──────────────────────────────────────
-const TEST_EMAIL    = process.env.TEST_EMAIL    || 'your-test@email.com'
-const TEST_PASSWORD = process.env.TEST_PASSWORD || 'your-test-password'
+const TEST_IDENTIFIER = process.env.TEST_EMAIL    || 'your-test@email.com'
+const TEST_PASSWORD   = process.env.TEST_PASSWORD || 'your-test-password'
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function testLogin() {
@@ -31,14 +31,14 @@ async function testLogin() {
     console.log('⚠️  Health check failed:', err.message, '— server may still work')
   }
 
-  // ── 2. Login request ─────────────────────────────────────────────────────────
-  console.log('\n[2/4] Attempting login with:', TEST_EMAIL)
+  // ── 2. Login request (uses "identifier" field, not "email") ──────────────────
+  console.log('\n[2/4] Attempting login with:', TEST_IDENTIFIER)
   let accessToken = null
   try {
     const loginRes = await fetch(`${API_URL}/auth/login`, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ email: TEST_EMAIL, password: TEST_PASSWORD }),
+      body:    JSON.stringify({ identifier: TEST_IDENTIFIER, password: TEST_PASSWORD }),
       signal:  AbortSignal.timeout(10000),
     })
 
@@ -52,7 +52,7 @@ async function testLogin() {
       console.log('   Role:', data.user?.role  || data.role  || '(no role)')
       console.log('   Token (first 20 chars):', accessToken.slice(0, 20) + '...')
     } else {
-      console.log('❌ Login failed:', loginRes.status, JSON.stringify(body).slice(0, 200))
+      console.log('❌ Login failed:', loginRes.status, JSON.stringify(body).slice(0, 300))
       process.exit(1)
     }
   } catch (err) {
@@ -70,8 +70,8 @@ async function testLogin() {
       })
       const meBody = await meRes.json().catch(() => null)
       if (meRes.ok) {
-        console.log(`✅ ${endpoint} returned ${meRes.status}`)
         const d = meBody?.data ?? meBody
+        console.log(`✅ ${endpoint} returned ${meRes.status}`)
         console.log('   Name:', d?.firstName, d?.lastName)
         console.log('   Email:', d?.email)
         break
@@ -88,8 +88,8 @@ async function testLogin() {
   console.log('✅ Production API is working!')
   console.log('   API URL:  ', API_URL)
   console.log('   Login:     OK')
-  console.log('\n📱 You can now build the APK — API is confirmed working.')
-  console.log('\n   Run: eas build --platform android --profile apk')
+  console.log('\n📱 You can now build the APK:')
+  console.log('   eas build --platform android --profile apk')
 }
 
 testLogin().catch((err) => {

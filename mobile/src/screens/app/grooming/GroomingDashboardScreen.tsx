@@ -11,10 +11,9 @@ import { useGroomingStore } from '@/store/groomingStore';
 import type { RecommendationCategory } from '@/store/groomingStore';
 import T from '@/theme'
 
-;
 
 const CATEGORY_COLORS: Record<RecommendationCategory, string> = {
-  Skincare: '#EC4899',
+  Skincare: T.pink,
   Haircare: T.orange,
   Lifestyle: T.green,
   Grooming: T.primary2,
@@ -130,7 +129,7 @@ export function GroomingDashboardScreen() {
         <View style={styles.statsGrid}>
           {[
             { label: 'Tips', value: stats.total, icon: 'bulb', color: T.primary2 },
-            { label: 'Saved', value: stats.saved, icon: 'bookmark', color: '#EC4899' },
+            { label: 'Saved', value: stats.saved, icon: 'bookmark', color: T.pink },
             { label: 'Analyses', value: analysisHistory.length, icon: 'scan', color: T.green },
             { label: 'Skin Score', value: latestAnalysis?.skinScore ?? '—', icon: 'star', color: T.orange },
           ].map((stat) => (
@@ -161,7 +160,7 @@ export function GroomingDashboardScreen() {
                 <Text style={styles.analysisDate}>Last scan: {formatDate(latestAnalysis.date)}</Text>
                 <View style={styles.concernsRow}>
                   {latestAnalysis.concerns.slice(0, 3).map((c) => (
-                    <View key={c} style={[styles.concernChip, { backgroundColor: '#EF444415' }]}>
+                    <View key={c} style={[styles.concernChip, { backgroundColor: `${T.red}15` }]}>
                       <Text style={[styles.concernChipText, { color: T.red }]}>{c}</Text>
                     </View>
                   ))}
@@ -204,7 +203,7 @@ export function GroomingDashboardScreen() {
                   <Text style={styles.recTitle}>{rec.title}</Text>
                   <Text style={styles.recCategory}>{rec.category}</Text>
                 </View>
-                <View style={[styles.priorityBadge, { backgroundColor: '#EF444418' }]}>
+                <View style={[styles.priorityBadge, { backgroundColor: `${T.red}18` }]}>
                   <Text style={[styles.priorityText, { color: T.red }]}>High</Text>
                 </View>
               </TouchableOpacity>
@@ -218,7 +217,7 @@ export function GroomingDashboardScreen() {
           <View style={styles.categoryRow}>
             {(
               [
-                ['Skincare', stats.skincare, '#EC4899'],
+                ['Skincare', stats.skincare, T.pink],
                 ['Haircare', stats.haircare, T.orange],
                 ['Lifestyle', stats.lifestyle, T.green],
               ] as [string, number, string][]
@@ -269,7 +268,7 @@ export function GroomingDashboardScreen() {
           {/* Evening */}
           <View style={[styles.routineHeader, { marginTop: 16 }]}>
             <View style={styles.routinePeriodRow}>
-              <Ionicons name="moon" size={16} color='#8B5CF6' />
+              <Ionicons name="moon" size={16} color={T.primary} />
               <Text style={styles.routinePeriodLabel}>Evening</Text>
             </View>
             <Text style={styles.routineProgress}>

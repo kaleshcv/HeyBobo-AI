@@ -17,7 +17,6 @@ import { useDietaryProfileStore } from '@/store/dietaryProfileStore';
 import Svg, { Circle } from 'react-native-svg';
 import T from '@/theme'
 
-;
 
 export function DietaryDashboardScreen() {
   const insets = useSafeAreaInsets();
@@ -135,7 +134,7 @@ export function DietaryDashboardScreen() {
         {/* Macros */}
         <Card padding="lg" style={{ marginBottom: 24 }}>
           <Text style={styles.sectionTitle}>Macronutrients</Text>
-          {renderMacroBar('Protein', nutrition?.totalProtein || 45, 150, '#3B82F6')}
+          {renderMacroBar('Protein', nutrition?.totalProtein || 45, 150, T.cyan)}
           {renderMacroBar('Carbs', nutrition?.totalCarbs || 180, 250, T.orange)}
           {renderMacroBar('Fat', nutrition?.totalFat || 55, 70, T.red)}
         </Card>
@@ -148,7 +147,7 @@ export function DietaryDashboardScreen() {
               <Text style={styles.waterCount}>6/8 glasses</Text>
             </View>
             <TouchableOpacity style={styles.addWaterButton}>
-              <Ionicons name="add" size={20} color="#fff" />
+              <Ionicons name="add" size={20} color={T.white} />
             </TouchableOpacity>
           </View>
           <View style={styles.waterGlasses}>
@@ -163,7 +162,7 @@ export function DietaryDashboardScreen() {
                 <Ionicons
                   name="water"
                   size={14}
-                  color={idx < 6 ? '#3B82F6' : T.border2}
+                  color={idx < 6 ? T.cyan : T.border2}
                 />
               </View>
             ))}
@@ -321,8 +320,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   waterGlassFilled: {
-    backgroundColor: '#3B82F620',
-    borderColor: '#3B82F6',
+    backgroundColor: `${T.cyan}20`,
+    borderColor: T.cyan,
   },
   mealsSection: {
     marginBottom: 32,
@@ -341,7 +340,7 @@ const styles = StyleSheet.create({
   mealItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderRadius: 10,
     padding: 12,
     marginBottom: 10,

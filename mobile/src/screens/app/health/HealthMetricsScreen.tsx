@@ -16,7 +16,7 @@ const METRICS = [
   { key: 'weight',     label: 'Weight',        unit: 'kg',   icon: 'fitness'      as const, color: T.cyan,    values: [74.2,74.0,73.8,73.6,73.5,73.4,73.2] },
   { key: 'spo2',       label: 'Blood Oxygen',  unit: '%',    icon: 'water'        as const, color: T.teal,    values: [98,97,98,99,98,98,97] },
   { key: 'sleep',      label: 'Sleep',         unit: 'hrs',  icon: 'moon'         as const, color: T.primary, values: [7.0,6.5,7.5,8.0,7.2,6.8,7.4] },
-  { key: 'stress',     label: 'Stress Level',  unit: '/10',  icon: 'brain'        as const, color: T.pink,    values: [5,6,4,7,5,4,3] },
+  { key: 'stress',     label: 'Stress Level',  unit: '/10',  icon: 'flash'        as const, color: T.pink,    values: [5,6,4,7,5,4,3] },
 ]
 
 export function HealthMetricsScreen() {

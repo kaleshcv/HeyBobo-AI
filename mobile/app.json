@@ -1,21 +1,23 @@
 {
   "expo": {
-    "name": "EduPlatform",
-    "slug": "eduplatform",
+    "name": "HeyBobo",
+    "slug": "heybobo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
-    "scheme": "eduplatform",
+    "scheme": "heybobo",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./src/assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.eduplatform.app",
+      "bundleIdentifier": "com.heybobo.app",
       "buildNumber": "1",
       "infoPlist": {
         "NSCameraUsageDescription": "Used for live workout pose detection and grooming visual analysis",
@@ -25,7 +27,9 @@
         "NSMotionUsageDescription": "Used to track steps and physical activity",
         "NSMicrophoneUsageDescription": "Used for voice input in AI Tutor"
       },
-      "associatedDomains": ["applinks:yourdomain.com"]
+      "associatedDomains": [
+        "applinks:yourdomain.com"
+      ]
     },
     "android": {
       "usesCleartextTraffic": true,
@@ -33,7 +37,7 @@
         "foregroundImage": "./src/assets/images/adaptive-icon.png",
         "backgroundColor": "#6366F1"
       },
-      "package": "com.eduplatform.app",
+      "package": "com.heybobo.app",
       "versionCode": 1,
       "permissions": [
         "android.permission.CAMERA",
@@ -53,7 +57,10 @@
               "pathPrefix": "/app"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ]
     },
@@ -62,15 +69,32 @@
     },
     "plugins": [
       "expo-secure-store",
-      ["expo-camera", { "cameraPermission": "Allow EduPlatform to access your camera" }],
-      ["expo-image-picker", { "photosPermission": "Allow EduPlatform to access your photos" }],
-      ["expo-notifications", { "icon": "./src/assets/images/notification-icon.png", "color": "#6366F1" }],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow HeyBobo to access your camera"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow HeyBobo to access your photos"
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./src/assets/images/notification-icon.png",
+          "color": "#6366F1"
+        }
+      ],
       "expo-font"
     ],
     "extra": {
       "eas": {
-        "projectId": "your-eas-project-id"
+        "projectId": "a83ee5aa-c126-4b0e-9e8b-ec9c3e5197c3"
       }
-    }
+    },
+    "owner": "kaleshcv"
   }
 }

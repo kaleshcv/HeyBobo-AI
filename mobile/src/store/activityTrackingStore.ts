@@ -232,7 +232,7 @@ export const useActivityTrackingStore = create<ActivityTrackingState>()(
       },
     }),
     {
-      name: 'eduplatform_activity_tracking',
+      name: 'heybobo_activity_tracking',
       storage: createJSONStorage(() => asyncStorage),
     },
   ),

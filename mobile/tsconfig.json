@@ -17,6 +17,6 @@
     "src",
     "*.ts",
     "*.tsx",
-    "nativewind-env.d.ts"
+    "*.d.ts"
   ]
 }

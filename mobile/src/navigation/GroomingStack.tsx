@@ -10,7 +10,12 @@ const Stack = createNativeStackNavigator<GroomingStackParamList>()
 
 export function GroomingStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{
+      headerShown: false,
+      animation: 'slide_from_right',
+      animationDuration: 250,
+      gestureEnabled: true,
+    }}>
       <Stack.Screen name="GroomingDashboard" component={GroomingDashboardScreen} />
       <Stack.Screen name="VisualAnalysis"    component={VisualAnalysisScreen} />
       <Stack.Screen name="Recommendations"   component={RecommendationsScreen} />

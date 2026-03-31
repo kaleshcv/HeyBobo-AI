@@ -11,7 +11,12 @@ const Stack = createNativeStackNavigator<ProfileStackParamList>()
 
 export function ProfileStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{
+      headerShown: false,
+      animation: 'slide_from_right',
+      animationDuration: 250,
+      gestureEnabled: true,
+    }}>
       <Stack.Screen name="Profile"       component={ProfileScreen} />
       <Stack.Screen name="Settings"      component={SettingsScreen} />
       <Stack.Screen name="Notifications" component={NotificationsScreen} />

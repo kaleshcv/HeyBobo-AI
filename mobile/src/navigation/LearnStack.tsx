@@ -17,7 +17,12 @@ const Stack = createNativeStackNavigator<LearnStackParamList>()
 
 export function LearnStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{
+      headerShown: false,
+      animation: 'slide_from_right',
+      animationDuration: 250,
+      gestureEnabled: true,
+    }}>
       <Stack.Screen name="CoursesList"  component={CoursesListScreen} />
       <Stack.Screen name="CoursePlayer" component={CoursePlayerScreen} />
       <Stack.Screen name="LessonPlayer" component={LessonPlayerScreen}

@@ -273,7 +273,7 @@ export const useMeetingStore = create<MeetingState>()(
       },
     }),
     {
-      name: 'eduplatform_meetings',
+      name: 'heybobo_meetings',
       storage: createJSONStorage(() => asyncStorage),
     },
   ),

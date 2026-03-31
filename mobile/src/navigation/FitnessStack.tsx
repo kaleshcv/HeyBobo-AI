@@ -12,7 +12,12 @@ const Stack = createNativeStackNavigator<FitnessStackParamList>()
 
 export function FitnessStack() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{
+      headerShown: false,
+      animation: 'slide_from_right',
+      animationDuration: 250,
+      gestureEnabled: true,
+    }}>
       <Stack.Screen name="FitnessHub"       component={FitnessHubScreen} />
       <Stack.Screen name="FitnessProfile"   component={FitnessProfileScreen} />
       <Stack.Screen name="Workouts"         component={WorkoutsScreen} />

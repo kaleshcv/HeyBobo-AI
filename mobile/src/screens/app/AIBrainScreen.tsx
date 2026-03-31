@@ -17,32 +17,14 @@ import { useLearningStats } from '@/hooks/useCourses'
 import { useWorkoutSessions, useTodayActivity } from '@/hooks/useFitness'
 import T from '@/theme'
 
-// ─── Dark theme colours matching web dashboard ─────────────────────────────
-const C = {
-  bg:           '#0f172a',
-  surface:      T.text,
-  surface2:     '#334155',
-  border:       '#334155',
-  primary:      T.primary2,
-  primaryLight: T.primary,
-  green:        '#22c55e',
-  yellow:       '#eab308',
-  red:          T.red,
-  orange:       '#f97316',
-  cyan:         '#06b6d4',
-  white:        T.bg,
-  muted:        T.muted2,
-  muted2:       T.muted,
-}
-
 // ─── Helpers ────────────────────────────────────────────────────────────────
 const clamp = (v: number) => Math.max(0, Math.min(100, v))
 const pad2   = (n: number) => String(n).padStart(2, '0')
 
 function getGreeting(hour: number) {
-  if (hour < 12) return 'Good morning'
-  if (hour < 17) return 'Good afternoon'
-  return 'Good evening'
+  if (hour < 12) return 'Good Morning'
+  if (hour < 17) return 'Good Afternoon'
+  return 'Good Evening'
 }
 
 function getDateLabel() {
@@ -64,10 +46,10 @@ function getLiveClock() {
 // ─── Module chips config ────────────────────────────────────────────────────
 const MODULE_CHIPS = [
   { label: 'Learn',   icon: 'school-outline',      color: T.primary,  tab: 'Education', screen: 'CoursesList' },
-  { label: 'Fitness', icon: 'barbell-outline',      color: T.green,    tab: 'Health',    screen: 'FitnessDashboard' },
+  { label: 'Fitness', icon: 'barbell-outline',      color: T.green,    tab: 'Fitness',   screen: 'FitnessHub' },
   { label: 'Health',  icon: 'heart-outline',        color: T.red,      tab: 'Health',    screen: 'HealthHub' },
   { label: 'Diet',    icon: 'nutrition-outline',    color: T.yellow,   tab: 'Dietary',   screen: 'DietaryDashboard' },
-  { label: 'Shop',    icon: 'cart-outline',         color: T.cyan,     tab: 'Dietary',   screen: 'ShoppingHub' },
+  { label: 'Shop',    icon: 'cart-outline',         color: T.cyan,     tab: 'Shopping',  screen: 'ShoppingHub' },
   { label: 'Groups',  icon: 'people-outline',       color: T.orange,   tab: 'Education', screen: 'Groups' },
 ]
 
@@ -76,10 +58,10 @@ const QUEST_XP = [100, 75, 50, 60, 50, 80]
 
 // ─── Static daily quests (web-matching) ─────────────────────────────────────
 const DAILY_QUESTS = [
-  { id: 'dq1', label: 'Kickstart Protein Intake',  xp: 100, icon: 'nutrition-outline',   color: '#f97316' },
-  { id: 'dq2', label: 'Walk for Wellness',          xp: 75,  icon: 'walk-outline',         color: '#22c55e' },
-  { id: 'dq3', label: 'Log Meals Consistently',     xp: 50,  icon: 'restaurant-outline',   color: '#eab308' },
-  { id: 'dq4', label: 'Review Grocery Needs',       xp: 60,  icon: 'cart-outline',         color: '#06b6d4' },
+  { id: 'dq1', label: 'Kickstart Protein Intake',  xp: 100, icon: 'nutrition-outline',   color: T.orange },
+  { id: 'dq2', label: 'Walk for Wellness',          xp: 75,  icon: 'walk-outline',         color: T.green },
+  { id: 'dq3', label: 'Log Meals Consistently',     xp: 50,  icon: 'restaurant-outline',   color: T.yellow },
+  { id: 'dq4', label: 'Review Grocery Needs',       xp: 60,  icon: 'cart-outline',         color: T.cyan },
 ]
 
 // ─── Smart nudges ─────────────────────────────────────────────────────────────
@@ -93,15 +75,15 @@ const SMART_NUDGES = [
 // ─── Achievements ─────────────────────────────────────────────────────────────
 const ACHIEVEMENTS_DEF = [
   { id: 'a1', label: 'First Steps',   icon: 'footsteps-outline', color: T.primary2, desc: 'Log first activity' },
-  { id: 'a2', label: 'Goal Crusher',  icon: 'trophy-outline',    color: '#eab308', desc: 'Hit daily goal' },
+  { id: 'a2', label: 'Goal Crusher',  icon: 'trophy-outline',    color: T.yellow, desc: 'Hit daily goal' },
   { id: 'a3', label: 'On Fire',       icon: 'flame-outline',     color: T.red, desc: '3-day streak' },
-  { id: 'a4', label: 'Scholar',       icon: 'school-outline',    color: '#06b6d4', desc: 'Complete 5 lessons' },
-  { id: 'a5', label: 'Level 5',       icon: 'star-outline',      color: '#a855f7', desc: 'Reach Level 5' },
+  { id: 'a4', label: 'Scholar',       icon: 'school-outline',    color: T.cyan, desc: 'Complete 5 lessons' },
+  { id: 'a5', label: 'Level 5',       icon: 'star-outline',      color: T.primary, desc: 'Reach Level 5' },
 ]
 
 // ─── Small sub-components ───────────────────────────────────────────────────
 
-function Badge({ children, color = T.primary, textColor = '#fff' }: {
+function Badge({ children, color = T.primary, textColor = T.white }: {
   children: React.ReactNode; color?: string; textColor?: string
 }) {
   return (
@@ -167,7 +149,7 @@ export function AIBrainScreen() {
   // ── Bobo Says dismissal ───────────────────────────────────────────────────
   const [boboDismissed, setBoboDismissed] = useState(false)
 
-  const firstName = user?.firstName ?? 'Student'
+  const firstName = user?.firstName || user?.email?.split('@')[0] || 'User'
   const hour      = new Date().getHours()
   const greeting  = getGreeting(hour)
   const dateLabel = getDateLabel()
@@ -1097,7 +1079,7 @@ const styles = StyleSheet.create({
   },
   achieveUnlockedText: {
     fontSize: 10,
-    color: '#fff',
+    color: T.white,
     fontWeight: '800',
   },
 })

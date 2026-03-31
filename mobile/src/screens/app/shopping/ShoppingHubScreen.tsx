@@ -20,8 +20,8 @@ export function ShoppingHubScreen() {
   const lists = useShoppingListStore((s) => s.lists)
   const { monthlyBudget, expenses } = useBudgetStore()
 
-  const totalBudgetSpent = expenses.reduce((sum, e) => sum + e.amount, 0)
-  const budgetRemaining = monthlyBudget - totalBudgetSpent
+  const totalBudgetSpent = (expenses ?? []).reduce((sum, e) => sum + (e.amount ?? 0), 0)
+  const budgetRemaining = (monthlyBudget ?? 0) - totalBudgetSpent
 
   const hubCards = [
     {
@@ -29,7 +29,7 @@ export function ShoppingHubScreen() {
       title: 'Shopping Lists',
       count: lists.length,
       icon: 'list',
-      color: '#3B82F6',
+      color: T.cyan,
       route: 'ShoppingLists' as const,
     },
     {
@@ -53,7 +53,7 @@ export function ShoppingHubScreen() {
       title: 'Orders & Reviews',
       count: 0,
       icon: 'package',
-      color: '#8B5CF6',
+      color: T.primary,
       route: 'OrdersReviews' as const,
     },
   ]
@@ -120,30 +120,30 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   budgetLabel: {
-    color: '#FFF',
+    color: T.white,
     fontSize: 12,
     fontWeight: '500',
     opacity: 0.9,
   },
   budgetAmount: {
-    color: '#FFF',
+    color: T.white,
     fontSize: 32,
     fontWeight: '700',
     marginTop: 8,
   },
   budgetBar: {
     height: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: 'rgba(255,255,255,0.3)',
     borderRadius: 4,
     marginTop: 12,
     overflow: 'hidden',
   },
   budgetFill: {
     height: '100%',
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
   },
   budgetDetail: {
-    color: '#FFF',
+    color: T.white,
     fontSize: 12,
     marginTop: 10,
     opacity: 0.9,
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   badgeText: {
-    color: '#FFF',
+    color: T.white,
     fontSize: 11,
     fontWeight: '600',
   },
