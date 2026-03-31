@@ -4,15 +4,34 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "env": { "APP_ENV": "development" }
+      "env": {
+        "APP_ENV": "development",
+        "EXPO_PUBLIC_API_URL": "http://10.0.2.2:3001/api/v1"
+      }
     },
     "preview": {
       "distribution": "internal",
-      "env": { "APP_ENV": "staging" }
+      "env": {
+        "APP_ENV": "staging",
+        "EXPO_PUBLIC_API_URL": "https://app.heybobo.ai/api/v1"
+      }
+    },
+    "apk": {
+      "android": {
+        "buildType": "apk"
+      },
+      "distribution": "internal",
+      "env": {
+        "APP_ENV": "production",
+        "EXPO_PUBLIC_API_URL": "https://app.heybobo.ai/api/v1"
+      }
     },
     "production": {
       "autoIncrement": true,
-      "env": { "APP_ENV": "production" }
+      "env": {
+        "APP_ENV": "production",
+        "EXPO_PUBLIC_API_URL": "https://app.heybobo.ai/api/v1"
+      }
     }
   },
   "submit": {

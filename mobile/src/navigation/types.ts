@@ -24,35 +24,49 @@ export type LearnStackParamList = {
   AITutor:       undefined
 }
 
+// ── Fitness Stack ──────────────────────────────────────────
+export type FitnessStackParamList = {
+  FitnessHub:       undefined
+  FitnessProfile:   undefined
+  Workouts:         undefined
+  LiveWorkout:      { workoutId?: string; planId?: string }
+  FitnessDashboard: undefined
+}
+
 // ── Health Stack ───────────────────────────────────────────
 export type HealthStackParamList = {
   HealthHub:        undefined
-  FitnessProfile:   undefined
-  Workouts:         undefined
-  LiveWorkout:      { planId?: string }
   ActivityTracking: undefined
   Wearables:        undefined
   InjuryTracking:   undefined
-  FitnessDashboard: undefined
+  HealthMetrics:    undefined
 }
 
 // ── Dietary Stack ──────────────────────────────────────────
 export type DietaryStackParamList = {
-  DietaryDashboard:  undefined
-  MealLog:           { date?: string }
-  NutritionTracker:  { date?: string }
-  MealPlanner:       undefined
-  DietaryProfile:    undefined
-  DietaryGoals:      undefined
-  Grocery:           undefined
+  DietaryDashboard: undefined
+  MealLog:          { date?: string }
+  NutritionTracker: { date?: string }
+  MealPlanner:      undefined
+  DietaryProfile:   undefined
+  DietaryGoals:     undefined
+  Grocery:          undefined
+}
+
+// ── Grooming Stack ─────────────────────────────────────────
+export type GroomingStackParamList = {
   GroomingDashboard: undefined
   VisualAnalysis:    undefined
   Recommendations:   undefined
-  ShoppingHub:       undefined
-  ShoppingLists:     undefined
-  Marketplace:       undefined
-  BudgetExpenses:    undefined
-  OrdersReviews:     undefined
+}
+
+// ── Shopping Stack ─────────────────────────────────────────
+export type ShoppingStackParamList = {
+  ShoppingHub:   undefined
+  ShoppingLists: undefined
+  Marketplace:   undefined
+  BudgetExpenses: undefined
+  OrdersReviews: undefined
 }
 
 // ── Teacher Stack ──────────────────────────────────────────
@@ -92,8 +106,11 @@ export type ProfileStackParamList = {
 export type MainTabsParamList = {
   Home:      undefined
   Education: NavigatorScreenParams<LearnStackParamList>
+  Fitness:   NavigatorScreenParams<FitnessStackParamList>
   Health:    NavigatorScreenParams<HealthStackParamList>
   Dietary:   NavigatorScreenParams<DietaryStackParamList>
+  Grooming:  NavigatorScreenParams<GroomingStackParamList>
+  Shopping:  NavigatorScreenParams<ShoppingStackParamList>
   Account:   NavigatorScreenParams<ProfileStackParamList>
 }
 
