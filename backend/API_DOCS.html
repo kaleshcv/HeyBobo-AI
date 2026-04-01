@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HeyBobo API — Auth Endpoints</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: #7c4dff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Layout ── */
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 240px;
+      height: 100vh;
+      background: #161b27;
+      border-right: 1px solid #1e2535;
+      padding: 28px 0;
+      overflow-y: auto;
+      z-index: 10;
+    }
+    .sidebar-logo {
+      display: flex; align-items: center; gap: 10px;
+      padding: 0 20px 24px;
+      border-bottom: 1px solid #1e2535;
+      margin-bottom: 16px;
+    }
+    .sidebar-logo .dot {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: linear-gradient(135deg, #7c4dff, #00a651);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; font-weight: 800; color: #fff;
+    }
+    .sidebar-logo span { font-weight: 700; font-size: 16px; }
+    .sidebar-section { padding: 0 12px; margin-bottom: 8px; }
+    .sidebar-section-title {
+      font-size: 10px; font-weight: 700; letter-spacing: .1em;
+      color: #4a5568; text-transform: uppercase; padding: 4px 8px 6px;
+    }
+    .sidebar-link {
+      display: block; padding: 7px 10px; border-radius: 6px;
+      font-size: 13px; color: #a0aec0; margin-bottom: 2px;
+    }
+    .sidebar-link:hover, .sidebar-link.active {
+      background: rgba(124,77,255,0.12); color: #c4b5fd; text-decoration: none;
+    }
+    .sidebar-badge {
+      display: inline-block; font-size: 10px; font-weight: 700;
+      padding: 1px 7px; border-radius: 4px;
+      margin-right: 6px; vertical-align: middle;
+    }
+    .badge-post  { background: #1e3a5f; color: #60a5fa; }
+    .badge-get   { background: #1a3a2a; color: #34d399; }
+
+    main { margin-left: 240px; padding: 48px 48px 80px; max-width: 900px; }
+
+    /* ── Header ── */
+    .page-header { margin-bottom: 48px; border-bottom: 1px solid #1e2535; padding-bottom: 28px; }
+    .page-header h1 { font-size: 28px; font-weight: 800; margin-bottom: 10px; }
+    .page-header p { color: #94a3b8; }
+    .base-url-box {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #161b27; border: 1px solid #1e2535; border-radius: 8px;
+      padding: 8px 14px; font-family: 'Fira Mono', 'Courier New', monospace;
+      font-size: 13px; margin-top: 14px; color: #a78bfa;
+    }
+    .base-url-box .label { color: #4a5568; font-family: inherit; }
+
+    /* ── Endpoint card ── */
+    .endpoint { margin-bottom: 56px; }
+    .endpoint-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
+    .method-badge {
+      font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 5px;
+      text-transform: uppercase; white-space: nowrap; margin-top: 3px;
+    }
+    .method-post { background: #1e3a5f; color: #60a5fa; }
+    .method-get  { background: #1a3a2a; color: #34d399; }
+    .endpoint-title-block h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+    .endpoint-path {
+      font-family: 'Fira Mono', 'Courier New', monospace;
+      font-size: 13px; color: #7c4dff; background: rgba(124,77,255,0.08);
+      padding: 3px 8px; border-radius: 4px;
+    }
+    .endpoint-desc { color: #94a3b8; margin-bottom: 24px; font-size: 15px; }
+
+    /* ── Section labels ── */
+    .section-label {
+      font-size: 11px; font-weight: 700; letter-spacing: .09em;
+      text-transform: uppercase; color: #4a5568; margin-bottom: 10px;
+    }
+
+    /* ── Auth badge ── */
+    .auth-required {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.25);
+      color: #fbbf24; padding: 4px 10px; border-radius: 6px;
+      font-size: 12px; font-weight: 600; margin-bottom: 18px;
+    }
+    .auth-public {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.2);
+      color: #34d399; padding: 4px 10px; border-radius: 6px;
+      font-size: 12px; font-weight: 600; margin-bottom: 18px;
+    }
+
+    /* ── Code blocks ── */
+    pre, code {
+      font-family: 'Fira Mono', 'Courier New', monospace;
+      font-size: 13px;
+    }
+    pre {
+      background: #0d1117; border: 1px solid #1e2535; border-radius: 8px;
+      padding: 18px 20px; overflow-x: auto; margin-bottom: 20px;
+      line-height: 1.7;
+    }
+    .json-key   { color: #7dd3fc; }
+    .json-str   { color: #a3e635; }
+    .json-num   { color: #fb923c; }
+    .json-bool  { color: #c084fc; }
+    .json-null  { color: #f87171; }
+    .json-comment { color: #4a5568; font-style: italic; }
+
+    /* ── Tables ── */
+    table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 14px; }
+    th {
+      background: #161b27; text-align: left; padding: 9px 14px;
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .07em; color: #4a5568; border-bottom: 1px solid #1e2535;
+    }
+    td { padding: 9px 14px; border-bottom: 1px solid #191f2e; vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    .field { font-family: 'Fira Mono', 'Courier New', monospace; font-size: 12px; color: #a78bfa; }
+    .type  { font-family: 'Fira Mono', 'Courier New', monospace; font-size: 12px; color: #60a5fa; }
+    .required { color: #f87171; font-weight: 700; }
+    .optional { color: #4a5568; }
+
+    /* ── Response tabs ── */
+    .resp-block { margin-bottom: 16px; }
+    .resp-status {
+      display: inline-block; font-size: 12px; font-weight: 800; padding: 3px 10px;
+      border-radius: 5px 5px 0 0; margin-bottom: 0;
+    }
+    .resp-2xx { background: #1a3a2a; color: #34d399; }
+    .resp-4xx { background: #3a1a1a; color: #f87171; }
+    .resp-block pre { border-top-left-radius: 0; margin-top: 0; }
+
+    /* ── Divider ── */
+    hr { border: none; border-top: 1px solid #1e2535; margin: 48px 0; }
+
+    /* ── Validation rules ── */
+    .rule-list { list-style: none; padding: 0; margin-bottom: 24px; }
+    .rule-list li {
+      display: flex; align-items: baseline; gap: 8px;
+      padding: 5px 0; border-bottom: 1px solid #191f2e; font-size: 14px; color: #94a3b8;
+    }
+    .rule-list li:last-child { border-bottom: none; }
+    .rule-list .bullet { color: #7c4dff; font-weight: 700; }
+
+    /* ── Notes ── */
+    .note {
+      background: rgba(124,77,255,0.07); border-left: 3px solid #7c4dff;
+      border-radius: 0 6px 6px 0; padding: 12px 16px; margin-bottom: 20px;
+      font-size: 13.5px; color: #c4b5fd;
+    }
+    .note strong { color: #a78bfa; }
+  </style>
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="dot">B</div>
+    <span>HeyBobo API</span>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Auth</div>
+    <a href="#register"  class="sidebar-link"><span class="sidebar-badge badge-post">POST</span>Register</a>
+    <a href="#login"     class="sidebar-link"><span class="sidebar-badge badge-post">POST</span>Login</a>
+    <a href="#logout"    class="sidebar-link"><span class="sidebar-badge badge-post">POST</span>Logout</a>
+    <a href="#refresh"   class="sidebar-link"><span class="sidebar-badge badge-post">POST</span>Refresh Token</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Reference</div>
+    <a href="#errors"    class="sidebar-link">Error Codes</a>
+    <a href="#headers"   class="sidebar-link">Headers</a>
+  </div>
+</nav>
+
+<!-- ── Main ── -->
+<main>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <h1>HeyBobo Authentication API</h1>
+    <p>REST endpoints for user registration, login, and logout. All responses are JSON.</p>
+    <div class="base-url-box">
+      <span class="label">Base URL</span>
+      https://app.heybobo.ai/api/v1
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════ REGISTER ══════════════════════════════════════ -->
+  <div class="endpoint" id="register">
+    <div class="endpoint-header">
+      <span class="method-badge method-post">POST</span>
+      <div class="endpoint-title-block">
+        <h2>Register</h2>
+        <span class="endpoint-path">/auth/register</span>
+      </div>
+    </div>
+    <div class="auth-public">🔓 Public — no token required</div>
+    <p class="endpoint-desc">Creates a new user account and returns access + refresh tokens on success.</p>
+
+    <div class="section-label">Request Body <code style="font-size:11px;color:#4a5568">(application/json)</code></div>
+    <table>
+      <thead>
+        <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="field">firstName</td>
+          <td class="type">string</td>
+          <td class="required">required</td>
+          <td>User's first name. Max 50 chars.</td>
+        </tr>
+        <tr>
+          <td class="field">lastName</td>
+          <td class="type">string</td>
+          <td class="required">required</td>
+          <td>User's last name. Max 50 chars.</td>
+        </tr>
+        <tr>
+          <td class="field">username</td>
+          <td class="type">string</td>
+          <td class="required">required</td>
+          <td>Unique username. 3–30 chars. Letters, numbers, <code>_</code> and <code>-</code> only.</td>
+        </tr>
+        <tr>
+          <td class="field">email</td>
+          <td class="type">string</td>
+          <td class="required">required</td>
+          <td>Valid email address. Must be unique.</td>
+        </tr>
+        <tr>
+          <td class="field">password</td>
+          <td class="type">string</td>
+          <td class="required">required</td>
+          <td>Min 8 chars. See password rules below.</td>
+        </tr>
+        <tr>
+          <td class="field">role</td>
+          <td class="type">string</td>
+          <td class="optional">optional</td>
+          <td>One of <code>student</code> | <code>teacher</code> | <code>creator</code>. Defaults to <code>student</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="section-label">Password Requirements</div>
+    <ul class="rule-list">
+      <li><span class="bullet">›</span> Minimum 8 characters</li>
+      <li><span class="bullet">›</span> At least one uppercase letter (A–Z)</li>
+      <li><span class="bullet">›</span> At least one lowercase letter (a–z)</li>
+      <li><span class="bullet">›</span> At least one digit (0–9)</li>
+      <li><span class="bullet">›</span> At least one special character: <code>@ $ ! % * ? &</code></li>
+    </ul>
+
+    <div class="section-label">Example Request</div>
+    <pre><code><span class="json-comment">// POST https://app.heybobo.ai/api/v1/auth/register</span>
+{
+  <span class="json-key">"firstName"</span>: <span class="json-str">"John"</span>,
+  <span class="json-key">"lastName"</span>:  <span class="json-str">"Doe"</span>,
+  <span class="json-key">"username"</span>:  <span class="json-str">"john_doe"</span>,
+  <span class="json-key">"email"</span>:     <span class="json-str">"john@example.com"</span>,
+  <span class="json-key">"password"</span>:  <span class="json-str">"SecurePassword@123"</span>,
+  <span class="json-key">"role"</span>:      <span class="json-str">"student"</span>
+}</code></pre>
+
+    <div class="section-label">Responses</div>
+
+    <div class="resp-block">
+      <span class="resp-status resp-2xx">201 Created</span>
+      <pre><code>{
+  <span class="json-key">"success"</span>: <span class="json-bool">true</span>,
+  <span class="json-key">"data"</span>: {
+    <span class="json-key">"accessToken"</span>:  <span class="json-str">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."</span>,
+    <span class="json-key">"refreshToken"</span>: <span class="json-str">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."</span>,
+    <span class="json-key">"user"</span>: {
+      <span class="json-key">"id"</span>:    <span class="json-str">"64f3c2a1b7e8f100123abc45"</span>,
+      <span class="json-key">"email"</span>: <span class="json-str">"john@example.com"</span>,
+      <span class="json-key">"name"</span>:  <span class="json-str">"John Doe"</span>,
+      <span class="json-key">"role"</span>:  <span class="json-str">"student"</span>
+    }
+  }
+}</code></pre>
+    </div>
+
+    <div class="resp-block">
+      <span class="resp-status resp-4xx">400 Bad Request</span>
+      <pre><code>{
+  <span class="json-key">"success"</span>: <span class="json-bool">false</span>,
+  <span class="json-key">"statusCode"</span>: <span class="json-num">400</span>,
+  <span class="json-key">"message"</span>: <span class="json-str">"Password must contain uppercase, lowercase, number, and special character"</span>
+}</code></pre>
+    </div>
+
+    <div class="resp-block">
+      <span class="resp-status resp-4xx">409 Conflict</span>
+      <pre><code>{
+  <span class="json-key">"success"</span>: <span class="json-bool">false</span>,
+  <span class="json-key">"statusCode"</span>: <span class="json-num">409</span>,
+  <span class="json-key">"message"</span>: <span class="json-str">"Email already in use"</span>
+}</code></pre>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- ══════════════════════════════════════ LOGIN ══════════════════════════════════════ -->
+  <div class="endpoint" id="login">
+    <div class="endpoint-header">
+      <span class="method-badge method-post">POST</span>
+      <div class="endpoint-title-block">
+        <h2>Login</h2>
+        <span class="endpoint-path">/auth/login</span>
+      </div>
+    </div>
+    <div class="auth-public">🔓 Public — no token required</div>
+    <p class="endpoint-desc">
+      Authenticates an existing user with their email/username and password.
+      Returns a short-lived <strong>Access Token</strong> (JWT) and a <strong>Refresh Token</strong>.
+    </p>
+
+    <div class="section-label">Request Body <code style="font-size:11px;color:#4a5568">(application/json)</code></div>
+    <table>
+      <thead>
+        <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="field">identifier</td>
+          <td class="type">string</td>
+          <td class="required">required</td>
+          <td>Email address <em>or</em> username.</td>
+        </tr>
+        <tr>
+          <td class="field">password</td>
+          <td class="type">string</td>
+          <td class="required">required</td>
+          <td>The user's password.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note">
+      <strong>Tip:</strong> The <code>identifier</code> field accepts either an email address
+      (<code>john@example.com</code>) or a username (<code>john_doe</code>).
+    </div>
+
+    <div class="section-label">Example Request</div>
+    <pre><code><span class="json-comment">// POST https://app.heybobo.ai/api/v1/auth/login</span>
+{
+  <span class="json-key">"identifier"</span>: <span class="json-str">"john@example.com"</span>,
+  <span class="json-key">"password"</span>:   <span class="json-str">"SecurePassword@123"</span>
+}</code></pre>
+
+    <div class="section-label">Responses</div>
+
+    <div class="resp-block">
+      <span class="resp-status resp-2xx">200 OK</span>
+      <pre><code>{
+  <span class="json-key">"success"</span>: <span class="json-bool">true</span>,
+  <span class="json-key">"data"</span>: {
+    <span class="json-key">"accessToken"</span>:  <span class="json-str">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."</span>,
+    <span class="json-key">"refreshToken"</span>: <span class="json-str">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."</span>,
+    <span class="json-key">"user"</span>: {
+      <span class="json-key">"id"</span>:        <span class="json-str">"64f3c2a1b7e8f100123abc45"</span>,
+      <span class="json-key">"email"</span>:     <span class="json-str">"john@example.com"</span>,
+      <span class="json-key">"firstName"</span>: <span class="json-str">"John"</span>,
+      <span class="json-key">"lastName"</span>:  <span class="json-str">"Doe"</span>,
+      <span class="json-key">"username"</span>:  <span class="json-str">"john_doe"</span>,
+      <span class="json-key">"role"</span>:      <span class="json-str">"student"</span>
+    }
+  }
+}</code></pre>
+    </div>
+
+    <div class="resp-block">
+      <span class="resp-status resp-4xx">401 Unauthorized</span>
+      <pre><code>{
+  <span class="json-key">"success"</span>: <span class="json-bool">false</span>,
+  <span class="json-key">"statusCode"</span>: <span class="json-num">401</span>,
+  <span class="json-key">"message"</span>: <span class="json-str">"Invalid credentials"</span>
+}</code></pre>
+    </div>
+
+    <div class="resp-block">
+      <span class="resp-status resp-4xx">400 Bad Request</span>
+      <pre><code>{
+  <span class="json-key">"success"</span>: <span class="json-bool">false</span>,
+  <span class="json-key">"statusCode"</span>: <span class="json-num">400</span>,
+  <span class="json-key">"message"</span>: <span class="json-str">"identifier should not be empty"</span>
+}</code></pre>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- ══════════════════════════════════════ LOGOUT ══════════════════════════════════════ -->
+  <div class="endpoint" id="logout">
+    <div class="endpoint-header">
+      <span class="method-badge method-post">POST</span>
+      <div class="endpoint-title-block">
+        <h2>Logout</h2>
+        <span class="endpoint-path">/auth/logout</span>
+      </div>
+    </div>
+    <div class="auth-required">🔐 Protected — Bearer token required</div>
+    <p class="endpoint-desc">
+      Invalidates the user's refresh token server-side. The access token will expire naturally.
+      Pass the refresh token in the body to revoke it immediately.
+    </p>
+
+    <div class="section-label">Request Headers</div>
+    <table>
+      <thead>
+        <tr><th>Header</th><th>Value</th><th>Required</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="field">Authorization</td>
+          <td><code>Bearer &lt;accessToken&gt;</code></td>
+          <td class="required">required</td>
+        </tr>
+        <tr>
+          <td class="field">Content-Type</td>
+          <td><code>application/json</code></td>
+          <td class="required">required</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="section-label">Request Body <code style="font-size:11px;color:#4a5568">(application/json)</code></div>
+    <table>
+      <thead>
+        <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="field">refreshToken</td>
+          <td class="type">string</td>
+          <td class="optional">optional</td>
+          <td>Pass to revoke this specific refresh token immediately.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="section-label">Example Request</div>
+    <pre><code><span class="json-comment">// POST https://app.heybobo.ai/api/v1/auth/logout</span>
+<span class="json-comment">// Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</span>
+{
+  <span class="json-key">"refreshToken"</span>: <span class="json-str">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."</span>
+}</code></pre>
+
+    <div class="section-label">Responses</div>
+
+    <div class="resp-block">
+      <span class="resp-status resp-2xx">200 OK</span>
+      <pre><code>{
+  <span class="json-key">"message"</span>: <span class="json-str">"Logged out successfully"</span>
+}</code></pre>
+    </div>
+
+    <div class="resp-block">
+      <span class="resp-status resp-4xx">401 Unauthorized</span>
+      <pre><code>{
+  <span class="json-key">"success"</span>: <span class="json-bool">false</span>,
+  <span class="json-key">"statusCode"</span>: <span class="json-num">401</span>,
+  <span class="json-key">"message"</span>: <span class="json-str">"Unauthorized"</span>
+}</code></pre>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- ══════════════════════════════════════ REFRESH ══════════════════════════════════════ -->
+  <div class="endpoint" id="refresh">
+    <div class="endpoint-header">
+      <span class="method-badge method-post">POST</span>
+      <div class="endpoint-title-block">
+        <h2>Refresh Token</h2>
+        <span class="endpoint-path">/auth/refresh</span>
+      </div>
+    </div>
+    <div class="auth-public">🔓 Public — uses refresh token in body</div>
+    <p class="endpoint-desc">
+      Issues a new access token using a valid refresh token. Call this when the access token expires.
+    </p>
+
+    <div class="section-label">Request Body <code style="font-size:11px;color:#4a5568">(application/json)</code></div>
+    <table>
+      <thead>
+        <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="field">refreshToken</td>
+          <td class="type">string</td>
+          <td class="required">required</td>
+          <td>The refresh token from a previous login or register response.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="section-label">Example Request</div>
+    <pre><code><span class="json-comment">// POST https://app.heybobo.ai/api/v1/auth/refresh</span>
+{
+  <span class="json-key">"refreshToken"</span>: <span class="json-str">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."</span>
+}</code></pre>
+
+    <div class="section-label">Responses</div>
+
+    <div class="resp-block">
+      <span class="resp-status resp-2xx">200 OK</span>
+      <pre><code>{
+  <span class="json-key">"success"</span>: <span class="json-bool">true</span>,
+  <span class="json-key">"data"</span>: {
+    <span class="json-key">"accessToken"</span>:  <span class="json-str">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."</span>,
+    <span class="json-key">"refreshToken"</span>: <span class="json-str">"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."</span>
+  }
+}</code></pre>
+    </div>
+
+    <div class="resp-block">
+      <span class="resp-status resp-4xx">401 Unauthorized</span>
+      <pre><code>{
+  <span class="json-key">"success"</span>: <span class="json-bool">false</span>,
+  <span class="json-key">"statusCode"</span>: <span class="json-num">401</span>,
+  <span class="json-key">"message"</span>: <span class="json-str">"Invalid or expired refresh token"</span>
+}</code></pre>
+    </div>
+  </div>
+
+  <hr />
+
+  <!-- ══════════════════════════════════════ ERRORS ══════════════════════════════════════ -->
+  <div id="errors" style="margin-bottom:48px;">
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:16px;">Error Codes</h2>
+    <table>
+      <thead>
+        <tr><th>HTTP Status</th><th>Meaning</th><th>When it occurs</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>200</td><td>OK</td><td>Login, logout, and refresh succeeded.</td></tr>
+        <tr><td>201</td><td>Created</td><td>Register succeeded — user created.</td></tr>
+        <tr><td>400</td><td>Bad Request</td><td>Validation failed — missing or malformed fields.</td></tr>
+        <tr><td>401</td><td>Unauthorized</td><td>Wrong credentials, missing/expired token, or invalid refresh token.</td></tr>
+        <tr><td>403</td><td>Forbidden</td><td>Account suspended or role not permitted.</td></tr>
+        <tr><td>409</td><td>Conflict</td><td>Email or username already registered.</td></tr>
+        <tr><td>429</td><td>Too Many Requests</td><td>Rate limit exceeded (max 100 req / 15 min per IP).</td></tr>
+        <tr><td>500</td><td>Internal Server Error</td><td>Unexpected server error.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══════════════════════════════════════ HEADERS ══════════════════════════════════════ -->
+  <div id="headers">
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:16px;">Common Headers</h2>
+    <table>
+      <thead>
+        <tr><th>Header</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="field">Authorization: Bearer &lt;token&gt;</td>
+          <td>Required for all protected endpoints. Use the <code>accessToken</code> returned by login/register.</td>
+        </tr>
+        <tr>
+          <td class="field">Content-Type: application/json</td>
+          <td>Required for all POST requests with a body.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note">
+      <strong>Swagger UI</strong> — the full interactive API explorer is available at
+      <a href="https://app.heybobo.ai/api/v1/docs" target="_blank">https://app.heybobo.ai/api/v1/docs</a>
+      when the backend is running.
+    </div>
+  </div>
+
+</main>
+
+</body>
+</html>
