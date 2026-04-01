@@ -1526,7 +1526,7 @@ export default function GroupDetailPage() {
       </Box>
 
       {/* Tab Content */}
-      <Box sx={{ flex: 1, overflow: 'auto', px: 3, py: 2 }}>
+      <Box sx={{ flex: 1, overflow: 'auto', px: { xs: 2.5, md: 4, lg: 5 }, py: 3 }}>
         <TabPanel value={tab} index={0}><OverviewTab group={group} /></TabPanel>
         <TabPanel value={tab} index={1}><MembersTab group={group} /></TabPanel>
         <TabPanel value={tab} index={2}><ContentTab group={group} /></TabPanel>

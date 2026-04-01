@@ -146,6 +146,12 @@ export function AIBrainScreen() {
   const toggleQuest = (id: string) => setQuestDone((prev) => ({ ...prev, [id]: !prev[id] }))
   const questsCompleted = DAILY_QUESTS.filter((q) => questDone[q.id]).length
 
+  // ── Nudge log / dismiss state ────────────────────────────────────────────
+  const [nudgeLogged, setNudgeLogged] = useState<Record<string, boolean>>({})
+  const [nudgeDismissed, setNudgeDismissed] = useState<Record<string, boolean>>({})
+  const toggleNudge = (id: string) => setNudgeLogged((prev) => ({ ...prev, [id]: !prev[id] }))
+  const dismissNudge = (id: string) => setNudgeDismissed((prev) => ({ ...prev, [id]: true }))
+
   // ── Bobo Says dismissal ───────────────────────────────────────────────────
   const [boboDismissed, setBoboDismissed] = useState(false)
 
@@ -408,7 +414,7 @@ export function AIBrainScreen() {
             </View>
           </View>
           {/* Step goal suggestion */}
-          <View style={styles.suggRow}>
+          <TouchableOpacity style={styles.suggRow} activeOpacity={0.7} onPress={() => goTo('Health', 'ActivityTracking')}>
             <View style={[styles.suggIconBox, { backgroundColor: `${T.green}22` }]}>
               <Text style={styles.suggIconEmoji}>🏃</Text>
             </View>
@@ -416,18 +422,16 @@ export function AIBrainScreen() {
               <Text style={styles.suggTitle}>
                 {goals.steps - todayActivity.steps > 0
                   ? `${(goals.steps - todayActivity.steps).toLocaleString()} Steps to Go`
-                  : 'Step Goal Reached! 🎉'}
+                  : 'Step Goal Reached!'}
               </Text>
               <Text style={styles.suggSub}>
                 {todayActivity.steps.toLocaleString()} of {goals.steps.toLocaleString()} goal
               </Text>
             </View>
-            <View style={[styles.suggTag, { backgroundColor: `${T.green}22` }]}>
-              <Text style={[styles.suggTagText, { color: T.green }]}>Fitness</Text>
-            </View>
-          </View>
+            <Ionicons name="chevron-forward" size={14} color={T.green} />
+          </TouchableOpacity>
           {/* Shopping suggestion */}
-          <View style={styles.suggRow}>
+          <TouchableOpacity style={styles.suggRow} activeOpacity={0.7} onPress={() => goTo('Shopping', 'ShoppingLists')}>
             <View style={[styles.suggIconBox, { backgroundColor: `${T.cyan}22` }]}>
               <Text style={styles.suggIconEmoji}>🛒</Text>
             </View>
@@ -435,13 +439,11 @@ export function AIBrainScreen() {
               <Text style={styles.suggTitle}>Weekly Groceries</Text>
               <Text style={styles.suggSub}>Review your shopping list</Text>
             </View>
-            <View style={[styles.suggTag, { backgroundColor: `${T.cyan}22` }]}>
-              <Text style={[styles.suggTagText, { color: T.cyan }]}>Shopping</Text>
-            </View>
-          </View>
+            <Ionicons name="chevron-forward" size={14} color={T.cyan} />
+          </TouchableOpacity>
           {/* Calorie suggestion if low */}
           {calPct < 50 && (
-            <View style={styles.suggRow}>
+            <TouchableOpacity style={styles.suggRow} activeOpacity={0.7} onPress={() => goTo('Dietary', 'MealLog')}>
               <View style={[styles.suggIconBox, { backgroundColor: `${T.yellow}22` }]}>
                 <Text style={styles.suggIconEmoji}>🍽️</Text>
               </View>
@@ -449,10 +451,8 @@ export function AIBrainScreen() {
                 <Text style={styles.suggTitle}>Log Your Meals</Text>
                 <Text style={styles.suggSub}>Only {calPct}% of calorie goal logged</Text>
               </View>
-              <View style={[styles.suggTag, { backgroundColor: `${T.yellow}22` }]}>
-                <Text style={[styles.suggTagText, { color: T.yellow }]}>Diet</Text>
-              </View>
-            </View>
+              <Ionicons name="chevron-forward" size={14} color={T.yellow} />
+            </TouchableOpacity>
           )}
         </View>
 
@@ -501,12 +501,37 @@ export function AIBrainScreen() {
             </View>
           </View>
           <View style={styles.nudgesGrid}>
-            {SMART_NUDGES.slice(0, 4).map((nudge) => (
-              <View key={nudge.id} style={styles.nudgeCard}>
-                <Text style={styles.nudgeEmoji}>{nudge.emoji}</Text>
-                <Text style={styles.nudgeText}>{nudge.text}</Text>
-              </View>
-            ))}
+            {SMART_NUDGES.filter((n) => !nudgeDismissed[n.id]).map((nudge) => {
+              const logged = nudgeLogged[nudge.id] ?? false
+              return (
+                <View key={nudge.id} style={[styles.nudgeCard, logged && { opacity: 0.6 }]}>
+                  <View style={styles.nudgeHeader}>
+                    <Text style={styles.nudgeEmoji}>{nudge.emoji}</Text>
+                    <TouchableOpacity
+                      onPress={() => dismissNudge(nudge.id)}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                    >
+                      <Ionicons name="close" size={14} color={T.muted2} />
+                    </TouchableOpacity>
+                  </View>
+                  <Text style={[styles.nudgeText, logged && styles.strikethrough]}>{nudge.text}</Text>
+                  <TouchableOpacity
+                    style={[styles.nudgeLogBtn, logged && { backgroundColor: `${T.green}22` }]}
+                    onPress={() => toggleNudge(nudge.id)}
+                    activeOpacity={0.7}
+                  >
+                    <Ionicons
+                      name={logged ? 'checkmark-circle' : 'ellipse-outline'}
+                      size={14}
+                      color={logged ? T.green : T.muted}
+                    />
+                    <Text style={[styles.nudgeLogText, { color: logged ? T.green : T.muted }]}>
+                      {logged ? 'Done' : 'Log'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )
+            })}
           </View>
         </View>
 
@@ -1014,24 +1039,40 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   nudgeCard: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
     backgroundColor: T.surface2,
     borderRadius: 10,
     padding: 12,
-    gap: 8,
     width: '48%',
     flexGrow: 1,
   },
+  nudgeHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
   nudgeEmoji: {
     fontSize: 16,
-    marginTop: 1,
   },
   nudgeText: {
-    flex: 1,
     fontSize: 12,
     color: T.white,
     lineHeight: 17,
+    marginBottom: 8,
+  },
+  nudgeLogBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    backgroundColor: T.surface3,
+  },
+  nudgeLogText: {
+    fontSize: 11,
+    fontWeight: '600',
   },
 
   // ── Achievements ─────────────────────────────────────────────────────────

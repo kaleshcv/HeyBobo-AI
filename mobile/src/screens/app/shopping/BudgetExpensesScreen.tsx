@@ -31,12 +31,12 @@ export function BudgetExpensesScreen() {
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      education: '#3B82F6',
+      education: T.cyan,
       fitness: T.green,
       food: T.orange,
-      grooming: '#EC4899',
-      health: '#8B5CF6',
-      transport: '#06B6D4',
+      grooming: T.pink,
+      health: T.primary,
+      transport: T.cyan,
       entertainment: T.red,
       other: T.muted,
     }
@@ -71,7 +71,7 @@ export function BudgetExpensesScreen() {
         <Text style={styles.expenseDescription}>{item.description}</Text>
         <Text style={styles.expenseCategory}>{item.category}</Text>
       </View>
-      <Text style={styles.expenseAmount}>-${item.amount.toFixed(2)}</Text>
+      <Text style={styles.expenseAmount}>-₹{item.amount.toFixed(2)}</Text>
     </View>
   )
 
@@ -84,12 +84,12 @@ export function BudgetExpensesScreen() {
           <View style={styles.budgetRow}>
             <View>
               <Text style={styles.budgetLabel}>Monthly Budget</Text>
-              <Text style={styles.budgetAmount}>${monthlyBudget}</Text>
+              <Text style={styles.budgetAmount}>₹{monthlyBudget}</Text>
             </View>
             <View>
               <Text style={styles.budgetLabel}>Remaining</Text>
               <Text style={[styles.budgetAmount, { color: budgetRemaining > 0 ? T.green : T.red }]}>
-                ${budgetRemaining.toFixed(2)}
+                ₹{budgetRemaining.toFixed(2)}
               </Text>
             </View>
           </View>
@@ -103,7 +103,7 @@ export function BudgetExpensesScreen() {
             />
           </View>
           <Text style={styles.progressLabel}>
-            ${totalSpent.toFixed(2)} of ${monthlyBudget} spent
+            ₹{totalSpent.toFixed(2)} of ₹{monthlyBudget} spent
           </Text>
         </View>
 
@@ -129,7 +129,7 @@ export function BudgetExpensesScreen() {
                       {category.charAt(0).toUpperCase() + category.slice(1)}
                     </Text>
                     <Text style={styles.categoryLimit}>
-                      ${spent.toFixed(2)} / ${limit}
+                      ₹{spent.toFixed(2)} / ₹{limit}
                     </Text>
                   </View>
                 </View>
@@ -176,7 +176,7 @@ export function BudgetExpensesScreen() {
                 <View style={styles.alertInfo}>
                   <Text style={styles.alertProduct}>{alert.productName}</Text>
                   <Text style={styles.alertPrice}>
-                    Target: ${alert.targetPrice} • Current: ${alert.currentPrice}
+                    Target: ₹{alert.targetPrice} • Current: ₹{alert.currentPrice}
                   </Text>
                 </View>
                 <Ionicons
@@ -257,12 +257,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   budgetLabel: {
-    color: '#FFF',
+    color: T.white,
     fontSize: 12,
     opacity: 0.9,
   },
   budgetAmount: {
-    color: '#FFF',
+    color: T.white,
     fontSize: 24,
     fontWeight: '700',
     marginTop: 4,
@@ -276,10 +276,10 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
   },
   progressLabel: {
-    color: '#FFF',
+    color: T.white,
     fontSize: 11,
     opacity: 0.9,
   },
@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
     backgroundColor: T.primary2,
   },
   addButtonText: {
-    color: '#FFF',
+    color: T.white,
     fontWeight: '600',
   },
 })

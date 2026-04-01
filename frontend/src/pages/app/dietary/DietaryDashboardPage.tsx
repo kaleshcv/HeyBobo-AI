@@ -568,7 +568,7 @@ export default function DietaryDashboardPage() {
   const statsScore = typeof stats?.score === 'number' ? Math.round(stats.score as number) : null;
 
   return (
-    <Box sx={{ flex: 1, px: 3, py: 3, overflow: 'auto' }}>
+    <Box sx={{ flex: 1, px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 3, flexWrap: 'wrap' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Box sx={{ width: 44, height: 44, borderRadius: 2, bgcolor: '#f59e0b20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>

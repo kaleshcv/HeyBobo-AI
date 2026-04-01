@@ -117,8 +117,20 @@ export function RegisterScreen() {
           </View>
         )}
 
-        <Button title="Create Account" onPress={handleSubmit((d) => register.mutate(d))}
-          loading={register.isPending} fullWidth size="lg" style={{ marginTop: 8 }} />
+        <Button
+          title="Create Account"
+          onPress={handleSubmit((d) =>
+            register.mutate(d, {
+              onSuccess: () => {
+                navigation.navigate('Onboarding')
+              },
+            })
+          )}
+          loading={register.isPending}
+          fullWidth
+          size="lg"
+          style={{ marginTop: 8 }}
+        />
 
         <View style={styles.loginRow}>
           <Text style={styles.loginText}>Already have an account? </Text>

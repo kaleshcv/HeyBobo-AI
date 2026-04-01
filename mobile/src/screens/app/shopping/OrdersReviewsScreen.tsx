@@ -93,7 +93,7 @@ export function OrdersReviewsScreen() {
       </View>
 
       <View style={styles.orderFooter}>
-        <Text style={styles.orderTotal}>${item.total.toFixed(2)}</Text>
+        <Text style={styles.orderTotal}>₹{item.total.toFixed(2)}</Text>
         <Text style={styles.estimatedDelivery}>
           Est. {new Date(item.estimatedDelivery).toLocaleDateString()}
         </Text>

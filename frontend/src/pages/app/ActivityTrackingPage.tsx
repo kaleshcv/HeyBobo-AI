@@ -583,7 +583,7 @@ export default function ActivityTrackingPage() {
   const dayActivities = customActivities.filter((a) => a.date === selectedDate);
 
   return (
-    <Box sx={{ maxWidth: 820, mx: 'auto', py: 3, px: 2 }}>
+    <Box sx={{ maxWidth: { xs: '100%', md: 1200, lg: 1440 }, mx: 'auto', px: { xs: 2.5, md: 4, lg: 5 }, py: 3 }}>
       {/* Header + Date Nav */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>

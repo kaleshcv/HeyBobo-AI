@@ -52,7 +52,7 @@ export function ShoppingListsScreen() {
               <Text style={styles.listName}>{item.name}</Text>
             </View>
             <Text style={styles.listDetail}>
-              {item.items.length} items • ${totalPrice.toFixed(2)}
+              {item.items.length} items • ₹{totalPrice.toFixed(2)}
             </Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={T.muted} />
@@ -101,7 +101,7 @@ export function ShoppingListsScreen() {
         style={[styles.fab, { bottom: insets.bottom + 16 }]}
         onPress={() => setShowAddModal(true)}
       >
-        <Ionicons name="add" size={24} color="#FFF" />
+        <Ionicons name="add" size={24} color={T.white} />
       </TouchableOpacity>
 
       <Modal
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     backgroundColor: T.primary2,
   },
   createButtonText: {
-    color: '#FFF',
+    color: T.white,
     fontWeight: '600',
   },
 })

@@ -400,7 +400,7 @@ export default function InjuryPage() {
   ];
 
   return (
-    <Box sx={{ p: 3, maxWidth: 1200, mx: 'auto' }}>
+    <Box sx={{ maxWidth: { xs: '100%', md: 1200, lg: 1440 }, mx: 'auto', px: { xs: 2.5, md: 4, lg: 5 }, py: 3 }}>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>

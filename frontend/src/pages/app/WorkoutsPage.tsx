@@ -58,6 +58,8 @@ import {
   type WorkoutExercise,
 } from '@/store/workoutSystemStore';
 import toast from 'react-hot-toast';
+import { useUIStore } from '@/store/uiStore';
+import { t } from '@/lib/translations';
 
 const LiveWorkoutTab = lazy(() => import('@/components/LiveWorkoutTab'));
 
@@ -176,6 +178,7 @@ function ExerciseDetailDialog({ exercise, open, onClose }: { exercise: Exercise 
 // ─── A. Workout Library ─────────────────────────────────
 function WorkoutLibrary() {
   const dk = useTheme().palette.mode === 'dark';
+  const { language } = useUIStore();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<ExerciseCategory | 'all'>('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyLevel | 'all'>('all');
@@ -197,7 +200,7 @@ function WorkoutLibrary() {
       {/* Search + Filters */}
       <Box sx={{ display: 'flex', gap: 1, mb: 1, flexWrap: 'wrap', alignItems: 'center' }}>
         <TextField
-          placeholder="Search exercises or muscles..."
+          placeholder={t(language, 'searchExercisesPlaceholder')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           size="small"
@@ -205,17 +208,17 @@ function WorkoutLibrary() {
           InputProps={{ startAdornment: <SearchIcon sx={{ fontSize: 18, mr: 0.5, color: 'text.secondary' }} /> }}
         />
         <FormControl size="small" sx={{ minWidth: 130 }}>
-          <InputLabel>Difficulty</InputLabel>
+          <InputLabel>{t(language, 'difficultyLabel')}</InputLabel>
           <Select
-            label="Difficulty"
+            label={t(language, 'difficultyLabel')}
             value={selectedDifficulty}
             onChange={(e) => setSelectedDifficulty(e.target.value as any)}
             sx={{ borderRadius: 2 }}
           >
-            <MenuItem value="all">All Levels</MenuItem>
-            <MenuItem value="beginner">Beginner</MenuItem>
-            <MenuItem value="intermediate">Intermediate</MenuItem>
-            <MenuItem value="advanced">Advanced</MenuItem>
+            <MenuItem value="all">{t(language, 'allLevels')}</MenuItem>
+            <MenuItem value="beginner">{t(language, 'beginnerLevel')}</MenuItem>
+            <MenuItem value="intermediate">{t(language, 'intermediateLevel')}</MenuItem>
+            <MenuItem value="advanced">{t(language, 'advancedLevel')}</MenuItem>
           </Select>
         </FormControl>
       </Box>
@@ -306,6 +309,7 @@ function WorkoutLibrary() {
 // ─── B. Workout Plans ───────────────────────────────────
 function WorkoutPlans() {
   const dk = useTheme().palette.mode === 'dark';
+  const { language } = useUIStore();
   const { activePlanId, setActivePlan, getExercise } = useWorkoutSystemStore();
   const [goalFilter, setGoalFilter] = useState<PlanGoal | 'all'>('all');
   const [expandedPlan, setExpandedPlan] = useState<string | null>(null);
@@ -326,7 +330,7 @@ function WorkoutPlans() {
           return (
             <Chip
               key={g}
-              label={isAll ? 'All Plans' : `${meta!.emoji} ${meta!.label}`}
+              label={isAll ? t(language, 'allPlansLabel') : `${meta!.emoji} ${meta!.label}`}
               onClick={() => setGoalFilter(g)}
               variant={active ? 'filled' : 'outlined'}
               sx={{
@@ -394,7 +398,7 @@ function WorkoutPlans() {
                       onClick={() => setActivePlan(null)}
                       sx={{ textTransform: 'none', borderRadius: 2, borderColor: dk ? 'rgba(255,255,255,0.2)' : '#bdbdbd', color: 'text.primary', fontSize: 12 }}
                     >
-                      Deactivate Plan
+                      {t(language, 'deactivatePlan')}
                     </Button>
                   ) : (
                     <Button
@@ -404,7 +408,7 @@ function WorkoutPlans() {
                       onClick={() => { setActivePlan(plan.id); toast.success(`Started: ${plan.name}`); }}
                       sx={{ textTransform: 'none', borderRadius: 2, bgcolor: goalMeta.color, '&:hover': { bgcolor: goalMeta.color, filter: 'brightness(0.9)' }, fontSize: 12, fontWeight: 600 }}
                     >
-                      Start Plan
+                      {t(language, 'setAsActive')}
                     </Button>
                   )}
                   <Button
@@ -753,15 +757,16 @@ function CustomWorkouts() {
 // ═══════════════════ MAIN PAGE ═══════════════════════════
 export default function WorkoutsPage() {
   const [tab, setTab] = useState(0);
+  const { language } = useUIStore();
 
   return (
-    <Box sx={{ py: 2, px: 2 }}>
+    <Box sx={{ px: { xs: 2.5, md: 4, lg: 5 }, py: 3 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1.5 }}>
         <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: '#10b98120', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <FitnessCenterIcon sx={{ fontSize: 22, color: '#10b981' }} />
         </Box>
         <Box>
-          <Typography variant="h5" sx={{ fontWeight: 700, mb: 0, fontSize: 20 }}>Workouts</Typography>
+          <Typography variant="h5" sx={{ fontWeight: 700, mb: 0, fontSize: 20 }}>{t(language, 'workoutsTabLabel')}</Typography>
           <Typography variant="body2" color="text.secondary" sx={{ fontSize: 13 }}>
             Browse exercises, follow plans, or build your own routines.
           </Typography>
@@ -778,10 +783,10 @@ export default function WorkoutsPage() {
             '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontSize: 14 },
           }}
         >
-          <Tab icon={<FitnessCenterIcon sx={{ fontSize: 16, color: '#10b981' }} />} iconPosition="start" label="Exercise Library" />
-          <Tab icon={<CalendarMonthIcon sx={{ fontSize: 16, color: '#38bdf8' }} />} iconPosition="start" label="Workout Plans" />
-          <Tab icon={<AutoFixHighIcon sx={{ fontSize: 16, color: '#a78bfa' }} />} iconPosition="start" label="Custom Workouts" />
-          <Tab icon={<PlayArrowIcon sx={{ fontSize: 16, color: '#06b6d4' }} />} iconPosition="start" label="Live Workout" sx={{ color: tab === 3 ? '#06b6d4' : undefined }} />
+          <Tab icon={<FitnessCenterIcon sx={{ fontSize: 16, color: '#10b981' }} />} iconPosition="start" label={t(language, 'exerciseLibraryBtn')} />
+          <Tab icon={<CalendarMonthIcon sx={{ fontSize: 16, color: '#38bdf8' }} />} iconPosition="start" label={t(language, 'workoutPlansBtn')} />
+          <Tab icon={<AutoFixHighIcon sx={{ fontSize: 16, color: '#a78bfa' }} />} iconPosition="start" label={t(language, 'customWorkoutsLabel')} />
+          <Tab icon={<PlayArrowIcon sx={{ fontSize: 16, color: '#06b6d4' }} />} iconPosition="start" label={t(language, 'liveWorkoutBtn')} sx={{ color: tab === 3 ? '#06b6d4' : undefined }} />
         </Tabs>
 
         <Box sx={{ p: 1.5 }}>

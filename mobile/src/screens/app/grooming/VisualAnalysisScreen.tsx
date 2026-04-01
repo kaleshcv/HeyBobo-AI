@@ -17,7 +17,6 @@ import { useGroomingStore } from '@/store/groomingStore';
 import type { SkinType } from '@/store/groomingStore';
 import T from '@/theme'
 
-;
 
 export function VisualAnalysisScreen() {
   const insets = useSafeAreaInsets();
@@ -31,10 +30,14 @@ export function VisualAnalysisScreen() {
     if (!cameraRef.current) return;
 
     setIsAnalyzing(true);
-    setTimeout(() => {
+    try {
+      const photo = await cameraRef.current.takePictureAsync({ quality: 0.7, base64: false });
+      // Simulate AI analysis on the captured photo (replace with real API later)
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       const newResult = {
         id: `a${Date.now()}`,
         date: new Date().toISOString(),
+        photoUri: photo?.uri ?? null,
         skinType: 'Combination' as SkinType,
         skinScore: Math.floor(65 + Math.random() * 25),
         concerns: ['Dryness', 'Oiliness'],
@@ -47,8 +50,27 @@ export function VisualAnalysisScreen() {
       addAnalysisResult(newResult);
       updateProfile({ skinType: newResult.skinType, concerns: newResult.concerns });
       setResults(newResult);
+    } catch (_e) {
+      // Camera capture failed — fall back to simulated result
+      const newResult = {
+        id: `a${Date.now()}`,
+        date: new Date().toISOString(),
+        photoUri: null,
+        skinType: 'Combination' as SkinType,
+        skinScore: Math.floor(65 + Math.random() * 25),
+        concerns: ['Dryness', 'Oiliness'],
+        recommendations: [
+          'Use lightweight, non-comedogenic moisturizer',
+          'Apply sunscreen daily',
+          'Exfoliate 2-3 times weekly',
+        ],
+      };
+      addAnalysisResult(newResult);
+      updateProfile({ skinType: newResult.skinType, concerns: newResult.concerns });
+      setResults(newResult);
+    } finally {
       setIsAnalyzing(false);
-    }, 2000);
+    }
   };
 
   if (results) {
@@ -144,7 +166,7 @@ export function VisualAnalysisScreen() {
       ) : (
         <>
           <View style={styles.cameraContainer}>
-            <CameraView style={styles.camera} />
+            <CameraView ref={cameraRef} style={styles.camera} facing="front" />
             <View style={styles.cameraOverlay}>
               <View style={styles.cameraMask} />
             </View>
@@ -156,7 +178,7 @@ export function VisualAnalysisScreen() {
               onPress={handleTakePhoto}
             >
               <View style={styles.captureBtnInner}>
-                <Ionicons name="camera" size={32} color="#fff" />
+                <Ionicons name="camera" size={32} color={T.white} />
               </View>
             </TouchableOpacity>
           </View>
@@ -181,7 +203,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#fff',
+    color: T.white,
   },
   cameraContainer: {
     flex: 1,
@@ -225,7 +247,7 @@ const styles = StyleSheet.create({
   },
   analyzingText: {
     fontSize: 14,
-    color: '#fff',
+    color: T.white,
     marginTop: 16,
   },
   content: {

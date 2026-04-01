@@ -30,6 +30,8 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import { useFitnessProfileStore, calcBMI, bmiCategory } from '@/store/fitnessProfileStore';
 import { useTheme } from '@mui/material';
+import { useUIStore } from '@/store/uiStore';
+import { t } from '@/lib/translations';
 import { useActivityTrackingStore } from '@/store/activityTrackingStore';
 import { useWearablesStore } from '@/store/wearablesStore';
 import { useInjuryStore } from '@/store/injuryStore';
@@ -203,6 +205,7 @@ function StatCard({
 export default function HealthFitnessPage() {
   const dk = useTheme().palette.mode === 'dark';
   const navigate = useNavigate();
+  const { language } = useUIStore();
 
   const profile = useFitnessProfileStore((s) => s.profile);
   const isOnboarded = useFitnessProfileStore((s) => s.isOnboarded);
@@ -423,7 +426,7 @@ export default function HealthFitnessPage() {
   ].filter((item) => item.value !== null);
 
   return (
-    <Box sx={{ flex: 1, px: 3, py: 3, overflow: 'auto' }}>
+    <Box sx={{ flex: 1, px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 3, flexWrap: 'wrap' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Box sx={{ width: 44, height: 44, borderRadius: 2, bgcolor: '#f43f5e20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -431,26 +434,26 @@ export default function HealthFitnessPage() {
           </Box>
           <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>
-            Health Dashboard
+            {t(language, 'healthDashboardTitle')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Unified health view across profile, activity tracking, wearables, and injury recovery.
+            {t(language, 'healthDashboardSubtitle')}
           </Typography>
           </Box>
         </Box>
 
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
           <Button variant="outlined" startIcon={<PersonIcon />} onClick={() => navigate('/app/health/fitness-profile')}>
-            Health Profile
+            {t(language, 'healthProfileBtn')}
           </Button>
           <Button variant="outlined" startIcon={<DirectionsWalkIcon />} onClick={() => navigate('/app/health/activity-tracking')}>
-            Activity Tracking
+            {t(language, 'activityTrackingLink')}
           </Button>
           <Button variant="outlined" startIcon={<WatchIcon />} onClick={() => navigate('/app/health/wearables')}>
-            Wearables
+            {t(language, 'wearableLabel')}
           </Button>
           <Button variant="contained" color="error" startIcon={<HealingIcon />} onClick={() => navigate('/app/health/injury')}>
-            Injury Tracker
+            {t(language, 'injuryTrackerLink')}
           </Button>
         </Box>
       </Box>
@@ -465,7 +468,7 @@ export default function HealthFitnessPage() {
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             icon={<MonitorHeartIcon sx={{ fontSize: 24 }} />}
-            label="Overall Health Score"
+            label={t(language, 'overallHealthScore')}
             value={`${overallHealthScore}%`}
             sub={`Activity ${activityScore}% · Recovery ${recoveryScore}%`}
             color="#f43f5e"
@@ -504,7 +507,7 @@ export default function HealthFitnessPage() {
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             icon={<WatchIcon sx={{ fontSize: 24 }} />}
-            label="Connected Devices"
+            label={t(language, 'connectedDevices')}
             value={devices.length}
             sub={`${activeAlerts.length} active alert${activeAlerts.length !== 1 ? 's' : ''}`}
             color="#22d3ee"
@@ -525,10 +528,10 @@ export default function HealthFitnessPage() {
                     />
                   </Box>
                 )) : (
-                  <Typography variant="body2" color="text.secondary">No devices paired yet. Tap to connect your first wearable.</Typography>
+                  <Typography variant="body2" color="text.secondary">{t(language, 'noDevicesPaired')}</Typography>
                 )}
                 <Button size="small" variant="text" onClick={() => navigate('/app/health/wearables')} sx={{ alignSelf: 'flex-start', mt: 0.5 }}>
-                  Manage Devices →
+                  {t(language, 'manageDevices')} →
                 </Button>
               </Box>
             }
@@ -537,7 +540,7 @@ export default function HealthFitnessPage() {
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             icon={<HealingIcon sx={{ fontSize: 24 }} />}
-            label="Active Injuries"
+            label={t(language, 'activeInjuriesLabel')}
             value={activeInjuries.length}
             sub={activeInjuries.length > 0 ? `Avg recovery ${recoveryScore}%` : 'No active injury load'}
             color="#fb923c"
@@ -552,10 +555,10 @@ export default function HealthFitnessPage() {
                     <Chip label={`${getRecoveryScore(injury.id)}%`} size="small" color={getRecoveryScore(injury.id) >= 70 ? 'success' : 'warning'} variant="outlined" />
                   </Box>
                 )) : (
-                  <Typography variant="body2" color="text.secondary">No active injuries being tracked. Recovery score is at full baseline.</Typography>
+                  <Typography variant="body2" color="text.secondary">{t(language, 'noActiveInjuries')}</Typography>
                 )}
                 <Button size="small" variant="text" onClick={() => navigate('/app/health/injury')} sx={{ alignSelf: 'flex-start', mt: 0.5 }}>
-                  Injury Tracker →
+                  {t(language, 'injuryTrackerLink')} →
                 </Button>
               </Box>
             }
@@ -564,7 +567,7 @@ export default function HealthFitnessPage() {
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             icon={<DirectionsWalkIcon sx={{ fontSize: 24 }} />}
-            label="Daily Activity"
+            label={t(language, 'dailyActivityLabel')}
             value={`${activityScore}%`}
             sub={`${todayMetrics.steps.toLocaleString()} steps · ${todayMetrics.activeMinutes} active min`}
             color="#10b981"
@@ -583,7 +586,7 @@ export default function HealthFitnessPage() {
                   </Box>
                 ))}
                 <Button size="small" variant="text" onClick={() => navigate('/app/health/activity-tracking')} sx={{ alignSelf: 'flex-start', mt: 0.5 }}>
-                  Activity Tracking →
+                  {t(language, 'activityTrackingLink')} →
                 </Button>
               </Box>
             }

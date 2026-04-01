@@ -232,7 +232,7 @@ export default function GroceryPage() {
   const statusColor = (s: string) => s === 'active' ? '#4caf50' : s === 'shopping' ? '#ff9800' : s === 'completed' ? '#2196f3' : '#9e9e9e';
 
   return (
-    <Box sx={{ p: { xs: 2, sm: 3 }, width: '100%' }}>
+    <Box sx={{ px: { xs: 2.5, md: 4, lg: 5 }, py: 3, width: '100%' }}>
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>

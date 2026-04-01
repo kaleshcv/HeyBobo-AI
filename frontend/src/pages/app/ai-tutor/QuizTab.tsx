@@ -162,7 +162,7 @@ export default function QuizTab({ selectedBookId }: Props) {
     }
 
     return (
-      <Box sx={{ maxWidth: 700, mx: 'auto', p: 3 }}>
+      <Box sx={{ maxWidth: 800, mx: 'auto', px: { xs: 2.5, md: 4 }, py: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
           <Button size="small" onClick={() => setActiveQuiz(null)} sx={{ textTransform: 'none' }}>
             ← Back to Quizzes
@@ -252,7 +252,7 @@ export default function QuizTab({ selectedBookId }: Props) {
 
   // Quiz list view
   return (
-    <Box sx={{ maxWidth: 700, mx: 'auto', p: 3 }}>
+    <Box sx={{ maxWidth: 800, mx: 'auto', px: { xs: 2.5, md: 4 }, py: 3 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
         <Box sx={{ width: 32, height: 32, borderRadius: 2, bgcolor: '#f59e0b20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <QuizIcon sx={{ fontSize: 18, color: '#f59e0b' }} />

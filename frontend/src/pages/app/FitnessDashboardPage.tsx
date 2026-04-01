@@ -31,6 +31,8 @@ import {
   useWorkoutSystemStore,
 } from '@/store/workoutSystemStore';
 import { LIVE_CATEGORIES, LIVE_EXERCISES, useLiveWorkoutStore } from '@/store/liveWorkoutStore';
+import { useUIStore } from '@/store/uiStore';
+import { t } from '@/lib/translations';
 
 function clamp(value: number, min = 0, max = 100) {
   return Math.min(max, Math.max(min, value));
@@ -133,6 +135,7 @@ function StatCard({
 export default function FitnessDashboardPage() {
   const dk = useTheme().palette.mode === 'dark';
   const navigate = useNavigate();
+  const { language } = useUIStore();
 
   const customWorkouts = useWorkoutSystemStore((s) => s.customWorkouts);
   const activePlanId = useWorkoutSystemStore((s) => s.activePlanId);
@@ -271,7 +274,7 @@ export default function FitnessDashboardPage() {
   }, [activePlan, avgFormScore, customWorkouts.length, liveSessions.length, popularCustomWorkouts, recoverySignal, weeklyLogs.length]);
 
   return (
-    <Box sx={{ flex: 1, px: 3, py: 3, overflow: 'auto' }}>
+    <Box sx={{ flex: 1, px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 3, flexWrap: 'wrap' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Box sx={{ width: 44, height: 44, borderRadius: 2, bgcolor: '#10b98120', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -279,23 +282,23 @@ export default function FitnessDashboardPage() {
           </Box>
           <Box>
           <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}>
-            Fitness Dashboard
+            {t(language, 'fitnessDashboardTitle')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Standalone training overview built only from Fitness module data: plans, logs, custom workouts, library coverage, and live workout sessions.
+            {t(language, 'fitnessDashboardSubtitle')}
           </Typography>
           </Box>
         </Box>
 
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
           <Button variant="outlined" startIcon={<SportsGymnasticsIcon />} onClick={() => navigate('/app/fitness/workouts')}>
-            Exercise Library
+            {t(language, 'exerciseLibraryBtn')}
           </Button>
           <Button variant="outlined" startIcon={<CalendarMonthIcon />} onClick={() => navigate('/app/fitness/workouts')}>
-            Workout Plans
+            {t(language, 'workoutPlansBtn')}
           </Button>
           <Button variant="contained" startIcon={<VideocamIcon />} sx={{ bgcolor: '#2e7d32' }} onClick={() => navigate('/app/fitness/workouts')}>
-            Live Workout
+            {t(language, 'liveWorkoutBtn')}
           </Button>
         </Box>
       </Box>
@@ -304,7 +307,7 @@ export default function FitnessDashboardPage() {
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             icon={<FitnessCenterIcon sx={{ color: '#10b981', fontSize: 20 }} />}
-            label="Training Load"
+            label={t(language, 'trainingLoad')}
             value={`${trainingLoadScore}%`}
             sub={`${weeklyLogs.length} workouts · ${weeklyMinutes} min this week`}
             color="#10b981"
@@ -313,9 +316,9 @@ export default function FitnessDashboardPage() {
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             icon={<CalendarMonthIcon sx={{ color: '#38bdf8', fontSize: 20 }} />}
-            label="Active Plan"
+            label={t(language, 'activePlanLabel')}
             value={activePlan ? activePlan.daysPerWeek : 0}
-            sub={activePlan ? `${activePlan.name}` : 'No plan selected'}
+            sub={activePlan ? `${activePlan.name}` : t(language, 'noPlanSelected')}
             color="#38bdf8"
             onClick={() => navigate('/app/fitness/workouts')}
           />
@@ -323,9 +326,9 @@ export default function FitnessDashboardPage() {
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             icon={<AutoFixHighIcon sx={{ color: '#a78bfa', fontSize: 20 }} />}
-            label="Custom Workouts"
+            label={t(language, 'customWorkoutsLabel')}
             value={customWorkouts.length}
-            sub={customWorkouts.length > 0 ? `${customWorkouts.reduce((sum, workout) => sum + workout.timesUsed, 0)} total uses` : 'Build your own templates'}
+            sub={customWorkouts.length > 0 ? `${customWorkouts.reduce((sum, workout) => sum + workout.timesUsed, 0)} total uses` : t(language, 'buildYourOwn')}
             color="#a78bfa"
             onClick={() => navigate('/app/fitness/workouts')}
           />
@@ -333,7 +336,7 @@ export default function FitnessDashboardPage() {
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             icon={<PlayArrowIcon sx={{ color: '#06b6d4', fontSize: 20 }} />}
-            label="Live Sessions"
+            label={t(language, 'liveSessionsLabel')}
             value={liveSessions.length}
             sub={`${totalReps} reps · ${Math.round(totalWorkoutSeconds / 60)} min total`}
             color="#06b6d4"

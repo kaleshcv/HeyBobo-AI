@@ -59,8 +59,8 @@ export function CampusMarketplaceScreen() {
           <Text style={styles.conditionText}>{item.condition}</Text>
         </View>
         <View style={styles.priceRow}>
-          <Text style={styles.price}>${item.price}</Text>
-          <Text style={styles.originalPrice}>${item.originalPrice}</Text>
+          <Text style={styles.price}>₹{item.price}</Text>
+          <Text style={styles.originalPrice}>₹{item.originalPrice}</Text>
         </View>
         <View style={styles.sellerRow}>
           <Ionicons name="person-circle" size={16} color={T.muted} />
@@ -116,7 +116,7 @@ export function CampusMarketplaceScreen() {
       />
 
       <TouchableOpacity style={[styles.fab, { bottom: insets.bottom + 16 }]}>
-        <Ionicons name="add" size={24} color="#FFF" />
+        <Ionicons name="add" size={24} color={T.white} />
       </TouchableOpacity>
     </View>
   )
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     color: T.muted,
   },
   categoryChipTextActive: {
-    color: '#FFF',
+    color: T.white,
   },
   listingGrid: {
     paddingHorizontal: 16,
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   conditionText: {
     fontSize: 10,
     fontWeight: '600',
-    color: '#FFF',
+    color: T.white,
   },
   priceRow: {
     flexDirection: 'row',

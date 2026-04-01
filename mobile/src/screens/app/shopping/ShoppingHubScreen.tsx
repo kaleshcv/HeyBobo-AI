@@ -64,7 +64,7 @@ export function ShoppingHubScreen() {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.budgetCard}>
           <Text style={styles.budgetLabel}>Monthly Budget Remaining</Text>
-          <Text style={styles.budgetAmount}>${budgetRemaining}</Text>
+          <Text style={styles.budgetAmount}>₹{budgetRemaining}</Text>
           <View style={styles.budgetBar}>
             <View
               style={[
@@ -76,7 +76,7 @@ export function ShoppingHubScreen() {
             />
           </View>
           <Text style={styles.budgetDetail}>
-            ${totalBudgetSpent} of ${monthlyBudget} spent
+            ₹{totalBudgetSpent} of ₹{monthlyBudget} spent
           </Text>
         </View>
 

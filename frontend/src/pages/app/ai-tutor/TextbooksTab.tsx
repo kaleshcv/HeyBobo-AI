@@ -95,7 +95,7 @@ export default function TextbooksTab({ onSelectBook, selectedBookId }: Props) {
   };
 
   return (
-    <Box sx={{ maxWidth: 700, mx: 'auto', p: 3 }}>
+    <Box sx={{ maxWidth: 800, mx: 'auto', px: { xs: 2.5, md: 4 }, py: 3 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
         <Box sx={{ width: 32, height: 32, borderRadius: 2, bgcolor: '#38bdf820', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <MenuBookIcon sx={{ fontSize: 18, color: '#38bdf8' }} />

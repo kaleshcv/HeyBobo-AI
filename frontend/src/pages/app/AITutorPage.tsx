@@ -46,7 +46,7 @@ export default function AITutorPage() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: '100vh' }}>
       {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 2.5, pt: 2, pb: 0.5 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: { xs: 2.5, md: 4, lg: 5 }, pt: 2, pb: 0.5 }}>
         <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: '#7c4dff20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <SmartToyIcon sx={{ fontSize: 22, color: '#7c4dff' }} />
         </Box>

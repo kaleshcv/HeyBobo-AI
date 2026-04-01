@@ -14,13 +14,16 @@ import {
 } from '@mui/material'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
+import TranslateIcon from '@mui/icons-material/Translate'
 import { useAuth } from '@/hooks/useAuth'
 import { loginSchema } from '@/lib/validators'
+import { useUIStore } from '@/store/uiStore'
+import { t } from '@/lib/translations'
 
 export default function LoginPage() {
   const { login, isAuthenticated, loginLoading } = useAuth()
   const dk = useTheme().palette.mode === 'dark'
+  const { language, toggleLanguage } = useUIStore()
   const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -88,16 +91,12 @@ export default function LoginPage() {
         }} />
 
         <Box sx={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: 420 }}>
-          <Box sx={{
-            width: 72, height: 72, borderRadius: 3,
-            background: dk
-              ? 'linear-gradient(135deg, #C9A84C 0%, #E5B84E 100%)'
-              : 'linear-gradient(135deg, #00A650 0%, #00C853 100%)',
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            mb: 3, boxShadow: dk ? '0 8px 32px rgba(201,168,76,0.3)' : '0 8px 32px rgba(0,132,61,0.3)',
-          }}>
-            <AutoAwesomeIcon sx={{ color: dk ? '#0D1B2A' : '#fff', fontSize: 36 }} />
-          </Box>
+          <Box
+            component="img"
+            src="/bobo-mascot.png"
+            alt="Bobo"
+            sx={{ width: 160, height: 160, objectFit: 'contain', mb: 2, filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.35))' }}
+          />
           <Typography variant="h3" sx={{
             fontWeight: 800, color: '#F5F0E8', mb: 2, letterSpacing: '-0.02em',
           }}>
@@ -110,15 +109,15 @@ export default function LoginPage() {
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
             fontWeight: 600, mb: 3,
           }}>
-            Smart Learning Platform
+            {t(language, 'smartLearningPlatform')}
           </Typography>
           <Typography sx={{ color: dk ? '#B8C8D8' : '#E0F5EA', lineHeight: 1.7, fontSize: 15 }}>
-            Empowering learners with AI-driven education, health tracking, and lifestyle management — all in one premium platform.
+            {t(language, 'loginTagline')}
           </Typography>
 
           {/* Feature dots */}
           <Box sx={{ display: 'flex', gap: 3, mt: 5, justifyContent: 'center' }}>
-            {['AI Tutor', 'Fitness', 'Lifestyle'].map((label) => (
+            {[t(language, 'featureAITutor'), t(language, 'fitness'), t(language, 'featureLifestyle')].map((label) => (
               <Box key={label} sx={{ textAlign: 'center' }}>
                 <Box sx={{
                   width: 10, height: 10, borderRadius: '50%',
@@ -149,28 +148,41 @@ export default function LoginPage() {
         >
           {/* Mobile-only brand */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, alignItems: 'center', gap: 1.5, mb: 4, justifyContent: 'center' }}>
-            <Box sx={{
-              width: 40, height: 40, borderRadius: 2,
-              background: dk
-                ? 'linear-gradient(135deg, #C9A84C 0%, #E5B84E 100%)'
-                : 'linear-gradient(135deg, #00843D 0%, #00A650 100%)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <AutoAwesomeIcon sx={{ color: dk ? '#0D1B2A' : '#fff', fontSize: 22 }} />
-            </Box>
+            <Box
+              component="img"
+              src="/bobo-mascot.png"
+              alt="Bobo"
+              sx={{ width: 44, height: 44, objectFit: 'contain' }}
+            />
             <Typography variant="h6" sx={{ fontWeight: 700, color: dk ? '#F5F0E8' : '#0D1B2A' }}>HeyBobo</Typography>
           </Box>
 
+          {/* Language toggle */}
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
+            <Button
+              size="small"
+              startIcon={<TranslateIcon sx={{ fontSize: 16 }} />}
+              onClick={toggleLanguage}
+              sx={{
+                textTransform: 'none', fontWeight: 600, fontSize: 12,
+                color: dk ? '#C9A84C' : '#00843D',
+                '&:hover': { bgcolor: dk ? 'rgba(201,168,76,0.08)' : 'rgba(0,132,61,0.08)' },
+              }}
+            >
+              {language === 'ar' ? 'English' : 'العربية'}
+            </Button>
+          </Box>
+
           <Typography variant="h5" sx={{ fontWeight: 700, color: dk ? '#F5F0E8' : '#0D1B2A', mb: 0.5 }}>
-            Welcome back
+            {t(language, 'welcomeBackTitle')}
           </Typography>
           <Typography variant="body2" sx={{ color: dk ? '#B8C8D8' : '#4A5568', mb: 3 }}>
-            Sign in to continue your learning journey
+            {t(language, 'loginSubtitle')}
           </Typography>
 
           <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
             <TextField
-              label="Email or Username"
+              label={t(language, 'emailOrUsername')}
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               error={!!errors.identifier}
@@ -180,7 +192,7 @@ export default function LoginPage() {
               autoComplete="username"
             />
             <TextField
-              label="Password"
+              label={t(language, 'password')}
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -220,17 +232,17 @@ export default function LoginPage() {
                 '&.Mui-disabled': { opacity: 0.7 },
               }}
             >
-              {loginLoading ? <CircularProgress size={22} sx={{ color: dk ? '#0D1B2A' : '#fff' }} /> : 'Sign In'}
+              {loginLoading ? <CircularProgress size={22} sx={{ color: dk ? '#0D1B2A' : '#fff' }} /> : t(language, 'signIn')}
             </Button>
           </Box>
 
           <Typography variant="body2" sx={{ color: dk ? '#B8C8D8' : '#4A5568', textAlign: 'center', mt: 3 }}>
-            Don't have an account?{' '}
+            {t(language, 'dontHaveAccount')}{' '}
             <Link component={RouterLink} to="/auth/register" sx={{
               fontWeight: 600, color: dk ? '#C9A84C' : '#00843D',
               '&:hover': { color: dk ? '#B08A32' : '#006B32' },
             }}>
-              Create one
+              {t(language, 'createOne')}
             </Link>
           </Typography>
         </Paper>

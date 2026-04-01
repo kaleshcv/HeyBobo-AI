@@ -30,6 +30,8 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import LocalFloristIcon from '@mui/icons-material/LocalFlorist';
 import CheckroomIcon from '@mui/icons-material/Checkroom';
+import { useUIStore } from '@/store/uiStore';
+import { t } from '@/lib/translations';
 
 // ─── Default empty state ────────────────────────────────────────
 
@@ -151,6 +153,7 @@ function ScoreRing({ score }: { score: number }) {
 export default function GroomingDashboardPage() {
   const dk = useTheme().palette.mode === 'dark';
   const navigate = useNavigate();
+  const { language } = useUIStore();
 
   const [morningDone, setMorningDone] = useState(() => MORNING_ROUTINE.map((s) => s.done));
   const [eveningDone, setEveningDone] = useState(() => EVENING_ROUTINE.map((s) => s.done));
@@ -209,7 +212,7 @@ export default function GroomingDashboardPage() {
     new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
   return (
-    <Box sx={{ flex: 1, px: 3, py: 3, overflow: 'auto' }}>
+    <Box sx={{ flex: 1, px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 3, flexWrap: 'wrap', gap: 2 }}>
@@ -219,19 +222,19 @@ export default function GroomingDashboardPage() {
           </Box>
           <Box>
             <Typography variant="h5" sx={{ fontWeight: 700, mb: 0.5 }}>
-              Grooming &amp; Lifestyle Dashboard
+              {t(language, 'groomingDashboardTitle')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Personal care overview — insights from skin analysis, recommendations, and your daily routine tracker.
+              {t(language, 'groomingDashboardSubtitle')}
             </Typography>
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
           <Button variant="outlined" startIcon={<AutoAwesomeIcon />} onClick={() => navigate('/app/grooming/recommendations')}>
-            Recommendations
+            {t(language, 'recommendationsBtn')}
           </Button>
           <Button variant="contained" startIcon={<CameraAltIcon />} sx={{ bgcolor: '#e91e63' }} onClick={() => navigate('/app/grooming/visual-analysis')}>
-            Visual Analysis
+            {t(language, 'visualAnalysisBtn')}
           </Button>
         </Box>
       </Box>
@@ -241,7 +244,7 @@ export default function GroomingDashboardPage() {
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             icon={<TipsAndUpdatesIcon sx={{ fontSize: 20 }} />}
-            label="Total Tips"
+            label={t(language, 'totalTips')}
             value={stats.total}
             sub={`${stats.saved} saved to favourites`}
             color="#c084fc"
@@ -251,9 +254,9 @@ export default function GroomingDashboardPage() {
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             icon={<SpaIcon sx={{ fontSize: 20 }} />}
-            label="Skincare Tips"
+            label={t(language, 'skincareTipsLabel')}
             value={stats.skincare}
-            sub="AI-generated skincare advice"
+            sub={t(language, 'aiGeneratedNote')}
             color="#f43f5e"
             onClick={() => navigate('/app/grooming/recommendations')}
           />
@@ -261,9 +264,9 @@ export default function GroomingDashboardPage() {
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             icon={<ContentCutIcon sx={{ fontSize: 20 }} />}
-            label="Haircare Tips"
+            label={t(language, 'haircareTipsLabel')}
             value={stats.haircare}
-            sub="Hair & scalp recommendations"
+            sub={t(language, 'hairScalpNote')}
             color="#f59e0b"
             onClick={() => navigate('/app/grooming/recommendations')}
           />
@@ -271,9 +274,9 @@ export default function GroomingDashboardPage() {
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
             icon={<StarIcon sx={{ fontSize: 20 }} />}
-            label="Skin Score"
+            label={t(language, 'skinScoreLabel')}
             value={LAST_ANALYSIS ? `${LAST_ANALYSIS.skinScore}/100` : '--'}
-            sub={LAST_ANALYSIS ? `Last scan: ${formatDate(LAST_ANALYSIS.date)}` : 'No scan yet'}
+            sub={LAST_ANALYSIS ? `Last scan: ${formatDate(LAST_ANALYSIS.date)}` : t(language, 'noScanYetMsg')}
             color="#10b981"
             onClick={() => navigate('/app/grooming/visual-analysis')}
           />
@@ -286,18 +289,18 @@ export default function GroomingDashboardPage() {
         {/* Profile */}
         <Grid item xs={12} md={4}>
           <SectionCard
-            title="My Profile"
+            title={t(language, 'myProfileSection')}
             action={
               <Button size="small" variant="text" sx={{ color: '#6366F1', fontWeight: 600 }}>
-                Edit
+                {t(language, 'editBtn')}
               </Button>
             }
           >
             <Grid container spacing={1.5} sx={{ mb: 1.5 }}>
               {[
-                { icon: <WaterDropIcon fontSize="small" />, label: 'Skin Type', value: PROFILE.skinType, color: '#e91e63' },
-                { icon: <ContentCutIcon fontSize="small" />, label: 'Hair Type', value: PROFILE.hairType, color: '#ff9800' },
-                { icon: <FaceIcon fontSize="small" />, label: 'Face Shape', value: PROFILE.faceShape, color: '#6366F1' },
+                { icon: <WaterDropIcon fontSize="small" />, label: t(language, 'skinTypeLabel'), value: PROFILE.skinType, color: '#e91e63' },
+                { icon: <ContentCutIcon fontSize="small" />, label: t(language, 'hairTypeLabel'), value: PROFILE.hairType, color: '#ff9800' },
+                { icon: <FaceIcon fontSize="small" />, label: t(language, 'faceShapeLabel'), value: PROFILE.faceShape, color: '#6366F1' },
               ].map((item) => (
                 <Grid item xs={4} key={item.label}>
                   <Paper variant="outlined" sx={{ p: 1.25, borderRadius: 2, textAlign: 'center' }}>
@@ -311,14 +314,14 @@ export default function GroomingDashboardPage() {
               ))}
             </Grid>
 
-            <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.75 }}>Concerns</Typography>
+            <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.75 }}>{t(language, 'concernsLabel')}</Typography>
             <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap', mb: 1.5 }}>
               {PROFILE.concerns.map((c) => (
                 <Chip key={c} label={c} size="small" color="error" variant="outlined" />
               ))}
             </Box>
 
-            <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.75 }}>Style Preferences</Typography>
+            <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.75 }}>{t(language, 'stylePrefsLabel')}</Typography>
             <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap' }}>
               {PROFILE.stylePrefs.map((s) => (
                 <Chip key={s} label={s} size="small" variant="outlined" />
@@ -330,15 +333,15 @@ export default function GroomingDashboardPage() {
         {/* Skin Analysis */}
         <Grid item xs={12} md={8}>
           <SectionCard
-            title="AI Skin Analysis"
-            subtitle={LAST_ANALYSIS ? `Last scan: ${formatDate(LAST_ANALYSIS.date)}` : 'No scan performed yet'}
+            title={t(language, 'aiSkinAnalysisSection')}
+            subtitle={LAST_ANALYSIS ? `Last scan: ${formatDate(LAST_ANALYSIS.date)}` : t(language, 'noScanPerformedYet')}
             action={
               <Button
                 size="small" variant="outlined" startIcon={<CameraAltIcon />}
                 sx={{ borderColor: '#e91e63', color: '#e91e63' }}
                 onClick={() => navigate('/app/grooming/visual-analysis')}
               >
-                New Scan
+                {t(language, 'newScanBtn')}
               </Button>
             }
           >
@@ -346,7 +349,7 @@ export default function GroomingDashboardPage() {
               <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap', alignItems: 'flex-start' }}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
                   <ScoreRing score={LAST_ANALYSIS.skinScore} />
-                  <Typography variant="caption" color="text.secondary">Overall Score</Typography>
+                  <Typography variant="caption" color="text.secondary">{t(language, 'overallScoreLabel')}</Typography>
                 </Box>
 
                 <Box sx={{ flex: 1, minWidth: 200 }}>
@@ -354,7 +357,7 @@ export default function GroomingDashboardPage() {
                     {LAST_ANALYSIS.skinType} Skin Detected
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-                    Identified concerns:
+                    {t(language, 'identifiedConcernsLabel')}:
                   </Typography>
                   <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap', mb: 1.5 }}>
                     {LAST_ANALYSIS.concerns.map((c) => (
@@ -362,7 +365,7 @@ export default function GroomingDashboardPage() {
                     ))}
                   </Box>
 
-                  <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.75 }}>AI Recommendations</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.75 }}>{t(language, 'aiRecommendationsLabel')}</Typography>
                   {LAST_ANALYSIS.recommendations.slice(0, 3).map((r, i) => (
                     <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
                       <CheckCircleIcon sx={{ fontSize: 15, color: '#4caf50' }} />
@@ -388,7 +391,7 @@ export default function GroomingDashboardPage() {
         {/* Top Priority Recommendations */}
         <Grid item xs={12} md={7}>
           <SectionCard
-            title="Priority Recommendations"
+            title={t(language, 'priorityRecsSection')}
             subtitle={`${topRecs.length} high-priority tips from all categories`}
             action={
               <Button
@@ -396,7 +399,7 @@ export default function GroomingDashboardPage() {
                 sx={{ color: '#6366F1', fontWeight: 600 }}
                 onClick={() => navigate('/app/grooming/recommendations')}
               >
-                View All
+                {t(language, 'viewAllBtn')}
               </Button>
             }
           >

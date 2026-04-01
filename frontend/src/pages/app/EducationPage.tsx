@@ -1056,8 +1056,8 @@ export default function EducationPage() {
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
-        px: 2.5,
-        py: 2,
+        px: { xs: 2.5, md: 4, lg: 5 },
+        py: 3,
         overflow: 'auto',
       }}
     >

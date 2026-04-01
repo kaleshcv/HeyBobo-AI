@@ -11,7 +11,7 @@ import { z } from 'zod'
 import { Ionicons } from '@expo/vector-icons'
 import { Input }  from '@/components/common/Input'
 import { Button } from '@/components/common/Button'
-import { useLogin, useGoogleOAuth } from '@/hooks/useAuth'
+import { useLogin } from '@/hooks/useAuth'
 import T from '@/theme'
 
 const schema = z.object({
@@ -24,8 +24,6 @@ export function LoginScreen() {
   const insets     = useSafeAreaInsets()
   const navigation = useNavigation<any>()
   const login      = useLogin()
-  const { startOAuth } = useGoogleOAuth()
-
   const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
@@ -52,18 +50,6 @@ export function LoginScreen() {
 
         <Text style={styles.heading}>Welcome back</Text>
         <Text style={styles.subheading}>Sign in to continue learning</Text>
-
-        {/* Google OAuth */}
-        <TouchableOpacity style={styles.googleBtn} onPress={startOAuth} activeOpacity={0.8}>
-          <Ionicons name="logo-google" size={20} color="#EA4335" />
-          <Text style={styles.googleText}>Continue with Google</Text>
-        </TouchableOpacity>
-
-        <View style={styles.divider}>
-          <View style={styles.dividerLine} />
-          <Text style={styles.dividerText}>or</Text>
-          <View style={styles.dividerLine} />
-        </View>
 
         {/* Form */}
         <Controller
@@ -157,11 +143,6 @@ const styles = StyleSheet.create({
   brandName:       { fontSize: 24, fontWeight: '800', color: T.text },
   heading:         { fontSize: 28, fontWeight: '800', color: T.text, marginBottom: 8 },
   subheading:      { fontSize: 15, color: T.muted, marginBottom: 28 },
-  googleBtn:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: T.border2, borderRadius: 12, padding: 14, marginBottom: 20, backgroundColor: T.surface2 },
-  googleText:      { fontSize: 15, fontWeight: '600', color: T.text, marginLeft: 10 },
-  divider:         { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
-  dividerLine:     { flex: 1, height: 1, backgroundColor: T.border2 },
-  dividerText:     { paddingHorizontal: 12, fontSize: 13, color: T.muted2 },
   forgotBtn:       { alignSelf: 'flex-end', marginBottom: 20, marginTop: -8 },
   forgotText:      { fontSize: 13, fontWeight: '600', color: T.primary },
   errorBanner:     { flexDirection: 'row', alignItems: 'center', backgroundColor: `${T.red}22`, borderWidth: 1, borderColor: `${T.red}44`, borderRadius: 10, padding: 12, marginBottom: 16 },

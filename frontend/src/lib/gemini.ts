@@ -1494,7 +1494,7 @@ export interface AIBrainInput {
   };
 }
 
-export async function generateAIBrainDashboard(input: AIBrainInput): Promise<string> {
+export async function generateAIBrainDashboard(input: AIBrainInput, language: 'en' | 'ar' = 'en'): Promise<string> {
   const model = getModel();
 
   // Derive human-readable energy context from real data
@@ -1528,7 +1528,7 @@ export async function generateAIBrainDashboard(input: AIBrainInput): Promise<str
     ? input.context.recentWorkoutCategories.join(', ')
     : 'none logged';
 
-  const prompt = `You are the AI Brain of Heybobo — a deeply personal, context-aware intelligence layer that truly knows this user. You are NOT a generic assistant. You synthesise real biometric, behavioural, and environmental data into a highly personalised daily plan.
+  const prompt = `${language === 'ar' ? 'CRITICAL LANGUAGE INSTRUCTION: You MUST generate ALL text fields (title, description, headline, body, summary, details, suggestedFocus bullets, nudge, weatherNote, shoppingNudge, label, and any other human-readable text) in Arabic (العربية). Do NOT use English for any displayed text. Module labels must also be in Arabic.\n\n' : ''}You are the AI Brain of Heybobo — a deeply personal, context-aware intelligence layer that truly knows this user. You are NOT a generic assistant. You synthesise real biometric, behavioural, and environmental data into a highly personalised daily plan.
 
 Current time: ${input.currentTime}
 Day: ${input.dayOfWeek}

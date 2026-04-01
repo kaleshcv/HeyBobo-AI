@@ -57,6 +57,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 import { useAuth } from '@/hooks/useAuth';
+import { useUIStore } from '@/store/uiStore';
+import { t as tr } from '@/lib/translations';
 import { runPostWorkoutSimulation } from '@/lib/simulatePostWorkout';
 import {
   useAIBrainStore,
@@ -623,6 +625,7 @@ export default function AIBrainPage() {
   const dk = useTheme().palette.mode === 'dark';
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { language: lang } = useUIStore();
   const [error, setError] = useState<string | null>(null);
   const [dashView, setDashView] = useState<DashboardView>(() => {
     const stored = localStorage.getItem('bobo_dash_view') as DashboardView;
@@ -668,7 +671,7 @@ export default function AIBrainPage() {
     setError(null);
 
     try {
-      const rawJson = await generateAIBrainDashboard(brainInput);
+      const rawJson = await generateAIBrainDashboard(brainInput, lang);
       const parsed = JSON.parse(rawJson);
 
       setBrainData({
@@ -722,11 +725,9 @@ export default function AIBrainPage() {
   }, []);
 
   const greeting = useMemo(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    return 'Good evening';
-  }, []);
+    const h = new Date().getHours();
+    return h < 12 ? tr(lang, 'goodMorning') : h < 17 ? tr(lang, 'goodAfternoon') : tr(lang, 'goodEvening');
+  }, [lang]);
 
   const hasData = priorities.length > 0 || moduleInsights.length > 0;
   const show = MODE_SECTIONS[activeMode] ?? MODE_SECTIONS.monitor;
@@ -734,7 +735,7 @@ export default function AIBrainPage() {
   // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
-    <Box sx={{ p: { xs: 2, md: 3 } }}>
+    <Box sx={{ px: { xs: 2.5, md: 4, lg: 5 }, py: 3 }}>
       {/* Header */}
       <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
@@ -747,7 +748,7 @@ export default function AIBrainPage() {
               Bobo
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              {greeting}, {user?.firstName ?? 'there'}. Here's your unified dashboard.
+              {greeting}, {user?.firstName ?? 'there'}. {tr(lang, 'heresYourDashboard')}
             </Typography>
           </Box>
         </Box>
@@ -770,7 +771,7 @@ export default function AIBrainPage() {
               '&:hover': { borderColor: dk ? '#E5B84E' : '#00A650', bgcolor: dk ? 'rgba(201,168,76,0.08)' : 'rgba(0,132,61,0.08)' },
             }}
           >
-            🏋️ Simulate Workout
+            🏋️ {tr(lang, 'simulateWorkoutBtn')}
           </Button>
           <Button
             variant="outlined"
@@ -780,7 +781,7 @@ export default function AIBrainPage() {
             disabled={isLoading}
             sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600 }}
           >
-            {isLoading ? 'Analyzing...' : 'Refresh'}
+            {isLoading ? tr(lang, 'analyzingLabel') : tr(lang, 'refreshBtn')}
           </Button>
         </Box>
       </Box>

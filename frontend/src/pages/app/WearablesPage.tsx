@@ -20,6 +20,8 @@ import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import PeopleIcon from '@mui/icons-material/People';
 import toast from 'react-hot-toast';
 import { bleService } from '@/lib/bleService';
+import { useUIStore } from '@/store/uiStore';
+import { t } from '@/lib/translations';
 import {
   useWearablesStore,
   DEVICE_CATALOG,
@@ -72,6 +74,7 @@ function severityColor(s: string): 'error' | 'warning' | 'info' {
 
 function PairDeviceDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const dk = useTheme().palette.mode === 'dark';
+  const { language } = useUIStore();
   const { pairDevice, pairRealDevice, devices } = useWearablesStore();
   const [mode, setMode] = useState<'bluetooth' | 'catalog'>('bluetooth');
   const [filter, setFilter] = useState<DeviceType | 'all'>('all');
@@ -128,7 +131,7 @@ function PairDeviceDialog({ open, onClose }: { open: boolean; onClose: () => voi
       <DialogTitle sx={{ pb: 1 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <BluetoothIcon sx={{ color: '#1e88e5' }} />
-          <Typography variant="h6" sx={{ fontWeight: 700 }}>Pair a Device</Typography>
+          <Typography variant="h6" sx={{ fontWeight: 700 }}>{t(language, 'pairDeviceTitle')}</Typography>
         </Box>
       </DialogTitle>
       <DialogContent>
@@ -138,8 +141,8 @@ function PairDeviceDialog({ open, onClose }: { open: boolean; onClose: () => voi
           onChange={(_, v) => { setMode(v === 0 ? 'bluetooth' : 'catalog'); setScanError(null); setPairedInfo(null); }}
           sx={{ mb: 2, '& .MuiTab-root': { textTransform: 'none', fontWeight: 600, fontSize: 13 } }}
         >
-          <Tab icon={<BluetoothSearchingIcon sx={{ fontSize: 16 }} />} iconPosition="start" label="Bluetooth (Real Device)" />
-          <Tab icon={<AddIcon sx={{ fontSize: 16 }} />} iconPosition="start" label="Simulated Device" />
+          <Tab icon={<BluetoothSearchingIcon sx={{ fontSize: 16 }} />} iconPosition="start" label={t(language, 'bluetoothTabLabel')} />
+          <Tab icon={<AddIcon sx={{ fontSize: 16 }} />} iconPosition="start" label={t(language, 'simulatedTabLabel')} />
         </Tabs>
 
         {/* ── Bluetooth scan mode ── */}
@@ -163,7 +166,7 @@ function PairDeviceDialog({ open, onClose }: { open: boolean; onClose: () => voi
                     disabled={scanning}
                     sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2, bgcolor: '#1e88e5', flex: 1 }}
                   >
-                    {scanning ? 'Scanning...' : 'Scan for Health Devices'}
+                    {scanning ? t(language, 'scanningTextLabel') : t(language, 'scanForDevicesBtn')}
                   </Button>
                   <Button
                     variant="outlined"
@@ -172,7 +175,7 @@ function PairDeviceDialog({ open, onClose }: { open: boolean; onClose: () => voi
                     disabled={scanning}
                     sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2, flex: 1 }}
                   >
-                    {scanning ? 'Scanning...' : 'Scan All Nearby'}
+                    {scanning ? t(language, 'scanningTextLabel') : t(language, 'scanAllNearbyBtn')}
                   </Button>
                 </Box>
 
@@ -190,7 +193,7 @@ function PairDeviceDialog({ open, onClose }: { open: boolean; onClose: () => voi
                 )}
 
                 <Paper elevation={0} sx={{ p: 2, borderRadius: 2, bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5', mb: 2 }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>Supported BLE Profiles</Typography>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>{t(language, 'supportedProfilesLabel')}</Typography>
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                     {[
                       { label: '❤️ Heart Rate', desc: 'Real-time HR, HRV, calories' },
@@ -220,7 +223,7 @@ function PairDeviceDialog({ open, onClose }: { open: boolean; onClose: () => voi
         {mode === 'catalog' && (
           <>
             <TextField
-              placeholder="Search devices..."
+              placeholder={t(language, 'searchDevicesPlaceholder')}
               size="small"
               fullWidth
               value={search}
@@ -287,7 +290,7 @@ function PairDeviceDialog({ open, onClose }: { open: boolean; onClose: () => voi
         )}
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose} sx={{ textTransform: 'none' }}>Cancel</Button>
+        <Button onClick={onClose} sx={{ textTransform: 'none' }}>{t(language, 'cancelBtn')}</Button>
       </DialogActions>
     </Dialog>
   );
@@ -297,6 +300,7 @@ function PairDeviceDialog({ open, onClose }: { open: boolean; onClose: () => voi
 
 function DeviceCard({ device }: { device: WearableDevice }) {
   const dk = useTheme().palette.mode === 'dark';
+  const { language } = useUIStore();
   const { syncDevice, unpairDevice, toggleAutoSync, toggleMetric } = useWearablesStore();
   const [showSettings, setShowSettings] = useState(false);
   const meta = DEVICE_TYPE_META[device.type];
@@ -381,13 +385,13 @@ function DeviceCard({ device }: { device: WearableDevice }) {
           </Typography>
           <Box sx={{ display: 'flex', gap: 0.5 }}>
             {device.isRealDevice && isLiveBLE && (
-              <Tooltip title="Disconnect Bluetooth">
+              <Tooltip title={t(language, 'disconnectLabel')}>
                 <IconButton size="small" onClick={handleDisconnectBLE} sx={{ color: '#f44336' }}>
                   <BluetoothIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
             )}
-            <Tooltip title="Sync now">
+            <Tooltip title={t(language, 'syncNowLabel')}>
               <IconButton size="small" onClick={() => { syncDevice(device.id); toast.success('Synced!'); }} sx={{ color: '#1e88e5' }}>
                 <SyncIcon fontSize="small" />
               </IconButton>
@@ -397,7 +401,7 @@ function DeviceCard({ device }: { device: WearableDevice }) {
                 <SettingsIcon fontSize="small" />
               </IconButton>
             </Tooltip>
-            <Tooltip title="Unpair">
+            <Tooltip title={t(language, 'unpairLabel')}>
               <IconButton size="small" onClick={() => { unpairDevice(device.id); toast.success('Device removed'); }} sx={{ color: dk ? 'rgba(255,255,255,0.3)' : '#9e9e9e' }}>
                 <DeleteIcon fontSize="small" />
               </IconButton>
@@ -723,6 +727,7 @@ export default function WearablesPage() {
   const { devices, syncAllDevices, handleBLEReading, handleBLEDisconnect } = useWearablesStore();
   const [tab, setTab] = useState(0);
   const [pairOpen, setPairOpen] = useState(false);
+  const { language } = useUIStore();
   const alerts = useWearablesStore((s) => s.alerts.filter((a) => !a.dismissed));
 
   // Wire up BLE live data events
@@ -740,16 +745,16 @@ export default function WearablesPage() {
   }, [handleBLEReading, handleBLEDisconnect]);
 
   return (
-    <Box sx={{ py: 1.5, px: 1.5 }}>
+    <Box sx={{ px: { xs: 2.5, md: 4, lg: 5 }, py: 3 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: '#22d3ee20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <BluetoothIcon sx={{ fontSize: 22, color: '#22d3ee' }} />
           </Box>
           <Box>
-            <Typography variant="h5" sx={{ fontWeight: 700, fontSize: 20 }}>Wearables</Typography>
+            <Typography variant="h5" sx={{ fontWeight: 700, fontSize: 20 }}>{t(language, 'wearablesPageTitle')}</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ fontSize: 13 }}>
-              Connect and monitor health devices for real-time tracking.
+              {t(language, 'wearablesSubtitle')}
             </Typography>
           </Box>
         </Box>
@@ -762,7 +767,7 @@ export default function WearablesPage() {
               onClick={() => { syncAllDevices(); toast.success('All devices synced'); }}
               sx={{ textTransform: 'none', fontSize: 12, borderRadius: 2 }}
             >
-              Sync All
+              {t(language, 'syncAllBtn')}
             </Button>
           )}
           <Button
@@ -772,7 +777,7 @@ export default function WearablesPage() {
             onClick={() => setPairOpen(true)}
             sx={{ textTransform: 'none', fontSize: 12, borderRadius: 2, bgcolor: '#1e88e5' }}
           >
-            Pair Device
+            {t(language, 'pairDeviceTitle')}
           </Button>
         </Box>
       </Box>
@@ -804,7 +809,7 @@ export default function WearablesPage() {
             devices.length === 0 ? (
               <Box sx={{ textAlign: 'center', py: 6, color: 'text.secondary' }}>
                 <BluetoothIcon sx={{ fontSize: 56, opacity: 0.2, mb: 1 }} />
-                <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>No Devices Paired</Typography>
+                <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>{t(language, 'noDevicesPairedTitle')}</Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2, maxWidth: 360, mx: 'auto' }}>
                   Connect your smart watch, ring, fitness band, scale, or other health devices to start tracking automatically.
                 </Typography>
@@ -814,7 +819,7 @@ export default function WearablesPage() {
                   onClick={() => setPairOpen(true)}
                   sx={{ textTransform: 'none', fontWeight: 600, borderRadius: 2, bgcolor: '#1e88e5' }}
                 >
-                  Pair Your First Device
+                  {t(language, 'pairFirstDeviceBtn')}
                 </Button>
               </Box>
             ) : (

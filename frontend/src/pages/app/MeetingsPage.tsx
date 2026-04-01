@@ -63,10 +63,13 @@ import { useMeetingStore, Meeting } from '@/store/meetingStore';
 import { useCourseStore } from '@/store/courseStore';
 import { useAuth } from '@/hooks/useAuth';
 import toast from 'react-hot-toast';
+import { useUIStore } from '@/store/uiStore';
+import { t } from '@/lib/translations';
 
 // ============ Create Meeting Dialog ============
 function CreateMeetingDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const dk = useTheme().palette.mode === 'dark';
+  const { language } = useUIStore();
   const { user } = useAuth();
   const createMeeting = useMeetingStore((s) => s.createMeeting);
 
@@ -76,8 +79,8 @@ function CreateMeetingDialog({ open, onClose }: { open: boolean; onClose: () => 
   const [duration, setDuration] = useState(60);
 
   const handleCreate = () => {
-    if (!title.trim()) { toast.error('Title is required'); return; }
-    if (!scheduledAt) { toast.error('Schedule date/time is required'); return; }
+    if (!title.trim()) { toast.error(t(language, 'titleRequired')); return; }
+    if (!scheduledAt) { toast.error(t(language, 'scheduleDTRequired')); return; }
     const m = createMeeting({
       title: title.trim(),
       description: description.trim(),
@@ -94,13 +97,13 @@ function CreateMeetingDialog({ open, onClose }: { open: boolean; onClose: () => 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <VideocamIcon color="primary" /> New Meeting
+        <VideocamIcon color="primary" /> {t(language, 'newMeetingBtn')}
       </DialogTitle>
       <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '12px !important' }}>
-        <TextField label="Meeting Title" value={title} onChange={(e) => setTitle(e.target.value)} fullWidth size="small" />
-        <TextField label="Description (optional)" value={description} onChange={(e) => setDescription(e.target.value)} fullWidth multiline rows={2} size="small" />
+        <TextField label={t(language, 'meetingTitleLabel')} value={title} onChange={(e) => setTitle(e.target.value)} fullWidth size="small" />
+        <TextField label={t(language, 'descriptionOptionalLabel')} value={description} onChange={(e) => setDescription(e.target.value)} fullWidth multiline rows={2} size="small" />
         <TextField
-          label="Schedule Date & Time"
+          label={t(language, 'scheduleDateTimeLabel')}
           type="datetime-local"
           value={scheduledAt}
           onChange={(e) => setScheduledAt(e.target.value)}
@@ -109,20 +112,20 @@ function CreateMeetingDialog({ open, onClose }: { open: boolean; onClose: () => 
           InputLabelProps={{ shrink: true }}
         />
         <FormControl size="small" fullWidth>
-          <InputLabel>Duration</InputLabel>
-          <Select value={duration} label="Duration" onChange={(e) => setDuration(Number(e.target.value))}>
-            <MenuItem value={15}>15 minutes</MenuItem>
-            <MenuItem value={30}>30 minutes</MenuItem>
-            <MenuItem value={45}>45 minutes</MenuItem>
-            <MenuItem value={60}>1 hour</MenuItem>
-            <MenuItem value={90}>1.5 hours</MenuItem>
-            <MenuItem value={120}>2 hours</MenuItem>
+          <InputLabel>{t(language, 'durationLabel')}</InputLabel>
+          <Select value={duration} label={t(language, 'durationLabel')} onChange={(e) => setDuration(Number(e.target.value))}>
+            <MenuItem value={15}>{t(language, 'dur15minLabel')}</MenuItem>
+            <MenuItem value={30}>{t(language, 'dur30minLabel')}</MenuItem>
+            <MenuItem value={45}>{t(language, 'dur45minLabel')}</MenuItem>
+            <MenuItem value={60}>{t(language, 'dur1hourLabel')}</MenuItem>
+            <MenuItem value={90}>{t(language, 'dur1_5hourLabel')}</MenuItem>
+            <MenuItem value={120}>{t(language, 'dur2hourLabel')}</MenuItem>
           </Select>
         </FormControl>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button variant="contained" onClick={handleCreate} sx={{ bgcolor: dk ? '#1A2B3C' : '#616161' }}>Create Meeting</Button>
+        <Button onClick={onClose}>{t(language, 'cancelBtn')}</Button>
+        <Button variant="contained" onClick={handleCreate} sx={{ bgcolor: dk ? '#1A2B3C' : '#616161' }}>{t(language, 'createMeetingBtn')}</Button>
       </DialogActions>
     </Dialog>
   );
@@ -141,6 +144,7 @@ function getRegisteredUsers(): { name: string; email: string }[] {
 // ============ Invite / Share Dialog ============
 function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () => void; meeting: Meeting | null }) {
   const dk = useTheme().palette.mode === 'dark';
+  const { language } = useUIStore();
   const sendInvite = useMeetingStore((s) => s.sendInvite);
   const removeInvite = useMeetingStore((s) => s.removeInvite);
   const groups = useCourseStore((s) => s.groups);
@@ -229,7 +233,7 @@ function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () =
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <PersonAddIcon color="primary" /> Share & Invite
+          <PersonAddIcon color="primary" /> {t(language, 'shareInviteTitle')}
         </Box>
         <IconButton size="small" onClick={onClose}><CloseIcon fontSize="small" /></IconButton>
       </DialogTitle>
@@ -250,9 +254,9 @@ function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () =
         </Paper>
 
         <Tabs value={inviteType} onChange={(_, v) => setInviteType(v)} sx={{ mb: 2, '& .MuiTab-root': { minHeight: 36, textTransform: 'none', fontSize: 13 } }}>
-          <Tab label="Users" value="users" icon={<PeopleIcon sx={{ fontSize: 18 }} />} iconPosition="start" />
-          <Tab label="Groups" value="group" icon={<GroupIcon sx={{ fontSize: 18 }} />} iconPosition="start" />
-          <Tab label="By Email" value="email" icon={<SendIcon sx={{ fontSize: 18 }} />} iconPosition="start" />
+          <Tab label={t(language, 'usersTabLabel')} value="users" icon={<PeopleIcon sx={{ fontSize: 18 }} />} iconPosition="start" />
+          <Tab label={t(language, 'groupsTabLabel')} value="group" icon={<GroupIcon sx={{ fontSize: 18 }} />} iconPosition="start" />
+          <Tab label={t(language, 'byEmailTabLabel')} value="email" icon={<SendIcon sx={{ fontSize: 18 }} />} iconPosition="start" />
         </Tabs>
 
         {inviteType === 'users' && (
@@ -264,7 +268,7 @@ function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () =
             ) : (
               <>
                 <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
-                  Select users to invite ({registeredUsers.length} registered)
+                  {t(language, 'selectUsersToInvite')} ({registeredUsers.length} registered)
                 </Typography>
                 <List dense sx={{ maxHeight: 220, overflow: 'auto', border: '1px solid', borderColor: 'divider', borderRadius: 1 }}>
                   {registeredUsers.map((u) => {
@@ -293,9 +297,9 @@ function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () =
                           secondaryTypographyProps={{ variant: 'caption' }}
                         />
                         {isInvited ? (
-                          <Chip label="Invited" size="small" color="success" sx={{ height: 22, fontSize: 10 }} />
+                    <Chip label={t(language, 'invitedLabel')} size="small" color="success" sx={{ height: 22, fontSize: 10 }} />
                         ) : isSelected ? (
-                          <Chip label="Selected" size="small" color="primary" sx={{ height: 22, fontSize: 10 }} />
+                          <Chip label={t(language, 'selectedLabel')} size="small" color="primary" sx={{ height: 22, fontSize: 10 }} />
                         ) : null}
                       </ListItem>
                     );
@@ -353,7 +357,7 @@ function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () =
                           primaryTypographyProps={{ variant: 'body2', fontWeight: selectedGroupId === g.id ? 600 : 400 }}
                           secondaryTypographyProps={{ variant: 'caption' }}
                         />
-                        {isInvited && <Chip label="Invited" size="small" color="success" sx={{ height: 22, fontSize: 10 }} />}
+                        {isInvited && <Chip label={t(language, 'invitedLabel')} size="small" color="success" sx={{ height: 22, fontSize: 10 }} />}
                       </ListItem>
                     );
                   })}
@@ -366,7 +370,7 @@ function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () =
                     fullWidth
                     sx={{ bgcolor: dk ? '#1A2B3C' : '#616161' }}
                   >
-                    Invite Group
+                    {t(language, 'inviteGroupBtn')}
                   </Button>
                 )}
               </>
@@ -383,7 +387,7 @@ function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () =
             <TextField label="Email" value={email} onChange={(e) => setEmail(e.target.value)} size="small" fullWidth
               onKeyDown={(e) => e.key === 'Enter' && handleSendEmail()} />
             <Button variant="contained" onClick={handleSendEmail} startIcon={<SendIcon />} sx={{ bgcolor: dk ? '#1A2B3C' : '#616161', alignSelf: 'flex-end' }}>
-              Send Invite
+                  {t(language, 'sendInviteBtn')}
             </Button>
           </Box>
         )}
@@ -392,7 +396,7 @@ function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () =
         {meeting.invites.length > 0 && (
           <>
             <Divider sx={{ my: 2 }} />
-            <Typography variant="subtitle2" sx={{ mb: 1 }}>Invited ({meeting.invites.length})</Typography>
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>{t(language, 'invitedLabel')} ({meeting.invites.length})</Typography>
             <List dense sx={{ maxHeight: 180, overflow: 'auto' }}>
               {meeting.invites.map((inv) => (
                 <ListItem key={inv.id} sx={{ py: 0.25 }}>
@@ -426,6 +430,7 @@ function InviteDialog({ open, onClose, meeting }: { open: boolean; onClose: () =
 // ============ Join by Code Dialog ============
 function JoinByCodeDialog({ open, onClose, onJoin }: { open: boolean; onClose: () => void; onJoin: (meeting: Meeting) => void }) {
   const dk = useTheme().palette.mode === 'dark';
+  const { language } = useUIStore();
   const joinByCode = useMeetingStore((s) => s.joinByCode);
   const [code, setCode] = useState('');
 
@@ -441,14 +446,14 @@ function JoinByCodeDialog({ open, onClose, onJoin }: { open: boolean; onClose: (
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
       <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <KeyboardIcon color="primary" /> Join with a Code
+        <KeyboardIcon color="primary" /> {t(language, 'joinWithCodeTitle')}
       </DialogTitle>
       <DialogContent>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
           Enter the meeting code provided by the host
         </Typography>
         <TextField
-          label="Meeting Code"
+          label={t(language, 'meetingCodeLabel')}
           placeholder="abc-def-ghi"
           value={code}
           onChange={(e) => setCode(e.target.value)}
@@ -457,8 +462,8 @@ function JoinByCodeDialog({ open, onClose, onJoin }: { open: boolean; onClose: (
         />
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button variant="contained" onClick={handleJoin} disabled={!code.trim()} sx={{ bgcolor: dk ? '#1A2B3C' : '#616161' }}>Join</Button>
+        <Button onClick={onClose}>{t(language, 'cancelBtn')}</Button>
+        <Button variant="contained" onClick={handleJoin} disabled={!code.trim()} sx={{ bgcolor: dk ? '#1A2B3C' : '#616161' }}>{t(language, 'joinWithCodeBtn')}</Button>
       </DialogActions>
     </Dialog>
   );
@@ -923,6 +928,7 @@ function MeetingCard({ meeting, onInvite, onJoin }: { meeting: Meeting; onInvite
 // ============ Main MeetingsPage ============
 export default function MeetingsPage() {
   const dk = useTheme().palette.mode === 'dark';
+  const { language } = useUIStore();
   const { user } = useAuth();
   const meetings = useMeetingStore((s) => s.meetings);
   const { startMeeting, setActiveMeeting, joinMeeting } = useMeetingStore();
@@ -966,7 +972,7 @@ export default function MeetingsPage() {
   }
 
   return (
-    <Box sx={{ p: 3, px: 4 }}>
+    <Box sx={{ px: { xs: 2.5, md: 4, lg: 5 }, py: 3 }}>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -974,16 +980,16 @@ export default function MeetingsPage() {
             <VideocamIcon sx={{ fontSize: 22, color: '#ec4899' }} />
           </Box>
           <Box>
-            <Typography variant="h5" fontWeight={700}>Meetings</Typography>
-            <Typography variant="body2" color="text.secondary">Create, schedule and join live meetings</Typography>
+            <Typography variant="h5" fontWeight={700}>{t(language, 'meetingsTitleLabel')}</Typography>
+            <Typography variant="body2" color="text.secondary">{t(language, 'meetingSubtitle')}</Typography>
           </Box>
         </Box>
         <Stack direction="row" spacing={1}>
           <Button variant="outlined" startIcon={<KeyboardIcon />} onClick={() => setJoinCodeOpen(true)}>
-            Join with Code
+            {t(language, 'joinWithCodeBtn')}
           </Button>
           <Button variant="contained" startIcon={<AddIcon />} onClick={() => setCreateOpen(true)} sx={{ bgcolor: dk ? '#1A2B3C' : '#616161' }}>
-            New Meeting
+            {t(language, 'newMeetingBtn')}
           </Button>
         </Stack>
       </Box>
@@ -991,10 +997,10 @@ export default function MeetingsPage() {
       {/* Quick Stats */}
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
         {[
-          { label: 'Scheduled', count: myMeetings.filter((m) => m.status === 'scheduled').length, color: '#1976d2' },
-          { label: 'Live Now', count: meetings.filter((m) => m.status === 'live').length, color: '#4caf50' },
-          { label: 'Completed', count: myMeetings.filter((m) => m.status === 'ended').length, color: '#9e9e9e' },
-          { label: 'Invitations', count: invitedMeetings.length, color: '#ff9800' },
+          { label: t(language, 'scheduledLabel'), count: myMeetings.filter((m) => m.status === 'scheduled').length, color: '#1976d2' },
+          { label: t(language, 'liveNowLabel'), count: meetings.filter((m) => m.status === 'live').length, color: '#4caf50' },
+          { label: t(language, 'completedLabel'), count: myMeetings.filter((m) => m.status === 'ended').length, color: '#9e9e9e' },
+          { label: t(language, 'invitationsLabel'), count: invitedMeetings.length, color: '#ff9800' },
         ].map((stat) => (
           <Grid item xs={6} sm={3} key={stat.label}>
             <Paper sx={{ p: 1.5, textAlign: 'center', borderRadius: 2, borderTop: `3px solid ${stat.color}` }} elevation={0} variant="outlined">
@@ -1007,11 +1013,11 @@ export default function MeetingsPage() {
 
       {/* Tabs */}
       <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mb: 2, '& .MuiTab-root': { minHeight: 40, textTransform: 'none' } }}>
-        <Tab label={`Upcoming (${tabMeetings[0].length})`} />
-        <Tab label={<Badge badgeContent={tabMeetings[1].length} color="success" sx={{ '& .MuiBadge-badge': { right: -8 } }}>Live</Badge>} />
-        <Tab label={`Past (${tabMeetings[2].length})`} />
-        <Tab label={`Invited (${tabMeetings[3].length})`} />
-        <Tab label={`Recordings (${recordings.length})`} icon={<FiberManualRecordIcon sx={{ fontSize: 14, color: '#f44336' }} />} iconPosition="start" />
+        <Tab label={`${t(language, 'upcomingLabel')} (${tabMeetings[0].length})`} />
+        <Tab label={<Badge badgeContent={tabMeetings[1].length} color="success" sx={{ '& .MuiBadge-badge': { right: -8 } }}>{t(language, 'liveLabel')}</Badge>} />
+        <Tab label={`${t(language, 'pastLabel')} (${tabMeetings[2].length})`} />
+        <Tab label={`${t(language, 'invitedLabel')} (${tabMeetings[3].length})`} />
+        <Tab label={`${t(language, 'recordingsLabel')} (${recordings.length})`} icon={<FiberManualRecordIcon sx={{ fontSize: 14, color: '#f44336' }} />} iconPosition="start" />
       </Tabs>
 
       {/* Meeting list */}
@@ -1059,10 +1065,10 @@ export default function MeetingsPage() {
         <Paper sx={{ p: 4, textAlign: 'center', borderRadius: 2 }} elevation={0} variant="outlined">
           <VideocamIcon sx={{ fontSize: 48, color: dk ? 'rgba(255,255,255,0.15)' : '#bdbdbd', mb: 1 }} />
           <Typography color="text.secondary">
-            {tab === 0 && 'No upcoming meetings. Create one to get started!'}
-            {tab === 1 && 'No live meetings right now.'}
-            {tab === 2 && 'No past meetings yet.'}
-            {tab === 3 && "You haven't been invited to any meetings yet."}
+            {tab === 0 && t(language, 'noUpcomingMeetings')}
+            {tab === 1 && t(language, 'noLiveMeetings')}
+            {tab === 2 && t(language, 'noPastMeetings')}
+            {tab === 3 && t(language, 'noInvitedMeetings')}
           </Typography>
         </Paper>
       ) : (

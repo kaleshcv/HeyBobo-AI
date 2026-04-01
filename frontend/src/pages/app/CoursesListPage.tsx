@@ -24,6 +24,8 @@ import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import SchoolIcon from '@mui/icons-material/School';
 import { useCourseStore, LocalCourse, VideoProgress } from '@/store/courseStore';
 import toast from 'react-hot-toast';
+import { useUIStore } from '@/store/uiStore';
+import { t } from '@/lib/translations';
 
 // --- Course Card ---
 function CourseCard({
@@ -38,6 +40,7 @@ function CourseCard({
   onDelete: () => void;
 }) {
   const dk = useTheme().palette.mode === 'dark';
+  const { language } = useUIStore();
   return (
     <Card
       sx={{
@@ -80,7 +83,7 @@ function CourseCard({
           </Box>
         </CardContent>
       </Box>
-      <Tooltip title="Delete course">
+      <Tooltip title={t(language, 'deleteCourseTooltip')}>
         <IconButton
           className="delete-btn"
           size="small"
@@ -97,6 +100,7 @@ function CourseCard({
 export default function CoursesListPage() {
   const dk = useTheme().palette.mode === 'dark';
   const navigate = useNavigate();
+  const { language } = useUIStore();
   const [search, setSearch] = useState('');
   const [tab, setTab] = useState(0); // 0 = All, 1 = My Courses
 
@@ -127,15 +131,15 @@ export default function CoursesListPage() {
   };
 
   return (
-    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', px: 3, py: 3, overflow: 'auto' }}>
+    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
         <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: '#38bdf820', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <SchoolIcon sx={{ fontSize: 20, color: '#38bdf8' }} />
         </Box>
-        <Typography variant="h5" sx={{ fontWeight: 600 }}>Courses</Typography>
+        <Typography variant="h5" sx={{ fontWeight: 600 }}>{t(language, 'coursesPageTitle')}</Typography>
       </Box>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-        Browse and manage your course library
+        {t(language, 'coursesPageSubtitle')}
       </Typography>
 
       {/* Tabs */}
@@ -149,15 +153,15 @@ export default function CoursesListPage() {
           '& .MuiTab-root': { textTransform: 'none', minHeight: 36, px: 2, py: 0.5, fontSize: 13, fontWeight: 600, color: 'text.secondary', '&.Mui-selected': { color: 'text.primary' } },
         }}
       >
-        <Tab label="All Courses" />
-        <Tab label="My Courses" />
+        <Tab label={t(language, 'allCoursesTab')} />
+        <Tab label={t(language, 'myCoursesTab')} />
       </Tabs>
 
       {/* Search */}
       <Box sx={{ maxWidth: 480, mb: 3 }}>
         <TextField
           fullWidth
-          placeholder="Search courses..."
+          placeholder={t(language, 'searchCoursesPlaceholder')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           variant="outlined"
@@ -191,11 +195,11 @@ export default function CoursesListPage() {
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', py: 8 }}>
           <PlayCircleOutlineIcon sx={{ fontSize: 48, color: dk ? 'rgba(255,255,255,0.15)' : '#bdbdbd', mb: 2 }} />
           <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-            {search ? 'No courses match your search' : tab === 1 ? 'No courses started yet' : 'No courses yet'}
+            {search ? t(language, 'noCoursesMatchMsg') : tab === 1 ? t(language, 'noCoursesStartedMsg') : t(language, 'noCoursesYetMsg')}
           </Typography>
           {!search && tab === 0 && (
             <Typography variant="body2" color="text.secondary">
-              Add courses from the Education dashboard
+              {t(language, 'addCoursesFromDashboard')}
             </Typography>
           )}
         </Box>

@@ -6,10 +6,13 @@ import { Tabs } from '@/components/ui/Tabs'
 import { CourseProgress } from '@/components/common/CourseProgress'
 import { useMyEnrollments } from '@/hooks/useEnrollment'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { useUIStore } from '@/store/uiStore'
+import { t } from '@/lib/translations'
 
 export default function MyLearningPage() {
   const navigate = useNavigate()
   const { data: enrollments = [] } = useMyEnrollments()
+  const { language } = useUIStore()
 
   const active = enrollments.filter((e) => e.status === 'active')
   const completed = enrollments.filter((e) => e.status === 'completed')
@@ -31,7 +34,7 @@ export default function MyLearningPage() {
         onClick={() => navigate(`/student/my-learning`)}
         className="ml-4"
       >
-        Continue
+        {t(language, 'continueBtn')}
       </Button>
     </Card>
   )
@@ -39,7 +42,7 @@ export default function MyLearningPage() {
   const tabs = [
     {
       id: 'all',
-      label: 'All Courses',
+      label: t(language, 'allCoursesTab'),
       content: (
         <div>
           {enrollments.length > 0 ? (
@@ -47,9 +50,9 @@ export default function MyLearningPage() {
           ) : (
             <EmptyState
               icon={<BookOpen size={48} />}
-              title="No courses yet"
-              description="Start learning by enrolling in a course"
-              actionLabel="Browse Courses"
+              title={t(language, 'noCoursesYetMsg')}
+              description={t(language, 'startByEnrolling')}
+              actionLabel={t(language, 'browseCoursesBtn')}
               onAction={() => navigate('/courses')}
             />
           )}
@@ -58,7 +61,7 @@ export default function MyLearningPage() {
     },
     {
       id: 'inprogress',
-      label: 'In Progress',
+      label: t(language, 'inProgressTab'),
       content: (
         <div>
           {active.length > 0 ? (
@@ -66,9 +69,9 @@ export default function MyLearningPage() {
           ) : (
             <EmptyState
               icon={<BookOpen size={48} />}
-              title="No courses in progress"
-              description="Enroll in a course to get started"
-              actionLabel="Browse Courses"
+              title={t(language, 'noInProgress')}
+              description={t(language, 'startByEnrolling')}
+              actionLabel={t(language, 'browseCoursesBtn')}
               onAction={() => navigate('/courses')}
             />
           )}
@@ -77,7 +80,7 @@ export default function MyLearningPage() {
     },
     {
       id: 'completed',
-      label: 'Completed',
+      label: t(language, 'completedTab'),
       content: (
         <div>
           {completed.length > 0 ? (
@@ -85,8 +88,8 @@ export default function MyLearningPage() {
           ) : (
             <EmptyState
               icon={<BookOpen size={48} />}
-              title="No completed courses"
-              description="Complete a course to see it here"
+              title={t(language, 'noCompleted')}
+              description={t(language, 'startByEnrolling')}
             />
           )}
         </div>
@@ -97,8 +100,8 @@ export default function MyLearningPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-4xl font-bold text-navy-800">My Learning</h1>
-        <p className="text-navy-500 mt-2">Track your progress and continue learning</p>
+        <h1 className="text-4xl font-bold text-navy-800">{t(language, 'myLearningTitle')}</h1>
+        <p className="text-navy-500 mt-2">{t(language, 'trackProgress')}</p>
       </div>
 
       <Tabs tabs={tabs} defaultTab="all" />

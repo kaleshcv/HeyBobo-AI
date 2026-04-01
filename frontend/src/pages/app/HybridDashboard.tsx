@@ -39,6 +39,7 @@ import { useCourseStore } from '@/store/courseStore';
 import { useShoppingListStore } from '@/store/shoppingListStore';
 import { useInjuryStore } from '@/store/injuryStore';
 import { useUIStore } from '@/store/uiStore';
+import { t as tr } from '@/lib/translations';
 
 /* ═══════════════════════════════════════════════════════════════════
    CSS KEYFRAMES
@@ -158,13 +159,13 @@ function StatPill({ label, value, color, sub }: { label: string; value: string; 
 /* ═══════════════════════════════════════════════════════════════════
    MODULE CONSTANTS
    ═══════════════════════════════════════════════════════════════════ */
-const MODULE_NAV: { icon: React.ReactNode; label: string; color: string; path: string; emoji: string }[] = [
-  { icon: <SchoolIcon sx={{ fontSize: 20 }} />,         label: 'Learn',   color: '#38bdf8', path: '/app/education',  emoji: '📚' },
-  { icon: <FitnessCenterIcon sx={{ fontSize: 20 }} />,  label: 'Fitness', color: '#10b981', path: '/app/fitness',    emoji: '🏋️' },
-  { icon: <MonitorHeartIcon sx={{ fontSize: 20 }} />,   label: 'Health',  color: '#f43f5e', path: '/app/health',     emoji: '❤️' },
-  { icon: <RestaurantIcon sx={{ fontSize: 20 }} />,     label: 'Diet',    color: '#f59e0b', path: '/app/dietary',    emoji: '🍎' },
-  { icon: <ShoppingCartIcon sx={{ fontSize: 20 }} />,   label: 'Shop',    color: '#a78bfa', path: '/app/shopping',   emoji: '🛒' },
-  { icon: <GroupsIcon sx={{ fontSize: 20 }} />,         label: 'Groups',  color: '#ec4899', path: '/app/groups',     emoji: '👥' },
+const MODULE_NAV_BASE: { icon: React.ReactNode; key: 'navLearn' | 'navFitness' | 'navHealth' | 'navDiet' | 'navShop' | 'navGroups'; color: string; path: string; emoji: string }[] = [
+  { icon: <SchoolIcon sx={{ fontSize: 20 }} />,         key: 'navLearn',   color: '#38bdf8', path: '/app/education',  emoji: '📚' },
+  { icon: <FitnessCenterIcon sx={{ fontSize: 20 }} />,  key: 'navFitness', color: '#10b981', path: '/app/fitness',    emoji: '🏋️' },
+  { icon: <MonitorHeartIcon sx={{ fontSize: 20 }} />,   key: 'navHealth',  color: '#f43f5e', path: '/app/health',     emoji: '❤️' },
+  { icon: <RestaurantIcon sx={{ fontSize: 20 }} />,     key: 'navDiet',    color: '#f59e0b', path: '/app/dietary',    emoji: '🍎' },
+  { icon: <ShoppingCartIcon sx={{ fontSize: 20 }} />,   key: 'navShop',    color: '#a78bfa', path: '/app/shopping',   emoji: '🛒' },
+  { icon: <GroupsIcon sx={{ fontSize: 20 }} />,         key: 'navGroups',  color: '#ec4899', path: '/app/groups',     emoji: '👥' },
 ];
 
 const MODULE_SCORE_META: Record<string, { emoji: string; color: string }> = {
@@ -201,7 +202,12 @@ export default function HybridDashboard() {
   /* ── theme mode (from global store) ── */
   const hbMode = useUIStore((s) => s.theme);
   const toggleMode = useUIStore((s) => s.toggleTheme);
+  const lang = useUIStore((s) => s.language);
   const t = hbMode === 'dark' ? HB_DARK : HB_LIGHT;
+
+  const MODULE_NAV = useMemo(() =>
+    MODULE_NAV_BASE.map(m => ({ ...m, label: tr(lang, m.key) })),
+  [lang]);
 
   /* ── store reads ── */
   const { schedule, moduleInsights, alerts: brainAlerts, recommendations, crossInsights } = useAIBrainStore();
@@ -269,19 +275,26 @@ export default function HybridDashboard() {
     const trends = moduleInsights.map(m => m.trend);
     const ups = trends.filter(t => t === 'up').length;
     const downs = trends.filter(t => t === 'down').length;
-    if (ups > downs) return { text: 'improving', arrow: '↑', color: '#10b981' };
-    if (downs > ups) return { text: 'declining', arrow: '↓', color: '#ef4444' };
-    return { text: 'stable', arrow: '→', color: t.tm };
-  }, [moduleInsights, t.tm]);
+    if (ups > downs) return { text: tr(lang, 'trendImproving'), arrow: '↑', color: '#10b981' };
+    if (downs > ups) return { text: tr(lang, 'trendDeclining'), arrow: '↓', color: '#ef4444' };
+    return { text: tr(lang, 'trendStable'), arrow: '→', color: t.tm };
+  }, [moduleInsights, t.tm, lang]);
 
   // Module scores
+  const MODULE_LABEL_KEY: Record<string, Parameters<typeof tr>[1]> = {
+    education: 'modEducation', fitness: 'modFitness', health: 'modHealth',
+    dietary: 'modDiet', shopping: 'modShopping', groups: 'modGroups',
+    grooming: 'modGrooming', injury: 'modInjury', rehab: 'modRehab', wellness: 'modWellness',
+  };
   const moduleScores = useMemo(() =>
     moduleInsights.map(m => ({
-      label: m.label, score: m.score, trend: m.trend,
+      label: MODULE_LABEL_KEY[m.module] ? tr(lang, MODULE_LABEL_KEY[m.module]!) : m.label,
+      score: m.score, trend: m.trend,
       emoji: MODULE_SCORE_META[m.module]?.emoji ?? '📊',
       color: MODULE_SCORE_META[m.module]?.color ?? '#64748b',
     })),
-  [moduleInsights]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  [moduleInsights, lang]);
 
   // Grade
   const grade = lifeScore >= 90 ? 'S' : lifeScore >= 75 ? 'A' : lifeScore >= 60 ? 'B' : lifeScore >= 40 ? 'C' : 'D';
@@ -312,29 +325,29 @@ export default function HybridDashboard() {
   const suggestions = useMemo(() => {
     const items: Sug[] = [];
     if (sleepHours > 0 && sleepHours < 6)
-      items.push({ emoji: '😴', title: 'Improve Your Sleep', sub: `Only ${sleepHours.toFixed(1)}h — try magnesium or earlier bedtime`, tag: `${sleepHours.toFixed(1)}h`, tagColor: '#ef4444', tagBg: 'rgba(239,68,68,.12)', path: '/app/health' });
+      items.push({ emoji: '😴', title: tr(lang, 'sugImprSleep'), sub: `${sleepHours.toFixed(1)}${tr(lang, 'sugSleepSub')}`, tag: `${sleepHours.toFixed(1)}h`, tagColor: '#ef4444', tagBg: 'rgba(239,68,68,.12)', path: '/app/health' });
     if (stressScore > 50)
-      items.push({ emoji: '🧘', title: 'Manage Stress', sub: stressScore > 70 ? 'High stress — try breathing exercises' : 'Elevated — take a mindfulness break', tag: `${stressScore}/100`, tagColor: '#f59e0b', tagBg: 'rgba(245,158,11,.12)', path: '/app/fitness' });
+      items.push({ emoji: '🧘', title: tr(lang, 'sugManageStress'), sub: stressScore > 70 ? tr(lang, 'sugHighStress') : tr(lang, 'sugElevStress'), tag: `${stressScore}/100`, tagColor: '#f59e0b', tagBg: 'rgba(245,158,11,.12)', path: '/app/fitness' });
 
     wearableAlerts.filter(a => !a.dismissed).slice(0, 1).forEach(a =>
       items.push({ emoji: '⌚', title: a.deviceName, sub: a.message, tag: a.severity, tagColor: a.severity === 'critical' ? '#ef4444' : '#f59e0b', tagBg: a.severity === 'critical' ? 'rgba(239,68,68,.12)' : 'rgba(245,158,11,.12)', path: '/app/wearables' }));
 
     const stepsGap = activityGoals.steps - todayMetrics.steps;
     if (stepsGap > 1000)
-      items.push({ emoji: '🚶', title: `${stepsGap.toLocaleString()} Steps to Go`, sub: `${todayMetrics.steps.toLocaleString()} of ${activityGoals.steps.toLocaleString()} goal`, tag: 'Fitness', tagColor: '#10b981', tagBg: 'rgba(16,185,129,.12)', path: '/app/fitness' });
+      items.push({ emoji: '🚶', title: `${stepsGap.toLocaleString()} ${tr(lang, 'sugStepsToGo')}`, sub: `${todayMetrics.steps.toLocaleString()} of ${activityGoals.steps.toLocaleString()} ${tr(lang, 'sugStepsGoal')}`, tag: tr(lang, 'modFitness'), tagColor: '#10b981', tagBg: 'rgba(16,185,129,.12)', path: '/app/fitness' });
     activeInjuries.slice(0, 1).forEach(inj =>
-      items.push({ emoji: '🩹', title: `${inj.bodyPart} Recovery`, sub: `Status: ${inj.status} — severity: ${inj.severity}`, tag: 'Injury', tagColor: '#fb923c', tagBg: 'rgba(251,146,60,.12)', path: '/app/health/injury' }));
+      items.push({ emoji: '🩹', title: `${inj.bodyPart} ${tr(lang, 'modRehab')}`, sub: `Status: ${inj.status} — severity: ${inj.severity}`, tag: tr(lang, 'modInjury'), tagColor: '#fb923c', tagBg: 'rgba(251,146,60,.12)', path: '/app/health/injury' }));
     rehabPrograms.filter(p => p.status === 'active').slice(0, 1).forEach(p =>
-      items.push({ emoji: '🏥', title: p.name, sub: `${p.frequency} — ${p.completedSessions.length} sessions done`, tag: 'Rehab', tagColor: '#fb923c', tagBg: 'rgba(251,146,60,.12)', path: '/app/health/injury' }));
+      items.push({ emoji: '🏥', title: p.name, sub: `${p.frequency} — ${p.completedSessions.length} sessions done`, tag: tr(lang, 'modRehab'), tagColor: '#fb923c', tagBg: 'rgba(251,146,60,.12)', path: '/app/health/injury' }));
     courses.slice(0, 2).forEach(c => {
       const p = getCourseProgress(c.id);
       if (p.percent > 0 && p.percent < 100)
-        items.push({ emoji: '📚', title: c.title, sub: `${p.percent}% complete — ${p.total - p.completed} lectures left`, tag: 'Education', tagColor: '#38bdf8', tagBg: 'rgba(56,189,248,.12)', path: '/app/education' });
+        items.push({ emoji: '📚', title: c.title, sub: `${p.percent}% complete — ${p.total - p.completed} ${tr(lang, 'sugLectLeft')}`, tag: tr(lang, 'modEducation'), tagColor: '#38bdf8', tagBg: 'rgba(56,189,248,.12)', path: '/app/education' });
     });
     shoppingLists.forEach(list => {
       const unchecked = list.items.filter(i => !i.checked);
       if (unchecked.length > 0)
-        items.push({ emoji: '🛒', title: `${list.emoji} ${list.name}`, sub: `${unchecked.length} item${unchecked.length !== 1 ? 's' : ''} pending`, tag: 'Shopping', tagColor: '#a78bfa', tagBg: 'rgba(167,139,250,.12)', path: '/app/shopping' });
+        items.push({ emoji: '🛒', title: `${list.emoji} ${list.name}`, sub: `${unchecked.length} ${tr(lang, 'sugItemsPend')}`, tag: tr(lang, 'modShopping'), tagColor: '#a78bfa', tagBg: 'rgba(167,139,250,.12)', path: '/app/shopping' });
     });
     return items.slice(0, 6);
   }, [sleepHours, stressScore, wearableAlerts, activityGoals, todayMetrics, activeInjuries, rehabPrograms, courses, getCourseProgress, shoppingLists]);
@@ -348,12 +361,12 @@ export default function HybridDashboard() {
 
   // Achievements
   const achievements = useMemo(() => [
-    { id: 'first', icon: <DirectionsRunIcon sx={{ fontSize: 18, color: '#0D1B2A' }} />, title: 'First Steps', desc: 'Log first activity', unlocked: todayMetrics.steps > 0 || workoutLogs.length > 0 },
-    { id: 'goals', icon: <EmojiEventsIcon sx={{ fontSize: 18, color: '#0D1B2A' }} />, title: 'Goal Crusher', desc: 'Hit all daily goals', unlocked: stepPct >= 100 && calPct >= 100 && activePct >= 100 },
-    { id: 'streak3', icon: <LocalFireDepartmentIcon sx={{ fontSize: 18, color: '#0D1B2A' }} />, title: 'On Fire', desc: '3-day streak', unlocked: streak >= 3 },
-    { id: 'learner', icon: <SchoolIcon sx={{ fontSize: 18, color: '#0D1B2A' }} />, title: 'Scholar', desc: 'Complete a course', unlocked: courses.some(c => getCourseProgress(c.id).percent >= 100) },
-    { id: 'level5', icon: <StarIcon sx={{ fontSize: 18, color: '#0D1B2A' }} />, title: 'Level 5', desc: 'Reach level 5', unlocked: xpData.level >= 5 },
-  ], [todayMetrics.steps, workoutLogs.length, stepPct, calPct, activePct, streak, courses, getCourseProgress, xpData.level]);
+    { id: 'first', icon: <DirectionsRunIcon sx={{ fontSize: 18, color: '#0D1B2A' }} />, title: tr(lang, 'achFirstSteps'), desc: tr(lang, 'achFirstStepsDesc'), unlocked: todayMetrics.steps > 0 || workoutLogs.length > 0 },
+    { id: 'goals', icon: <EmojiEventsIcon sx={{ fontSize: 18, color: '#0D1B2A' }} />, title: tr(lang, 'achGoalCrusher'), desc: tr(lang, 'achGoalCrusherDesc'), unlocked: stepPct >= 100 && calPct >= 100 && activePct >= 100 },
+    { id: 'streak3', icon: <LocalFireDepartmentIcon sx={{ fontSize: 18, color: '#0D1B2A' }} />, title: tr(lang, 'achOnFire'), desc: tr(lang, 'achOnFireDesc'), unlocked: streak >= 3 },
+    { id: 'learner', icon: <SchoolIcon sx={{ fontSize: 18, color: '#0D1B2A' }} />, title: tr(lang, 'achScholar'), desc: tr(lang, 'achScholarDesc'), unlocked: courses.some(c => getCourseProgress(c.id).percent >= 100) },
+    { id: 'level5', icon: <StarIcon sx={{ fontSize: 18, color: '#0D1B2A' }} />, title: tr(lang, 'achLevel5'), desc: tr(lang, 'achLevel5Desc'), unlocked: xpData.level >= 5 },
+  ], [lang, todayMetrics.steps, workoutLogs.length, stepPct, calPct, activePct, streak, courses, getCourseProgress, xpData.level]);
 
   /* ── Weather data ── */
   type WeatherData = { temp: number; feelsLike: number; humidity: number; windSpeed: number; uvIndex: number; weatherCode: number; precip: number };
@@ -386,14 +399,14 @@ export default function HybridDashboard() {
   const weatherLabel = useMemo(() => {
     if (!weather) return null;
     const c = weather.weatherCode;
-    if (c <= 1) return { text: 'Clear', emoji: '☀️', icon: <WbSunnyRoundedIcon sx={{ fontSize: 22, color: '#f59e0b' }} /> };
-    if (c <= 3) return { text: 'Partly Cloudy', emoji: '⛅', icon: <WbSunnyRoundedIcon sx={{ fontSize: 22, color: '#fbbf24' }} /> };
-    if (c <= 48) return { text: 'Cloudy / Foggy', emoji: '☁️', icon: <AirRoundedIcon sx={{ fontSize: 22, color: '#94a3b8' }} /> };
-    if (c <= 67) return { text: 'Rainy', emoji: '🌧️', icon: <UmbrellaRoundedIcon sx={{ fontSize: 22, color: '#60a5fa' }} /> };
-    if (c <= 77) return { text: 'Snowy', emoji: '❄️', icon: <AcUnitRoundedIcon sx={{ fontSize: 22, color: '#93c5fd' }} /> };
-    if (c <= 82) return { text: 'Heavy Rain', emoji: '⛈️', icon: <UmbrellaRoundedIcon sx={{ fontSize: 22, color: '#3b82f6' }} /> };
-    return { text: 'Stormy', emoji: '⛈️', icon: <UmbrellaRoundedIcon sx={{ fontSize: 22, color: '#6366f1' }} /> };
-  }, [weather]);
+    if (c <= 1) return { text: tr(lang, 'weatherClear'), emoji: '☀️', icon: <WbSunnyRoundedIcon sx={{ fontSize: 22, color: '#f59e0b' }} /> };
+    if (c <= 3) return { text: tr(lang, 'weatherPartlyCloudy'), emoji: '⛅', icon: <WbSunnyRoundedIcon sx={{ fontSize: 22, color: '#fbbf24' }} /> };
+    if (c <= 48) return { text: tr(lang, 'weatherCloudy'), emoji: '☁️', icon: <AirRoundedIcon sx={{ fontSize: 22, color: '#94a3b8' }} /> };
+    if (c <= 67) return { text: tr(lang, 'weatherRainy'), emoji: '🌧️', icon: <UmbrellaRoundedIcon sx={{ fontSize: 22, color: '#60a5fa' }} /> };
+    if (c <= 77) return { text: tr(lang, 'weatherSnowy'), emoji: '❄️', icon: <AcUnitRoundedIcon sx={{ fontSize: 22, color: '#93c5fd' }} /> };
+    if (c <= 82) return { text: tr(lang, 'weatherHeavyRain'), emoji: '⛈️', icon: <UmbrellaRoundedIcon sx={{ fontSize: 22, color: '#3b82f6' }} /> };
+    return { text: tr(lang, 'weatherStormy'), emoji: '⛈️', icon: <UmbrellaRoundedIcon sx={{ fontSize: 22, color: '#6366f1' }} /> };
+  }, [weather, lang]);
 
   // Protection recommendations based on weather + health data
   const protectionTips = useMemo(() => {
@@ -401,34 +414,34 @@ export default function HybridDashboard() {
     const tips: { icon: React.ReactNode; title: string; sub: string; color: string }[] = [];
     // UV protection
     if (weather.uvIndex >= 6) {
-      tips.push({ icon: <ShieldRoundedIcon sx={{ fontSize: 16 }} />, title: 'High UV — Apply SPF 50+', sub: `UV Index ${weather.uvIndex}. Reapply sunscreen every 2 hours if outdoors.`, color: '#ef4444' });
+      tips.push({ icon: <ShieldRoundedIcon sx={{ fontSize: 16 }} />, title: tr(lang, 'tipHighUV'), sub: `UV Index ${weather.uvIndex}. Reapply sunscreen every 2 hours if outdoors.`, color: '#ef4444' });
     } else if (weather.uvIndex >= 3) {
-      tips.push({ icon: <ShieldRoundedIcon sx={{ fontSize: 16 }} />, title: 'Moderate UV — Wear Sunscreen', sub: `UV Index ${weather.uvIndex}. SPF 30+ recommended for outdoor activities.`, color: '#f59e0b' });
+      tips.push({ icon: <ShieldRoundedIcon sx={{ fontSize: 16 }} />, title: tr(lang, 'tipModerateUV'), sub: `UV Index ${weather.uvIndex}. SPF 30+ recommended for outdoor activities.`, color: '#f59e0b' });
     }
     // Heat advisory
     if (weather.temp >= 38) {
-      tips.push({ icon: <WbSunnyRoundedIcon sx={{ fontSize: 16 }} />, title: 'Extreme Heat Warning', sub: `${weather.temp}°C — Avoid outdoor exercise between 10 AM–4 PM. Stay hydrated.`, color: '#ef4444' });
+      tips.push({ icon: <WbSunnyRoundedIcon sx={{ fontSize: 16 }} />, title: tr(lang, 'tipExtremeHeat'), sub: `${weather.temp}°C — Avoid outdoor exercise between 10 AM–4 PM. Stay hydrated.`, color: '#ef4444' });
     } else if (weather.temp >= 33) {
-      tips.push({ icon: <WbSunnyRoundedIcon sx={{ fontSize: 16 }} />, title: 'Hot Day — Extra Hydration', sub: `${weather.temp}°C feels like ${weather.feelsLike}°C. Drink 3–4L water today.`, color: '#f59e0b' });
+      tips.push({ icon: <WbSunnyRoundedIcon sx={{ fontSize: 16 }} />, title: tr(lang, 'tipHotDay'), sub: `${weather.temp}°C feels like ${weather.feelsLike}°C. Drink 3–4L water today.`, color: '#f59e0b' });
     }
     // Rain
     if (weather.precip > 0 || (weather.weatherCode >= 51 && weather.weatherCode <= 82)) {
-      tips.push({ icon: <UmbrellaRoundedIcon sx={{ fontSize: 16 }} />, title: 'Rain Expected — Carry Umbrella', sub: 'Consider indoor workouts instead. Roads may be slippery.', color: '#60a5fa' });
+      tips.push({ icon: <UmbrellaRoundedIcon sx={{ fontSize: 16 }} />, title: tr(lang, 'tipRain'), sub: 'Consider indoor workouts instead. Roads may be slippery.', color: '#60a5fa' });
     }
     // Humidity
     if (weather.humidity >= 75) {
-      tips.push({ icon: <WaterDropRoundedIcon sx={{ fontSize: 16 }} />, title: 'High Humidity — Breathable Clothing', sub: `${weather.humidity}% humidity. Wear moisture-wicking fabrics. Electrolytes helpful.`, color: '#06b6d4' });
+      tips.push({ icon: <WaterDropRoundedIcon sx={{ fontSize: 16 }} />, title: tr(lang, 'tipHighHumidity'), sub: `${weather.humidity}% humidity. Wear moisture-wicking fabrics. Electrolytes helpful.`, color: '#06b6d4' });
     }
     // Wind
     if (weather.windSpeed >= 35) {
-      tips.push({ icon: <AirRoundedIcon sx={{ fontSize: 16 }} />, title: 'Strong Winds — Stay Sheltered', sub: `${weather.windSpeed} km/h gusts. Avoid cycling or running outdoors.`, color: '#94a3b8' });
+      tips.push({ icon: <AirRoundedIcon sx={{ fontSize: 16 }} />, title: tr(lang, 'tipStrongWind'), sub: `${weather.windSpeed} km/h gusts. Avoid cycling or running outdoors.`, color: '#94a3b8' });
     }
     // Cold (unlikely in Dubai but covers all locations)
     if (weather.temp <= 12) {
-      tips.push({ icon: <AcUnitRoundedIcon sx={{ fontSize: 16 }} />, title: 'Cold Day — Layer Up', sub: `${weather.temp}°C. Warm up properly before exercising. Protect extremities.`, color: '#818cf8' });
+      tips.push({ icon: <AcUnitRoundedIcon sx={{ fontSize: 16 }} />, title: tr(lang, 'tipCold'), sub: `${weather.temp}°C. Warm up properly before exercising. Protect extremities.`, color: '#818cf8' });
     }
     return tips;
-  }, [weather]);
+  }, [weather, lang]);
 
   // Daily smart nudges — time-aware contextual reminders
   const nudges = useMemo(() => {
@@ -441,55 +454,55 @@ export default function HybridDashboard() {
     const glassesPerHour = Math.ceil((waterGoalL * 4) / 14); // glasses across waking hours
     if (hour >= 7 && hour <= 22) {
       const glassesToNow = Math.max(1, (hour - 7) * glassesPerHour);
-      items.push({ emoji: '💧', text: `Hydration check — ${glassesToNow}+ glasses by now (aim for ${waterGoalL}L today)`, color: '#06b6d4' });
+      items.push({ emoji: '💧', text: `${tr(lang, 'nudgeHydration')} — ${glassesToNow}+ ${lang === 'ar' ? 'كأساً' : 'glasses'} ${lang === 'ar' ? 'حتى الآن' : 'by now'} (${lang === 'ar' ? 'الهدف' : 'aim for'} ${waterGoalL}L ${lang === 'ar' ? 'اليوم' : 'today'})`, color: '#06b6d4' });
     }
 
     // Posture / screen-break nudge
     if (hour >= 9 && hour <= 18) {
-      items.push({ emoji: '🧍', text: 'Stand up & stretch — 2 min break every hour reduces back strain by 40%', color: '#8b5cf6' });
+      items.push({ emoji: '🧍', text: tr(lang, 'nudgeStretch'), color: '#8b5cf6' });
     }
 
     // Morning supplements
     if (hour >= 6 && hour < 10) {
-      items.push({ emoji: '💊', text: 'Morning supplements: Vitamin D3, Omega-3 with breakfast for best absorption', color: '#f59e0b' });
+      items.push({ emoji: '💊', text: tr(lang, 'nudgeSupplements'), color: '#f59e0b' });
     }
 
     // Evening wind-down
     if (hour >= 20) {
-      items.push({ emoji: '🌙', text: 'Wind-down time — dim screens, take magnesium, sleep goal: 7+ hours', color: '#818cf8' });
+      items.push({ emoji: '🌙', text: tr(lang, 'nudgeWindDown'), color: '#818cf8' });
       if (sleepHours > 0 && sleepHours < 6) {
-        items.push({ emoji: '😴', text: `Last night was only ${sleepHours.toFixed(1)}h — try sleeping 30 min earlier tonight`, color: '#ef4444' });
+        items.push({ emoji: '😴', text: lang === 'ar' ? `الليلة الماضية كانت ${sleepHours.toFixed(1)}س فقط — حاول النوم مبكراً بـ 30 دقيقة الليلة` : `Last night was only ${sleepHours.toFixed(1)}h — try sleeping 30 min earlier tonight`, color: '#ef4444' });
       }
     }
 
     // Steps nudge based on time of day
     if (hour >= 12 && stepPct < 40) {
-      items.push({ emoji: '🚶', text: `Only ${stepPct}% of step goal by afternoon — take a 15-min walk after lunch`, color: '#10b981' });
+      items.push({ emoji: '🚶', text: lang === 'ar' ? `${stepPct}% فقط من هدف الخطوات — امشِ 15 دقيقة بعد الغداء` : `Only ${stepPct}% of step goal by afternoon — take a 15-min walk after lunch`, color: '#10b981' });
     } else if (hour >= 17 && stepPct < 70) {
-      items.push({ emoji: '🏃', text: `${100 - stepPct}% of steps remaining — evening walk or light jog recommended`, color: '#10b981' });
+      items.push({ emoji: '🏃', text: lang === 'ar' ? `${100 - stepPct}% من الخطوات متبقٍ — يُنصح بالمشي المسائي` : `${100 - stepPct}% of steps remaining — evening walk or light jog recommended`, color: '#10b981' });
     }
 
     // Grooming / skincare
     if (hour >= 6 && hour < 9) {
-      items.push({ emoji: '🧴', text: weather && weather.uvIndex >= 3 ? `Apply sunscreen (UV ${weather.uvIndex}) + moisturizer before heading out` : 'Morning skincare: cleanse & moisturize for the day', color: '#ec4899' });
+      items.push({ emoji: '🧴', text: weather && weather.uvIndex >= 3 ? (lang === 'ar' ? `ضع واقي شمس (UV ${weather.uvIndex}) + مرطب قبل الخروج` : `Apply sunscreen (UV ${weather.uvIndex}) + moisturizer before heading out`) : tr(lang, 'nudgeSkincareMorning'), color: '#ec4899' });
     }
     if (hour >= 20 && hour <= 23) {
-      items.push({ emoji: '🧴', text: 'Evening skincare: cleanse, tone & night cream for skin recovery', color: '#ec4899' });
+      items.push({ emoji: '🧴', text: tr(lang, 'nudgeSkincareEvening'), color: '#ec4899' });
     }
 
     // Calorie check
     if (hour >= 14 && calPct < 30) {
-      items.push({ emoji: '🔥', text: 'Low calorie burn so far — try a brisk walk or quick workout to boost metabolism', color: '#ef4444' });
+      items.push({ emoji: '🔥', text: tr(lang, 'nudgeLowCalories'), color: '#ef4444' });
     }
 
     return items.slice(0, 5);
-  }, [weather, sleepHours, stepPct, calPct]);
+  }, [weather, sleepHours, stepPct, calPct, lang]);
 
   // Greeting
   const greeting = useMemo(() => {
     const h = new Date().getHours();
-    return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
-  }, []);
+    return h < 12 ? tr(lang, 'goodMorning') : h < 17 ? tr(lang, 'goodAfternoon') : tr(lang, 'goodEvening');
+  }, [lang]);
   const firstName = user?.firstName ?? 'there';
   const todayDate = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
 
@@ -522,7 +535,7 @@ export default function HybridDashboard() {
               {/* Live sync indicator */}
               <Box sx={{ display: 'flex', alignItems: 'center', gap: .5, mr: .5 }}>
                 <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: '#10b981', animation: 'hb-live-dot 2s ease infinite' }} />
-                <Typography sx={{ fontSize: 9, color: t.td }}>Live · {lastSyncTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Typography>
+                <Typography sx={{ fontSize: 9, color: t.td }}>{tr(lang, 'liveSync')} {lastSyncTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Typography>
               </Box>
               {/* Theme toggle */}
               <IconButton onClick={toggleMode} size="small" sx={{
@@ -557,7 +570,7 @@ export default function HybridDashboard() {
                 </Box>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: .3 }}>
-                <Typography sx={{ fontSize: 9, color: t.td2 }}>Next level</Typography>
+                <Typography sx={{ fontSize: 9, color: t.td2 }}>{tr(lang, 'nextLevel')}</Typography>
                 <Typography sx={{ fontSize: 9, color: '#C9A84C', fontWeight: 700 }}>{xpData.inLevel}/{xpData.forLevel} XP</Typography>
               </Box>
             </Box>
@@ -597,10 +610,10 @@ export default function HybridDashboard() {
 
         {/* ─────── ACTIVITY STATS (horizontal pills) ─────── */}
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: heartRate > 0 ? 'repeat(4, 1fr)' : 'repeat(3, 1fr)' }, gap: 1, mb: 2, animation: 'hb-slide-up .4s .1s ease both' }}>
-          <StatPill label="Steps" value={todayMetrics.steps.toLocaleString()} color="#10b981" sub={`${stepPct}% of goal`} />
-          <StatPill label="Calories" value={`${todayMetrics.caloriesBurned}`} color="#ef4444" sub={`${calPct}% of goal`} />
-          <StatPill label="Active" value={`${todayMetrics.activeMinutes}m`} color="#f59e0b" sub={`${activePct}% of goal`} />
-          {heartRate > 0 && <StatPill label="BPM" value={`${heartRate}`} color="#f43f5e" />}
+          <StatPill label={tr(lang, 'statSteps')} value={todayMetrics.steps.toLocaleString()} color="#10b981" sub={`${stepPct}% ${tr(lang, 'ofGoalLabel')}`} />
+          <StatPill label={tr(lang, 'statCalories')} value={`${todayMetrics.caloriesBurned}`} color="#ef4444" sub={`${calPct}% ${tr(lang, 'ofGoalLabel')}`} />
+          <StatPill label={tr(lang, 'statActive')} value={`${todayMetrics.activeMinutes}m`} color="#f59e0b" sub={`${activePct}% ${tr(lang, 'ofGoalLabel')}`} />
+          {heartRate > 0 && <StatPill label={tr(lang, 'statBPM')} value={`${heartRate}`} color="#f43f5e" />}
         </Box>
 
         {/* ─────── WEATHER + PROTECTION ─────── */}
@@ -616,23 +629,23 @@ export default function HybridDashboard() {
                 }}>{weatherLabel.icon}</Box>
                 <Box sx={{ flex: 1 }}>
                   <Typography sx={{ fontWeight: 800, fontSize: 26, color: t.text, lineHeight: 1 }}>{weather.temp}°C</Typography>
-                  <Typography sx={{ fontSize: 12, color: t.ts, mt: .25 }}>{weatherLabel.text} · Feels like {weather.feelsLike}°C</Typography>
+                  <Typography sx={{ fontSize: 12, color: t.ts, mt: .25 }}>{weatherLabel.text} · {tr(lang, 'feelsLike')} {weather.feelsLike}°C</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 2, flexShrink: 0 }}>
                   <Box sx={{ textAlign: 'center' }}>
                     <WaterDropRoundedIcon sx={{ fontSize: 14, color: '#06b6d4' }} />
                     <Typography sx={{ fontSize: 10, fontWeight: 700, color: t.text }}>{weather.humidity}%</Typography>
-                    <Typography sx={{ fontSize: 8, color: t.td }}>Humidity</Typography>
+                    <Typography sx={{ fontSize: 8, color: t.td }}>{tr(lang, 'humidityLabel')}</Typography>
                   </Box>
                   <Box sx={{ textAlign: 'center' }}>
                     <AirRoundedIcon sx={{ fontSize: 14, color: '#94a3b8' }} />
                     <Typography sx={{ fontSize: 10, fontWeight: 700, color: t.text }}>{weather.windSpeed}</Typography>
-                    <Typography sx={{ fontSize: 8, color: t.td }}>km/h</Typography>
+                    <Typography sx={{ fontSize: 8, color: t.td }}>{tr(lang, 'windSpeedLabel')}</Typography>
                   </Box>
                   <Box sx={{ textAlign: 'center' }}>
                     <WbSunnyRoundedIcon sx={{ fontSize: 14, color: weather.uvIndex >= 6 ? '#ef4444' : weather.uvIndex >= 3 ? '#f59e0b' : '#10b981' }} />
                     <Typography sx={{ fontSize: 10, fontWeight: 700, color: t.text }}>{weather.uvIndex}</Typography>
-                    <Typography sx={{ fontSize: 8, color: t.td }}>UV</Typography>
+                    <Typography sx={{ fontSize: 8, color: t.td }}>{tr(lang, 'uvIndexLabel')}</Typography>
                   </Box>
                 </Box>
               </Box>
@@ -641,7 +654,7 @@ export default function HybridDashboard() {
             {/* Protection tips */}
             {protectionTips.length > 0 && (
               <Card delay={.15}>
-                <SectionTitle icon={<ShieldRoundedIcon sx={{ fontSize: 14, color: '#f43f5e' }} />} title="Daily Protection" />
+                <SectionTitle icon={<ShieldRoundedIcon sx={{ fontSize: 14, color: '#f43f5e' }} />} title={tr(lang, 'dailyProtection')} />
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: .75 }}>
                   {protectionTips.map((tip, i) => (
                     <Box key={i} sx={{
@@ -668,7 +681,7 @@ export default function HybridDashboard() {
             <Box sx={{ display: 'flex', gap: 2.5, justifyContent: 'center' }}>
               {sleepHours > 0 && (
                 <Box sx={{ textAlign: 'center' }}>
-                  <Typography sx={{ fontSize: 9, color: t.tm, textTransform: 'uppercase', letterSpacing: .5 }}>Sleep</Typography>
+                  <Typography sx={{ fontSize: 9, color: t.tm, textTransform: 'uppercase', letterSpacing: .5 }}>{tr(lang, 'vitalSleep')}</Typography>
                   <Typography sx={{ fontWeight: 800, fontSize: 18, color: sleepHours >= 7 ? '#10b981' : sleepHours >= 5 ? '#f59e0b' : '#ef4444' }}>
                     {sleepHours.toFixed(1)}h
                   </Typography>
@@ -676,13 +689,13 @@ export default function HybridDashboard() {
               )}
               {stressScore > 0 && (
                 <Box sx={{ textAlign: 'center' }}>
-                  <Typography sx={{ fontSize: 9, color: t.tm, textTransform: 'uppercase', letterSpacing: .5 }}>Stress</Typography>
+                  <Typography sx={{ fontSize: 9, color: t.tm, textTransform: 'uppercase', letterSpacing: .5 }}>{tr(lang, 'vitalStress')}</Typography>
                   <Typography sx={{ fontWeight: 800, fontSize: 18, color: stressScore <= 30 ? '#10b981' : stressScore <= 60 ? '#f59e0b' : '#ef4444' }}>{stressScore}</Typography>
                 </Box>
               )}
               {recoveryScore > 0 && (
                 <Box sx={{ textAlign: 'center' }}>
-                  <Typography sx={{ fontSize: 9, color: t.tm, textTransform: 'uppercase', letterSpacing: .5 }}>Recovery</Typography>
+                  <Typography sx={{ fontSize: 9, color: t.tm, textTransform: 'uppercase', letterSpacing: .5 }}>{tr(lang, 'vitalRecovery')}</Typography>
                   <Typography sx={{ fontWeight: 800, fontSize: 18, color: recoveryScore >= 70 ? '#10b981' : recoveryScore >= 40 ? '#f59e0b' : '#ef4444' }}>{recoveryScore}</Typography>
                 </Box>
               )}
@@ -718,11 +731,11 @@ export default function HybridDashboard() {
           <Card delay={.25}>
             <SectionTitle
               icon={<AccessTimeIcon sx={{ fontSize: 14, color: '#38bdf8' }} />}
-              title="Today's Plan"
+              title={tr(lang, 'todaysPlan')}
               right={<Typography sx={{ fontSize: 10, color: t.td }}>{plan.filter(p => p.done).length}/{plan.length}</Typography>}
             />
             {plan.length === 0 ? (
-              <Typography sx={{ fontSize: 12, color: t.td }}>No plan yet — hit Refresh above.</Typography>
+              <Typography sx={{ fontSize: 12, color: t.td }}>{tr(lang, 'noPlanYet')}</Typography>
             ) : plan.map((item, i) => (
               <Box key={item.id} sx={{
                 display: 'flex', gap: 1, py: .75, borderBottom: i < plan.length - 1 ? `1px solid ${t.div}` : 'none',
@@ -749,7 +762,7 @@ export default function HybridDashboard() {
             <Card delay={.3}>
               <SectionTitle
                 icon={<TrendingUpIcon sx={{ fontSize: 14, color: '#C9A84C' }} />}
-                title="Module Scores"
+                title={tr(lang, 'moduleScoresLabel')}
               />
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                 {moduleScores.map((s) => (
@@ -775,7 +788,7 @@ export default function HybridDashboard() {
             <Card delay={.3}>
               <SectionTitle
                 icon={<TrendingUpIcon sx={{ fontSize: 14, color: '#C9A84C' }} />}
-                title="Quick Actions"
+                title={tr(lang, 'quickActions')}
               />
               <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: .75 }}>
                 {MODULE_NAV.slice(0, 4).map((mod) => (
@@ -801,7 +814,7 @@ export default function HybridDashboard() {
           <Card delay={.35} sx={{ mb: { xs: 2, md: 0 } }}>
             <SectionTitle
               icon={<StarIcon sx={{ fontSize: 14, color: '#f59e0b' }} />}
-              title="Daily Quests"
+              title={tr(lang, 'dailyQuests')}
               right={<Typography sx={{ fontSize: 10, color: t.td }}>{quests.filter(q => questDone.has(q.id)).length}/{quests.length}</Typography>}
             />
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: .5 }}>
@@ -837,7 +850,7 @@ export default function HybridDashboard() {
         {/* ─────── SUGGESTIONS ─────── */}
         {suggestions.length > 0 && (
           <Card delay={.4} sx={{ mb: { xs: 2, md: 0 } }}>
-            <Typography sx={{ fontWeight: 700, fontSize: 14, color: t.text, mb: 1.5 }}>✨ Suggested for You</Typography>
+            <Typography sx={{ fontWeight: 700, fontSize: 14, color: t.text, mb: 1.5 }}>{tr(lang, 'suggestedForYou')}</Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: .75 }}>
               {suggestions.map((s, i) => (
                 <Box key={i} onClick={() => s.path && navigate(s.path)} sx={{
@@ -868,7 +881,7 @@ export default function HybridDashboard() {
         {/* ─────── BOBO INSIGHTS ─────── */}
         {boboCards.length > 0 && (
           <Card delay={.45} sx={{ mb: 2 }}>
-            <Typography sx={{ fontWeight: 700, fontSize: 14, color: t.text, mb: 1.5 }}>💬 Bobo Says</Typography>
+            <Typography sx={{ fontWeight: 700, fontSize: 14, color: t.text, mb: 1.5 }}>{tr(lang, 'boboSays')}</Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               {boboCards.map((ci) => (
                 <Box key={ci.id} sx={{
@@ -898,7 +911,7 @@ export default function HybridDashboard() {
         {/* ─────── SMART NUDGES ─────── */}
         {nudges.length > 0 && (
           <Card delay={.48} sx={{ mb: 2 }}>
-            <SectionTitle icon={<BoltIcon sx={{ fontSize: 14, color: '#fbbf24' }} />} title="Smart Nudges" />
+            <SectionTitle icon={<BoltIcon sx={{ fontSize: 14, color: '#fbbf24' }} />} title={lang === 'ar' ? 'تنبيهات ذكية' : 'Smart Nudges'} />
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: .75 }}>
               {nudges.map((n, i) => (
                 <Box key={i} sx={{
@@ -919,7 +932,7 @@ export default function HybridDashboard() {
         <Card delay={.5} sx={{ mb: 3 }}>
           <SectionTitle
             icon={<EmojiEventsIcon sx={{ fontSize: 14, color: '#C9A84C' }} />}
-            title="Achievements"
+            title={lang === 'ar' ? 'الإنجازات' : 'Achievements'}
               right={<Typography sx={{ fontSize: 10, color: t.td }}>{achievements.filter(a => a.unlocked).length}/{achievements.length}</Typography>}
           />
           <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'center', flexWrap: 'wrap' }}>

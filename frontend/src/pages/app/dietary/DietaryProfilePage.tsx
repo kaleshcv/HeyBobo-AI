@@ -273,7 +273,7 @@ export default function DietaryProfilePage() {
   const markDirty = () => { if (!dirty) setDirty(true); };
 
   return (
-    <Box sx={{ flex: 1, px: 3, py: 3, overflow: 'auto' }}>
+    <Box sx={{ flex: 1, px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 3, flexWrap: 'wrap' }}>
         <Box>

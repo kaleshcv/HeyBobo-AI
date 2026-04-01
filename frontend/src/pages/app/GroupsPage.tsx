@@ -19,11 +19,14 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { useGroupStore, GroupCategory, GroupType, PostPermission } from '@/store/groupStore';
 import toast from 'react-hot-toast';
+import { useUIStore } from '@/store/uiStore';
+import { t } from '@/lib/translations';
 
 // ─── Create Group Dialog ──────────────────────────────────
 
 function CreateGroupDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const dk = useTheme().palette.mode === 'dark';
+  const { language } = useUIStore();
   const createGroup = useGroupStore((s) => s.createGroup);
   const navigate = useNavigate();
   const [name, setName] = useState('');
@@ -34,7 +37,7 @@ function CreateGroupDialog({ open, onClose }: { open: boolean; onClose: () => vo
   const [maxMembers, setMaxMembers] = useState(50);
 
   const handleCreate = () => {
-    if (!name.trim()) { toast.error('Group name is required'); return; }
+    if (!name.trim()) { toast.error(t(language, 'groupNameRequired')); return; }
     const group = createGroup({
       name: name.trim(),
       description: description.trim(),
@@ -44,7 +47,7 @@ function CreateGroupDialog({ open, onClose }: { open: boolean; onClose: () => vo
       maxMembers,
       courseIds: [],
     });
-    toast.success('Group created!');
+    toast.success(t(language, 'groupCreated'));
     setName(''); setDescription('');
     onClose();
     navigate(`/app/groups/${group.id}`);
@@ -52,50 +55,50 @@ function CreateGroupDialog({ open, onClose }: { open: boolean; onClose: () => vo
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth PaperProps={{ sx: { borderRadius: 3 } }}>
-      <DialogTitle sx={{ fontWeight: 600 }}>Create New Group</DialogTitle>
+      <DialogTitle sx={{ fontWeight: 600 }}>{t(language, 'createBtn')}</DialogTitle>
       <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '8px !important' }}>
-        <TextField label="Group Name" value={name} onChange={(e) => setName(e.target.value)} fullWidth size="small" required placeholder="e.g. Batch 2026 - Web Dev" />
-        <TextField label="Description" value={description} onChange={(e) => setDescription(e.target.value)} fullWidth size="small" multiline rows={2} placeholder="Short description of this group" />
+        <TextField label={t(language, 'groupNameLabel')} value={name} onChange={(e) => setName(e.target.value)} fullWidth size="small" required placeholder="e.g. Batch 2026 - Web Dev" />
+        <TextField label={t(language, 'groupDescriptionLabel')} value={description} onChange={(e) => setDescription(e.target.value)} fullWidth size="small" multiline rows={2} placeholder="Short description of this group" />
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <FormControl fullWidth size="small">
-              <InputLabel>Category</InputLabel>
-              <Select value={category} onChange={(e) => setCategory(e.target.value as GroupCategory)} label="Category">
-                <MenuItem value="course-based">Course Based</MenuItem>
-                <MenuItem value="subject-based">Subject Based</MenuItem>
-                <MenuItem value="college-based">College Based</MenuItem>
-                <MenuItem value="study-group">Study Group</MenuItem>
-                <MenuItem value="project-group">Project Group</MenuItem>
+              <InputLabel>{t(language, 'categoryLabel')}</InputLabel>
+              <Select value={category} onChange={(e) => setCategory(e.target.value as GroupCategory)} label={t(language, 'categoryLabel')}>
+                <MenuItem value="course-based">{t(language, 'groupCourse')}</MenuItem>
+                <MenuItem value="subject-based">{t(language, 'groupSubject')}</MenuItem>
+                <MenuItem value="college-based">{t(language, 'groupCollege')}</MenuItem>
+                <MenuItem value="study-group">{t(language, 'groupStudy')}</MenuItem>
+                <MenuItem value="project-group">{t(language, 'groupProject')}</MenuItem>
               </Select>
             </FormControl>
           </Grid>
           <Grid item xs={6}>
             <FormControl fullWidth size="small">
-              <InputLabel>Privacy</InputLabel>
-              <Select value={groupType} onChange={(e) => setGroupType(e.target.value as GroupType)} label="Privacy">
-                <MenuItem value="public">Public</MenuItem>
-                <MenuItem value="private">Private</MenuItem>
-                <MenuItem value="restricted">Restricted</MenuItem>
+              <InputLabel>{t(language, 'privacyLabel')}</InputLabel>
+              <Select value={groupType} onChange={(e) => setGroupType(e.target.value as GroupType)} label={t(language, 'privacyLabel')}>
+                <MenuItem value="public">{t(language, 'typePublic')}</MenuItem>
+                <MenuItem value="private">{t(language, 'typePrivate')}</MenuItem>
+                <MenuItem value="restricted">{t(language, 'typeRestricted')}</MenuItem>
               </Select>
             </FormControl>
           </Grid>
           <Grid item xs={6}>
             <FormControl fullWidth size="small">
-              <InputLabel>Post Permissions</InputLabel>
-              <Select value={postPermission} onChange={(e) => setPostPermission(e.target.value as PostPermission)} label="Post Permissions">
-                <MenuItem value="everyone">Everyone</MenuItem>
-                <MenuItem value="admins-only">Admins Only</MenuItem>
+              <InputLabel>{t(language, 'postPermissionsLabel')}</InputLabel>
+              <Select value={postPermission} onChange={(e) => setPostPermission(e.target.value as PostPermission)} label={t(language, 'postPermissionsLabel')}>
+                <MenuItem value="everyone">{t(language, 'groupEveryone')}</MenuItem>
+                <MenuItem value="admins-only">{t(language, 'groupAdminsOnly')}</MenuItem>
               </Select>
             </FormControl>
           </Grid>
           <Grid item xs={6}>
-            <TextField label="Max Members" type="number" value={maxMembers} onChange={(e) => setMaxMembers(Math.max(2, parseInt(e.target.value) || 2))} fullWidth size="small" inputProps={{ min: 2, max: 500 }} />
+            <TextField label={t(language, 'maxMembersLabel')} type="number" value={maxMembers} onChange={(e) => setMaxMembers(Math.max(2, parseInt(e.target.value) || 2))} fullWidth size="small" inputProps={{ min: 2, max: 500 }} />
           </Grid>
         </Grid>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose} sx={{ textTransform: 'none', color: 'text.secondary' }}>Cancel</Button>
-        <Button onClick={handleCreate} variant="contained" sx={{ textTransform: 'none', bgcolor: dk ? '#1A2B3C' : '#616161', '&:hover': { bgcolor: dk ? '#243B4F' : '#424242' } }}>Create Group</Button>
+        <Button onClick={onClose} sx={{ textTransform: 'none', color: 'text.secondary' }}>{t(language, 'cancelBtn')}</Button>
+        <Button onClick={handleCreate} variant="contained" sx={{ textTransform: 'none', bgcolor: dk ? '#1A2B3C' : '#616161', '&:hover': { bgcolor: dk ? '#243B4F' : '#424242' } }}>{t(language, 'createBtn')}</Button>
       </DialogActions>
     </Dialog>
   );
@@ -107,6 +110,7 @@ export default function GroupsPage() {
   const dk = useTheme().palette.mode === 'dark';
   const groups = useGroupStore((s) => s.groups);
   const navigate = useNavigate();
+  const { language } = useUIStore();
   const [createOpen, setCreateOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [filterCategory, setFilterCategory] = useState<string>('all');
@@ -131,7 +135,7 @@ export default function GroupsPage() {
   };
 
   return (
-    <Box sx={{ flex: 1, px: 3, py: 3, overflow: 'auto' }}>
+    <Box sx={{ flex: 1, px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -139,42 +143,42 @@ export default function GroupsPage() {
             <GroupIcon sx={{ fontSize: 20, color: '#ec4899' }} />
           </Box>
           <Box>
-          <Typography variant="h5" sx={{ fontWeight: 600 }}>Community Groups</Typography>
+          <Typography variant="h5" sx={{ fontWeight: 600 }}>{t(language, 'communityGroupsTitle')}</Typography>
           <Typography variant="body2" color="text.secondary">
             {groups.length} group{groups.length !== 1 ? 's' : ''} &middot; Collaborate, learn &amp; grow together
           </Typography>
           </Box>
         </Box>
         <Button variant="contained" startIcon={<AddIcon />} onClick={() => setCreateOpen(true)} sx={{ textTransform: 'none', bgcolor: dk ? '#1A2B3C' : '#616161', '&:hover': { bgcolor: dk ? '#243B4F' : '#424242' }, borderRadius: 2 }}>
-          New Group
+          {t(language, 'newGroupBtn')}
         </Button>
       </Box>
 
       {/* Search & Filters */}
       <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
         <TextField
-          size="small" placeholder="Search groups..." value={search} onChange={(e) => setSearch(e.target.value)}
+          size="small" placeholder={t(language, 'searchGroupsPlaceholder')} value={search} onChange={(e) => setSearch(e.target.value)}
           sx={{ minWidth: 240 }}
           InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon sx={{ fontSize: 18, color: 'text.secondary' }} /></InputAdornment> }}
         />
         <FormControl size="small" sx={{ minWidth: 140 }}>
-          <InputLabel>Category</InputLabel>
-          <Select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} label="Category">
-            <MenuItem value="all">All Categories</MenuItem>
-            <MenuItem value="course-based">Course</MenuItem>
-            <MenuItem value="subject-based">Subject</MenuItem>
-            <MenuItem value="college-based">College</MenuItem>
-            <MenuItem value="study-group">Study</MenuItem>
-            <MenuItem value="project-group">Project</MenuItem>
+          <InputLabel>{t(language, 'categoryLabel')}</InputLabel>
+          <Select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} label={t(language, 'categoryLabel')}>
+            <MenuItem value="all">{t(language, 'allCategoriesOpt')}</MenuItem>
+            <MenuItem value="course-based">{t(language, 'groupCourse')}</MenuItem>
+            <MenuItem value="subject-based">{t(language, 'groupSubject')}</MenuItem>
+            <MenuItem value="college-based">{t(language, 'groupCollege')}</MenuItem>
+            <MenuItem value="study-group">{t(language, 'groupStudy')}</MenuItem>
+            <MenuItem value="project-group">{t(language, 'groupProject')}</MenuItem>
           </Select>
         </FormControl>
         <FormControl size="small" sx={{ minWidth: 120 }}>
           <InputLabel>Type</InputLabel>
           <Select value={filterType} onChange={(e) => setFilterType(e.target.value)} label="Type">
-            <MenuItem value="all">All Types</MenuItem>
-            <MenuItem value="public">Public</MenuItem>
-            <MenuItem value="private">Private</MenuItem>
-            <MenuItem value="restricted">Restricted</MenuItem>
+            <MenuItem value="all">{t(language, 'allTypesOpt')}</MenuItem>
+            <MenuItem value="public">{t(language, 'typePublic')}</MenuItem>
+            <MenuItem value="private">{t(language, 'typePrivate')}</MenuItem>
+            <MenuItem value="restricted">{t(language, 'typeRestricted')}</MenuItem>
           </Select>
         </FormControl>
       </Box>
@@ -246,8 +250,8 @@ export default function GroupsPage() {
                     )}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 1 }}>
                       <Typography variant="caption" color="text.secondary" sx={{ fontSize: 10 }}>Code: {group.inviteCode}</Typography>
-                      <Tooltip title="Copy invite code">
-                        <IconButton size="small" onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(group.inviteCode); toast.success('Invite code copied!'); }} sx={{ p: 0.25 }}>
+                      <Tooltip title={t(language, 'copyInviteCode')}>
+                        <IconButton size="small" onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(group.inviteCode); toast.success(t(language, 'inviteCodeCopied')); }} sx={{ p: 0.25 }}>
                           <ContentCopyIcon sx={{ fontSize: 12, color: 'text.secondary' }} />
                         </IconButton>
                       </Tooltip>
@@ -261,14 +265,14 @@ export default function GroupsPage() {
       ) : groups.length === 0 ? (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', py: 8 }}>
           <GroupIcon sx={{ fontSize: 48, color: '#ec489940', mb: 2 }} />
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>No groups yet</Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>{t(language, 'noGroupsYetMsg')}</Typography>
           <Button variant="outlined" startIcon={<AddIcon />} onClick={() => setCreateOpen(true)} sx={{ textTransform: 'none', borderColor: 'divider', color: 'text.secondary' }}>
-            Create your first group
+            {t(language, 'createFirstGroupMsg')}
           </Button>
         </Box>
       ) : (
         <Box sx={{ py: 6, textAlign: 'center' }}>
-          <Typography variant="body2" color="text.secondary">No groups match your search</Typography>
+          <Typography variant="body2" color="text.secondary">{t(language, 'noGroupsMatchMsg')}</Typography>
         </Box>
       )}
 
