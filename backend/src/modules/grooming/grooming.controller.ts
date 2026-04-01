@@ -12,12 +12,20 @@ import {
   Headers,
   UseInterceptors,
   UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiConsumes } from '@nestjs/swagger';
+import { createHash } from 'crypto';
 import { Public } from '../../common/decorators/public.decorator';
 import { createDiskStorage } from '../../common/storage/multer.config';
 import { GroomingService } from './grooming.service';
+
+/** Convert any string user ID to a valid 24-char hex ObjectId */
+function toObjectId(id: string): string {
+  if (/^[a-f\d]{24}$/i.test(id)) return id;
+  return createHash('md5').update(id).digest('hex').substring(0, 24);
+}
 import {
   SaveGroomingProfileDto,
   SaveRecommendationDto,
@@ -35,7 +43,8 @@ export class GroomingController {
   constructor(private readonly groomingService: GroomingService) {}
 
   private getUserId(headers: Record<string, string>): string {
-    return headers['x-user-id'] || 'anonymous';
+    const raw = headers['x-user-id'] || 'anonymous';
+    return toObjectId(raw);
   }
 
   // ═══════════ PROFILE ════════════════════════════════════
@@ -183,6 +192,9 @@ export class GroomingController {
     @UploadedFile() file: Express.Multer.File,
     @Headers() headers: Record<string, string>,
   ) {
+    if (!file) {
+      throw new BadRequestException('Image file is required');
+    }
     const userId = this.getUserId(headers);
     const imageUrl = `/uploads/grooming/${file.filename}`;
     return { imageUrl, filename: file.filename };

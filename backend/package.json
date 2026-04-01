@@ -18,7 +18,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "test:agent": "npx ts-node test/run-testing-agent.ts",
     "test:functionality": "jest --config ./test/jest-e2e.json --testPathPattern=functionality-tests",
-    "test:functionality:standalone": "npx ts-node test/run-functionality-agent.ts"
+    "test:functionality:standalone": "npx ts-node test/run-functionality-agent.ts",
+    "test:persistence": "npx ts-node --compiler-options '{\"module\":\"commonjs\"}' test/run-data-persistence-agent.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.3.0",
