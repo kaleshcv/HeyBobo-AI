@@ -13,7 +13,6 @@ import TeacherLayout from '@/components/layout/TeacherLayout'
 import AdminLayout from '@/components/layout/AdminLayout'
 
 // Public pages (lazy loaded)
-const HomePage = lazy(() => import('@/pages/public/HomePage'))
 const NotFoundPage = lazy(() => import('@/pages/public/NotFoundPage'))
 
 // Auth pages (lazy loaded)
@@ -103,11 +102,7 @@ const SuspenseWrapper = ({ children }: { children: React.ReactNode }) => (
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: (
-      <SuspenseWrapper>
-        <HomePage />
-      </SuspenseWrapper>
-    ),
+    element: <Navigate to="/auth/login" replace />,
   },
 
   // Auth routes
