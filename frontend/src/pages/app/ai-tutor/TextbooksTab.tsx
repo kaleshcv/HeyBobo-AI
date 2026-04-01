@@ -7,12 +7,14 @@ import {
   LinearProgress,
   Tooltip,
   Chip,
+  Collapse,
   useTheme,
 } from '@mui/material';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import DeleteIcon from '@mui/icons-material/Delete';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import toast from 'react-hot-toast';
 import { aiApi } from '@/lib/api';
 import { useAITutorStore, Textbook } from '@/store/aiTutorStore';
@@ -148,45 +150,97 @@ export default function TextbooksTab({ onSelectBook, selectedBookId }: Props) {
           </Typography>
         </Box>
       ) : (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          {textbooks.map((book) => (
-            <Paper
-              key={book.id}
-              variant="outlined"
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1.5,
-                p: 1.5,
-                borderRadius: 2,
-                cursor: 'pointer',
-                bgcolor: selectedBookId === book.id ? (dk ? 'rgba(206,147,216,0.12)' : '#f3e5f5') : 'transparent',
-                borderColor: selectedBookId === book.id ? '#ce93d8' : 'divider',
-                '&:hover': { bgcolor: selectedBookId === book.id ? (dk ? 'rgba(206,147,216,0.15)' : '#f3e5f5') : (dk ? 'rgba(255,255,255,0.03)' : '#fafafa') },
-              }}
-              onClick={() => onSelectBook(book.id)}
-            >
-              <PictureAsPdfIcon sx={{ fontSize: 28, color: '#e57373' }} />
-              <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Typography variant="body2" sx={{ fontWeight: 600 }} noWrap>{book.name}</Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {book.pageCount} pages · {formatSize(book.size)} · {new Date(book.createdAt).toLocaleDateString()}
-                </Typography>
-              </Box>
-              {selectedBookId === book.id && (
-                <Chip label="Active" size="small" color="secondary" variant="outlined" sx={{ fontSize: 11 }} />
-              )}
-              <Tooltip title="Delete textbook">
-                <IconButton
-                  size="small"
-                  onClick={(e) => handleDelete(book.id, e)}
-                  sx={{ color: 'text.secondary', opacity: 0.5, '&:hover': { opacity: 1, color: '#f44336' } }}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          {textbooks.map((book) => {
+            const isSelected = selectedBookId === book.id;
+            return (
+              <Box key={book.id}>
+                <Paper
+                  variant="outlined"
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1.5,
+                    p: 1.5,
+                    borderRadius: 2,
+                    cursor: 'pointer',
+                    borderWidth: isSelected ? 2 : 1,
+                    borderColor: isSelected ? '#4caf50' : 'divider',
+                    bgcolor: isSelected ? (dk ? 'rgba(76,175,80,0.12)' : '#f1f8e9') : 'transparent',
+                    boxShadow: isSelected ? '0 0 0 3px rgba(76,175,80,0.18)' : 'none',
+                    transition: 'all 0.2s',
+                    '&:hover': {
+                      borderColor: isSelected ? '#4caf50' : (dk ? 'rgba(255,255,255,0.3)' : '#999'),
+                      bgcolor: isSelected ? (dk ? 'rgba(76,175,80,0.15)' : '#f1f8e9') : (dk ? 'rgba(255,255,255,0.04)' : '#fafafa'),
+                    },
+                  }}
+                  onClick={() => onSelectBook(book.id)}
                 >
-                  <DeleteIcon sx={{ fontSize: 18 }} />
-                </IconButton>
-              </Tooltip>
-            </Paper>
-          ))}
+                  <PictureAsPdfIcon sx={{ fontSize: 28, color: isSelected ? '#4caf50' : '#e57373', transition: 'color 0.2s' }} />
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Typography
+                      variant="body2"
+                      sx={{ fontWeight: 700, color: isSelected ? (dk ? '#81c784' : '#2e7d32') : 'text.primary', transition: 'color 0.2s' }}
+                      noWrap
+                    >
+                      {book.name}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {book.pageCount} pages · {formatSize(book.size)} · {new Date(book.createdAt).toLocaleDateString()}
+                    </Typography>
+                  </Box>
+                  {isSelected && (
+                    <Chip
+                      icon={<CheckCircleIcon sx={{ fontSize: '14px !important' }} />}
+                      label="Active"
+                      size="small"
+                      sx={{
+                        bgcolor: dk ? 'rgba(76,175,80,0.2)' : '#c8e6c9',
+                        color: dk ? '#81c784' : '#2e7d32',
+                        borderColor: '#4caf50',
+                        fontWeight: 700,
+                        fontSize: 11,
+                        border: '1px solid',
+                      }}
+                    />
+                  )}
+                  <Tooltip title="Delete textbook">
+                    <IconButton
+                      size="small"
+                      onClick={(e) => handleDelete(book.id, e)}
+                      sx={{ color: 'text.secondary', opacity: 0.5, '&:hover': { opacity: 1, color: '#f44336' } }}
+                    >
+                      <DeleteIcon sx={{ fontSize: 18 }} />
+                    </IconButton>
+                  </Tooltip>
+                </Paper>
+
+                {/* Selection note */}
+                <Collapse in={isSelected} unmountOnExit>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 0.75,
+                      mt: 0.5,
+                      ml: 1.5,
+                      px: 1.5,
+                      py: 0.6,
+                      borderRadius: 1.5,
+                      bgcolor: dk ? 'rgba(76,175,80,0.1)' : '#f1f8e9',
+                      border: '1px solid',
+                      borderColor: dk ? 'rgba(76,175,80,0.25)' : '#a5d6a7',
+                    }}
+                  >
+                    <CheckCircleIcon sx={{ fontSize: 14, color: '#4caf50' }} />
+                    <Typography variant="caption" sx={{ color: dk ? '#81c784' : '#2e7d32', fontWeight: 600 }}>
+                      This textbook is selected — AI Tutor will answer questions based on this book.
+                    </Typography>
+                  </Box>
+                </Collapse>
+              </Box>
+            );
+          })}
         </Box>
       )}
     </Box>
