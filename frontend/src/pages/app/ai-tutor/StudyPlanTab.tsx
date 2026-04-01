@@ -19,6 +19,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import SchoolIcon from '@mui/icons-material/School';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import toast from 'react-hot-toast';
 import { useAITutorStore } from '@/store/aiTutorStore';
 import { generateStudyPlan, teachContent } from '@/lib/gemini';
@@ -297,6 +298,29 @@ export default function StudyPlanTab({ selectedBookId, onTeach }: Props) {
                                   {ch.topics.length > 3 && (
                                     <Chip label={`+${ch.topics.length - 3} more`} size="small" sx={{ fontSize: 10, height: 20 }} />
                                   )}
+                                </Box>
+                                <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                                  <Button
+                                    size="small"
+                                    variant={ch.completed ? 'contained' : 'outlined'}
+                                    startIcon={<CheckCircleOutlineIcon sx={{ fontSize: 16 }} />}
+                                    onClick={() => toggleChapterComplete(plan.id, ch.id)}
+                                    sx={{
+                                      textTransform: 'none',
+                                      borderColor: '#7c4dff',
+                                      color: ch.completed ? '#fff' : '#7c4dff',
+                                      bgcolor: ch.completed ? '#7c4dff' : 'transparent',
+                                      '&:hover': {
+                                        borderColor: '#651fff',
+                                        bgcolor: ch.completed ? '#651fff' : (dk ? 'rgba(124,77,255,0.12)' : 'rgba(124,77,255,0.08)'),
+                                      },
+                                    }}
+                                  >
+                                    {ch.completed ? 'Completed' : 'Mark Completed'}
+                                  </Button>
+                                  <Typography variant="caption" color="text.secondary">
+                                    Marks this module as completed in your study plan.
+                                  </Typography>
                                 </Box>
                               </Box>
                               <Tooltip title={`Teach me: ${ch.title}`}>
