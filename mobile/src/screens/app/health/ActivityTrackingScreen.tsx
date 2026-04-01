@@ -8,8 +8,6 @@ import { Card } from '@/components/common/Card';
 import { AppHeader } from '@/components/layout/AppHeader';
 import T from '@/theme'
 
-;
-
 export function ActivityTrackingScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
@@ -45,7 +43,7 @@ export function ActivityTrackingScreen() {
 
             <View style={styles.summaryCard}>
               <View style={styles.summaryIcon}>
-                <Ionicons name="flame" size={20} color="#EF4444" />
+                <Ionicons name="flame" size={20} color={T.red} />
               </View>
               <Text style={styles.summaryLabel}>Total Calories</Text>
               <Text style={styles.summaryValue}>

@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { getUserScopedKey } from '@/lib/userStorage'
 import { type BLEDeviceInfo, type BLEReading } from '@/lib/bleService'
 
 // ─── Types ──────────────────────────────────────────────
@@ -250,25 +249,14 @@ interface WearablesState {
   handleBLEDisconnect: (bleDeviceId: string) => void
 }
 
-function loadState(): { devices: WearableDevice[]; readings: HealthReading[]; alerts: DeviceAlert[] } {
-  try {
-    const raw = localStorage.getItem(getUserScopedKey('heybobo_wearables'))
-    if (raw) return JSON.parse(raw)
-  } catch { /* ignore */ }
-  return { devices: [], readings: [], alerts: [] }
-}
-
-function persist(state: { devices: WearableDevice[]; readings: HealthReading[]; alerts: DeviceAlert[] }) {
-  localStorage.setItem(getUserScopedKey('heybobo_wearables'), JSON.stringify(state))
-}
+// Data is synced to backend via API — no localStorage
+// Zustand stores data in-memory only (ephemeral per session)
 
 export const useWearablesStore = create<WearablesState>((set, get) => {
-  const saved = loadState()
-
   return {
-    devices: saved.devices,
-    readings: saved.readings.slice(0, 500),
-    alerts: saved.alerts,
+    devices: [],
+    readings: [],
+    alerts: [],
     studentProfiles: [],
 
     pairDevice: (entry) => {
@@ -295,7 +283,6 @@ export const useWearablesStore = create<WearablesState>((set, get) => {
       const newReadings = simulateReadings(device)
       const readings = [...newReadings, ...get().readings].slice(0, 500)
       set({ devices, readings })
-      persist({ devices, readings, alerts: get().alerts })
     },
 
     unpairDevice: (deviceId) => {
@@ -303,7 +290,6 @@ export const useWearablesStore = create<WearablesState>((set, get) => {
       const readings = get().readings.filter((r) => r.deviceId !== deviceId)
       const alerts = get().alerts.filter((a) => a.deviceId !== deviceId)
       set({ devices, readings, alerts })
-      persist({ devices, readings, alerts })
     },
 
     syncDevice: (deviceId) => {
@@ -337,7 +323,6 @@ export const useWearablesStore = create<WearablesState>((set, get) => {
       }
       const alerts = [...newAlerts, ...get().alerts]
       set({ devices, readings, alerts })
-      persist({ devices, readings, alerts })
     },
 
     syncAllDevices: () => {
@@ -350,7 +335,6 @@ export const useWearablesStore = create<WearablesState>((set, get) => {
     toggleAutoSync: (deviceId) => {
       const devices = get().devices.map((d) => d.id === deviceId ? { ...d, isAutoSync: !d.isAutoSync } : d)
       set({ devices })
-      persist({ devices, readings: get().readings, alerts: get().alerts })
     },
 
     toggleMetric: (deviceId, metric) => {
@@ -359,19 +343,16 @@ export const useWearablesStore = create<WearablesState>((set, get) => {
         return { ...d, metrics: d.metrics.map((m) => m.metric === metric ? { ...m, enabled: !m.enabled } : m) }
       })
       set({ devices })
-      persist({ devices, readings: get().readings, alerts: get().alerts })
     },
 
     dismissAlert: (alertId) => {
       const alerts = get().alerts.map((a) => a.id === alertId ? { ...a, dismissed: true } : a)
       set({ alerts })
-      persist({ devices: get().devices, readings: get().readings, alerts })
     },
 
     dismissAllAlerts: () => {
       const alerts = get().alerts.map((a) => ({ ...a, dismissed: true }))
       set({ alerts })
-      persist({ devices: get().devices, readings: get().readings, alerts })
     },
 
     loadStudentProfiles: () => {
@@ -448,7 +429,6 @@ export const useWearablesStore = create<WearablesState>((set, get) => {
 
       const devices = [...get().devices, device]
       set({ devices })
-      persist({ devices, readings: get().readings, alerts: get().alerts })
     },
 
     handleBLEReading: (reading: BLEReading) => {
@@ -470,7 +450,6 @@ export const useWearablesStore = create<WearablesState>((set, get) => {
         d.id === device.id ? { ...d, lastSyncedAt: reading.timestamp, connectionStatus: 'connected' as ConnectionStatus } : d,
       )
       set({ devices, readings })
-      persist({ devices, readings, alerts: get().alerts })
     },
 
     handleBLEDisconnect: (bleDeviceId: string) => {
@@ -493,7 +472,6 @@ export const useWearablesStore = create<WearablesState>((set, get) => {
       }
       const alerts = [...newAlerts, ...get().alerts]
       set({ devices, alerts })
-      persist({ devices, readings: get().readings, alerts })
     },
   }
 })

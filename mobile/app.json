@@ -28,7 +28,7 @@
         "NSMicrophoneUsageDescription": "Used for voice input in AI Tutor"
       },
       "associatedDomains": [
-        "applinks:yourdomain.com"
+        "applinks:app.heybobo.ai"
       ]
     },
     "android": {
@@ -53,7 +53,7 @@
           "data": [
             {
               "scheme": "https",
-              "host": "yourdomain.com",
+              "host": "app.heybobo.ai",
               "pathPrefix": "/app"
             }
           ],

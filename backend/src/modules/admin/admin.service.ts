@@ -13,6 +13,68 @@ export class AdminService {
     @InjectModel(Course.name) private courseModel: Model<Course>,
   ) {}
 
+  // ─── DB Browser ─────────────────────────────────────────
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  private get nativeDb() { return this.userModel.db.db!; }
+
+  async dbListCollections(): Promise<Array<{ name: string; count: number }>> {
+    const cols = await this.nativeDb.listCollections().toArray();
+    const results = await Promise.all(
+      cols.map(async (c) => ({
+        name: c.name,
+        count: await this.nativeDb.collection(c.name).countDocuments(),
+      })),
+    );
+    return results.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  async dbQueryCollection(collectionName: string, opts: {
+    page?: number; limit?: number; search?: string;
+    searchField?: string; sortField?: string; sortDir?: 'asc' | 'desc';
+  } = {}): Promise<any> {
+    const page = Math.max(1, Number(opts.page) || 1);
+    const limit = Math.min(100, Math.max(1, Number(opts.limit) || 20));
+    const skip = (page - 1) * limit;
+    const col = this.nativeDb.collection(collectionName);
+
+    let filter: any = {};
+    if (opts.search && opts.searchField) {
+      filter[opts.searchField] = { $regex: opts.search, $options: 'i' };
+    } else if (opts.search) {
+      filter.$or = [
+        { name: { $regex: opts.search, $options: 'i' } },
+        { title: { $regex: opts.search, $options: 'i' } },
+        { email: { $regex: opts.search, $options: 'i' } },
+        { topic: { $regex: opts.search, $options: 'i' } },
+      ];
+    }
+
+    const sortField = opts.sortField || 'createdAt';
+    const sortDir = opts.sortDir === 'asc' ? 1 : -1;
+
+    const [docs, total] = await Promise.all([
+      col.find(filter).sort({ [sortField]: sortDir } as any).skip(skip).limit(limit).toArray(),
+      col.countDocuments(filter),
+    ]);
+    return { data: docs, total, page, limit, pages: Math.ceil(total / limit) };
+  }
+
+  async dbGetDocument(collectionName: string, id: string): Promise<any> {
+    const col = this.nativeDb.collection(collectionName);
+    let filter: any;
+    try { filter = { _id: new Types.ObjectId(id) }; } catch { filter = { _id: id }; }
+    return col.findOne(filter);
+  }
+
+  async dbDeleteDocument(collectionName: string, id: string): Promise<boolean> {
+    const col = this.nativeDb.collection(collectionName);
+    let filter: any;
+    try { filter = { _id: new Types.ObjectId(id) }; } catch { filter = { _id: id }; }
+    const result = await col.deleteOne(filter);
+    return result.deletedCount > 0;
+  }
+  // ─── End DB Browser ─────────────────────────────────────
+
   async getUsers(query?: any): Promise<any> {
     const page = query?.page || 1;
     const limit = query?.limit || 10;

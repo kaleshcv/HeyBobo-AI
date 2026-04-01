@@ -37,7 +37,7 @@ import { GroomingModule } from '@/modules/grooming/grooming.module';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get<string>('database.mongoUri'),
-        serverSelectionTimeoutMS: 5000,
+        serverSelectionTimeoutMS: 30000,
         socketTimeoutMS: 45000,
       }),
     }),

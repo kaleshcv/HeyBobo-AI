@@ -17,8 +17,6 @@ import { useWearablesStore } from '@/store/wearablesStore';
 import Svg, { Circle, Path } from 'react-native-svg';
 import T from '@/theme'
 
-;
-
 export function HealthFitnessScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
@@ -147,7 +145,7 @@ export function HealthFitnessScreen() {
                 {heartRate || 72} bpm
               </Text>
             </View>
-            <Ionicons name="heart" size={40} color="#EF4444" />
+            <Ionicons name="heart" size={40} color={T.red} />
           </View>
           <View style={styles.heartRateRange}>
             <Text style={styles.heartRateRangeLabel}>
@@ -177,7 +175,7 @@ export function HealthFitnessScreen() {
           'people',
           'Grooming',
           'Personal care tips',
-          () => navigation.navigate('Dietary', { screen: 'GroomingDashboard' } as any)
+          () => navigation.navigate('Grooming', { screen: 'GroomingDashboard' } as any)
         )}
 
         {renderQuickAccessCard(
@@ -335,7 +333,7 @@ const styles = StyleSheet.create({
   quickAccessCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderRadius: 10,
     padding: 14,
     marginBottom: 12,

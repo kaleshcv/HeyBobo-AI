@@ -54,6 +54,7 @@ const AdminCoursesPage = lazy(() => import('@/pages/admin/CoursesPage'))
 const AdminCategoriesPage = lazy(() => import('@/pages/admin/CategoriesPage'))
 const AdminAnalyticsPage = lazy(() => import('@/pages/admin/AnalyticsPage'))
 const AdminCertificatesPage = lazy(() => import('@/pages/admin/CertificatesPage'))
+const AdminDatabasePage = lazy(() => import('@/pages/admin/DatabasePage'))
 
 // App module pages (lazy loaded)
 const EducationPage = lazy(() => import('@/pages/app/EducationPage'))
@@ -411,6 +412,14 @@ export const router = createBrowserRouter([
         element: (
           <SuspenseWrapper>
             <AdminCertificatesPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
+        path: 'database',
+        element: (
+          <SuspenseWrapper>
+            <AdminDatabasePage />
           </SuspenseWrapper>
         ),
       },

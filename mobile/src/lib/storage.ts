@@ -1,38 +1,33 @@
 /**
- * Storage layer — in-memory implementation for Expo Go compatibility.
- * react-native-mmkv requires a native build (npx expo run:android).
- * For Expo Go dev testing, we use a simple Map-based store.
+ * Storage layer — uses AsyncStorage for persistent data across app restarts.
+ * Auth tokens are handled separately via expo-secure-store in the auth store.
  */
 
-const memStore = new Map<string, string>()
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export const Storage = {
-  get: <T>(key: string): T | null => {
-    const raw = memStore.get(key)
+  get: async <T>(key: string): Promise<T | null> => {
+    const raw = await AsyncStorage.getItem(key)
     if (!raw) return null
     try { return JSON.parse(raw) as T } catch { return null }
   },
-  set: (key: string, value: unknown): void => {
-    memStore.set(key, JSON.stringify(value))
+  set: async (key: string, value: unknown): Promise<void> => {
+    await AsyncStorage.setItem(key, JSON.stringify(value))
   },
-  delete: (key: string): void => {
-    memStore.delete(key)
+  delete: async (key: string): Promise<void> => {
+    await AsyncStorage.removeItem(key)
   },
-  clearAll: (): void => {
-    memStore.clear()
+  clearAll: async (): Promise<void> => {
+    await AsyncStorage.clear()
   },
 }
 
 // Async wrapper — used by React Query persister & Zustand persist middleware
 export const asyncStorage = {
   getItem:    (key: string): Promise<string | null> =>
-    Promise.resolve(memStore.get(key) ?? null),
-  setItem:    (key: string, value: string): Promise<void> => {
-    memStore.set(key, value)
-    return Promise.resolve()
-  },
-  removeItem: (key: string): Promise<void> => {
-    memStore.delete(key)
-    return Promise.resolve()
-  },
+    AsyncStorage.getItem(key),
+  setItem:    (key: string, value: string): Promise<void> =>
+    AsyncStorage.setItem(key, value),
+  removeItem: (key: string): Promise<void> =>
+    AsyncStorage.removeItem(key),
 }

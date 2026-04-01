@@ -11,7 +11,7 @@ function getSaved() {
   try {
     const raw = localStorage.getItem(REMEMBER_KEY)
     if (!raw) return null
-    return JSON.parse(raw) as { email: string; password: string }
+    return JSON.parse(raw) as { email: string }
   } catch { return null }
 }
 
@@ -19,7 +19,7 @@ export default function HomePage() {
   const { login, isAuthenticated } = useAuth()
   const saved = getSaved()
   const [email, setEmail]           = useState(saved?.email ?? '')
-  const [password, setPassword]     = useState(saved?.password ?? '')
+  const [password, setPassword]     = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(!!saved)
   const [errors, setErrors]         = useState<{ email?: string; password?: string }>({})
@@ -49,7 +49,7 @@ export default function HomePage() {
     if (!validate()) return
     setIsLoading(true)
     if (rememberMe) {
-      localStorage.setItem(REMEMBER_KEY, JSON.stringify({ email, password }))
+      localStorage.setItem(REMEMBER_KEY, JSON.stringify({ email }))
     } else {
       localStorage.removeItem(REMEMBER_KEY)
     }

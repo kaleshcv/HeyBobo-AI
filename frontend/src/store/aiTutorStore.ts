@@ -1,6 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { createUserStorage } from '@/lib/userStorage';
 
 // --- Types ---
 export interface Textbook {
@@ -40,6 +38,7 @@ export interface StudyPlanChapter {
 
 export interface StudyPlan {
   id: string;
+  clientId?: string;
   textbookId: string;
   title: string;
   totalDays: number;
@@ -58,6 +57,7 @@ export interface QuizQuestion {
 
 export interface Quiz {
   id: string;
+  clientId?: string;
   textbookId: string;
   title: string;
   questions: QuizQuestion[];
@@ -66,6 +66,7 @@ export interface Quiz {
 
 export interface QuizAttempt {
   id: string;
+  clientId?: string;
   quizId: string;
   textbookId: string;
   answers: Record<string, number>;
@@ -76,6 +77,7 @@ export interface QuizAttempt {
 
 export interface LessonRecord {
   id: string;
+  clientId?: string;
   textbookId: string;
   topic: string;
   content: string;
@@ -91,6 +93,7 @@ export interface RevisionItem {
 
 export interface RevisionPlan {
   id: string;
+  clientId?: string;
   quizAttemptId: string;
   textbookId: string;
   quizTitle: string;
@@ -118,96 +121,105 @@ interface AITutorState {
 
   // Study Plans
   studyPlans: StudyPlan[];
+  setStudyPlans: (plans: StudyPlan[]) => void;
   addStudyPlan: (plan: StudyPlan) => void;
   removeStudyPlan: (id: string) => void;
   toggleChapterComplete: (planId: string, chapterId: string) => void;
 
   // Quizzes
   quizzes: Quiz[];
+  setQuizzes: (quizzes: Quiz[]) => void;
   addQuiz: (quiz: Quiz) => void;
   removeQuiz: (id: string) => void;
 
   // Quiz Attempts
   quizAttempts: QuizAttempt[];
+  setQuizAttempts: (attempts: QuizAttempt[]) => void;
   addQuizAttempt: (attempt: QuizAttempt) => void;
 
   // Lessons
   lessons: LessonRecord[];
+  setLessons: (lessons: LessonRecord[]) => void;
   addLesson: (lesson: LessonRecord) => void;
 
   // Revision Plans
   revisionPlans: RevisionPlan[];
+  setRevisionPlans: (plans: RevisionPlan[]) => void;
   addRevisionPlan: (plan: RevisionPlan) => void;
   dismissRevisionPlan: (id: string) => void;
+
+  // Selected book context
+  selectedBookId: string | null;
+  setSelectedBookId: (id: string | null) => void;
 }
 
-export const useAITutorStore = create<AITutorState>()(
-  persist(
-    (set) => ({
-      textbooks: [],
-      setTextbooks: (books) => set({ textbooks: books }),
-      addTextbook: (book) => set((s) => ({ textbooks: [book, ...s.textbooks] })),
-      removeTextbook: (id) =>
-        set((s) => ({
-          textbooks: s.textbooks.filter((b) => b.id !== id),
-          conversations: s.conversations.filter((c) => c.textbookId !== id),
-          studyPlans: s.studyPlans.filter((p) => p.textbookId !== id),
-          quizzes: s.quizzes.filter((q) => q.textbookId !== id),
-          quizAttempts: s.quizAttempts.filter((a) => a.textbookId !== id),
-          lessons: s.lessons.filter((l) => l.textbookId !== id),
-          revisionPlans: s.revisionPlans.filter((r) => r.textbookId !== id),
-        })),
+export const useAITutorStore = create<AITutorState>()((set) => ({
+  textbooks: [],
+  setTextbooks: (books) => set({ textbooks: books }),
+  addTextbook: (book) => set((s) => ({ textbooks: [book, ...s.textbooks] })),
+  removeTextbook: (id) =>
+    set((s) => ({
+      textbooks: s.textbooks.filter((b) => b.id !== id),
+      conversations: s.conversations.filter((c) => c.textbookId !== id),
+      studyPlans: s.studyPlans.filter((p) => p.textbookId !== id),
+      quizzes: s.quizzes.filter((q) => q.textbookId !== id),
+      quizAttempts: s.quizAttempts.filter((a) => a.textbookId !== id),
+      lessons: s.lessons.filter((l) => l.textbookId !== id),
+      revisionPlans: s.revisionPlans.filter((r) => r.textbookId !== id),
+    })),
 
-      conversations: [],
-      addConversation: (conv) => set((s) => ({ conversations: [conv, ...s.conversations] })),
-      updateConversation: (id, messages) =>
-        set((s) => ({
-          conversations: s.conversations.map((c) =>
-            c.id === id ? { ...c, messages, updatedAt: new Date().toISOString() } : c,
-          ),
-        })),
-      removeConversation: (id) =>
-        set((s) => ({ conversations: s.conversations.filter((c) => c.id !== id) })),
+  conversations: [],
+  addConversation: (conv) => set((s) => ({ conversations: [conv, ...s.conversations] })),
+  updateConversation: (id, messages) =>
+    set((s) => ({
+      conversations: s.conversations.map((c) =>
+        c.id === id ? { ...c, messages, updatedAt: new Date().toISOString() } : c,
+      ),
+    })),
+  removeConversation: (id) =>
+    set((s) => ({ conversations: s.conversations.filter((c) => c.id !== id) })),
 
-      studyPlans: [],
-      addStudyPlan: (plan) => set((s) => ({ studyPlans: [plan, ...s.studyPlans] })),
-      removeStudyPlan: (id) => set((s) => ({ studyPlans: s.studyPlans.filter((p) => p.id !== id) })),
-      toggleChapterComplete: (planId, chapterId) =>
-        set((s) => ({
-          studyPlans: s.studyPlans.map((p) =>
-            p.id === planId
-              ? {
-                  ...p,
-                  chapters: p.chapters.map((ch) =>
-                    ch.id === chapterId ? { ...ch, completed: !ch.completed } : ch,
-                  ),
-                }
-              : p,
-          ),
-        })),
+  studyPlans: [],
+  setStudyPlans: (plans) => set({ studyPlans: plans }),
+  addStudyPlan: (plan) => set((s) => ({ studyPlans: [plan, ...s.studyPlans] })),
+  removeStudyPlan: (id) => set((s) => ({ studyPlans: s.studyPlans.filter((p) => p.id !== id || p.clientId !== id) })),
+  toggleChapterComplete: (planId, chapterId) =>
+    set((s) => ({
+      studyPlans: s.studyPlans.map((p) =>
+        (p.id === planId || p.clientId === planId)
+          ? {
+              ...p,
+              chapters: p.chapters.map((ch) =>
+                ch.id === chapterId ? { ...ch, completed: !ch.completed } : ch,
+              ),
+            }
+          : p,
+      ),
+    })),
 
-      quizzes: [],
-      addQuiz: (quiz) => set((s) => ({ quizzes: [quiz, ...s.quizzes] })),
-      removeQuiz: (id) => set((s) => ({ quizzes: s.quizzes.filter((q) => q.id !== id) })),
+  quizzes: [],
+  setQuizzes: (quizzes) => set({ quizzes }),
+  addQuiz: (quiz) => set((s) => ({ quizzes: [quiz, ...s.quizzes] })),
+  removeQuiz: (id) => set((s) => ({ quizzes: s.quizzes.filter((q) => q.id !== id && q.clientId !== id) })),
 
-      quizAttempts: [],
-      addQuizAttempt: (attempt) => set((s) => ({ quizAttempts: [attempt, ...s.quizAttempts] })),
+  quizAttempts: [],
+  setQuizAttempts: (attempts) => set({ quizAttempts: attempts }),
+  addQuizAttempt: (attempt) => set((s) => ({ quizAttempts: [attempt, ...s.quizAttempts] })),
 
-      lessons: [],
-      addLesson: (lesson) => set((s) => ({ lessons: [lesson, ...s.lessons] })),
+  lessons: [],
+  setLessons: (lessons) => set({ lessons }),
+  addLesson: (lesson) => set((s) => ({ lessons: [lesson, ...s.lessons] })),
 
-      revisionPlans: [],
-      addRevisionPlan: (plan) => set((s) => ({ revisionPlans: [plan, ...s.revisionPlans] })),
-      dismissRevisionPlan: (id) =>
-        set((s) => ({
-          revisionPlans: s.revisionPlans.map((r) =>
-            r.id === id ? { ...r, dismissed: true } : r,
-          ),
-        })),
-    }),
-    {
-      name: 'heybobo-ai-tutor',
-      storage: createUserStorage(),
-    },
-  ),
-);
+  revisionPlans: [],
+  setRevisionPlans: (plans) => set({ revisionPlans: plans }),
+  addRevisionPlan: (plan) => set((s) => ({ revisionPlans: [plan, ...s.revisionPlans] })),
+  dismissRevisionPlan: (id) =>
+    set((s) => ({
+      revisionPlans: s.revisionPlans.map((r) =>
+        (r.id === id || r.clientId === id) ? { ...r, dismissed: true } : r,
+      ),
+    })),
+
+  selectedBookId: null,
+  setSelectedBookId: (id) => set({ selectedBookId: id }),
+}));

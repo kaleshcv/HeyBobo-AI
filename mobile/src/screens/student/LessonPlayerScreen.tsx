@@ -113,7 +113,7 @@ export function LessonPlayerScreen() {
           <View style={styles.videoContainer}>
             {/* Video player placeholder - replace with VideoView from expo-video when upgrading SDK */}
             <View style={[styles.video, { backgroundColor: '#000', alignItems: 'center', justifyContent: 'center' }]}>
-              <Ionicons name="play-circle" size={64} color="#fff" />
+              <Ionicons name="play-circle" size={64} color={T.white} />
             </View>
             <View style={styles.progressBar}>
               <View
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderBottomWidth: 1,
     borderBottomColor: T.border2,
   },
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
   resourceItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 8,

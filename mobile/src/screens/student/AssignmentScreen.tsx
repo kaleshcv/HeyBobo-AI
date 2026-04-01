@@ -16,8 +16,6 @@ import { Card } from '@/components/common/Card';
 import * as DocumentPicker from 'expo-document-picker';
 import T from '@/theme'
 
-;
-
 export function AssignmentScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();

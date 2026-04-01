@@ -15,8 +15,6 @@ import { Button } from '@/components/common/Button';
 import { AppHeader } from '@/components/layout/AppHeader';
 import T from '@/theme'
 
-;
-
 const MOCK_ITEMS = [
   {
     category: 'Vegetables',
@@ -74,7 +72,7 @@ export function GroceryScreen() {
         ]}
       >
         {item.checked && (
-          <Ionicons name="checkmark" size={14} color="#fff" />
+          <Ionicons name="checkmark" size={14} color={T.white} />
         )}
       </View>
       <Text
@@ -152,7 +150,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     gap: 10,
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderBottomWidth: 1,
     borderBottomColor: T.border2,
   },
@@ -199,7 +197,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 12,
     paddingVertical: 10,
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderRadius: 8,
     marginBottom: 6,
     gap: 10,

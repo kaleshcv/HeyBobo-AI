@@ -371,8 +371,8 @@ function StudyPlansTab() {
         activeOpacity={0.8}
       >
         {generating
-          ? <ActivityIndicator color="#fff" size="small" />
-          : <Ionicons name="sparkles" size={17} color="#fff" />
+          ? <ActivityIndicator color={T.white} size="small" />
+          : <Ionicons name="sparkles" size={17} color={T.white} />
         }
         <Text style={styles.primaryBtnText}>
           {generating ? 'Generating…' : 'Generate Study Plan'}
@@ -653,7 +653,7 @@ function ChatTab({ insets }: { insets: { bottom: number } }) {
                 </View>
               )}
               <View style={[styles.bubble, isUser ? styles.bubbleUser : styles.bubbleBot]}>
-                <Text style={[styles.bubbleText, isUser && { color: '#fff' }]}>{item.content}</Text>
+                <Text style={[styles.bubbleText, isUser && { color: T.white }]}>{item.content}</Text>
               </View>
             </View>
           )
@@ -679,7 +679,7 @@ function ChatTab({ insets }: { insets: { bottom: number } }) {
           disabled={!text.trim()}
           activeOpacity={0.8}
         >
-          <Ionicons name="send" size={17} color={text.trim() ? '#fff' : T.muted2} />
+          <Ionicons name="send" size={17} color={text.trim() ? T.white : T.muted2} />
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -754,7 +754,7 @@ const styles = StyleSheet.create({
     backgroundColor: T.primary, borderRadius: 10, paddingVertical: 13,
     marginBottom: 20, gap: 8,
   },
-  primaryBtnText: { fontSize: 14, fontWeight: '700', color: '#fff' },
+  primaryBtnText: { fontSize: 14, fontWeight: '700', color: T.white },
 
   selectorRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 14, gap: 10 },
   selectorLabel: { fontSize: 12, color: T.muted, fontWeight: '600' },

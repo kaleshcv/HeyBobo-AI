@@ -23,7 +23,7 @@ function resolveApiUrl(): string {
 }
 
 const API_URL = resolveApiUrl()
-console.log('[API] Using base URL:', API_URL)
+if (__DEV__) console.log('[API] Using base URL:', API_URL)
 
 let isRefreshing = false
 let failedQueue: Array<{ resolve: (value?: any) => void; reject: (reason?: any) => void }> = []

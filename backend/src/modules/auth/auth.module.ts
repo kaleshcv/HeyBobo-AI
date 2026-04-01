@@ -12,6 +12,11 @@ import { JwtRefreshStrategy } from '@/modules/auth/strategies/jwt-refresh.strate
 import { GoogleStrategy } from '@/modules/auth/strategies/google.strategy';
 import { UsersModule } from '@/modules/users/users.module';
 
+const optionalProviders = [];
+if (process.env.GOOGLE_CLIENT_ID) {
+  optionalProviders.push(GoogleStrategy);
+}
+
 @Module({
   imports: [
     PassportModule,
@@ -32,7 +37,7 @@ import { UsersModule } from '@/modules/users/users.module';
     UsersModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, JwtRefreshStrategy, GoogleStrategy],
+  providers: [AuthService, JwtStrategy, JwtRefreshStrategy, ...optionalProviders],
   exports: [AuthService],
 })
 export class AuthModule {}

@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Patch, Delete, Body, Param, Query } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { AdminService } from '@/modules/admin/admin.service';
 import { Roles, UserRole } from '@/common/decorators/roles.decorator';
@@ -59,5 +59,47 @@ export class AdminController {
   @ApiOperation({ summary: 'Toggle course featured status' })
   async toggleFeatured(@Param('id') courseId: string): Promise<any> {
     return this.adminService.toggleFeaturedCourse(courseId);
+  }
+
+  // ─── DB Browser ────────────────────────────────────────────
+
+  @Get('db-collections')
+  @ApiOperation({ summary: 'List all database collections with document counts' })
+  async listCollections(): Promise<any> {
+    return this.adminService.dbListCollections();
+  }
+
+  @Get('db-browse/:collection')
+  @ApiOperation({ summary: 'Query a collection with pagination and search' })
+  async queryCollection(
+    @Param('collection') collection: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+    @Query('search') search?: string,
+    @Query('searchField') searchField?: string,
+    @Query('sortField') sortField?: string,
+    @Query('sortDir') sortDir?: 'asc' | 'desc',
+  ): Promise<any> {
+    return this.adminService.dbQueryCollection(collection, {
+      page, limit, search, searchField, sortField, sortDir,
+    });
+  }
+
+  @Get('db-doc/:collection/:id')
+  @ApiOperation({ summary: 'Get a single document by ID' })
+  async getDocument(
+    @Param('collection') collection: string,
+    @Param('id') id: string,
+  ): Promise<any> {
+    return this.adminService.dbGetDocument(collection, id);
+  }
+
+  @Delete('db-doc/:collection/:id')
+  @ApiOperation({ summary: 'Delete a document by ID' })
+  async deleteDocument(
+    @Param('collection') collection: string,
+    @Param('id') id: string,
+  ): Promise<any> {
+    return this.adminService.dbDeleteDocument(collection, id);
   }
 }

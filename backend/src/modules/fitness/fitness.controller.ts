@@ -10,8 +10,15 @@ import {
   Logger,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { createHash } from 'crypto';
 import { FitnessService } from './fitness.service';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
+
+/** Convert any string user ID to a valid 24-char hex ObjectId */
+function toObjectId(id: string): string {
+  if (/^[a-f\d]{24}$/i.test(id)) return id;
+  return createHash('md5').update(id).digest('hex').substring(0, 24);
+}
 import {
   CreateWorkoutSessionDto,
   UpdateDailyMetricsDto,
@@ -36,6 +43,7 @@ export class FitnessController {
     @Body() dto: CreateWorkoutSessionDto,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     const session = await this.fitnessService.createWorkoutSession(userId, dto);
     return { success: true, data: session };
   }
@@ -46,6 +54,7 @@ export class FitnessController {
     @Body() body: { sessions: CreateWorkoutSessionDto[] },
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     const result = await this.fitnessService.bulkCreateSessions(userId, body.sessions);
     return { success: true, data: result };
   }
@@ -56,6 +65,7 @@ export class FitnessController {
     @Query() query: QueryWorkoutSessionsDto,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     const result = await this.fitnessService.getWorkoutSessions(userId, query);
     return { success: true, data: result };
   }
@@ -66,6 +76,7 @@ export class FitnessController {
     @Param('id') id: string,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     const session = await this.fitnessService.getWorkoutSession(userId, id);
     return { success: true, data: session };
   }
@@ -76,6 +87,7 @@ export class FitnessController {
     @Param('id') id: string,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     await this.fitnessService.deleteWorkoutSession(userId, id);
     return { success: true };
   }
@@ -88,6 +100,7 @@ export class FitnessController {
     @Param('date') date: string,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     const metrics = await this.fitnessService.getDailyMetrics(userId, date);
     return { success: true, data: metrics };
   }
@@ -99,6 +112,7 @@ export class FitnessController {
     @Query('endDate') endDate: string,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     const metrics = await this.fitnessService.getDailyMetricsRange(userId, startDate, endDate);
     return { success: true, data: metrics };
   }
@@ -109,6 +123,7 @@ export class FitnessController {
     @Body() dto: UpdateDailyMetricsDto,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     const metrics = await this.fitnessService.updateDailyMetrics(userId, dto);
     return { success: true, data: metrics };
   }
@@ -118,6 +133,7 @@ export class FitnessController {
   @Get('profile')
   @ApiOperation({ summary: 'Get fitness profile' })
   async getProfile(@CurrentUser('sub') userId: string) {
+    userId = toObjectId(userId);
     const profile = await this.fitnessService.getFitnessProfile(userId);
     return { success: true, data: profile };
   }
@@ -128,6 +144,7 @@ export class FitnessController {
     @Body() dto: SaveFitnessProfileDto,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     const profile = await this.fitnessService.saveFitnessProfile(userId, dto);
     return { success: true, data: profile };
   }
@@ -137,6 +154,7 @@ export class FitnessController {
   @Get('goals')
   @ApiOperation({ summary: 'Get fitness goals' })
   async getGoals(@CurrentUser('sub') userId: string) {
+    userId = toObjectId(userId);
     const goals = await this.fitnessService.getGoals(userId);
     return { success: true, data: goals };
   }
@@ -147,6 +165,7 @@ export class FitnessController {
     @Body() dto: CreateFitnessGoalDto,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     const goal = await this.fitnessService.createGoal(userId, dto);
     return { success: true, data: goal };
   }
@@ -158,6 +177,7 @@ export class FitnessController {
     @Body() body: { current: number },
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     const goal = await this.fitnessService.updateGoalProgress(userId, id, body.current);
     return { success: true, data: goal };
   }
@@ -168,6 +188,7 @@ export class FitnessController {
     @Param('id') id: string,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     await this.fitnessService.deleteGoal(userId, id);
     return { success: true };
   }
@@ -177,6 +198,7 @@ export class FitnessController {
   @Get('stats')
   @ApiOperation({ summary: 'Get workout statistics and insights' })
   async getStats(@CurrentUser('sub') userId: string) {
+    userId = toObjectId(userId);
     const stats = await this.fitnessService.getWorkoutStats(userId);
     return { success: true, data: stats };
   }

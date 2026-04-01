@@ -1,5 +1,5 @@
 import React from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { UserRole } from '@/types/index'
 
@@ -10,8 +10,9 @@ interface RoleRouteProps {
 
 export const RoleRoute: React.FC<RoleRouteProps> = ({ children, allowedRoles }) => {
   const { isAuthenticated, hasRole } = useAuth()
+  const location = useLocation()
 
-  if (!isAuthenticated && window.location.pathname !== '/auth/login') {
+  if (!isAuthenticated && location.pathname !== '/auth/login') {
     return <Navigate to="/auth/login" replace />
   }
 

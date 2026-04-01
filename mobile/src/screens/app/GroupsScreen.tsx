@@ -113,7 +113,7 @@ export function GroupsScreen() {
         style={[styles.fab, { bottom: insets.bottom + 16 }]}
         onPress={() => setShowAddModal(true)}
       >
-        <Ionicons name="add" size={24} color="#FFF" />
+        <Ionicons name="add" size={24} color={T.white} />
       </TouchableOpacity>
 
       <Modal
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   avatarText: {
-    color: '#FFF',
+    color: T.white,
     fontSize: 20,
     fontWeight: '700',
   },
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   categoryText: {
-    color: '#FFF',
+    color: T.white,
     fontSize: 12,
     fontWeight: '700',
   },
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
     backgroundColor: T.primary2,
   },
   createButtonText: {
-    color: '#FFF',
+    color: T.white,
     fontWeight: '600',
   },
 })

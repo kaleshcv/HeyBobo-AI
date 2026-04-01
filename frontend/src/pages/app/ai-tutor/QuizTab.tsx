@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -23,6 +23,7 @@ import ReplayIcon from '@mui/icons-material/Replay';
 import toast from 'react-hot-toast';
 import { useAITutorStore } from '@/store/aiTutorStore';
 import { generateQuiz, generateRevisionPlan } from '@/lib/gemini';
+import { aiQuizApi, aiAttemptApi, aiRevisionApi } from '@/lib/api';
 import { errorLogger } from '@/lib/errorLogger';
 
 interface Props {
@@ -31,20 +32,46 @@ interface Props {
 
 export default function QuizTab({ selectedBookId }: Props) {
   const dk = useTheme().palette.mode === 'dark';
-  const { textbooks, quizzes, addQuiz, removeQuiz, quizAttempts, addQuizAttempt, addRevisionPlan, studyPlans } = useAITutorStore();
+  const {
+    textbooks, quizzes, setQuizzes, addQuiz, removeQuiz,
+    quizAttempts, setQuizAttempts, addQuizAttempt,
+    addRevisionPlan, setRevisionPlans, studyPlans,
+  } = useAITutorStore();
   const [topic, setTopic] = useState('');
   const [numQuestions, setNumQuestions] = useState('10');
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeQuiz, setActiveQuiz] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [showResults, setShowResults] = useState(false);
+  const [_currentAttemptId, setCurrentAttemptId] = useState<string | null>(null);
+
+  // Load quizzes and attempts from DB on mount
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [quizRes, attemptRes, revisionRes] = await Promise.all([
+          aiQuizApi.getAll(),
+          aiAttemptApi.getAll(),
+          aiRevisionApi.getAll(),
+        ]);
+        if (quizRes.data?.data) setQuizzes(quizRes.data.data);
+        if (attemptRes.data?.data) setQuizAttempts(attemptRes.data.data);
+        if (revisionRes.data?.data) setRevisionPlans(revisionRes.data.data);
+      } catch (err) {
+        errorLogger.warn('Failed to load quiz data from DB', 'QuizTab', { meta: { error: String(err) } });
+      }
+    };
+    loadData();
+  }, []);
 
   const activeBook = textbooks.find((b) => b.id === selectedBookId);
-  const bookQuizzes = quizzes.filter((q) => q.textbookId === selectedBookId);
+  const bookQuizzes = selectedBookId
+    ? quizzes.filter((q) => q.textbookId === selectedBookId)
+    : quizzes;
 
   // Get chapter titles from study plans for quick topic selection
   const planChapters = studyPlans
-    .filter((p) => p.textbookId === selectedBookId)
+    .filter((p) => !selectedBookId || p.textbookId === selectedBookId)
     .flatMap((p) => p.chapters.map((c) => c.title));
 
   const handleGenerate = async () => {
@@ -61,8 +88,10 @@ export default function QuizTab({ selectedBookId }: Props) {
     try {
       const json = await generateQuiz(activeBook.name, activeBook.extractedText, topic || 'General', n);
       const data = JSON.parse(json);
+      const clientId = `quiz-${Date.now()}`;
       const quiz = {
-        id: `quiz-${Date.now()}`,
+        id: clientId,
+        clientId,
         textbookId: activeBook.id,
         title: data.title || `Quiz: ${topic || 'General'}`,
         questions: (data.questions || []).map((q: any, idx: number) => ({
@@ -74,6 +103,17 @@ export default function QuizTab({ selectedBookId }: Props) {
         })),
         createdAt: new Date().toISOString(),
       };
+      // Save to DB
+      try {
+        await aiQuizApi.upsert({
+          clientId: quiz.clientId,
+          textbookId: quiz.textbookId,
+          title: quiz.title,
+          questions: quiz.questions,
+        });
+      } catch (err) {
+        errorLogger.warn('Failed to save quiz to DB', 'QuizTab', { meta: { error: String(err) } });
+      }
       addQuiz(quiz);
       toast.success(`Quiz created with ${quiz.questions.length} questions!`);
     } catch (err: any) {
@@ -88,25 +128,46 @@ export default function QuizTab({ selectedBookId }: Props) {
     setActiveQuiz(quizId);
     setAnswers({});
     setShowResults(false);
+    setCurrentAttemptId(null);
   };
 
-  const handleSubmit = () => {
-    const quiz = quizzes.find((q) => q.id === activeQuiz);
+  const handleSubmit = async () => {
+    const quiz = quizzes.find((q) => q.id === activeQuiz || q.clientId === activeQuiz);
     if (!quiz) return;
     let score = 0;
     quiz.questions.forEach((q) => {
       if (answers[q.id] === q.correctIndex) score++;
     });
-    const attemptId = `attempt-${Date.now()}`;
-    addQuizAttempt({
-      id: attemptId,
+    const attemptClientId = `attempt-${Date.now()}`;
+    setCurrentAttemptId(attemptClientId);
+
+    const attempt = {
+      id: attemptClientId,
+      clientId: attemptClientId,
       quizId: quiz.id,
       textbookId: quiz.textbookId,
       answers,
       score,
       total: quiz.questions.length,
       completedAt: new Date().toISOString(),
-    });
+    };
+
+    // Save attempt to DB
+    try {
+      await aiAttemptApi.save({
+        clientId: attemptClientId,
+        quizId: quiz.clientId || quiz.id,
+        textbookId: quiz.textbookId,
+        answers,
+        score,
+        total: quiz.questions.length,
+        completedAt: attempt.completedAt,
+      });
+    } catch (err) {
+      errorLogger.warn('Failed to save quiz attempt to DB', 'QuizTab', { meta: { error: String(err) } });
+    }
+
+    addQuizAttempt(attempt);
     setShowResults(true);
     const pct = Math.round((score / quiz.questions.length) * 100);
     toast.success(`Score: ${score}/${quiz.questions.length} (${pct}%)`);
@@ -123,11 +184,13 @@ export default function QuizTab({ selectedBookId }: Props) {
           userAnswer: answers[q.id] ?? -1,
         }));
       generateRevisionPlan(quiz.title, wrongQs)
-        .then((json) => {
+        .then(async (json) => {
           const data = JSON.parse(json);
-          addRevisionPlan({
-            id: `rev-${Date.now()}`,
-            quizAttemptId: attemptId,
+          const revClientId = `rev-${Date.now()}`;
+          const revPlan = {
+            id: revClientId,
+            clientId: revClientId,
+            quizAttemptId: attemptClientId,
             textbookId: quiz.textbookId,
             quizTitle: quiz.title,
             score,
@@ -141,14 +204,40 @@ export default function QuizTab({ selectedBookId }: Props) {
             summary: data.summary || 'Review the topics you got wrong.',
             createdAt: new Date().toISOString(),
             dismissed: false,
-          });
+          };
+          // Save revision plan to DB
+          try {
+            await aiRevisionApi.save({
+              clientId: revClientId,
+              quizAttemptId: attemptClientId,
+              textbookId: quiz.textbookId,
+              quizTitle: quiz.title,
+              score,
+              total: quiz.questions.length,
+              weakAreas: revPlan.weakAreas,
+              summary: revPlan.summary,
+            });
+          } catch (err) {
+            errorLogger.warn('Failed to save revision plan to DB', 'QuizTab', { meta: { error: String(err) } });
+          }
+          addRevisionPlan(revPlan);
           toast('Revision plan created — check your Dashboard', { icon: '📋' });
         })
         .catch((e) => { errorLogger.warn('Failed to generate revision plan', 'QuizTab', { meta: { error: String(e) } }); });
     }
   };
 
-  const currentQuiz = quizzes.find((q) => q.id === activeQuiz);
+  const handleDeleteQuiz = async (quizId: string, quizClientId?: string) => {
+    const idToDelete = quizClientId || quizId;
+    try {
+      await aiQuizApi.delete(idToDelete);
+    } catch (err) {
+      errorLogger.warn('Failed to delete quiz from DB', 'QuizTab', { meta: { error: String(err) } });
+    }
+    removeQuiz(quizId);
+  };
+
+  const currentQuiz = quizzes.find((q) => q.id === activeQuiz || q.clientId === activeQuiz);
 
   // Taking a quiz
   if (currentQuiz && activeQuiz) {
@@ -322,7 +411,7 @@ export default function QuizTab({ selectedBookId }: Props) {
           ) : (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               {bookQuizzes.map((quiz) => {
-                const attempts = quizAttempts.filter((a) => a.quizId === quiz.id);
+                const attempts = quizAttempts.filter((a) => a.quizId === quiz.id || a.quizId === quiz.clientId);
                 const bestScore = attempts.length > 0 ? Math.max(...attempts.map((a) => a.score)) : null;
                 return (
                   <Paper
@@ -349,7 +438,7 @@ export default function QuizTab({ selectedBookId }: Props) {
                         />
                       )}
                       <Tooltip title="Delete quiz">
-                        <IconButton size="small" onClick={(e) => { e.stopPropagation(); removeQuiz(quiz.id); }}>
+                        <IconButton size="small" onClick={(e) => { e.stopPropagation(); handleDeleteQuiz(quiz.id, quiz.clientId); }}>
                           <DeleteIcon sx={{ fontSize: 16 }} />
                         </IconButton>
                       </Tooltip>

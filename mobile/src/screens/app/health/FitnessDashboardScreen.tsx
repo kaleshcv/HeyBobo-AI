@@ -113,7 +113,7 @@ export function FitnessDashboardScreen() {
             </View>
 
             <TouchableOpacity style={styles.startButton}>
-              <Ionicons name="play" size={20} color="#FFF" />
+              <Ionicons name="play" size={20} color={T.white} />
               <Text style={styles.startButtonText}>Start Workout</Text>
             </TouchableOpacity>
           </View>
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   activePlanTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#FFF',
+    color: T.white,
   },
   activePlanGoal: {
     fontSize: 12,
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statsValue: {
-    color: '#FFF',
+    color: T.white,
     fontSize: 16,
     fontWeight: '700',
   },
@@ -267,17 +267,17 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   dayTextActive: {
-    color: '#FFF',
+    color: T.white,
   },
   workoutDot: {
     width: 4,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     marginTop: 4,
   },
   startButton: {
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
     color: T.muted,
   },
   categoryChipTextActive: {
-    color: '#FFF',
+    color: T.white,
   },
   presetPlanCard: {
     backgroundColor: T.surface2,
@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   planDaysText: {
-    color: '#FFF',
+    color: T.white,
     fontSize: 14,
     fontWeight: '700',
   },
@@ -416,7 +416,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   difficultyText: {
-    color: '#FFF',
+    color: T.white,
     fontSize: 10,
     fontWeight: '600',
   },

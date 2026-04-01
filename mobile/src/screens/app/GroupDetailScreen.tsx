@@ -58,7 +58,7 @@ export function GroupDetailScreen() {
     <View style={[styles.postCard, item.pinned && styles.pinnedPost]}>
       {item.pinned && (
         <View style={styles.pinnedBadge}>
-          <Ionicons name="pin" size={12} color="#FFF" />
+          <Ionicons name="pin" size={12} color={T.white} />
           <Text style={styles.pinnedText}>Pinned</Text>
         </View>
       )}
@@ -157,7 +157,7 @@ export function GroupDetailScreen() {
                 onPress={handleAddPost}
                 disabled={!newPostContent.trim()}
               >
-                <Ionicons name="send" size={16} color="#FFF" />
+                <Ionicons name="send" size={16} color={T.white} />
               </TouchableOpacity>
             </View>
 
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   pinnedText: {
-    color: '#FFF',
+    color: T.white,
     fontSize: 10,
     fontWeight: '600',
   },
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   memberAvatarText: {
-    color: '#FFF',
+    color: T.white,
     fontSize: 18,
     fontWeight: '700',
   },

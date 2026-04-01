@@ -23,6 +23,11 @@ export function OAuthCallbackScreen() {
 
         if (!accessToken || !refreshToken) throw new Error('Missing tokens')
 
+        // Store tokens first so the API client can use them for getProfile()
+        const SecureStore = await import('expo-secure-store')
+        await SecureStore.setItemAsync('access_token', accessToken)
+        await SecureStore.setItemAsync('refresh_token', refreshToken)
+
         const user = await authApi.getProfile()
         await setAuth(user, accessToken, refreshToken)
         // Navigation handled automatically by RootNavigator (isAuthenticated → Main)

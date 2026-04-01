@@ -18,7 +18,6 @@ import { Button } from '@/components/common/Button';
 import { Card } from '@/components/common/Card';
 import { useLogMeal, useSearchFood } from '@/hooks/useDietary';
 import { MealType } from '@/types';
-import * as DocumentPicker from 'expo-document-picker';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import T from '@/theme';
 

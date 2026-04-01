@@ -8,8 +8,6 @@ import { Card } from '@/components/common/Card';
 import { AppHeader } from '@/components/layout/AppHeader';
 import T from '@/theme'
 
-;
-
 export function TeacherDashboardScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
@@ -103,7 +101,7 @@ const styles = StyleSheet.create({
   actionCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderRadius: 10,
     padding: 14,
     marginBottom: 10,

@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { getUserScopedKey } from '@/lib/userStorage'
 import { syncFitnessProfile } from './fitnessSyncService'
 
 export type FitnessGoal = 'weight-loss' | 'muscle-gain' | 'general-fitness' | 'endurance' | 'rehab-mobility'
@@ -49,39 +48,23 @@ const DEFAULT_PROFILE: FitnessProfile = {
   minutesPerDay: 30,
 }
 
-function loadProfile(): { profile: FitnessProfile; isOnboarded: boolean } {
-  try {
-    const stored = localStorage.getItem(getUserScopedKey('heybobo_fitness_profile'))
-    if (stored) {
-      const parsed = JSON.parse(stored)
-      return { profile: { ...DEFAULT_PROFILE, ...parsed.profile }, isOnboarded: !!parsed.isOnboarded }
-    }
-  } catch { /* ignore */ }
-  return { profile: DEFAULT_PROFILE, isOnboarded: false }
-}
-
-function persist(profile: FitnessProfile, isOnboarded: boolean) {
-  localStorage.setItem(getUserScopedKey('heybobo_fitness_profile'), JSON.stringify({ profile, isOnboarded }))
-}
+// Data is synced to backend via API — no localStorage
+// Zustand stores data in-memory only (ephemeral per session)
 
 export const useFitnessProfileStore = create<FitnessProfileState>((set, get) => {
-  const initial = loadProfile()
   return {
-    profile: initial.profile,
-    isOnboarded: initial.isOnboarded,
+    profile: DEFAULT_PROFILE,
+    isOnboarded: false,
     setProfile: (partial) => {
       const updated = { ...get().profile, ...partial }
-      persist(updated, get().isOnboarded)
       set({ profile: updated })
       syncFitnessProfile(updated)
     },
     completeOnboarding: () => {
-      persist(get().profile, true)
       set({ isOnboarded: true })
       syncFitnessProfile({ ...get().profile, isOnboarded: true })
     },
     resetProfile: () => {
-      persist(DEFAULT_PROFILE, false)
       set({ profile: DEFAULT_PROFILE, isOnboarded: false })
     },
   }

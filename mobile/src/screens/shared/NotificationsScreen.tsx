@@ -9,8 +9,6 @@ import { EmptyState } from '@/components/common/EmptyState';
 import { AppHeader } from '@/components/layout/AppHeader';
 import T from '@/theme'
 
-;
-
 const MOCK_NOTIFICATIONS = [
   {
     id: '1',

@@ -15,8 +15,6 @@ import { useNutritionSummary } from '@/hooks/useDietary';
 import Svg, { Polyline, G, Text as SvgText } from 'react-native-svg';
 import T from '@/theme'
 
-;
-
 const DAILY_DATA = [
   { day: 'Mon', calories: 1800 },
   { day: 'Tue', calories: 2100 },
@@ -98,7 +96,7 @@ export function NutritionTrackerScreen() {
         {/* Macro Breakdown */}
         <Card padding="lg" style={{ marginBottom: 24 }}>
           <Text style={styles.sectionTitle}>Weekly Macro Breakdown</Text>
-          {renderMacroBreakdown('Protein', 1050, '#3B82F6')}
+          {renderMacroBreakdown('Protein', 1050, T.cyan)}
           {renderMacroBreakdown('Carbs', 1260, T.orange)}
           {renderMacroBreakdown('Fat', 490, T.red)}
         </Card>

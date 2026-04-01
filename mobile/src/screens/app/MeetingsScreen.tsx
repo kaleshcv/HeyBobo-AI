@@ -200,8 +200,8 @@ function DetailModal({ meeting, visible, onClose }: {
           <View style={[styles.statusBadge, { backgroundColor: `${statusColor(meeting.status)}22` }]}>
             <Text style={[styles.statusText, { color: statusColor(meeting.status) }]}>{statusLabel(meeting.status)}</Text>
           </View>
-          {isHost && isSched && <TouchableOpacity style={[styles.actionBtn, { backgroundColor: T.green }]} onPress={() => startMeeting(meeting.id)}><Ionicons name="videocam" size={13} color="#fff" /><Text style={styles.actionBtnText}>Start</Text></TouchableOpacity>}
-          {isHost && isLive  && <TouchableOpacity style={[styles.actionBtn, { backgroundColor: T.red }]} onPress={() => { endMeeting(meeting.id); onClose() }}><Ionicons name="call" size={13} color="#fff" /><Text style={styles.actionBtnText}>End</Text></TouchableOpacity>}
+          {isHost && isSched && <TouchableOpacity style={[styles.actionBtn, { backgroundColor: T.green }]} onPress={() => startMeeting(meeting.id)}><Ionicons name="videocam" size={13} color={T.white} /><Text style={styles.actionBtnText}>Start</Text></TouchableOpacity>}
+          {isHost && isLive  && <TouchableOpacity style={[styles.actionBtn, { backgroundColor: T.red }]} onPress={() => { endMeeting(meeting.id); onClose() }}><Ionicons name="call" size={13} color={T.white} /><Text style={styles.actionBtnText}>End</Text></TouchableOpacity>}
           {isHost && isSched && <TouchableOpacity style={[styles.actionBtn, { backgroundColor: T.orange }]} onPress={() => { cancelMeeting(meeting.id); onClose() }}><Text style={styles.actionBtnText}>Cancel</Text></TouchableOpacity>}
         </View>
 
@@ -244,7 +244,7 @@ function DetailModal({ meeting, visible, onClose }: {
             {isLive && (
               <View style={styles.chatInputRow}>
                 <TextInput style={styles.chatInput} value={chatText} onChangeText={setChatText} placeholder="Type a message…" placeholderTextColor={T.muted2} returnKeyType="send" onSubmitEditing={sendMsg} />
-                <TouchableOpacity style={styles.sendBtn} onPress={sendMsg}><Ionicons name="send" size={17} color="#fff" /></TouchableOpacity>
+                <TouchableOpacity style={styles.sendBtn} onPress={sendMsg}><Ionicons name="send" size={17} color={T.white} /></TouchableOpacity>
               </View>
             )}
           </KeyboardAvoidingView>
@@ -504,7 +504,7 @@ const styles = StyleSheet.create({
   // Detail modal
   detailActions: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 20, paddingVertical: 12 },
   actionBtn: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
-  actionBtnText: { color: '#fff', fontWeight: '600', fontSize: 13 },
+  actionBtnText: { color: T.white, fontWeight: '600', fontSize: 13 },
   detailTabs: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: T.border },
   detailTab: { flex: 1, paddingVertical: 10, alignItems: 'center' },
   detailTabActive: { borderBottomWidth: 2, borderBottomColor: T.primary },

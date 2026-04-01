@@ -12,7 +12,7 @@ interface AvatarProps {
 
 const SIZE_MAP: Record<string, number> = { xs: 24, sm: 32, md: 40, lg: 56, xl: 72 }
 
-const COLORS = [T.primary2, '#8B5CF6', '#EC4899', '#EF4444', '#F59E0B', '#10B981', '#3B82F6']
+const COLORS = [T.primary2, T.primary, T.pink, T.red, T.orange, T.green, T.cyan]
 
 function colorFromName(name: string) {
   let hash = 0

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 // ═══════════ ENUMS ═══════════════════════════════════════
 
@@ -161,8 +161,8 @@ export const OutfitProfileSchema = SchemaFactory.createForClass(OutfitProfile);
 
 @Schema({ timestamps: true })
 export class GroomingProfile extends Document {
-  @Prop({ required: true, index: true })
-  userId: string;
+  @Prop({ required: true, index: true, type: Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
 
   @Prop({ type: SkincareProfileSchema, default: () => ({}) })
   skincare: SkincareProfile;
@@ -273,8 +273,8 @@ export const OutfitSuggestionSchema = SchemaFactory.createForClass(OutfitSuggest
 
 @Schema({ timestamps: true })
 export class GroomingRecommendation extends Document {
-  @Prop({ required: true, index: true })
-  userId: string;
+  @Prop({ required: true, index: true, type: Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
 
   @Prop({ required: true, enum: RecommendationType })
   type: string;
@@ -335,8 +335,8 @@ export const AnalysisMetricSchema = SchemaFactory.createForClass(AnalysisMetric)
 
 @Schema({ timestamps: true })
 export class VisualAnalysis extends Document {
-  @Prop({ required: true, index: true })
-  userId: string;
+  @Prop({ required: true, index: true, type: Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
 
   @Prop({ required: true, enum: VisualAnalysisType })
   type: string;

@@ -15,8 +15,6 @@ import { Card } from '@/components/common/Card';
 import { useQuiz, useSubmitQuiz } from '@/hooks/useQuiz';
 import T from '@/theme'
 
-;
-
 export function QuizScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
@@ -131,7 +129,7 @@ export function QuizScreen() {
             <Ionicons
               name={isPassed ? 'checkmark-circle' : 'close-circle'}
               size={64}
-              color="#fff"
+              color={T.white}
             />
           </View>
 
@@ -283,7 +281,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderBottomWidth: 1,
     borderBottomColor: T.border2,
   },
@@ -351,7 +349,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: T.border2,
     borderRadius: 8,
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
   },
   optionSelected: {
     borderColor: T.primary2,

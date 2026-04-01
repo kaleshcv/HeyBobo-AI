@@ -403,10 +403,13 @@ export const aiApi = {
   uploadDocument: (file: File) => {
     const formData = new FormData()
     formData.append('file', file)
+    // Setting Content-Type to undefined removes the Axios instance's default
+    // 'application/json' header so the browser can auto-set the correct
+    // 'multipart/form-data; boundary=...' value that multer needs to parse the body
     return api.post<ApiResponse<{ id: string; filename: string; pageCount: number; size: number; extractedText: string; createdAt: string }>>(
       '/ai/documents/upload',
       formData,
-      { headers: { 'Content-Type': 'multipart/form-data' } }
+      { headers: { 'Content-Type': undefined } },
     )
   },
 
@@ -415,6 +418,96 @@ export const aiApi = {
 
   deleteDocument: (documentId: string) =>
     api.delete(`/ai/documents/${documentId}`),
+}
+
+// Study Plan API
+export const studyPlanApi = {
+  getAll: () =>
+    api.get<ApiResponse<any[]>>('/ai/study-plans'),
+
+  upsert: (plan: {
+    clientId: string;
+    textbookId: string;
+    title: string;
+    totalDays: number;
+    hoursPerDay: number;
+    chapters: Array<{
+      id: string; title: string; description: string;
+      days: number; topics: string[]; objectives: string[]; completed: boolean;
+    }>;
+  }) => api.post<ApiResponse<any>>('/ai/study-plans', plan),
+
+  toggleChapter: (clientId: string, chapterId: string) =>
+    api.patch<ApiResponse<any>>(`/ai/study-plans/${clientId}/chapters/${chapterId}/toggle`, {}),
+
+  delete: (clientId: string) =>
+    api.delete(`/ai/study-plans/${clientId}`),
+}
+
+// AI Quiz API
+export const aiQuizApi = {
+  getAll: () =>
+    api.get<ApiResponse<any[]>>('/ai/quizzes'),
+
+  upsert: (quiz: {
+    clientId: string;
+    textbookId: string;
+    title: string;
+    questions: Array<{ id: string; question: string; options: string[]; correctIndex: number; explanation: string }>;
+  }) => api.post<ApiResponse<any>>('/ai/quizzes', quiz),
+
+  delete: (clientId: string) =>
+    api.delete(`/ai/quizzes/${clientId}`),
+}
+
+// AI Quiz Attempt API
+export const aiAttemptApi = {
+  getAll: () =>
+    api.get<ApiResponse<any[]>>('/ai/quiz-attempts'),
+
+  save: (attempt: {
+    clientId: string;
+    quizId: string;
+    textbookId: string;
+    answers: Record<string, number>;
+    score: number;
+    total: number;
+    completedAt: string;
+  }) => api.post<ApiResponse<any>>('/ai/quiz-attempts', attempt),
+}
+
+// AI Lesson API
+export const aiLessonApi = {
+  getAll: () =>
+    api.get<ApiResponse<any[]>>('/ai/lessons'),
+
+  save: (lesson: {
+    clientId: string;
+    textbookId: string;
+    topic: string;
+    content: string;
+    completedAt: string;
+  }) => api.post<ApiResponse<any>>('/ai/lessons', lesson),
+}
+
+// AI Revision Plan API
+export const aiRevisionApi = {
+  getAll: () =>
+    api.get<ApiResponse<any[]>>('/ai/revision-plans'),
+
+  save: (plan: {
+    clientId: string;
+    quizAttemptId: string;
+    textbookId: string;
+    quizTitle: string;
+    score: number;
+    total: number;
+    weakAreas: Array<{ topic: string; weakness: string; action: string; priority: string }>;
+    summary: string;
+  }) => api.post<ApiResponse<any>>('/ai/revision-plans', plan),
+
+  dismiss: (clientId: string) =>
+    api.patch<ApiResponse<any>>(`/ai/revision-plans/${clientId}/dismiss`, {}),
 }
 
 // Notification API
@@ -490,6 +583,27 @@ export const adminApi = {
 
   updateTeacherStatus: (userId: string, approved: boolean) =>
     api.put<ApiResponse<User>>(`/admin/teachers/${userId}`, { approved }),
+}
+
+// Admin DB Browser API
+export const dbBrowserApi = {
+  listCollections: () =>
+    api.get<ApiResponse<Array<{ name: string; count: number }>>>('/admin/db-collections'),
+
+  queryCollection: (
+    collection: string,
+    params: { page?: number; limit?: number; search?: string; searchField?: string; sortField?: string; sortDir?: 'asc' | 'desc' } = {}
+  ) =>
+    api.get<{ success: boolean; data: any[]; total: number; page: number; limit: number; pages: number }>(
+      `/admin/db-browse/${collection}`,
+      { params }
+    ),
+
+  getDocument: (collection: string, id: string) =>
+    api.get<ApiResponse<any>>(`/admin/db-doc/${collection}/${id}`),
+
+  deleteDocument: (collection: string, id: string) =>
+    api.delete(`/admin/db-doc/${collection}/${id}`),
 }
 
 // Category API

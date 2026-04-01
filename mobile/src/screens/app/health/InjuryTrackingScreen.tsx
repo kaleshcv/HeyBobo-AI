@@ -92,7 +92,7 @@ export function InjuryTrackingScreen() {
                   : T.border2,
               }}
             >
-              <Text style={{ fontSize: 10, fontWeight: '700', color: level <= item.painLevel ? '#fff' : T.muted }}>
+              <Text style={{ fontSize: 10, fontWeight: '700', color: level <= item.painLevel ? T.white : T.muted }}>
                 {level}
               </Text>
             </TouchableOpacity>
@@ -171,7 +171,7 @@ export function InjuryTrackingScreen() {
           setSelectedBodyPartModal(true)
         }}
       >
-        <Ionicons name="add" size={24} color="#FFF" />
+        <Ionicons name="add" size={24} color={T.white} />
       </TouchableOpacity>
 
       <Modal

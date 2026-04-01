@@ -29,7 +29,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const [accessToken, userJson] = await Promise.all([
         SecureStore.getItemAsync('access_token'),
-        Promise.resolve(Storage.get<User>('auth_user')),
+        Storage.get<User>('auth_user'),
       ])
 
       if (accessToken && userJson) {
@@ -44,8 +44,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     await Promise.all([
       SecureStore.setItemAsync('access_token', accessToken),
       SecureStore.setItemAsync('refresh_token', refreshToken),
+      Storage.set('auth_user', user),
     ])
-    Storage.set('auth_user', user)
     set({ user, accessToken, isAuthenticated: true })
   },
 
@@ -58,8 +58,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     await Promise.all([
       SecureStore.deleteItemAsync('access_token'),
       SecureStore.deleteItemAsync('refresh_token'),
+      Storage.delete('auth_user'),
     ])
-    Storage.delete('auth_user')
     set({ user: null, accessToken: null, isAuthenticated: false })
   },
 

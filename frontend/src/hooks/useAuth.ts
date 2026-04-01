@@ -145,8 +145,7 @@ export const useAuth = () => {
     // Clear auth tokens from store
     logoutStore()
     toast.success('Logged out successfully')
-    // Full page reload clears all in-memory zustand state.
-    // User-scoped data remains in localStorage and will restore on next login.
+    // Full page reload clears all in-memory Zustand state
     window.location.href = '/auth/login'
   }, [logoutStore, refreshToken])
 

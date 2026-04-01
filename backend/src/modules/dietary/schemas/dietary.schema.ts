@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 // ─── Enums ──────────────────────────────────────────────
 export enum MealType {
@@ -67,8 +67,8 @@ export const FoodItemSchema = SchemaFactory.createForClass(FoodItem);
 // ─── Main Schema: MealLog ───────────────────────────────
 @Schema({ timestamps: true, collection: 'meal_logs' })
 export class MealLog extends Document {
-  @Prop({ required: true, index: true })
-  userId: string;
+  @Prop({ required: true, index: true, type: Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
 
   @Prop({ required: true, enum: MealType })
   mealType: MealType;
@@ -115,8 +115,8 @@ MealLogSchema.index({ userId: 1, mealType: 1 });
 // ─── Daily Nutrition Summary ────────────────────────────
 @Schema({ timestamps: true, collection: 'daily_nutrition' })
 export class DailyNutrition extends Document {
-  @Prop({ required: true, index: true })
-  userId: string;
+  @Prop({ required: true, index: true, type: Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
 
   @Prop({ required: true })
   date: string; // YYYY-MM-DD
@@ -150,8 +150,8 @@ DailyNutritionSchema.index({ userId: 1, date: -1 }, { unique: true });
 // ─── Dietary Profile ────────────────────────────────────
 @Schema({ timestamps: true, collection: 'dietary_profiles' })
 export class DietaryProfile extends Document {
-  @Prop({ required: true, unique: true, index: true })
-  userId: string;
+  @Prop({ required: true, unique: true, index: true, type: Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
 
   @Prop({ enum: DietGoal })
   goal: string;
@@ -195,8 +195,8 @@ export const DietaryProfileSchema = SchemaFactory.createForClass(DietaryProfile)
 // ─── Dietary Goal ───────────────────────────────────────
 @Schema({ timestamps: true, collection: 'dietary_goals' })
 export class DietaryGoal extends Document {
-  @Prop({ required: true, index: true })
-  userId: string;
+  @Prop({ required: true, index: true, type: Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
 
   @Prop({ required: true })
   type: string; // 'calories', 'protein', 'water', 'meals', etc.
@@ -230,8 +230,8 @@ DietaryGoalSchema.index({ userId: 1, type: 1 });
 // ─── Supplement Log ─────────────────────────────────────
 @Schema({ timestamps: true, collection: 'supplement_logs' })
 export class SupplementLog extends Document {
-  @Prop({ required: true, index: true })
-  userId: string;
+  @Prop({ required: true, index: true, type: Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
 
   @Prop({ required: true })
   name: string;
@@ -359,8 +359,8 @@ export const DayPlanSchema = SchemaFactory.createForClass(DayPlan);
 // ─── Main Schema: Meal Plan ─────────────────────────────
 @Schema({ timestamps: true, collection: 'meal_plans' })
 export class MealPlan extends Document {
-  @Prop({ required: true, index: true })
-  userId: string;
+  @Prop({ required: true, index: true, type: Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
 
   @Prop({ required: true })
   title: string;
@@ -504,8 +504,8 @@ export const GroceryItemSchema = SchemaFactory.createForClass(GroceryItem);
 // ─── Main Schema: Grocery List ──────────────────────────
 @Schema({ timestamps: true, collection: 'grocery_lists' })
 export class GroceryList extends Document {
-  @Prop({ required: true, index: true })
-  userId: string;
+  @Prop({ required: true, index: true, type: Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
 
   @Prop({ required: true })
   title: string;

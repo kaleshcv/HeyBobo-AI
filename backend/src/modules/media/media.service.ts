@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -91,7 +91,7 @@ export class MediaService {
     const asset = await this.findOne(id);
 
     if (asset.ownerId.toString() !== ownerId) {
-      throw new Error('You can only delete your own assets');
+      throw new ForbiddenException('You can only delete your own assets');
     }
 
     if (asset.muxAssetId) {

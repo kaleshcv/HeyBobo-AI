@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import { Home, Users, BookOpen, Grid3x3, BarChart3, Award } from 'lucide-react'
+import { Home, Users, BookOpen, Grid3x3, BarChart3, Award, Database } from 'lucide-react'
 import { Header } from './Header'
 import { Sidebar } from './Sidebar'
 import { useTheme } from '@mui/material'
@@ -18,6 +18,7 @@ export default function AdminLayout() {
     { id: 'categories', label: 'Categories', icon: Grid3x3, href: '/admin/categories' },
     { id: 'analytics', label: 'Analytics', icon: BarChart3, href: '/admin/analytics' },
     { id: 'certificates', label: 'Certificates', icon: Award, href: '/admin/certificates' },
+    { id: 'database', label: 'Database', icon: Database, href: '/admin/database' },
   ]
 
   return (

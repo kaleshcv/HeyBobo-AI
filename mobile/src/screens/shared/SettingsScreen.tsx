@@ -8,8 +8,6 @@ import { Card } from '@/components/common/Card';
 import { AppHeader } from '@/components/layout/AppHeader';
 import T from '@/theme'
 
-;
-
 const THEMES = ['Light', 'Dark', 'System'];
 
 export function SettingsScreen() {

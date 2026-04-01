@@ -13,8 +13,6 @@ import { Button } from '@/components/common/Button';
 import { AppHeader } from '@/components/layout/AppHeader';
 import T from '@/theme'
 
-;
-
 const GOALS = [
   {
     id: 'lose_weight',

@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { getUserScopedKey } from '@/lib/userStorage'
 import { syncDailyMetrics, syncWorkoutSession } from './fitnessSyncService'
 
 export interface DailyMetrics {
@@ -112,36 +111,16 @@ function toDateStr(d: Date): string {
   return d.toISOString().slice(0, 10)
 }
 
-function loadState() {
-  try {
-    const raw = localStorage.getItem(getUserScopedKey('heybobo_activity_tracking'))
-    if (raw) return JSON.parse(raw)
-  } catch { /* ignore */ }
-  return null
-}
-
-function persist(state: Pick<ActivityTrackingState, 'dailyMetrics' | 'workouts' | 'customActivities' | 'connectedDevices' | 'goals'>) {
-  localStorage.setItem(
-    getUserScopedKey('heybobo_activity_tracking'),
-    JSON.stringify({
-      dailyMetrics: state.dailyMetrics,
-      workouts: state.workouts,
-      customActivities: state.customActivities,
-      connectedDevices: state.connectedDevices,
-      goals: state.goals,
-    }),
-  )
-}
+// Data is synced to backend via API — no localStorage
+// Zustand stores data in-memory only (ephemeral per session)
 
 export const useActivityTrackingStore = create<ActivityTrackingState>((set, get) => {
-  const saved = loadState()
-
   const initial = {
-    dailyMetrics: saved?.dailyMetrics ?? {},
-    workouts: saved?.workouts ?? [],
-    customActivities: saved?.customActivities ?? [],
-    connectedDevices: saved?.connectedDevices ?? [],
-    goals: saved?.goals ?? DEFAULT_GOALS,
+    dailyMetrics: {},
+    workouts: [],
+    customActivities: [],
+    connectedDevices: [],
+    goals: DEFAULT_GOALS,
   }
 
   return {
@@ -154,7 +133,6 @@ export const useActivityTrackingStore = create<ActivityTrackingState>((set, get)
       const updated = { ...current, ...partial, date }
       const newMetrics = { ...get().dailyMetrics, [date]: updated }
       set({ dailyMetrics: newMetrics })
-      persist({ ...get(), dailyMetrics: newMetrics })
       syncDailyMetrics(date, updated)
     },
 
@@ -171,7 +149,6 @@ export const useActivityTrackingStore = create<ActivityTrackingState>((set, get)
       }
       const newMetrics = { ...get().dailyMetrics, [workout.date]: updated }
       set({ dailyMetrics: newMetrics })
-      persist({ ...get(), workouts, dailyMetrics: newMetrics })
       // Sync workout to backend
       syncWorkoutSession({
         name: workout.name,
@@ -187,7 +164,6 @@ export const useActivityTrackingStore = create<ActivityTrackingState>((set, get)
     removeWorkout: (id) => {
       const workouts = get().workouts.filter((w) => w.id !== id)
       set({ workouts })
-      persist({ ...get(), workouts })
     },
 
     addCustomActivity: (activity) => {
@@ -202,13 +178,11 @@ export const useActivityTrackingStore = create<ActivityTrackingState>((set, get)
       }
       const newMetrics = { ...get().dailyMetrics, [activity.date]: updated }
       set({ dailyMetrics: newMetrics })
-      persist({ ...get(), customActivities, dailyMetrics: newMetrics })
     },
 
     removeCustomActivity: (id) => {
       const customActivities = get().customActivities.filter((a) => a.id !== id)
       set({ customActivities })
-      persist({ ...get(), customActivities })
     },
 
     connectDevice: (type, name) => {
@@ -216,13 +190,11 @@ export const useActivityTrackingStore = create<ActivityTrackingState>((set, get)
       const existing = get().connectedDevices.filter((d) => d.type !== type)
       const connectedDevices = [...existing, { type, name, connectedAt: now, lastSyncedAt: now, isActive: true }]
       set({ connectedDevices })
-      persist({ ...get(), connectedDevices })
     },
 
     disconnectDevice: (type) => {
       const connectedDevices = get().connectedDevices.filter((d) => d.type !== type)
       set({ connectedDevices })
-      persist({ ...get(), connectedDevices })
     },
 
     syncDevice: (type) => {
@@ -230,13 +202,11 @@ export const useActivityTrackingStore = create<ActivityTrackingState>((set, get)
         d.type === type ? { ...d, lastSyncedAt: new Date().toISOString() } : d,
       )
       set({ connectedDevices })
-      persist({ ...get(), connectedDevices })
     },
 
     setGoals: (partial) => {
       const goals = { ...get().goals, ...partial }
       set({ goals })
-      persist({ ...get(), goals })
     },
 
     getWeeklyMetrics: (endDate) => {

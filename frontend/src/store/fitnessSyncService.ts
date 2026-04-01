@@ -1,7 +1,7 @@
 /**
  * Fitness API sync utilities.
  * Provides background sync from frontend Zustand stores to the backend MongoDB.
- * Offline-first: localStorage remains primary, API is secondary sync.
+ * Zustand stores are in-memory only; API is the persistent data layer.
  */
 import { fitnessApi } from '../lib/api';
 import { useAuthStore } from './authStore';

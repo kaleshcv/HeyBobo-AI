@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Mux from '@mux/mux-node';
 
@@ -21,11 +21,8 @@ export class MuxService {
 
   async createDirectUpload(): Promise<{ url: string; assetId: string }> {
     if (!this.mux) {
-      this.logger.warn('Mux not configured, returning mock data');
-      return {
-        url: 'https://upload.mux.dev',
-        assetId: `mock-${Date.now()}`,
-      };
+      this.logger.warn('Mux not configured — video upload unavailable');
+      throw new ServiceUnavailableException('Video hosting service is not configured');
     }
 
     try {

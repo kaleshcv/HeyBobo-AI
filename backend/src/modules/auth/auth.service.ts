@@ -273,31 +273,38 @@ export class AuthService {
       return { message: 'If email exists, password reset link will be sent' };
     }
 
-    // Generate reset token (in production, store in DB with expiry)
-    // For now, just log it
-    const resetToken = uuidv4();
-    this.logger.log(`Password reset requested for ${email}. Reset token: ${resetToken}`);
+    // Generate a short-lived JWT as the reset token (15 min expiry)
+    const resetToken = this.jwtService.sign(
+      { sub: user._id.toString(), email: user.email, purpose: 'password-reset' },
+      {
+        secret: this.configService.get<string>('jwt.secret'),
+        expiresIn: '15m',
+      },
+    );
+    this.logger.log(`Password reset requested for ${email}`);
 
-    // In production: send email with reset link
+    // In production: send email with reset link containing the token
     // await this.emailService.sendPasswordResetEmail(email, resetToken);
 
     return { message: 'If email exists, password reset link will be sent' };
   }
 
   async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<{ message: string }> {
-    // In production, verify reset token from DB
-    // const token = await this.passwordResetTokenModel.findOne({
-    //   token: resetPasswordDto.token,
-    //   expiresAt: { $gt: new Date() }
-    // });
+    // Verify the JWT reset token
+    let payload: { sub: string; email: string; purpose: string };
+    try {
+      payload = this.jwtService.verify(resetPasswordDto.token, {
+        secret: this.configService.get<string>('jwt.secret'),
+      });
+    } catch {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
 
-    // For now, just update password for any valid request
-    // In production, this would be more secure
+    if (payload.purpose !== 'password-reset') {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
 
-    const user = await this.userModel.findById(
-      // Simplified - in production get from token
-      '000000000000000000000000',
-    );
+    const user = await this.userModel.findById(payload.sub);
 
     if (!user) {
       throw new BadRequestException('Invalid or expired reset token');

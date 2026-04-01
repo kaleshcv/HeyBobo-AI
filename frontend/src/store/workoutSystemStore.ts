@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { getUserScopedKey } from '@/lib/userStorage'
 import { syncWorkoutSession } from './fitnessSyncService'
 
 // ─── Types ──────────────────────────────────────────────
@@ -208,17 +207,8 @@ function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 }
 
-function loadState(): { customWorkouts: CustomWorkout[]; activePlanId: string | null; workoutLogs: WorkoutLog[] } {
-  try {
-    const raw = localStorage.getItem(getUserScopedKey('heybobo_workout_system'))
-    if (raw) return JSON.parse(raw)
-  } catch { /* ignore */ }
-  return { customWorkouts: [], activePlanId: null, workoutLogs: [] }
-}
-
-function persist(state: { customWorkouts: CustomWorkout[]; activePlanId: string | null; workoutLogs: WorkoutLog[] }) {
-  localStorage.setItem(getUserScopedKey('heybobo_workout_system'), JSON.stringify(state))
-}
+// Data is synced to backend via API — no localStorage
+// Zustand stores data in-memory only (ephemeral per session)
 
 interface WorkoutSystemState {
   customWorkouts: CustomWorkout[]
@@ -240,10 +230,10 @@ interface WorkoutSystemState {
 }
 
 export const useWorkoutSystemStore = create<WorkoutSystemState>((set, get) => {
-  const saved = loadState()
-
   return {
-    ...saved,
+    customWorkouts: [],
+    activePlanId: null,
+    workoutLogs: [],
 
     createCustomWorkout: (name, description, exercises) => {
       const workout: CustomWorkout = {
@@ -257,19 +247,16 @@ export const useWorkoutSystemStore = create<WorkoutSystemState>((set, get) => {
       }
       const customWorkouts = [workout, ...get().customWorkouts]
       set({ customWorkouts })
-      persist({ ...get(), customWorkouts })
     },
 
     deleteCustomWorkout: (id) => {
       const customWorkouts = get().customWorkouts.filter((w) => w.id !== id)
       set({ customWorkouts })
-      persist({ ...get(), customWorkouts })
     },
 
     updateCustomWorkout: (id, partial) => {
       const customWorkouts = get().customWorkouts.map((w) => (w.id === id ? { ...w, ...partial } : w))
       set({ customWorkouts })
-      persist({ ...get(), customWorkouts })
     },
 
     useCustomWorkout: (id) => {
@@ -277,19 +264,16 @@ export const useWorkoutSystemStore = create<WorkoutSystemState>((set, get) => {
         w.id === id ? { ...w, lastUsedAt: new Date().toISOString(), timesUsed: w.timesUsed + 1 } : w,
       )
       set({ customWorkouts })
-      persist({ ...get(), customWorkouts })
     },
 
     setActivePlan: (planId) => {
       set({ activePlanId: planId })
-      persist({ ...get(), activePlanId: planId })
     },
 
     logWorkout: (log) => {
       const entry: WorkoutLog = { ...log, id: generateId(), createdAt: new Date().toISOString() }
       const workoutLogs = [entry, ...get().workoutLogs]
       set({ workoutLogs })
-      persist({ ...get(), workoutLogs })
       // Sync to backend
       syncWorkoutSession({
         name: log.workoutName,
@@ -308,7 +292,6 @@ export const useWorkoutSystemStore = create<WorkoutSystemState>((set, get) => {
 
     clearLogs: () => {
       set({ workoutLogs: [] })
-      persist({ ...get(), workoutLogs: [] })
     },
 
     getExercise: (id) => EXERCISE_DATABASE.find((e) => e.id === id),

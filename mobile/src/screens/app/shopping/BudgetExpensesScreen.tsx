@@ -194,7 +194,7 @@ export function BudgetExpensesScreen() {
         style={[styles.fab, { bottom: insets.bottom + 16 }]}
         onPress={() => setShowAddExpense(true)}
       >
-        <Ionicons name="add" size={24} color="#FFF" />
+        <Ionicons name="add" size={24} color={T.white} />
       </TouchableOpacity>
 
       <Modal

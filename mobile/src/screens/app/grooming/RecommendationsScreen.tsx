@@ -9,10 +9,8 @@ import { useGroomingStore } from '@/store/groomingStore';
 import type { RecommendationCategory } from '@/store/groomingStore';
 import T from '@/theme'
 
-;
-
 const CATEGORY_COLORS: Record<RecommendationCategory, string> = {
-  Skincare: '#EC4899',
+  Skincare: T.pink,
   Haircare: T.orange,
   Lifestyle: T.green,
   Grooming: T.primary2,
@@ -66,10 +64,10 @@ export function RecommendationsScreen() {
                 <Ionicons
                   name={CATEGORY_ICONS[tab as RecommendationCategory]}
                   size={13}
-                  color={active ? '#fff' : color}
+                  color={active ? T.white : color}
                 />
               )}
-              <Text style={[styles.tabText, active ? { color: '#fff' } : { color }]}>
+              <Text style={[styles.tabText, active ? { color: T.white } : { color }]}>
                 {tab} {count > 0 && `(${count})`}
               </Text>
             </TouchableOpacity>
@@ -155,7 +153,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: 5,
     paddingHorizontal: 12, paddingVertical: 7,
     borderRadius: 20, borderWidth: 1.5, borderColor: T.border2,
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
   },
   tabText: { fontSize: 12, fontWeight: '600' },
 

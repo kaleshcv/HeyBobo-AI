@@ -7,8 +7,6 @@ import { Card } from '@/components/common/Card';
 import { AppHeader } from '@/components/layout/AppHeader';
 import T from '@/theme'
 
-;
-
 export function AdminDashboardScreen() {
   const insets = useSafeAreaInsets();
 

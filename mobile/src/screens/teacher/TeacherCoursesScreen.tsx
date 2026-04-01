@@ -8,8 +8,6 @@ import { Button } from '@/components/common/Button';
 import { AppHeader } from '@/components/layout/AppHeader';
 import T from '@/theme'
 
-;
-
 const COURSES = [
   { id: '1', title: 'React Basics', students: 45, published: true },
   { id: '2', title: 'Advanced JS', students: 32, published: false },
@@ -47,7 +45,7 @@ export function TeacherCoursesScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: T.bg },
   listContent: { paddingHorizontal: 16, paddingVertical: 16 },
-  courseCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#111827', borderRadius: 10, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: T.border2 },
+  courseCard: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: T.surface, borderRadius: 10, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: T.border2 },
   courseTitle: { fontSize: 14, fontWeight: '700', color: T.text },
   courseInfo: { fontSize: 12, color: T.muted, marginTop: 4 },
   courseActions: { flexDirection: 'row', alignItems: 'center', gap: 10 },

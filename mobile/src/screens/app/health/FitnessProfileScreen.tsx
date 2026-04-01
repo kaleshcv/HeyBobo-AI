@@ -16,8 +16,6 @@ import { Button } from '@/components/common/Button';
 import { Card } from '@/components/common/Card';
 import T from '@/theme'
 
-;
-
 const FITNESS_GOALS = ['Lose Weight', 'Gain Muscle', 'Get Fit', 'Maintain Health'];
 const ACTIVITY_LEVELS = ['Sedentary', 'Light', 'Moderate', 'Very Active'];
 const FITNESS_LEVELS = ['Beginner', 'Intermediate', 'Advanced'];
@@ -104,7 +102,7 @@ export function FitnessProfileScreen() {
                             : 'shield-checkmark'
                     }
                     size={24}
-                    color={fitnessGoal === goal ? '#fff' : T.primary2}
+                    color={fitnessGoal === goal ? T.white : T.primary2}
                   />
                 </View>
                 <View style={styles.goalContent}>
@@ -308,7 +306,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderBottomWidth: 1,
     borderBottomColor: T.border2,
   },
@@ -361,7 +359,7 @@ const styles = StyleSheet.create({
   goalCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -390,7 +388,7 @@ const styles = StyleSheet.create({
     color: T.text,
   },
   goalTitleActive: {
-    color: '#fff',
+    color: T.white,
   },
   label: {
     fontSize: 13,
@@ -410,7 +408,7 @@ const styles = StyleSheet.create({
   optionCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderRadius: 10,
     padding: 14,
     marginBottom: 10,
@@ -453,7 +451,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16,
     paddingBottom: 24,
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderTopWidth: 1,
     borderTopColor: T.border2,
   },
@@ -463,7 +461,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   pickerModal: {
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: '80%',

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 // ─── Enums ──────────────────────────────────────────────
 export enum WorkoutSource {
@@ -84,8 +84,8 @@ export const FormAnalysisSchema = SchemaFactory.createForClass(FormAnalysis);
 // ─── Main Schema: WorkoutSession ────────────────────────
 @Schema({ timestamps: true, collection: 'workout_sessions' })
 export class WorkoutSession extends Document {
-  @Prop({ required: true, index: true })
-  userId: string;
+  @Prop({ required: true, index: true, type: Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
 
   @Prop({ required: true, enum: WorkoutSource })
   source: WorkoutSource;
@@ -145,8 +145,8 @@ WorkoutSessionSchema.index({ userId: 1, category: 1 });
 // ─── Daily Metrics Schema ───────────────────────────────
 @Schema({ timestamps: true, collection: 'daily_metrics' })
 export class DailyMetric extends Document {
-  @Prop({ required: true, index: true })
-  userId: string;
+  @Prop({ required: true, index: true, type: Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
 
   @Prop({ required: true })
   date: string; // YYYY-MM-DD
@@ -183,8 +183,8 @@ DailyMetricSchema.index({ userId: 1, date: -1 }, { unique: true });
 // ─── Fitness Profile Schema ─────────────────────────────
 @Schema({ timestamps: true, collection: 'fitness_profiles' })
 export class FitnessProfile extends Document {
-  @Prop({ required: true, unique: true, index: true })
-  userId: string;
+  @Prop({ required: true, unique: true, index: true, type: Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
 
   @Prop({ type: [String], default: [] })
   goals: string[];
@@ -228,8 +228,8 @@ export const FitnessProfileSchema = SchemaFactory.createForClass(FitnessProfile)
 // ─── Goal/Achievement Schema ────────────────────────────
 @Schema({ timestamps: true, collection: 'fitness_goals' })
 export class FitnessGoal extends Document {
-  @Prop({ required: true, index: true })
-  userId: string;
+  @Prop({ required: true, index: true, type: Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
 
   @Prop({ required: true })
   type: string; // 'steps', 'workouts', 'calories', 'streak', 'reps', etc.

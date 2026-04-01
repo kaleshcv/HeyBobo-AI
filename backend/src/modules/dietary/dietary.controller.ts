@@ -14,9 +14,16 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
+import { createHash } from 'crypto';
 import { createDiskStorage } from '../../common/storage/multer.config';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { DietaryService } from './dietary.service';
+
+/** Convert any string user ID to a valid 24-char hex ObjectId */
+function toObjectId(id: string): string {
+  if (/^[a-f\d]{24}$/i.test(id)) return id;
+  return createHash('md5').update(id).digest('hex').substring(0, 24);
+}
 import {
   CreateMealLogDto,
   UpdateMealLogDto,
@@ -48,6 +55,7 @@ export class DietaryController {
     @Body() dto: CreateMealLogDto,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.createMealLog(userId, dto);
   }
 
@@ -57,6 +65,7 @@ export class DietaryController {
     @Query() query: QueryMealLogsDto,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.getMealLogs(userId, query);
   }
 
@@ -66,6 +75,7 @@ export class DietaryController {
     @Param('id') id: string,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.getMealLog(userId, id);
   }
 
@@ -76,6 +86,7 @@ export class DietaryController {
     @Body() dto: UpdateMealLogDto,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.updateMealLog(userId, id, dto);
   }
 
@@ -88,6 +99,7 @@ export class DietaryController {
     @UploadedFile() file: Express.Multer.File,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.addMealPhoto(userId, id, file);
   }
 
@@ -97,6 +109,7 @@ export class DietaryController {
     @Param('id') id: string,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     await this.dietaryService.deleteMealLog(userId, id);
     return { deleted: true };
   }
@@ -109,6 +122,7 @@ export class DietaryController {
     @Param('date') date: string,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.getDailyNutrition(userId, date);
   }
 
@@ -119,6 +133,7 @@ export class DietaryController {
     @Query('endDate') endDate: string,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.getDailyNutritionRange(userId, startDate, endDate);
   }
 
@@ -128,6 +143,7 @@ export class DietaryController {
     @Body() dto: UpdateDailyNutritionDto,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.updateDailyNutrition(userId, dto);
   }
 
@@ -136,6 +152,7 @@ export class DietaryController {
   @Get('profile')
   @ApiOperation({ summary: 'Get dietary profile' })
   async getProfile(@CurrentUser('sub') userId: string) {
+    userId = toObjectId(userId);
     return this.dietaryService.getDietaryProfile(userId);
   }
 
@@ -145,6 +162,7 @@ export class DietaryController {
     @Body() dto: SaveDietaryProfileDto,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.saveDietaryProfile(userId, dto);
   }
 
@@ -153,6 +171,7 @@ export class DietaryController {
   @Get('goals')
   @ApiOperation({ summary: 'Get dietary goals' })
   async getGoals(@CurrentUser('sub') userId: string) {
+    userId = toObjectId(userId);
     return this.dietaryService.getGoals(userId);
   }
 
@@ -162,6 +181,7 @@ export class DietaryController {
     @Body() dto: CreateDietaryGoalDto,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.createGoal(userId, dto);
   }
 
@@ -172,6 +192,7 @@ export class DietaryController {
     @Body() body: { current: number },
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.updateGoalProgress(userId, id, body.current);
   }
 
@@ -181,6 +202,7 @@ export class DietaryController {
     @Param('id') id: string,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     await this.dietaryService.deleteGoal(userId, id);
     return { deleted: true };
   }
@@ -190,6 +212,7 @@ export class DietaryController {
   @Get('stats')
   @ApiOperation({ summary: 'Get nutrition statistics and insights' })
   async getStats(@CurrentUser('sub') userId: string) {
+    userId = toObjectId(userId);
     return this.dietaryService.getNutritionStats(userId);
   }
 
@@ -201,6 +224,7 @@ export class DietaryController {
     @Body() dto: CreateSupplementLogDto,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.createSupplement(userId, dto);
   }
 
@@ -210,6 +234,7 @@ export class DietaryController {
     @Query() query: QuerySupplementLogsDto,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.getSupplements(userId, query);
   }
 
@@ -220,6 +245,7 @@ export class DietaryController {
     @Body() dto: UpdateSupplementLogDto,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.updateSupplement(userId, id, dto);
   }
 
@@ -229,6 +255,7 @@ export class DietaryController {
     @Param('id') id: string,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.toggleSupplementTaken(userId, id);
   }
 
@@ -238,6 +265,7 @@ export class DietaryController {
     @Param('id') id: string,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     await this.dietaryService.deleteSupplement(userId, id);
     return { deleted: true };
   }
@@ -250,18 +278,21 @@ export class DietaryController {
     @Body() dto: SaveMealPlanDto,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.saveMealPlan(userId, dto);
   }
 
   @Get('meal-plans')
   @ApiOperation({ summary: 'Get all meal plans' })
   async getMealPlans(@CurrentUser('sub') userId: string) {
+    userId = toObjectId(userId);
     return this.dietaryService.getMealPlans(userId);
   }
 
   @Get('meal-plans/active')
   @ApiOperation({ summary: 'Get the currently active meal plan' })
   async getActivePlan(@CurrentUser('sub') userId: string) {
+    userId = toObjectId(userId);
     return this.dietaryService.getActivePlan(userId);
   }
 
@@ -271,6 +302,7 @@ export class DietaryController {
     @Param('id') id: string,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.getMealPlan(userId, id);
   }
 
@@ -281,6 +313,7 @@ export class DietaryController {
     @Body() dto: SaveMealPlanDto,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.updateMealPlan(userId, id, dto);
   }
 
@@ -290,6 +323,7 @@ export class DietaryController {
     @Param('id') id: string,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.setActivePlan(userId, id);
   }
 
@@ -299,6 +333,7 @@ export class DietaryController {
     @Param('id') id: string,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     await this.dietaryService.deleteMealPlan(userId, id);
     return { deleted: true };
   }
@@ -311,12 +346,14 @@ export class DietaryController {
     @Body() dto: CreateGroceryListDto,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.createGroceryList(userId, dto);
   }
 
   @Get('grocery-lists')
   @ApiOperation({ summary: 'Get all grocery lists' })
   async getGroceryLists(@CurrentUser('sub') userId: string) {
+    userId = toObjectId(userId);
     return this.dietaryService.getGroceryLists(userId);
   }
 
@@ -326,6 +363,7 @@ export class DietaryController {
     @Param('id') id: string,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.getGroceryList(userId, id);
   }
 
@@ -336,6 +374,7 @@ export class DietaryController {
     @Body() dto: UpdateGroceryListDto,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.updateGroceryList(userId, id, dto);
   }
 
@@ -346,6 +385,7 @@ export class DietaryController {
     @Param('index') index: string,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.toggleGroceryItem(userId, id, parseInt(index, 10));
   }
 
@@ -356,6 +396,7 @@ export class DietaryController {
     @Body() body: { items: any[] },
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     return this.dietaryService.addGroceryItems(userId, id, body.items);
   }
 
@@ -365,6 +406,7 @@ export class DietaryController {
     @Param('id') id: string,
     @CurrentUser('sub') userId: string,
   ) {
+    userId = toObjectId(userId);
     await this.dietaryService.deleteGroceryList(userId, id);
     return { deleted: true };
   }

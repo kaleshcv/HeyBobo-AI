@@ -27,12 +27,12 @@ async function bootstrap(): Promise<void> {
     const required = ['JWT_SECRET', 'JWT_REFRESH_SECRET', 'MONGODB_URI'];
     const missing = required.filter((k) => !process.env[k]);
     if (missing.length) {
-      console.error(`FATAL: Missing required environment variables: ${missing.join(', ')}`);
+      process.stderr.write(`FATAL: Missing required environment variables: ${missing.join(', ')}\n`);
       process.exit(1);
     }
     const insecureDefaults = ['your-super-secret-jwt-key', 'your-super-secret-refresh-key'];
     if (insecureDefaults.includes(process.env.JWT_SECRET!) || insecureDefaults.includes(process.env.JWT_REFRESH_SECRET!)) {
-      console.error('FATAL: JWT secrets must not use default values in production');
+      process.stderr.write('FATAL: JWT secrets must not use default values in production\n');
       process.exit(1);
     }
   }
@@ -82,16 +82,39 @@ async function bootstrap(): Promise<void> {
     skip: (req) => req.method === 'GET', // Don't rate-limit GET requests (e.g. username availability check)
   });
 
+  const passwordResetLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 5, // limit each IP to 5 password reset requests per hour
+    message: 'Too many password reset attempts, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
+
   app.use(generalLimiter);
+  app.use('/api/v1/auth/forgot-password', passwordResetLimiter);
+  app.use('/api/v1/auth/reset-password', passwordResetLimiter);
   app.use('/api/v1/auth', authLimiter);
 
-  // CORS
-  const frontendUrl = configService.get<string>('FRONTEND_URL');
+  // CORS — allow configured frontend URL plus the Vite dev server
+  const frontendUrl = configService.get<string>('FRONTEND_URL') || 'http://localhost:5173';
+  const nodeEnv = configService.get<string>('NODE_ENV') || 'development';
+  const allowedOrigins = [frontendUrl];
+  if (nodeEnv !== 'production') {
+    // Accept common local dev ports so the Vite proxy and direct requests both work
+    allowedOrigins.push('http://localhost:5173', 'http://localhost:3000', 'http://localhost:4173');
+  }
   app.enableCors({
-    origin: frontendUrl,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (curl, Swagger, mobile) or from allowed origins
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`Origin ${origin} not allowed by CORS`));
+      }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   });
 
   // Global pipes
@@ -175,6 +198,6 @@ async function bootstrap(): Promise<void> {
 }
 
 bootstrap().catch((error: Error) => {
-  console.error('Fatal error during application bootstrap:', error);
+  process.stderr.write(`Fatal error during application bootstrap: ${error.message}\n${error.stack}\n`);
   process.exit(1);
 });

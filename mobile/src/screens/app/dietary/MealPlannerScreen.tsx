@@ -9,8 +9,6 @@ import { Button } from '@/components/common/Button';
 import { AppHeader } from '@/components/layout/AppHeader';
 import T from '@/theme'
 
-;
-
 const WEEK_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
 
@@ -110,7 +108,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     marginRight: 8,
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderWidth: 1,
     borderColor: T.border2,
   },
@@ -124,7 +122,7 @@ const styles = StyleSheet.create({
     color: T.text,
   },
   dayTextActive: {
-    color: '#fff',
+    color: T.white,
   },
   mealSlotsContainer: {
     paddingHorizontal: 16,
@@ -132,7 +130,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   mealSlot: {
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderRadius: 12,
     padding: 14,
     borderWidth: 2,

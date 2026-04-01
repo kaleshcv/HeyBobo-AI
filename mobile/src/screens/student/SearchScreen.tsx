@@ -14,8 +14,6 @@ import { EmptyState } from '@/components/common/EmptyState';
 import { useCourses } from '@/hooks/useCourses';
 import T from '@/theme'
 
-;
-
 const PRICE_FILTERS = [
   { label: 'All', value: null },
   { label: 'Free', value: 0 },

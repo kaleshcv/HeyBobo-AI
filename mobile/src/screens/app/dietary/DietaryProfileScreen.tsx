@@ -16,8 +16,6 @@ import { Button } from '@/components/common/Button';
 import { Card } from '@/components/common/Card';
 import T from '@/theme'
 
-;
-
 const DIET_TYPES = ['Omnivore', 'Vegetarian', 'Vegan', 'Keto', 'Paleo'];
 const ALLERGIES = ['Nuts', 'Dairy', 'Gluten', 'Shellfish', 'Soy', 'Fish'];
 
@@ -111,7 +109,7 @@ export function DietaryProfileScreen() {
                   {allergy}
                 </Text>
                 {selectedAllergies.includes(allergy) && (
-                  <Ionicons name="checkmark" size={14} color="#fff" />
+                  <Ionicons name="checkmark" size={14} color={T.white} />
                 )}
               </TouchableOpacity>
             ))}
@@ -195,7 +193,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderBottomWidth: 1,
     borderBottomColor: T.border2,
   },
@@ -224,7 +222,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: T.border2,
     borderRadius: 8,
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     marginBottom: 12,
   },
   selectorText: {
@@ -245,7 +243,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: T.border2,
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     alignItems: 'center',
   },
   dietTypeButtonActive: {
@@ -258,7 +256,7 @@ const styles = StyleSheet.create({
     color: T.text,
   },
   dietTypeTextActive: {
-    color: '#fff',
+    color: T.white,
   },
   allergiesGrid: {
     flexDirection: 'row',
@@ -271,7 +269,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     borderColor: T.border2,
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
@@ -286,7 +284,7 @@ const styles = StyleSheet.create({
     color: T.text,
   },
   allergyChipTextActive: {
-    color: '#fff',
+    color: T.white,
   },
   input: {
     borderWidth: 1,
@@ -328,7 +326,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     position: 'absolute',
   },
   divider: {
@@ -341,7 +339,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modal: {
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     maxHeight: '80%',
