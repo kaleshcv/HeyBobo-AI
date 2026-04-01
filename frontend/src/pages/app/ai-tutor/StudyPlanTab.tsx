@@ -134,7 +134,15 @@ export default function StudyPlanTab({ selectedBookId, onTeach }: Props) {
         <>
           {/* Generate form */}
           <Paper variant="outlined" sx={{ p: 2.5, borderRadius: 2, mb: 3 }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5 }}>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                fontWeight: 600,
+                mb: 1.5,
+                wordBreak: 'break-word',
+                overflowWrap: 'anywhere',
+              }}
+            >
               Create Study Plan for "{activeBook.name}"
             </Typography>
             <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-end', flexWrap: 'wrap' }}>
@@ -187,9 +195,18 @@ export default function StudyPlanTab({ selectedBookId, onTeach }: Props) {
                       sx={{ p: 2, cursor: 'pointer', '&:hover': { bgcolor: dk ? 'rgba(255,255,255,0.03)' : '#fafafa' } }}
                       onClick={() => setExpandedPlan(isExpanded ? null : plan.id)}
                     >
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
                         <CalendarTodayIcon sx={{ fontSize: 20, color: '#7c4dff' }} />
-                        <Typography variant="subtitle2" sx={{ flex: 1, fontWeight: 600 }}>
+                        <Typography
+                          variant="subtitle2"
+                          sx={{
+                            flex: 1,
+                            fontWeight: 600,
+                            minWidth: 0,
+                            wordBreak: 'break-word',
+                            overflowWrap: 'anywhere',
+                          }}
+                        >
                           {plan.title}
                         </Typography>
                         <Chip
@@ -234,17 +251,48 @@ export default function StudyPlanTab({ selectedBookId, onTeach }: Props) {
                                 size="small"
                                 sx={{ mt: -0.5, color: '#7c4dff', '&.Mui-checked': { color: '#7c4dff' } }}
                               />
-                              <Box sx={{ flex: 1 }}>
-                                <Typography variant="body2" sx={{ fontWeight: 600, textDecoration: ch.completed ? 'line-through' : 'none' }}>
+                              <Box sx={{ flex: 1, minWidth: 0 }}>
+                                <Typography
+                                  variant="body2"
+                                  sx={{
+                                    fontWeight: 600,
+                                    textDecoration: ch.completed ? 'line-through' : 'none',
+                                    wordBreak: 'break-word',
+                                    overflowWrap: 'anywhere',
+                                  }}
+                                >
                                   {idx + 1}. {ch.title}
                                 </Typography>
                                 {ch.description && (
-                                  <Typography variant="caption" color="text.secondary">{ch.description}</Typography>
+                                  <Typography
+                                    variant="caption"
+                                    color="text.secondary"
+                                    sx={{ display: 'block', wordBreak: 'break-word', overflowWrap: 'anywhere' }}
+                                  >
+                                    {ch.description}
+                                  </Typography>
                                 )}
                                 <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mt: 0.5 }}>
                                   <Chip label={`${ch.days} day${ch.days > 1 ? 's' : ''}`} size="small" sx={{ fontSize: 10, height: 20 }} />
                                   {ch.topics.slice(0, 3).map((t, ti) => (
-                                    <Chip key={ti} label={t} size="small" variant="outlined" sx={{ fontSize: 10, height: 20 }} />
+                                    <Chip
+                                      key={ti}
+                                      label={t}
+                                      size="small"
+                                      variant="outlined"
+                                      sx={{
+                                        fontSize: 10,
+                                        height: 'auto',
+                                        maxWidth: '100%',
+                                        '& .MuiChip-label': {
+                                          display: 'block',
+                                          whiteSpace: 'normal',
+                                          wordBreak: 'break-word',
+                                          overflowWrap: 'anywhere',
+                                          py: 0.25,
+                                        },
+                                      }}
+                                    />
                                   ))}
                                   {ch.topics.length > 3 && (
                                     <Chip label={`+${ch.topics.length - 3} more`} size="small" sx={{ fontSize: 10, height: 20 }} />
