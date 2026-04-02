@@ -134,7 +134,7 @@ export function ActivityTrackingScreen() {
           <View style={styles.divider} />
 
           <View style={styles.insightItem}>
-            <Ionicons name="alert-circle" size={20} color="#F59E0B" />
+            <Ionicons name="alert-circle" size={20} color={T.yellow} />
             <View style={{ flex: 1, marginLeft: 12 }}>
               <Text style={styles.insightTitle}>Rest Needed</Text>
               <Text style={styles.insightText}>

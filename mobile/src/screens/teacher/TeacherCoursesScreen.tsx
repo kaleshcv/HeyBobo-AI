@@ -24,7 +24,7 @@ export function TeacherCoursesScreen() {
         <Text style={styles.courseInfo}>{item.students} students enrolled</Text>
       </View>
       <View style={styles.courseActions}>
-        <View style={[styles.badge, { backgroundColor: item.published ? '#10B98120' : '#F59E0B20' }]}>
+        <View style={[styles.badge, { backgroundColor: item.published ? T.green + '20' : T.orange + '20' }]}>
           <Text style={{ color: item.published ? T.green : T.orange, fontSize: 10, fontWeight: '600' }}>
             {item.published ? 'Published' : 'Draft'}
           </Text>

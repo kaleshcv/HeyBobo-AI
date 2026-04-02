@@ -112,7 +112,7 @@ export function OrdersReviewsScreen() {
                 key={i}
                 name={i < item.rating ? 'star' : 'star-outline'}
                 size={14}
-                color="#F59E0B"
+                color={T.yellow}
               />
             ))}
           </View>

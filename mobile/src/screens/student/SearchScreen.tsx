@@ -93,7 +93,7 @@ export function SearchScreen() {
 
         <View style={styles.resultFooter}>
           <View style={styles.ratingContainer}>
-            <Ionicons name="star" size={12} color="#FBBF24" />
+            <Ionicons name="star" size={12} color={T.yellow} />
             <Text style={styles.rating}>{item.rating || '4.5'}</Text>
             <Text style={styles.reviews}>
               ({Math.floor(Math.random() * 1000) + 100})
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderBottomWidth: 1,
     borderBottomColor: T.border2,
   },
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderRadius: 8,
     paddingHorizontal: 12,
     borderWidth: 1,
@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   filterPanel: {
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: T.border2,
     borderRadius: 6,
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
   },
   filterOptionActive: {
     backgroundColor: T.primary2,
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
     color: T.muted,
   },
   filterOptionTextActive: {
-    color: '#fff',
+    color: T.white,
   },
   resultsCount: {
     fontSize: 12,
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
   resultCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderRadius: 8,
     padding: 12,
     marginBottom: 12,

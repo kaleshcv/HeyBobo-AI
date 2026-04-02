@@ -36,7 +36,7 @@ export function ResetPasswordScreen() {
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: '#111827' }}
+      style={{ flex: 1, backgroundColor: T.surface }}
       contentContainerStyle={[styles.content, { paddingTop: insets.top + 40, paddingBottom: 40 }]}
     >
       <Text style={styles.heading}>Set new password</Text>

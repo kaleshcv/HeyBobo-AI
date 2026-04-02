@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     position: 'absolute',
   },
   modalOverlay: {
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modal: {
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
   },

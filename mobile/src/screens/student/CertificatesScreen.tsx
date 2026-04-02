@@ -86,7 +86,7 @@ export function CertificatesScreen() {
           </View>
 
           <View style={styles.metaItem}>
-            <Ionicons name="star" size={14} color="#FBBF24" />
+            <Ionicons name="star" size={14} color={T.yellow} />
             <Text style={styles.metaText}>{item.grade}</Text>
           </View>
         </View>
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   certificateCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,

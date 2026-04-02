@@ -37,7 +37,7 @@ export function RecommendationsScreen() {
   );
 
   const priorityColor = (p: string) => p === 'High' ? T.red : p === 'Medium' ? T.orange : T.green;
-  const priorityBg = (p: string) => p === 'High' ? '#EF444415' : p === 'Medium' ? '#F59E0B15' : '#10B98115';
+  const priorityBg = (p: string) => p === 'High' ? T.red + '15' : p === 'Medium' ? T.orange + '15' : T.green + '15';
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>

@@ -63,7 +63,7 @@ interface TextbookStoreState {
   setQuizAnswer: (qId: string, idx: number) => void
 }
 
-const BOOK_COLORS = [T.primary2, '#22c55e', '#f97316', '#06b6d4', '#a855f7', T.red]
+const BOOK_COLORS = [T.primary2, T.green, T.orange, T.cyan, T.primary, T.red]
 
 const useTextbookStore = create<TextbookStoreState>()(
   persist(
@@ -137,17 +137,17 @@ const SAMPLE_QUESTIONS: TutorQuizQuestion[] = [
 
 // ─── Theme ───────────────────────────────────────────────────────────────────
 const C = {
-  bg:      '#0f172a',
+  bg:      T.bg2,
   surface: T.text,
-  surface2:'#334155',
-  border:  '#334155',
+  surface2:T.border2,
+  border:  T.border2,
   primary: T.primary2,
   primaryL:T.primary,
-  green:   '#22c55e',
-  yellow:  '#eab308',
+  green:   T.green,
+  yellow:  T.yellow,
   red:     T.red,
-  cyan:    '#06b6d4',
-  orange:  '#f97316',
+  cyan:    T.cyan,
+  orange:  T.orange,
   white:   T.bg,
   muted:   T.muted2,
   muted2:  T.muted2,
@@ -526,7 +526,7 @@ function ProgressTab() {
     { label: 'Textbooks',        value: textbooks.length,  icon: 'document-text-outline',   color: T.orange },
     { label: 'Topics Done',      value: `${topicsDone}/${topicsTotal || 0}`, icon: 'checkmark-done-outline', color: T.cyan },
     { label: 'Quiz Questions',   value: `${quizAttempted}/${SAMPLE_QUESTIONS.length}`, icon: 'help-circle-outline', color: T.yellow },
-    { label: 'Quiz Accuracy',    value: quizAttempted ? `${Math.round((quizCorrect / quizAttempted) * 100)}%` : '—', icon: 'trophy-outline', color: '#a855f7' },
+    { label: 'Quiz Accuracy',    value: quizAttempted ? `${Math.round((quizCorrect / quizAttempted) * 100)}%` : '—', icon: 'trophy-outline', color: T.primary },
   ]
 
   const achievements = [

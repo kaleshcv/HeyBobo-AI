@@ -68,7 +68,7 @@ export function CampusMarketplaceScreen() {
             {item.seller.name}
           </Text>
           <View style={styles.ratingBadge}>
-            <Ionicons name="star" size={12} color="#F59E0B" />
+            <Ionicons name="star" size={12} color={T.yellow} />
             <Text style={styles.ratingText}>{item.seller.rating.toFixed(1)}</Text>
           </View>
         </View>

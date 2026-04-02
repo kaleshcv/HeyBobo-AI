@@ -155,7 +155,8 @@ export function AIBrainScreen() {
   // ── Bobo Says dismissal ───────────────────────────────────────────────────
   const [boboDismissed, setBoboDismissed] = useState(false)
 
-  const firstName = user?.firstName || user?.email?.split('@')[0] || 'User'
+  const rawName   = user?.firstName || user?.email?.split('@')[0] || 'User'
+  const firstName = rawName.charAt(0).toUpperCase() + rawName.slice(1).toLowerCase()
   const hour      = new Date().getHours()
   const greeting  = getGreeting(hour)
   const dateLabel = getDateLabel()

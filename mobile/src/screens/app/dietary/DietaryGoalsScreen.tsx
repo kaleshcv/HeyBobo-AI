@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   goalCard: {
-    backgroundColor: '#111827',
+    backgroundColor: T.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,

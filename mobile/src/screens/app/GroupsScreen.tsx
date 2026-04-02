@@ -16,7 +16,7 @@ import { AppHeader } from '@/components/layout/AppHeader'
 import T from '@/theme'
 
 const generateColorForName = (name: string) => {
-  const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE']
+  const colors = [T.red, T.teal, T.cyan, T.orange, T.teal, T.yellow, T.primary]
   const index = name.charCodeAt(0) % colors.length
   return colors[index]
 }

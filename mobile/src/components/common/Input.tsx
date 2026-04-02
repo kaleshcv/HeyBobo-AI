@@ -10,6 +10,18 @@ import {
 import { Ionicons } from '@expo/vector-icons'
 import T from '@/theme'
 
+/** Light-mode palette for screens that override the dark theme */
+const LIGHT = {
+  bg:      '#f8fafc',
+  border:  '#e2e8f0',
+  text:    '#0f172a',
+  text2:   '#334155',
+  muted:   '#64748b',
+  muted2:  '#94a3b8',
+  primary: T.primary2,
+  red:     T.red,
+} as const
+
 interface InputProps extends TextInputProps {
   label?:        string
   error?:        string
@@ -18,6 +30,8 @@ interface InputProps extends TextInputProps {
   rightIcon?:    string
   onRightIconPress?: () => void
   containerStyle?: object
+  /** Force light-mode colours (e.g. on the login screen) */
+  lightMode?:    boolean
 }
 
 export function Input({
@@ -29,6 +43,7 @@ export function Input({
   onRightIconPress,
   containerStyle,
   secureTextEntry,
+  lightMode = false,
   style,
   ...rest
 }: InputProps) {
@@ -37,27 +52,31 @@ export function Input({
 
   const isPassword = secureTextEntry
 
+  /* Resolve palette once */
+  const c = lightMode ? LIGHT : { bg: T.surface2, border: T.border2, text: T.text, text2: T.text2, muted: T.muted, muted2: T.muted2, primary: T.primary, red: T.red }
+
   return (
     <View style={[styles.wrapper, containerStyle]}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && <Text style={[styles.label, lightMode && { color: c.text2 }]}>{label}</Text>}
 
       <View style={[
         styles.inputRow,
-        isFocused && styles.focused,
+        lightMode && { backgroundColor: c.bg, borderColor: c.border },
+        isFocused && (lightMode ? { borderColor: c.primary } : styles.focused),
         !!error    && styles.errored,
       ]}>
         {leftIcon && (
           <Ionicons
             name={leftIcon as any}
             size={18}
-            color={error ? T.red : isFocused ? T.primary : T.muted}
+            color={error ? c.red : isFocused ? c.primary : c.muted}
             style={styles.leftIcon}
           />
         )}
 
         <TextInput
-          style={[styles.input, style]}
-          placeholderTextColor={T.muted2}
+          style={[styles.input, lightMode && { color: c.text }, style]}
+          placeholderTextColor={c.muted2}
           secureTextEntry={isPassword ? !showPassword : false}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
@@ -74,14 +93,14 @@ export function Input({
                 ? showPassword ? 'eye-off' : 'eye'
                 : rightIcon) as any}
               size={18}
-              color={T.muted}
+              color={c.muted}
             />
           </TouchableOpacity>
         )}
       </View>
 
-      {error && <Text style={styles.error}>{error}</Text>}
-      {hint && !error && <Text style={styles.hint}>{hint}</Text>}
+      {error && <Text style={[styles.error, lightMode && { color: c.red }]}>{error}</Text>}
+      {hint && !error && <Text style={[styles.hint, lightMode && { color: c.muted }]}>{hint}</Text>}
     </View>
   )
 }

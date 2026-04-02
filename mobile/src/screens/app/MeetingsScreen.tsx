@@ -24,16 +24,16 @@ import T from '@/theme'
 
 // ─── Dark theme ───────────────────────────────────────────────────────────────
 const C = {
-  bg:      '#0f172a',
+  bg:      T.bg2,
   surface: T.text,
-  surface2:'#334155',
-  border:  '#334155',
+  surface2:T.border2,
+  border:  T.border2,
   primary: T.primary2,
   primaryL:T.primary,
-  yellow:  '#eab308',
-  green:   '#22c55e',
+  yellow:  T.yellow,
+  green:   T.green,
   red:     T.red,
-  orange:  '#f97316',
+  orange:  T.orange,
   white:   T.bg,
   muted:   T.muted2,
   muted2:  T.muted2,
@@ -333,7 +333,7 @@ export function MeetingsScreen() {
             <Text style={styles.joinCodeBtnText}>Join with Code</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.newMeetingBtn} onPress={() => setShowCreate(true)} activeOpacity={0.8}>
-            <Ionicons name="add" size={15} color="#000" />
+            <Ionicons name="add" size={15} color={T.black} />
             <Text style={styles.newMeetingBtnText}>New Meeting</Text>
           </TouchableOpacity>
         </View>
@@ -438,7 +438,7 @@ const styles = StyleSheet.create({
   joinCodeBtn: { flexDirection: 'row', alignItems: 'center', gap: 5, borderWidth: 1, borderColor: T.border, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 7 },
   joinCodeBtnText: { fontSize: 12, fontWeight: '600', color: T.white },
   newMeetingBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: T.yellow, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 7 },
-  newMeetingBtnText: { fontSize: 12, fontWeight: '700', color: '#000' },
+  newMeetingBtnText: { fontSize: 12, fontWeight: '700', color: T.black },
 
   // Stats
   statsRow: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: T.border },

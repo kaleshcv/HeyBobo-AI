@@ -19,8 +19,6 @@ import T from '@/theme'
 // expo-video Video component - use VideoView in newer Expo SDK
 // import { VideoView } from 'expo-video'; // uncomment when upgrading
 
-;
-
 export function LessonPlayerScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useAppNavigation();
@@ -112,7 +110,7 @@ export function LessonPlayerScreen() {
         {lesson.videoUrl && (
           <View style={styles.videoContainer}>
             {/* Video player placeholder - replace with VideoView from expo-video when upgrading SDK */}
-            <View style={[styles.video, { backgroundColor: '#000', alignItems: 'center', justifyContent: 'center' }]}>
+            <View style={[styles.video, { backgroundColor: T.black, alignItems: 'center', justifyContent: 'center' }]}>
               <Ionicons name="play-circle" size={64} color={T.white} />
             </View>
             <View style={styles.progressBar}>
@@ -138,7 +136,7 @@ export function LessonPlayerScreen() {
             </View>
             {lesson.completed && (
               <View style={styles.completedBadge}>
-                <Ionicons name="checkmark-circle" size={24} color="#10B981" />
+                <Ionicons name="checkmark-circle" size={24} color={T.green} />
               </View>
             )}
           </View>
@@ -244,7 +242,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: '#000',
+    backgroundColor: T.black,
   },
   video: {
     width: '100%',

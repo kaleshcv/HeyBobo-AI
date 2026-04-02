@@ -106,7 +106,7 @@ export function InjuryTrackingScreen() {
           <Text style={styles.statusText}>{item.status.charAt(0).toUpperCase() + item.status.slice(1)}</Text>
         </View>
         {item.affectsWorkout && (
-          <View style={[styles.statusBadge, { backgroundColor: '#ef444422' }]}>
+          <View style={[styles.statusBadge, { backgroundColor: T.red + '22' }]}>
             <Ionicons name="warning" size={14} color={T.red} />
             <Text style={[styles.statusText, { color: T.red }]}>Affects Workout</Text>
           </View>
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: '#1e293b',
+    backgroundColor: T.surface2,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   tipsCard: {
-    backgroundColor: '#1e293b',
+    backgroundColor: T.surface2,
     borderRadius: 12,
     padding: 16,
     marginBottom: 24,

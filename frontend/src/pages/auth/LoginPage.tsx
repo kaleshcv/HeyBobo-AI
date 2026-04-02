@@ -10,7 +10,7 @@ import {
   InputAdornment,
   IconButton,
   CircularProgress,
-  useTheme,
+  ThemeProvider,
 } from '@mui/material'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
@@ -19,10 +19,11 @@ import { useAuth } from '@/hooks/useAuth'
 import { loginSchema } from '@/lib/validators'
 import { useUIStore } from '@/store/uiStore'
 import { t } from '@/lib/translations'
+import { lightTheme } from '@/theme'
 
 export default function LoginPage() {
   const { login, isAuthenticated, loginLoading } = useAuth()
-  const dk = useTheme().palette.mode === 'dark'
+  const dk = false // light theme forced via ThemeProvider
   const { language, toggleLanguage } = useUIStore()
   const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
@@ -55,6 +56,7 @@ export default function LoginPage() {
   }
 
   return (
+    <ThemeProvider theme={lightTheme}>
     <Box sx={{ minHeight: '100vh', display: 'flex' }}>
       {/* Left Panel — Dubai Branding */}
       <Box
@@ -136,14 +138,26 @@ export default function LoginPage() {
       {/* Right Panel — Login Form */}
       <Box sx={{
         flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        bgcolor: dk ? '#0D1B2A' : '#F8F6F1', px: 3,
+        background: '#F8F6F1 !important', px: 3,
       }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: 440 }}>
+          <Box
+            component="img"
+            src="/logo.png"
+            alt="Logo"
+            sx={{ width: 80, height: 80, objectFit: 'contain', mb: 2 }}
+          />
         <Paper
           elevation={0}
           sx={{
-            width: '100%', maxWidth: 440, p: 5, borderRadius: 4,
-            border: `1px solid ${dk ? 'rgba(201,168,76,0.15)' : 'rgba(201,168,76,0.15)'}`,
-            boxShadow: dk ? '0 8px 40px rgba(0,0,0,0.3)' : '0 8px 40px rgba(0,0,0,0.06)',
+            width: '100%', p: 5, borderRadius: '16px !important',
+            background: '#fff !important',
+            color: '#0D1B2A',
+            border: '1px solid rgba(0,132,61,0.1) !important',
+            boxShadow: '0 8px 40px rgba(0,0,0,0.06) !important',
+            '&:hover': {
+              boxShadow: '0 8px 40px rgba(0,0,0,0.06) !important',
+            },
           }}
         >
           {/* Mobile-only brand */}
@@ -173,7 +187,7 @@ export default function LoginPage() {
             </Button>
           </Box>
 
-          <Typography variant="h5" sx={{ fontWeight: 700, color: dk ? '#F5F0E8' : '#0D1B2A', mb: 0.5 }}>
+          <Typography variant="h5" sx={{ fontWeight: 700, color: '#00843D !important', mb: 0.5 }}>
             {t(language, 'welcomeBackTitle')}
           </Typography>
           <Typography variant="body2" sx={{ color: dk ? '#B8C8D8' : '#4A5568', mb: 3 }}>
@@ -246,7 +260,9 @@ export default function LoginPage() {
             </Link>
           </Typography>
         </Paper>
+        </Box>
       </Box>
     </Box>
+    </ThemeProvider>
   )
 }
