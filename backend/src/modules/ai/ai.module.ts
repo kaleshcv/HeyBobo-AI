@@ -7,7 +7,7 @@ import { AITutorService } from '@/modules/ai/ai-tutor.service';
 import { AIConversation, AIConversationSchema } from '@/modules/ai/schemas/ai-conversation.schema';
 import { AIDocument, AIDocumentSchema } from '@/modules/ai/schemas/ai-document.schema';
 import { StudyPlan, StudyPlanSchema } from '@/modules/ai/schemas/study-plan.schema';
-import { Quiz, QuizSchema, QuizAttempt, QuizAttemptSchema } from '@/modules/ai/schemas/quiz.schema';
+import { AIQuiz, AIQuizSchema, AIQuizAttempt, AIQuizAttemptSchema } from '@/modules/ai/schemas/quiz.schema';
 import { AILesson, AILessonSchema, RevisionPlan, RevisionPlanSchema } from '@/modules/ai/schemas/lesson.schema';
 import { Lesson, LessonSchema } from '@/modules/education/lessons/schemas/lesson.schema';
 import { Course, CourseSchema } from '@/modules/education/courses/schemas/course.schema';
@@ -18,8 +18,8 @@ import { Course, CourseSchema } from '@/modules/education/courses/schemas/course
       { name: AIConversation.name, schema: AIConversationSchema },
       { name: AIDocument.name, schema: AIDocumentSchema },
       { name: StudyPlan.name, schema: StudyPlanSchema },
-      { name: Quiz.name, schema: QuizSchema },
-      { name: QuizAttempt.name, schema: QuizAttemptSchema },
+      { name: AIQuiz.name, schema: AIQuizSchema },
+      { name: AIQuizAttempt.name, schema: AIQuizAttemptSchema },
       { name: AILesson.name, schema: AILessonSchema },
       { name: RevisionPlan.name, schema: RevisionPlanSchema },
       { name: Lesson.name, schema: LessonSchema },

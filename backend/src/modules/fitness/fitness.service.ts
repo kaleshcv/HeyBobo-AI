@@ -7,6 +7,7 @@ import {
   FitnessProfile,
   FitnessGoal,
 } from './schemas/fitness.schema';
+import { User } from '@/modules/users/schemas/user.schema';
 import {
   CreateWorkoutSessionDto,
   UpdateDailyMetricsDto,
@@ -24,6 +25,7 @@ export class FitnessService {
     @InjectModel(DailyMetric.name) private dailyMetricModel: Model<DailyMetric>,
     @InjectModel(FitnessProfile.name) private profileModel: Model<FitnessProfile>,
     @InjectModel(FitnessGoal.name) private goalModel: Model<FitnessGoal>,
+    @InjectModel(User.name) private userModel: Model<User>,
   ) {}
 
   // ═══════════ WORKOUT SESSIONS ═════════════════════════
@@ -33,15 +35,18 @@ export class FitnessService {
     const session = new this.workoutModel({ ...dto, userId, startedAt: new Date(dto.startedAt), endedAt: dto.endedAt ? new Date(dto.endedAt) : undefined });
     const saved = await session.save();
 
-    // Update daily metrics
+    // Update daily metrics and user total workout count
     const date = new Date(dto.startedAt).toISOString().slice(0, 10);
-    await this.incrementDailyMetrics(userId, date, {
-      workoutsCompleted: 1,
-      totalReps: dto.totalReps || 0,
-      totalDurationSeconds: dto.durationSeconds || 0,
-      caloriesBurned: dto.caloriesBurned || 0,
-      activeMinutes: Math.round((dto.durationSeconds || 0) / 60),
-    });
+    await Promise.all([
+      this.incrementDailyMetrics(userId, date, {
+        workoutsCompleted: 1,
+        totalReps: dto.totalReps || 0,
+        totalDurationSeconds: dto.durationSeconds || 0,
+        caloriesBurned: dto.caloriesBurned || 0,
+        activeMinutes: Math.round((dto.durationSeconds || 0) / 60),
+      }),
+      this.userModel.findByIdAndUpdate(userId, { $inc: { totalWorkouts: 1 } }),
+    ]);
 
     return saved;
   }
@@ -162,10 +167,12 @@ export class FitnessService {
   async updateGoalProgress(userId: string, goalId: string, current: number): Promise<FitnessGoal> {
     const goal = await this.goalModel.findOne({ _id: goalId, userId });
     if (!goal) throw new NotFoundException('Goal not found');
+    const wasNotCompleted = !goal.completed;
     goal.current = current;
-    if (current >= goal.target && !goal.completed) {
+    if (current >= goal.target && wasNotCompleted) {
       goal.completed = true;
       goal.completedAt = new Date();
+      await this.userModel.findByIdAndUpdate(userId, { $inc: { completedFitnessGoals: 1 } });
     }
     return goal.save();
   }

@@ -22,9 +22,9 @@ export class QuizQuestion {
 
 export const QuizQuestionSchema = SchemaFactory.createForClass(QuizQuestion);
 
-// ─── Main Schema: Quiz ───────────────────────────────────
+// ─── Main Schema: AIQuiz ──────────────────────────────────
 @Schema({ timestamps: true, collection: 'ai_quizzes' })
-export class Quiz extends Document {
+export class AIQuiz extends Document {
   @Prop({ required: true, index: true, type: Types.ObjectId, ref: 'User' })
   userId: Types.ObjectId;
 
@@ -41,9 +41,9 @@ export class Quiz extends Document {
   questions: QuizQuestion[];
 }
 
-export const QuizSchema = SchemaFactory.createForClass(Quiz);
-QuizSchema.index({ userId: 1, textbookId: 1 });
-QuizSchema.index({ userId: 1, createdAt: -1 });
+export const AIQuizSchema = SchemaFactory.createForClass(AIQuiz);
+AIQuizSchema.index({ userId: 1, textbookId: 1 });
+AIQuizSchema.index({ userId: 1, createdAt: -1 });
 
 // ─── Sub-document: Answer Map ────────────────────────────
 @Schema({ _id: false })
@@ -53,9 +53,9 @@ export class AnswerEntry {
 }
 export const AnswerEntrySchema = SchemaFactory.createForClass(AnswerEntry);
 
-// ─── Main Schema: QuizAttempt ────────────────────────────
+// ─── Main Schema: AIQuizAttempt ──────────────────────────
 @Schema({ timestamps: true, collection: 'ai_quiz_attempts' })
-export class QuizAttempt extends Document {
+export class AIQuizAttempt extends Document {
   @Prop({ required: true, index: true, type: Types.ObjectId, ref: 'User' })
   userId: Types.ObjectId;
 
@@ -82,6 +82,6 @@ export class QuizAttempt extends Document {
   completedAt: string;
 }
 
-export const QuizAttemptSchema = SchemaFactory.createForClass(QuizAttempt);
-QuizAttemptSchema.index({ userId: 1, quizId: 1 });
-QuizAttemptSchema.index({ userId: 1, createdAt: -1 });
+export const AIQuizAttemptSchema = SchemaFactory.createForClass(AIQuizAttempt);
+AIQuizAttemptSchema.index({ userId: 1, quizId: 1 });
+AIQuizAttemptSchema.index({ userId: 1, createdAt: -1 });

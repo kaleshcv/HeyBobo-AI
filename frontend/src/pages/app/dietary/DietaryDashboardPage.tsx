@@ -12,6 +12,8 @@ import {
   Paper,
   Typography,
 } from '@mui/material';
+import { motion } from 'framer-motion';
+import { AnimatedPage } from '@/components/animations';
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -568,8 +570,9 @@ export default function DietaryDashboardPage() {
   const statsScore = typeof stats?.score === 'number' ? Math.round(stats.score as number) : null;
 
   return (
-    <Box sx={{ flex: 1, px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 3, flexWrap: 'wrap' }}>
+    <AnimatedPage>
+      <Box sx={{ flex: 1, px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
+        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 3, flexWrap: 'wrap' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Box sx={{ width: 44, height: 44, borderRadius: 2, bgcolor: '#f59e0b20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <RestaurantMenuIcon sx={{ fontSize: 24, color: '#f59e0b' }} />
@@ -604,43 +607,67 @@ export default function DietaryDashboardPage() {
 
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            icon={<DashboardIcon sx={{ color: '#f59e0b', fontSize: 20 }} />}
-            label="Daily Nutrition Score"
-            value={formatPercent(dailyScore)}
-            sub={`${today.totalCalories} kcal · ${today.mealsLogged || meals.length} meals today`}
-            color="#f59e0b"
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0 * 0.06, ease: 'easeOut' }}
+          >
+            <StatCard
+              icon={<DashboardIcon sx={{ color: '#f59e0b', fontSize: 20 }} />}
+              label="Daily Nutrition Score"
+              value={formatPercent(dailyScore)}
+              sub={`${today.totalCalories} kcal · ${today.mealsLogged || meals.length} meals today`}
+              color="#f59e0b"
+            />
+          </motion.div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            icon={<TrendingUpIcon sx={{ color: '#10b981', fontSize: 20 }} />}
-            label="Weekly Consistency"
-            value={formatPercent(weeklyConsistencyScore)}
-            sub={`${totalMealsLoggedThisWeek} meals logged across 7 days`}
-            color="#10b981"
-            onClick={() => navigate('/app/dietary/nutrition')}
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 1 * 0.06, ease: 'easeOut' }}
+          >
+            <StatCard
+              icon={<TrendingUpIcon sx={{ color: '#10b981', fontSize: 20 }} />}
+              label="Weekly Consistency"
+              value={formatPercent(weeklyConsistencyScore)}
+              sub={`${totalMealsLoggedThisWeek} meals logged across 7 days`}
+              color="#10b981"
+              onClick={() => navigate('/app/dietary/nutrition')}
+            />
+          </motion.div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            icon={<EventNoteIcon sx={{ color: '#a78bfa', fontSize: 20 }} />}
-            label="Meal Plans"
-            value={mealPlans.length}
-            sub={activePlan ? `${activePlan.title}` : 'No active plan'}
-            color="#a78bfa"
-            onClick={() => navigate('/app/dietary/meal-planner')}
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 2 * 0.06, ease: 'easeOut' }}
+          >
+            <StatCard
+              icon={<EventNoteIcon sx={{ color: '#a78bfa', fontSize: 20 }} />}
+              label="Meal Plans"
+              value={mealPlans.length}
+              sub={activePlan ? `${activePlan.title}` : 'No active plan'}
+              color="#a78bfa"
+              onClick={() => navigate('/app/dietary/meal-planner')}
+            />
+          </motion.div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            icon={<ShoppingCartIcon sx={{ color: '#38bdf8', fontSize: 20 }} />}
-            label="Grocery Readiness"
-            value={formatPercent(grocerySummary.completionRate)}
-            sub={`${grocerySummary.completedItems}/${grocerySummary.totalItems} items done`}
-            color="#38bdf8"
-            onClick={() => navigate('/app/dietary/grocery')}
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 3 * 0.06, ease: 'easeOut' }}
+          >
+            <StatCard
+              icon={<ShoppingCartIcon sx={{ color: '#38bdf8', fontSize: 20 }} />}
+              label="Grocery Readiness"
+              value={formatPercent(grocerySummary.completionRate)}
+              sub={`${grocerySummary.completedItems}/${grocerySummary.totalItems} items done`}
+              color="#38bdf8"
+              onClick={() => navigate('/app/dietary/grocery')}
+            />
+          </motion.div>
         </Grid>
       </Grid>
 
@@ -898,6 +925,7 @@ export default function DietaryDashboardPage() {
           </Grid>
         </Grid>
       </Grid>
-    </Box>
+      </Box>
+    </AnimatedPage>
   );
 }

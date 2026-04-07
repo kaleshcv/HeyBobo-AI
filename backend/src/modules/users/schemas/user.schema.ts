@@ -66,6 +66,31 @@ export class User extends Document {
   @Prop({ default: false })
   emailVerified: boolean;
 
+  // ── Activity stats (auto-maintained by service layer) ──
+  @Prop({ default: 0 })
+  enrolledCoursesCount: number;
+
+  @Prop({ default: 0 })
+  completedCoursesCount: number;
+
+  @Prop({ default: 0 })
+  totalLessonsCompleted: number;
+
+  @Prop({ default: 0 })
+  totalCertificates: number;
+
+  @Prop({ default: 0 })
+  totalWorkouts: number;
+
+  @Prop({ default: 0 })
+  completedFitnessGoals: number;
+
+  @Prop({ default: 0 })
+  totalMealsLogged: number;
+
+  @Prop({ default: 0 })
+  completedDietaryGoals: number;
+
   @Prop()
   createdAt: Date;
 

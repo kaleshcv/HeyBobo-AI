@@ -15,6 +15,8 @@ import {
   Checkbox,
   useTheme,
 } from '@mui/material';
+import { motion } from 'framer-motion';
+import { AnimatedPage } from '@/components/animations';
 import SpaIcon from '@mui/icons-material/Spa';
 import FaceIcon from '@mui/icons-material/Face';
 import ContentCutIcon from '@mui/icons-material/ContentCut';
@@ -212,9 +214,10 @@ export default function GroomingDashboardPage() {
     new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
   return (
-    <Box sx={{ flex: 1, px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
+    <AnimatedPage>
+      <Box sx={{ flex: 1, px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
 
-      {/* ── Header ─────────────────────────────────────────────────────────── */}
+        {/* ── Header ─────────────────────────────────────────────────────────── */}
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 3, flexWrap: 'wrap', gap: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: '#c084fc20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -242,44 +245,68 @@ export default function GroomingDashboardPage() {
       {/* ── Stat cards ─────────────────────────────────────────────────────── */}
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            icon={<TipsAndUpdatesIcon sx={{ fontSize: 20 }} />}
-            label={t(language, 'totalTips')}
-            value={stats.total}
-            sub={`${stats.saved} saved to favourites`}
-            color="#c084fc"
-            onClick={() => navigate('/app/grooming/recommendations')}
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0 * 0.06, ease: 'easeOut' }}
+          >
+            <StatCard
+              icon={<TipsAndUpdatesIcon sx={{ fontSize: 20 }} />}
+              label={t(language, 'totalTips')}
+              value={stats.total}
+              sub={`${stats.saved} saved to favourites`}
+              color="#c084fc"
+              onClick={() => navigate('/app/grooming/recommendations')}
+            />
+          </motion.div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            icon={<SpaIcon sx={{ fontSize: 20 }} />}
-            label={t(language, 'skincareTipsLabel')}
-            value={stats.skincare}
-            sub={t(language, 'aiGeneratedNote')}
-            color="#f43f5e"
-            onClick={() => navigate('/app/grooming/recommendations')}
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 1 * 0.06, ease: 'easeOut' }}
+          >
+            <StatCard
+              icon={<SpaIcon sx={{ fontSize: 20 }} />}
+              label={t(language, 'skincareTipsLabel')}
+              value={stats.skincare}
+              sub={t(language, 'aiGeneratedNote')}
+              color="#f43f5e"
+              onClick={() => navigate('/app/grooming/recommendations')}
+            />
+          </motion.div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            icon={<ContentCutIcon sx={{ fontSize: 20 }} />}
-            label={t(language, 'haircareTipsLabel')}
-            value={stats.haircare}
-            sub={t(language, 'hairScalpNote')}
-            color="#f59e0b"
-            onClick={() => navigate('/app/grooming/recommendations')}
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 2 * 0.06, ease: 'easeOut' }}
+          >
+            <StatCard
+              icon={<ContentCutIcon sx={{ fontSize: 20 }} />}
+              label={t(language, 'haircareTipsLabel')}
+              value={stats.haircare}
+              sub={t(language, 'hairScalpNote')}
+              color="#f59e0b"
+              onClick={() => navigate('/app/grooming/recommendations')}
+            />
+          </motion.div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            icon={<StarIcon sx={{ fontSize: 20 }} />}
-            label={t(language, 'skinScoreLabel')}
-            value={LAST_ANALYSIS ? `${LAST_ANALYSIS.skinScore}/100` : '--'}
-            sub={LAST_ANALYSIS ? `Last scan: ${formatDate(LAST_ANALYSIS.date)}` : t(language, 'noScanYetMsg')}
-            color="#10b981"
-            onClick={() => navigate('/app/grooming/visual-analysis')}
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 3 * 0.06, ease: 'easeOut' }}
+          >
+            <StatCard
+              icon={<StarIcon sx={{ fontSize: 20 }} />}
+              label={t(language, 'skinScoreLabel')}
+              value={LAST_ANALYSIS ? `${LAST_ANALYSIS.skinScore}/100` : '--'}
+              sub={LAST_ANALYSIS ? `Last scan: ${formatDate(LAST_ANALYSIS.date)}` : t(language, 'noScanYetMsg')}
+              color="#10b981"
+              onClick={() => navigate('/app/grooming/visual-analysis')}
+            />
+          </motion.div>
         </Grid>
       </Grid>
 
@@ -582,7 +609,8 @@ export default function GroomingDashboardPage() {
         </Grid>
       </Grid>
 
-    </Box>
+      </Box>
+    </AnimatedPage>
   );
 }
 

@@ -28,6 +28,7 @@ import { AssignmentsService } from '@/modules/education/assignments/assignments.
 import { AssignmentsController } from '@/modules/education/assignments/assignments.controller';
 import { ReviewsService } from '@/modules/education/reviews/reviews.service';
 import { ReviewsController } from '@/modules/education/reviews/reviews.controller';
+import { User, UserSchema } from '@/modules/users/schemas/user.schema';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { ReviewsController } from '@/modules/education/reviews/reviews.controlle
       { name: AssignmentSubmission.name, schema: AssignmentSubmissionSchema },
       { name: Review.name, schema: ReviewSchema },
       { name: Category.name, schema: CategorySchema },
+      { name: User.name, schema: UserSchema },
     ]),
   ],
   controllers: [

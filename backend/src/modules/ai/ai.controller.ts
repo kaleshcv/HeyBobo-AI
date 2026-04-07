@@ -57,15 +57,12 @@ export class AIController {
     userId = toObjectId(userId);
     const document = await this.aiService.uploadDocument(userId, file);
     return {
-      success: true,
-      data: {
-        id: document._id,
-        filename: document.originalName,
-        pageCount: document.pageCount,
-        size: document.size,
-        extractedText: document.extractedText,
-        createdAt: (document as any).createdAt,
-      },
+      id: document._id,
+      filename: document.originalName,
+      pageCount: document.pageCount,
+      size: document.size,
+      extractedText: document.extractedText,
+      createdAt: (document as any).createdAt,
     };
   }
 
@@ -73,8 +70,7 @@ export class AIController {
   @ApiOperation({ summary: 'Get user uploaded documents' })
   async getDocuments(@CurrentUser('sub') userId: string): Promise<any> {
     userId = toObjectId(userId);
-    const documents = await this.aiService.getUserDocuments(userId);
-    return { success: true, data: documents };
+    return this.aiService.getUserDocuments(userId);
   }
 
   @Delete('documents/:id')
@@ -85,7 +81,7 @@ export class AIController {
   ): Promise<any> {
     userId = toObjectId(userId);
     const deleted = await this.aiService.deleteDocument(id, userId);
-    return { success: true, deleted };
+    return { deleted };
   }
 
   @Get('conversations')
@@ -129,8 +125,7 @@ export class AIController {
   @ApiOperation({ summary: 'Get all study plans for the current user' })
   async getStudyPlans(@CurrentUser('sub') userId: string): Promise<any> {
     userId = toObjectId(userId);
-    const plans = await this.studyPlanService.getStudyPlans(userId);
-    return { success: true, data: plans };
+    return this.studyPlanService.getStudyPlans(userId);
   }
 
   @Post('study-plans')
@@ -155,8 +150,7 @@ export class AIController {
     },
   ): Promise<any> {
     userId = toObjectId(userId);
-    const plan = await this.studyPlanService.upsertStudyPlan(userId, body);
-    return { success: true, data: plan };
+    return this.studyPlanService.upsertStudyPlan(userId, body);
   }
 
   @Patch('study-plans/:clientId/chapters/:chapterId/toggle')
@@ -167,8 +161,7 @@ export class AIController {
     @Param('chapterId') chapterId: string,
   ): Promise<any> {
     userId = toObjectId(userId);
-    const plan = await this.studyPlanService.toggleChapter(userId, clientId, chapterId);
-    return { success: true, data: plan };
+    return this.studyPlanService.toggleChapter(userId, clientId, chapterId);
   }
 
   @Delete('study-plans/:clientId')
@@ -179,7 +172,7 @@ export class AIController {
   ): Promise<any> {
     userId = toObjectId(userId);
     const deleted = await this.studyPlanService.deleteStudyPlan(userId, clientId);
-    return { success: true, deleted };
+    return { deleted };
   }
 
   // ─── Quizzes ────────────────────────────────────────────
@@ -188,8 +181,7 @@ export class AIController {
   @ApiOperation({ summary: 'Get all quizzes for the current user' })
   async getQuizzes(@CurrentUser('sub') userId: string): Promise<any> {
     userId = toObjectId(userId);
-    const data = await this.aiTutorService.getQuizzes(userId);
-    return { success: true, data };
+    return this.aiTutorService.getQuizzes(userId);
   }
 
   @Post('quizzes')
@@ -204,8 +196,7 @@ export class AIController {
     },
   ): Promise<any> {
     userId = toObjectId(userId);
-    const data = await this.aiTutorService.upsertQuiz(userId, body);
-    return { success: true, data };
+    return this.aiTutorService.upsertQuiz(userId, body);
   }
 
   @Delete('quizzes/:clientId')
@@ -216,7 +207,7 @@ export class AIController {
   ): Promise<any> {
     userId = toObjectId(userId);
     const deleted = await this.aiTutorService.deleteQuiz(userId, clientId);
-    return { success: true, deleted };
+    return { deleted };
   }
 
   // ─── Quiz Attempts ───────────────────────────────────────
@@ -225,8 +216,7 @@ export class AIController {
   @ApiOperation({ summary: 'Get all quiz attempts for the current user' })
   async getQuizAttempts(@CurrentUser('sub') userId: string): Promise<any> {
     userId = toObjectId(userId);
-    const data = await this.aiTutorService.getAttempts(userId);
-    return { success: true, data };
+    return this.aiTutorService.getAttempts(userId);
   }
 
   @Post('quiz-attempts')
@@ -244,8 +234,7 @@ export class AIController {
     },
   ): Promise<any> {
     userId = toObjectId(userId);
-    const data = await this.aiTutorService.saveAttempt(userId, body);
-    return { success: true, data };
+    return this.aiTutorService.saveAttempt(userId, body);
   }
 
   // ─── AI Lessons ──────────────────────────────────────────
@@ -254,8 +243,7 @@ export class AIController {
   @ApiOperation({ summary: 'Get all lessons for the current user' })
   async getLessons(@CurrentUser('sub') userId: string): Promise<any> {
     userId = toObjectId(userId);
-    const data = await this.aiTutorService.getLessons(userId);
-    return { success: true, data };
+    return this.aiTutorService.getLessons(userId);
   }
 
   @Post('lessons')
@@ -271,8 +259,7 @@ export class AIController {
     },
   ): Promise<any> {
     userId = toObjectId(userId);
-    const data = await this.aiTutorService.saveLesson(userId, body);
-    return { success: true, data };
+    return this.aiTutorService.saveLesson(userId, body);
   }
 
   // ─── Revision Plans ──────────────────────────────────────
@@ -281,8 +268,7 @@ export class AIController {
   @ApiOperation({ summary: 'Get all revision plans for the current user' })
   async getRevisionPlans(@CurrentUser('sub') userId: string): Promise<any> {
     userId = toObjectId(userId);
-    const data = await this.aiTutorService.getRevisionPlans(userId);
-    return { success: true, data };
+    return this.aiTutorService.getRevisionPlans(userId);
   }
 
   @Post('revision-plans')
@@ -301,8 +287,7 @@ export class AIController {
     },
   ): Promise<any> {
     userId = toObjectId(userId);
-    const data = await this.aiTutorService.saveRevisionPlan(userId, body);
-    return { success: true, data };
+    return this.aiTutorService.saveRevisionPlan(userId, body);
   }
 
   @Patch('revision-plans/:clientId/dismiss')
@@ -312,7 +297,6 @@ export class AIController {
     @Param('clientId') clientId: string,
   ): Promise<any> {
     userId = toObjectId(userId);
-    const data = await this.aiTutorService.dismissRevisionPlan(userId, clientId);
-    return { success: true, data };
+    return this.aiTutorService.dismissRevisionPlan(userId, clientId);
   }
 }

@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { existsSync, unlinkSync } from 'fs';
 import { join } from 'path';
+import { User } from '@/modules/users/schemas/user.schema';
 import {
   MealLog,
   DailyNutrition,
@@ -39,6 +40,7 @@ export class DietaryService {
     @InjectModel(SupplementLog.name) private supplementModel: Model<SupplementLog>,
     @InjectModel(MealPlan.name) private mealPlanModel: Model<MealPlan>,
     @InjectModel(GroceryList.name) private groceryListModel: Model<GroceryList>,
+    @InjectModel(User.name) private userModel: Model<User>,
   ) {}
 
   // ═══════════ MEAL LOGS ════════════════════════════════
@@ -52,8 +54,11 @@ export class DietaryService {
     });
     const saved = await mealLog.save();
 
-    // Update daily nutrition summary
-    await this.recalculateDailyNutrition(userId, dto.date);
+    // Update daily nutrition summary and user total meal count
+    await Promise.all([
+      this.recalculateDailyNutrition(userId, dto.date),
+      this.userModel.findByIdAndUpdate(userId, { $inc: { totalMealsLogged: 1 } }),
+    ]);
 
     return saved;
   }
@@ -211,10 +216,12 @@ export class DietaryService {
   async updateGoalProgress(userId: string, goalId: string, current: number): Promise<DietaryGoal> {
     const goal = await this.goalModel.findOne({ _id: goalId, userId });
     if (!goal) throw new NotFoundException('Dietary goal not found');
+    const wasNotCompleted = !goal.completed;
     goal.current = current;
-    if (current >= goal.target && !goal.completed) {
+    if (current >= goal.target && wasNotCompleted) {
       goal.completed = true;
       goal.completedAt = new Date();
+      await this.userModel.findByIdAndUpdate(userId, { $inc: { completedDietaryGoals: 1 } });
     }
     return goal.save();
   }

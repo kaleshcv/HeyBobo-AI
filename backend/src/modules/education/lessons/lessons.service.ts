@@ -4,6 +4,8 @@ import { Model, Types } from 'mongoose';
 import { Lesson } from '@/modules/education/lessons/schemas/lesson.schema';
 import { LessonProgress } from '@/modules/education/lessons/schemas/lesson-progress.schema';
 import { Course } from '@/modules/education/courses/schemas/course.schema';
+import { Enrollment, EnrollmentStatus } from '@/modules/education/enrollments/schemas/enrollment.schema';
+import { User } from '@/modules/users/schemas/user.schema';
 
 @Injectable()
 export class LessonsService {
@@ -13,6 +15,8 @@ export class LessonsService {
     @InjectModel(Lesson.name) private lessonModel: Model<Lesson>,
     @InjectModel(LessonProgress.name) private progressModel: Model<LessonProgress>,
     @InjectModel(Course.name) private courseModel: Model<Course>,
+    @InjectModel(Enrollment.name) private enrollmentModel: Model<Enrollment>,
+    @InjectModel(User.name) private userModel: Model<User>,
   ) {}
 
   async create(courseId: string, createLessonDto: any, userId: string): Promise<Lesson> {
@@ -43,11 +47,14 @@ export class LessonsService {
 
   async updateProgress(lessonId: string, studentId: string, updateProgressDto: any): Promise<LessonProgress> {
     const lesson = await this.findOne(lessonId);
+    const wasCompleted = false;
 
     let progress = await this.progressModel.findOne({
       lessonId: new Types.ObjectId(lessonId),
       studentId: new Types.ObjectId(studentId),
     });
+
+    const isNewCompletion = updateProgressDto.completed && (!progress || !progress.completed);
 
     if (!progress) {
       progress = await this.progressModel.create({
@@ -55,6 +62,7 @@ export class LessonsService {
         courseId: lesson.courseId,
         studentId: new Types.ObjectId(studentId),
         ...updateProgressDto,
+        completedAt: updateProgressDto.completed ? new Date() : undefined,
       });
     } else {
       Object.assign(progress, updateProgressDto);
@@ -64,7 +72,45 @@ export class LessonsService {
       await progress.save();
     }
 
+    // Cascade: recalculate enrollment progress and update user stats
+    if (isNewCompletion) {
+      await this.recalculateEnrollmentProgress(lesson.courseId.toString(), studentId);
+      await this.userModel.findByIdAndUpdate(studentId, { $inc: { totalLessonsCompleted: 1 } });
+    }
+
     return progress;
+  }
+
+  private async recalculateEnrollmentProgress(courseId: string, studentId: string): Promise<void> {
+    const [totalLessons, completedLessons] = await Promise.all([
+      this.lessonModel.countDocuments({ courseId: new Types.ObjectId(courseId), status: 'published' }),
+      this.progressModel.countDocuments({
+        courseId: new Types.ObjectId(courseId),
+        studentId: new Types.ObjectId(studentId),
+        completed: true,
+      }),
+    ]);
+
+    if (totalLessons === 0) return;
+    const progressPercent = Math.round((completedLessons / totalLessons) * 100);
+
+    const enrollment = await this.enrollmentModel.findOne({
+      courseId: new Types.ObjectId(courseId),
+      studentId: new Types.ObjectId(studentId),
+    });
+
+    if (!enrollment) return;
+
+    const wasNotCompleted = enrollment.status !== EnrollmentStatus.COMPLETED;
+    enrollment.progressPercent = progressPercent;
+
+    if (progressPercent === 100 && wasNotCompleted) {
+      enrollment.status = EnrollmentStatus.COMPLETED;
+      enrollment.completedAt = new Date();
+      await this.userModel.findByIdAndUpdate(studentId, { $inc: { completedCoursesCount: 1 } });
+    }
+
+    await enrollment.save();
   }
 
   async getProgress(lessonId: string, studentId: string): Promise<LessonProgress | null> {

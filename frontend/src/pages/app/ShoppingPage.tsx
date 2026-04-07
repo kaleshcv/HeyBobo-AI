@@ -13,6 +13,8 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { motion } from 'framer-motion';
+import { AnimatedPage } from '@/components/animations';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
@@ -207,8 +209,9 @@ export default function ShoppingPage() {
   }, [activeOrders, avgDiscount, availableListings.length, budgetPct, checkedItems, listCompletionRate, lists.length, monthlyBudget, remaining, totalListItems, totalSpent, wishlistedCount]);
 
   return (
-    <Box sx={{ flex: 1, px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
-      {/* Header */}
+    <AnimatedPage>
+      <Box sx={{ flex: 1, px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
+        {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 3, flexWrap: 'wrap' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: '#a78bfa20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -242,44 +245,68 @@ export default function ShoppingPage() {
       {/* Stat Cards */}
       <Grid container spacing={2} sx={{ mb: 2.5 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            icon={<AccountBalanceWalletIcon sx={{ fontSize: 20 }} />}
-            label="Monthly Budget Used"
-            value={`${Math.round(budgetPct)}%`}
-            sub={`$${totalSpent.toFixed(0)} spent · $${remaining.toFixed(0)} left`}
-            color="#a78bfa"
-            onClick={() => navigate('/app/shopping/budget')}
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0 * 0.06, ease: 'easeOut' }}
+          >
+            <StatCard
+          icon={<AccountBalanceWalletIcon sx={{ fontSize: 20 }} />}
+          label="Monthly Budget Used"
+          value={`${Math.round(budgetPct)}%`}
+          sub={`$${totalSpent.toFixed(0)} spent · $${remaining.toFixed(0)} left`}
+          color="#a78bfa"
+          onClick={() => navigate('/app/shopping/budget')}
+            />
+          </motion.div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            icon={<ListAltIcon sx={{ fontSize: 20 }} />}
-            label="Shopping Lists"
-            value={lists.length}
-            sub={`${checkedItems}/${totalListItems} items checked · ${Math.round(listCompletionRate)}% done`}
-            color="#38bdf8"
-            onClick={() => navigate('/app/shopping/lists')}
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 1 * 0.06, ease: 'easeOut' }}
+          >
+            <StatCard
+              icon={<ListAltIcon sx={{ fontSize: 20 }} />}
+              label="Shopping Lists"
+              value={lists.length}
+              sub={`${checkedItems}/${totalListItems} items checked · ${Math.round(listCompletionRate)}% done`}
+              color="#38bdf8"
+              onClick={() => navigate('/app/shopping/lists')}
+            />
+          </motion.div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            icon={<StorefrontIcon sx={{ fontSize: 20 }} />}
-            label="Marketplace"
-            value={availableListings.length}
-            sub={`listings available · avg ${avgDiscount}% off`}
-            color="#06b6d4"
-            onClick={() => navigate('/app/shopping/marketplace')}
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 2 * 0.06, ease: 'easeOut' }}
+          >
+            <StatCard
+              icon={<StorefrontIcon sx={{ fontSize: 20 }} />}
+              label="Marketplace"
+              value={availableListings.length}
+              sub={`listings available · avg ${avgDiscount}% off`}
+              color="#06b6d4"
+              onClick={() => navigate('/app/shopping/marketplace')}
+            />
+          </motion.div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            icon={<ReceiptLongIcon sx={{ fontSize: 20 }} />}
-            label="Active Orders"
-            value={activeOrders.length}
-            sub={`${deliveredOrders.length} delivered · $${totalOrderValue.toFixed(0)} total`}
-            color="#ec4899"
-            onClick={() => navigate('/app/shopping/orders')}
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 3 * 0.06, ease: 'easeOut' }}
+          >
+            <StatCard
+              icon={<ReceiptLongIcon sx={{ fontSize: 20 }} />}
+              label="Active Orders"
+              value={activeOrders.length}
+              sub={`${deliveredOrders.length} delivered · $${totalOrderValue.toFixed(0)} total`}
+              color="#ec4899"
+              onClick={() => navigate('/app/shopping/orders')}
+            />
+          </motion.div>
         </Grid>
       </Grid>
 
@@ -546,6 +573,7 @@ export default function ShoppingPage() {
           </Grid>
         </Grid>
       </Grid>
-    </Box>
+      </Box>
+    </AnimatedPage>
   );
 }

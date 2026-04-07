@@ -35,6 +35,8 @@ import {
   InputAdornment,
   useTheme,
 } from '@mui/material';
+import { motion } from 'framer-motion';
+import { AnimatedPage } from '@/components/animations';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VideocamIcon from '@mui/icons-material/Videocam';
@@ -972,8 +974,9 @@ export default function MeetingsPage() {
   }
 
   return (
-    <Box sx={{ px: { xs: 2.5, md: 4, lg: 5 }, py: 3 }}>
-      {/* Header */}
+    <AnimatedPage>
+      <Box sx={{ px: { xs: 2.5, md: 4, lg: 5 }, py: 3 }}>
+        {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: '#ec489920', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -1073,9 +1076,15 @@ export default function MeetingsPage() {
         </Paper>
       ) : (
         <Grid container spacing={1.5}>
-          {tabMeetings[tab].map((meeting) => (
+          {tabMeetings[tab].map((meeting, i) => (
             <Grid item xs={12} md={6} key={meeting.id}>
-              <MeetingCard meeting={meeting} onInvite={setInviteMeeting} onJoin={handleJoinLive} />
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: i * 0.06, ease: 'easeOut' }}
+              >
+                <MeetingCard meeting={meeting} onInvite={setInviteMeeting} onJoin={handleJoinLive} />
+              </motion.div>
             </Grid>
           ))}
         </Grid>
@@ -1085,6 +1094,7 @@ export default function MeetingsPage() {
       <CreateMeetingDialog open={createOpen} onClose={() => setCreateOpen(false)} />
       <InviteDialog open={!!inviteMeeting} onClose={() => setInviteMeeting(null)} meeting={inviteMeeting} />
       <JoinByCodeDialog open={joinCodeOpen} onClose={() => setJoinCodeOpen(false)} onJoin={handleJoinLive} />
-    </Box>
+      </Box>
+    </AnimatedPage>
   );
 }

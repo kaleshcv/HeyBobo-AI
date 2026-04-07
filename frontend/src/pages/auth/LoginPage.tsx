@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link as RouterLink, Navigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import {
   Box,
   Paper,
@@ -20,6 +21,7 @@ import { loginSchema } from '@/lib/validators'
 import { useUIStore } from '@/store/uiStore'
 import { t } from '@/lib/translations'
 import { lightTheme } from '@/theme'
+import { AnimatedPage, FloatingParticles } from '@/components/animations'
 
 export default function LoginPage() {
   const { login, isAuthenticated, loginLoading } = useAuth()
@@ -57,6 +59,7 @@ export default function LoginPage() {
 
   return (
     <ThemeProvider theme={lightTheme}>
+    <AnimatedPage>
     <Box sx={{ minHeight: '100vh', display: 'flex' }}>
       {/* Left Panel — Dubai Branding */}
       <Box
@@ -138,15 +141,28 @@ export default function LoginPage() {
       {/* Right Panel — Login Form */}
       <Box sx={{
         flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: '#F8F6F1 !important', px: 3,
+        background: '#F8F6F1 !important', px: 3, position: 'relative', overflow: 'hidden',
       }}>
+        <FloatingParticles />
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: 440 }}>
-          <Box
-            component="img"
-            src="/logo.png"
-            alt="Logo"
-            sx={{ width: 80, height: 80, objectFit: 'contain', mb: 2 }}
-          />
+          <motion.div
+            initial={{ scale: 0.8, y: -20, opacity: 0 }}
+            animate={{ scale: 1, y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, type: 'spring', stiffness: 100 }}
+          >
+            <Box
+              component="img"
+              src="/logo.png"
+              alt="Logo"
+              sx={{ width: 80, height: 80, objectFit: 'contain', mb: 2 }}
+            />
+          </motion.div>
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          style={{ width: '100%' }}
+        >
         <Paper
           elevation={0}
           sx={{
@@ -195,59 +211,79 @@ export default function LoginPage() {
           </Typography>
 
           <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-            <TextField
-              label={t(language, 'emailOrUsername')}
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
-              error={!!errors.identifier}
-              helperText={errors.identifier}
-              fullWidth
-              size="small"
-              autoComplete="username"
-            />
-            <TextField
-              label={t(language, 'password')}
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              error={!!errors.password}
-              helperText={errors.password}
-              fullWidth
-              size="small"
-              autoComplete="current-password"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton size="small" onClick={() => setShowPassword(!showPassword)} edge="end">
-                      {showPassword ? <VisibilityOffIcon sx={{ fontSize: 18 }} /> : <VisibilityIcon sx={{ fontSize: 18 }} />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-              disabled={loginLoading}
-              sx={{
-                mt: 1, py: 1.4, fontWeight: 700, borderRadius: 2.5,
-                background: dk
-                  ? 'linear-gradient(135deg, #C9A84C 0%, #E5B84E 100%)'
-                  : 'linear-gradient(135deg, #00843D 0%, #00A650 100%)',
-                color: dk ? '#0D1B2A' : '#fff', fontSize: 15,
-                boxShadow: dk ? '0 4px 20px rgba(201,168,76,0.3)' : '0 4px 20px rgba(0,132,61,0.3)',
-                '&:hover': {
-                  background: dk
-                    ? 'linear-gradient(135deg, #B08A32 0%, #C9A84C 100%)'
-                    : 'linear-gradient(135deg, #006B32 0%, #00843D 100%)',
-                  boxShadow: dk ? '0 6px 28px rgba(201,168,76,0.4)' : '0 6px 28px rgba(0,132,61,0.4)',
-                },
-                '&.Mui-disabled': { opacity: 0.7 },
-              }}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
             >
-              {loginLoading ? <CircularProgress size={22} sx={{ color: dk ? '#0D1B2A' : '#fff' }} /> : t(language, 'signIn')}
-            </Button>
+              <TextField
+                label={t(language, 'emailOrUsername')}
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                error={!!errors.identifier}
+                helperText={errors.identifier}
+                fullWidth
+                size="small"
+                autoComplete="username"
+              />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <TextField
+                label={t(language, 'password')}
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                error={!!errors.password}
+                helperText={errors.password}
+                fullWidth
+                size="small"
+                autoComplete="current-password"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton size="small" onClick={() => setShowPassword(!showPassword)} edge="end">
+                        {showPassword ? <VisibilityOffIcon sx={{ fontSize: 18 }} /> : <VisibilityIcon sx={{ fontSize: 18 }} />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                disabled={loginLoading}
+                sx={{
+                  mt: 1, py: 1.4, fontWeight: 700, borderRadius: 2.5,
+                  background: dk
+                    ? 'linear-gradient(135deg, #C9A84C 0%, #E5B84E 100%)'
+                    : 'linear-gradient(135deg, #00843D 0%, #00A650 100%)',
+                  color: dk ? '#0D1B2A' : '#fff', fontSize: 15,
+                  boxShadow: dk ? '0 4px 20px rgba(201,168,76,0.3)' : '0 4px 20px rgba(0,132,61,0.3)',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  '&:hover:not(.Mui-disabled)': {
+                    background: dk
+                      ? 'linear-gradient(135deg, #B08A32 0%, #C9A84C 100%)'
+                      : 'linear-gradient(135deg, #006B32 0%, #00843D 100%)',
+                    boxShadow: dk ? '0 6px 28px rgba(201,168,76,0.4)' : '0 6px 28px rgba(0,132,61,0.4)',
+                    transform: 'translateY(-2px)',
+                  },
+                  '&.Mui-disabled': { opacity: 0.7 },
+                }}
+              >
+                {loginLoading ? <CircularProgress size={22} sx={{ color: dk ? '#0D1B2A' : '#fff' }} /> : t(language, 'signIn')}
+              </Button>
+            </motion.div>
           </Box>
 
           <Typography variant="body2" sx={{ color: dk ? '#B8C8D8' : '#4A5568', textAlign: 'center', mt: 3 }}>
@@ -260,9 +296,11 @@ export default function LoginPage() {
             </Link>
           </Typography>
         </Paper>
+        </motion.div>
         </Box>
       </Box>
     </Box>
+    </AnimatedPage>
     </ThemeProvider>
   )
 }

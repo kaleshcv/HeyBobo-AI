@@ -5,6 +5,8 @@ import { Quiz } from '@/modules/education/quizzes/schemas/quiz.schema';
 import { QuizQuestion } from '@/modules/education/quizzes/schemas/quiz-question.schema';
 import { QuizAttempt } from '@/modules/education/quizzes/schemas/quiz-attempt.schema';
 import { Course } from '@/modules/education/courses/schemas/course.schema';
+import { Enrollment, EnrollmentStatus } from '@/modules/education/enrollments/schemas/enrollment.schema';
+import { User } from '@/modules/users/schemas/user.schema';
 
 @Injectable()
 export class QuizzesService {
@@ -15,6 +17,8 @@ export class QuizzesService {
     @InjectModel(QuizQuestion.name) private questionModel: Model<QuizQuestion>,
     @InjectModel(QuizAttempt.name) private attemptModel: Model<QuizAttempt>,
     @InjectModel(Course.name) private courseModel: Model<Course>,
+    @InjectModel(Enrollment.name) private enrollmentModel: Model<Enrollment>,
+    @InjectModel(User.name) private userModel: Model<User>,
   ) {}
 
   async create(courseId: string, createQuizDto: any, userId: string): Promise<Quiz> {
@@ -109,6 +113,18 @@ export class QuizzesService {
       submittedAt: new Date(),
       timeTakenSeconds,
     });
+
+    // Cascade: update enrollment last-accessed timestamp
+    // and update user stats if passed
+    await Promise.all([
+      this.enrollmentModel.findOneAndUpdate(
+        { courseId: quiz.courseId, studentId: new Types.ObjectId(studentId) },
+        { $set: { lastAccessedAt: new Date() } },
+      ),
+      passed
+        ? this.userModel.findByIdAndUpdate(studentId, { $inc: { totalLessonsCompleted: 0 } })
+        : Promise.resolve(), // no-op placeholder; real stat tracked via lessonProgress
+    ]);
 
     this.logger.log(`Quiz attempt submitted: ${attempt._id}`);
     return attempt;

@@ -1,5 +1,6 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import {
   Box,
   Typography,
@@ -39,7 +40,9 @@ import AssignmentLateIcon from '@mui/icons-material/AssignmentLate';
 import CloseIcon from '@mui/icons-material/Close';
 import { useCourseStore, LocalCourse, getYouTubeThumbnail, VideoProgress } from '@/store/courseStore';
 import { useAITutorStore } from '@/store/aiTutorStore';
+import { AnimatedPage } from '@/components/animations';
 import { useAuth } from '@/hooks/useAuth';
+import { aiApi, studyPlanApi, aiQuizApi, aiAttemptApi, aiLessonApi, aiRevisionApi } from '@/lib/api';
 import toast from 'react-hot-toast';
 
 // --- Course Card ---
@@ -56,20 +59,24 @@ function CourseCard({
 }) {
   const dk = useTheme().palette.mode === 'dark';
   return (
-    <Card
-      sx={{
-        cursor: 'pointer',
-        border: '1px solid',
-        borderColor: 'divider',
-        boxShadow: 'none',
-        transition: 'all 0.2s',
-        position: 'relative',
-        '&:hover': {
-          bgcolor: 'action.hover',
-        },
-        '&:hover .delete-btn': { opacity: 1 },
-      }}
+    <motion.div
+      whileHover={{ y: -4, boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}
+      transition={{ type: 'spring', stiffness: 400, damping: 10 }}
     >
+      <Card
+        sx={{
+          cursor: 'pointer',
+          border: '1px solid',
+          borderColor: 'divider',
+          boxShadow: 'none',
+          transition: 'all 0.2s',
+          position: 'relative',
+          '&:hover': {
+            bgcolor: 'action.hover',
+          },
+          '&:hover .delete-btn': { opacity: 1 },
+        }}
+      >
       <Box onClick={onClick}>
         <CardMedia
           component="img"
@@ -154,7 +161,8 @@ function CourseCard({
           <DeleteIcon sx={{ fontSize: 16 }} />
         </IconButton>
       </Tooltip>
-    </Card>
+      </Card>
+    </motion.div>
   );
 }
 
@@ -399,9 +407,134 @@ function StatCard({
 // --- AI Tutor Insights ---
 function AITutorInsights() {
   const dk = useTheme().palette.mode === 'dark';
-  const { textbooks, studyPlans, quizzes, quizAttempts, lessons, revisionPlans, dismissRevisionPlan } = useAITutorStore();
+  const {
+    textbooks, setTextbooks,
+    studyPlans, setStudyPlans,
+    quizzes, setQuizzes,
+    quizAttempts, setQuizAttempts,
+    lessons, setLessons,
+    revisionPlans, setRevisionPlans,
+    dismissRevisionPlan,
+  } = useAITutorStore();
   const navigate = useNavigate();
   const [selectedRevision, setSelectedRevision] = useState<string | null>(null);
+
+  // Sync all AI-tutor data from the backend whenever the Education dashboard mounts
+  useEffect(() => {
+    let cancelled = false;
+    const sync = async () => {
+      try {
+        const [docRes, planRes, quizRes, attemptRes, lessonRes, revisionRes] = await Promise.all([
+          aiApi.getDocuments(),
+          studyPlanApi.getAll(),
+          aiQuizApi.getAll(),
+          aiAttemptApi.getAll(),
+          aiLessonApi.getAll(),
+          aiRevisionApi.getAll(),
+        ]);
+        if (cancelled) return;
+
+        // Textbooks
+        const docs: any[] = docRes.data?.data ?? [];
+        if (docs.length) {
+          setTextbooks(docs.map((d: any) => ({
+            id: String(d._id ?? d.id),
+            name: d.originalName ?? d.filename,
+            size: d.size ?? 0,
+            pageCount: d.pageCount ?? 0,
+            extractedText: d.extractedText ?? '',
+            createdAt: d.createdAt ?? new Date().toISOString(),
+          })));
+        }
+
+        // Study plans
+        const rawPlans: any[] = planRes.data?.data ?? [];
+        if (rawPlans.length) {
+          setStudyPlans(rawPlans.map((p: any) => ({
+            id: p.clientId ?? String(p._id),
+            clientId: p.clientId,
+            textbookId: p.textbookId,
+            title: p.title,
+            totalDays: p.totalDays,
+            hoursPerDay: p.hoursPerDay,
+            chapters: (p.chapters ?? []).map((ch: any) => ({
+              id: ch.id,
+              title: ch.title,
+              description: ch.description ?? '',
+              days: ch.days ?? 1,
+              topics: ch.topics ?? [],
+              objectives: ch.objectives ?? [],
+              completed: ch.completed ?? false,
+            })),
+            createdAt: p.createdAt ?? new Date().toISOString(),
+          })));
+        }
+
+        // Quizzes
+        const rawQuizzes: any[] = quizRes.data?.data ?? [];
+        if (rawQuizzes.length) {
+          setQuizzes(rawQuizzes.map((q: any) => ({
+            id: q.clientId ?? String(q._id),
+            clientId: q.clientId,
+            textbookId: q.textbookId,
+            title: q.title,
+            questions: q.questions ?? [],
+            createdAt: q.createdAt ?? new Date().toISOString(),
+          })));
+        }
+
+        // Quiz attempts
+        const rawAttempts: any[] = attemptRes.data?.data ?? [];
+        if (rawAttempts.length) {
+          setQuizAttempts(rawAttempts.map((a: any) => ({
+            id: a.clientId ?? String(a._id),
+            clientId: a.clientId,
+            quizId: a.quizId,
+            textbookId: a.textbookId,
+            answers: a.answers ?? {},
+            score: a.score,
+            total: a.total,
+            completedAt: a.completedAt ?? new Date().toISOString(),
+          })));
+        }
+
+        // Lessons
+        const rawLessons: any[] = lessonRes.data?.data ?? [];
+        if (rawLessons.length) {
+          setLessons(rawLessons.map((l: any) => ({
+            id: l.clientId ?? String(l._id),
+            clientId: l.clientId,
+            textbookId: l.textbookId,
+            topic: l.topic,
+            content: '',
+            completedAt: l.completedAt ?? new Date().toISOString(),
+          })));
+        }
+
+        // Revision plans
+        const rawRevisions: any[] = revisionRes.data?.data ?? [];
+        if (rawRevisions.length) {
+          setRevisionPlans(rawRevisions.map((r: any) => ({
+            id: r.clientId ?? String(r._id),
+            clientId: r.clientId,
+            quizAttemptId: r.quizAttemptId,
+            textbookId: r.textbookId,
+            quizTitle: r.quizTitle,
+            score: r.score,
+            total: r.total,
+            weakAreas: r.weakAreas ?? [],
+            summary: r.summary ?? '',
+            createdAt: r.createdAt ?? new Date().toISOString(),
+            dismissed: r.dismissed ?? false,
+          })));
+        }
+      } catch {
+        // Silently fall back to whatever is already in the store
+      }
+    };
+    sync();
+    return () => { cancelled = true; };
+  }, []);
 
   const totalTextbooks = textbooks.length;
   const totalChapters = studyPlans.reduce((s, p) => s + p.chapters.length, 0);
@@ -1051,16 +1184,17 @@ export default function EducationPage() {
   };
 
   return (
-    <Box
-      sx={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        px: { xs: 2.5, md: 4, lg: 5 },
-        py: 3,
-        overflow: 'auto',
-      }}
-    >
+    <AnimatedPage>
+      <Box
+        sx={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          px: { xs: 2.5, md: 4, lg: 5 },
+          py: 3,
+          overflow: 'auto',
+        }}
+      >
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -1125,14 +1259,20 @@ export default function EducationPage() {
       {/* Course cards grid */}
       {filteredCourses.length > 0 ? (
         <Grid container spacing={2}>
-          {filteredCourses.map((course) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={course.id}>
-              <CourseCard
-                course={course}
-                progress={getCourseProgress(course.id)}
-                onClick={() => navigate(`/app/education/${course.id}`)}
-                onDelete={() => handleDeleteCourse(course.id)}
-              />
+          {filteredCourses.map((course, i) => (
+            <Grid item xs={12} sm={6} md={4} lg={3} sx={{ height: '100%' }} key={course.id}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: i * 0.06, ease: 'easeOut' }}
+              >
+                <CourseCard
+                  course={course}
+                  progress={getCourseProgress(course.id)}
+                  onClick={() => navigate(`/app/education/${course.id}`)}
+                  onDelete={() => handleDeleteCourse(course.id)}
+                />
+              </motion.div>
             </Grid>
           ))}
         </Grid>
@@ -1167,6 +1307,7 @@ export default function EducationPage() {
       )}
 
       <CreateCourseDialog open={createOpen} onClose={() => setCreateOpen(false)} />
-    </Box>
+      </Box>
+    </AnimatedPage>
   );
 }

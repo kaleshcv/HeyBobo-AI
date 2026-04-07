@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Enrollment, EnrollmentStatus } from '@/modules/education/enrollments/schemas/enrollment.schema';
 import { Course } from '@/modules/education/courses/schemas/course.schema';
+import { User } from '@/modules/users/schemas/user.schema';
 
 @Injectable()
 export class EnrollmentsService {
@@ -11,6 +12,7 @@ export class EnrollmentsService {
   constructor(
     @InjectModel(Enrollment.name) private enrollmentModel: Model<Enrollment>,
     @InjectModel(Course.name) private courseModel: Model<Course>,
+    @InjectModel(User.name) private userModel: Model<User>,
   ) {}
 
   async enroll(courseId: string, studentId: string): Promise<Enrollment> {
@@ -33,8 +35,11 @@ export class EnrollmentsService {
       status: EnrollmentStatus.ACTIVE,
     });
 
-    // Increment enrollment count
-    await this.courseModel.findByIdAndUpdate(courseId, { $inc: { enrollmentCount: 1 } });
+    // Increment enrollment count on course and user stats
+    await Promise.all([
+      this.courseModel.findByIdAndUpdate(courseId, { $inc: { enrollmentCount: 1 } }),
+      this.userModel.findByIdAndUpdate(studentId, { $inc: { enrolledCoursesCount: 1 } }),
+    ]);
 
     this.logger.log(`Student ${studentId} enrolled in course ${courseId}`);
     return enrollment;
@@ -74,11 +79,13 @@ export class EnrollmentsService {
 
   async updateProgress(courseId: string, studentId: string, progressPercent: number): Promise<Enrollment> {
     const enrollment = await this.getEnrollment(courseId, studentId);
+    const wasNotCompleted = enrollment.status !== EnrollmentStatus.COMPLETED;
 
     enrollment.progressPercent = progressPercent;
-    if (progressPercent === 100 && enrollment.status === EnrollmentStatus.ACTIVE) {
+    if (progressPercent === 100 && wasNotCompleted) {
       enrollment.status = EnrollmentStatus.COMPLETED;
       enrollment.completedAt = new Date();
+      await this.userModel.findByIdAndUpdate(studentId, { $inc: { completedCoursesCount: 1 } });
     }
 
     await enrollment.save();
@@ -87,12 +94,18 @@ export class EnrollmentsService {
 
   async markCompleted(courseId: string, studentId: string): Promise<Enrollment> {
     const enrollment = await this.getEnrollment(courseId, studentId);
+    const alreadyCompleted = enrollment.status === EnrollmentStatus.COMPLETED;
 
     enrollment.status = EnrollmentStatus.COMPLETED;
     enrollment.completedAt = new Date();
     enrollment.progressPercent = 100;
 
     await enrollment.save();
+
+    if (!alreadyCompleted) {
+      await this.userModel.findByIdAndUpdate(studentId, { $inc: { completedCoursesCount: 1 } });
+    }
+
     this.logger.log(`Course ${courseId} completed by student ${studentId}`);
     return enrollment;
   }

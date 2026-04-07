@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link as RouterLink, Navigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import {
   Box,
   Paper,
@@ -29,6 +30,7 @@ import { authApi } from '@/lib/api'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useUIStore } from '@/store/uiStore'
 import { t } from '@/lib/translations'
+import { AnimatedPage, FloatingParticles } from '@/components/animations'
 
 export default function RegisterPage() {
   const dk = useTheme().palette.mode === 'dark'
@@ -110,6 +112,7 @@ export default function RegisterPage() {
   ]
 
   return (
+    <AnimatedPage>
     <Box sx={{ minHeight: '100vh', display: 'flex' }}>
       {/* Left Panel — Dubai Branding */}
       <Box
@@ -180,8 +183,15 @@ export default function RegisterPage() {
       {/* Right Panel — Register Form */}
       <Box sx={{
         flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        bgcolor: dk ? '#0D1B2A' : '#F8F6F1', px: 3, py: 4,
+        bgcolor: dk ? '#0D1B2A' : '#F8F6F1', px: 3, py: 4, position: 'relative', overflow: 'hidden',
       }}>
+        <FloatingParticles />
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          style={{ width: '100%', maxWidth: 480 }}
+        >
         <Paper
           elevation={0}
           sx={{
@@ -215,131 +225,181 @@ export default function RegisterPage() {
 
           <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {/* Role selector */}
-            <Box>
-              <Typography variant="caption" sx={{ mb: 0.75, display: 'block', fontWeight: 600, color: dk ? '#B8C8D8' : '#4A5568' }}>
-                {t(language, 'iAmLabel')}
-              </Typography>
-              <ToggleButtonGroup
-                value={role}
-                exclusive
-                onChange={(_, v) => v && setRole(v)}
-                fullWidth
-                size="small"
-                sx={{
-                  '& .MuiToggleButton-root': {
-                    textTransform: 'none', fontWeight: 600, borderRadius: 2.5,
-                    py: 1, gap: 0.75,
-                    '&.Mui-selected': {
-                      bgcolor: dk ? 'rgba(201,168,76,0.12)' : 'rgba(0,132,61,0.12)',
-                      borderColor: dk ? '#C9A84C' : '#00843D',
-                      color: dk ? '#F5F0E8' : '#0D1B2A',
-                      '&:hover': { bgcolor: dk ? 'rgba(201,168,76,0.2)' : 'rgba(0,132,61,0.2)' },
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.15 }}
+            >
+              <Box>
+                <Typography variant="caption" sx={{ mb: 0.75, display: 'block', fontWeight: 600, color: dk ? '#B8C8D8' : '#4A5568' }}>
+                  {t(language, 'iAmLabel')}
+                </Typography>
+                <ToggleButtonGroup
+                  value={role}
+                  exclusive
+                  onChange={(_, v) => v && setRole(v)}
+                  fullWidth
+                  size="small"
+                  sx={{
+                    '& .MuiToggleButton-root': {
+                      textTransform: 'none', fontWeight: 600, borderRadius: 2.5,
+                      py: 1, gap: 0.75,
+                      '&.Mui-selected': {
+                        bgcolor: dk ? 'rgba(201,168,76,0.12)' : 'rgba(0,132,61,0.12)',
+                        borderColor: dk ? '#C9A84C' : '#00843D',
+                        color: dk ? '#F5F0E8' : '#0D1B2A',
+                        '&:hover': { bgcolor: dk ? 'rgba(201,168,76,0.2)' : 'rgba(0,132,61,0.2)' },
+                      },
                     },
-                  },
-                }}
-              >
-                <ToggleButton value="student"><PersonIcon sx={{ fontSize: 18 }} /> {t(language, 'studentRole')}</ToggleButton>
-                <ToggleButton value="teacher"><MenuBookIcon sx={{ fontSize: 18 }} /> {t(language, 'teacherRole')}</ToggleButton>
-              </ToggleButtonGroup>
-            </Box>
+                  }}
+                >
+                  <ToggleButton value="student"><PersonIcon sx={{ fontSize: 18 }} /> {t(language, 'studentRole')}</ToggleButton>
+                  <ToggleButton value="teacher"><MenuBookIcon sx={{ fontSize: 18 }} /> {t(language, 'teacherRole')}</ToggleButton>
+                </ToggleButtonGroup>
+              </Box>
+            </motion.div>
 
-            <Box sx={{ display: 'flex', gap: 1.5 }}>
-              <TextField label={t(language, 'firstNameLabel')} value={firstName} onChange={(e) => setFirstName(e.target.value)}
-                error={!!errors.firstName} helperText={errors.firstName} fullWidth size="small" autoComplete="given-name" />
-              <TextField label={t(language, 'lastNameLabel')} value={lastName} onChange={(e) => setLastName(e.target.value)}
-                error={!!errors.lastName} helperText={errors.lastName} fullWidth size="small" autoComplete="family-name" />
-            </Box>
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <Box sx={{ display: 'flex', gap: 1.5 }}>
+                <TextField label={t(language, 'firstNameLabel')} value={firstName} onChange={(e) => setFirstName(e.target.value)}
+                  error={!!errors.firstName} helperText={errors.firstName} fullWidth size="small" autoComplete="given-name" />
+                <TextField label={t(language, 'lastNameLabel')} value={lastName} onChange={(e) => setLastName(e.target.value)}
+                  error={!!errors.lastName} helperText={errors.lastName} fullWidth size="small" autoComplete="family-name" />
+              </Box>
+            </motion.div>
 
             {/* Username with availability check */}
-            <TextField
-              label={t(language, 'usernameLabel')}
-              value={username}
-              onChange={(e) => setUsername(e.target.value.replace(/[^a-zA-Z0-9_-]/g, ''))}
-              error={!!errors.username || usernameStatus === 'taken'}
-              helperText={
-                errors.username ||
-                (usernameStatus === 'taken' ? t(language, 'usernameTaken') : undefined)
-              }
-              fullWidth size="small" autoComplete="username"
-              placeholder="e.g. john_doe"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    {usernameStatus === 'checking' && <CircularProgress size={18} sx={{ color: dk ? '#C9A84C' : '#00843D' }} />}
-                    {usernameStatus === 'available' && <CheckCircleIcon sx={{ fontSize: 18, color: '#00843D' }} />}
-                    {usernameStatus === 'taken' && <CancelIcon sx={{ fontSize: 18, color: '#d32f2f' }} />}
-                  </InputAdornment>
-                ),
-              }}
-            />
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.25 }}
+            >
+              <TextField
+                label={t(language, 'usernameLabel')}
+                value={username}
+                onChange={(e) => setUsername(e.target.value.replace(/[^a-zA-Z0-9_-]/g, ''))}
+                error={!!errors.username || usernameStatus === 'taken'}
+                helperText={
+                  errors.username ||
+                  (usernameStatus === 'taken' ? t(language, 'usernameTaken') : undefined)
+                }
+                fullWidth size="small" autoComplete="username"
+                placeholder="e.g. john_doe"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {usernameStatus === 'checking' && <CircularProgress size={18} sx={{ color: dk ? '#C9A84C' : '#00843D' }} />}
+                      {usernameStatus === 'available' && <CheckCircleIcon sx={{ fontSize: 18, color: '#00843D' }} />}
+                      {usernameStatus === 'taken' && <CancelIcon sx={{ fontSize: 18, color: '#d32f2f' }} />}
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </motion.div>
 
-            <TextField label={t(language, 'email')} type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-              error={!!errors.email} helperText={errors.email} fullWidth size="small" autoComplete="email" />
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <TextField label={t(language, 'email')} type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                error={!!errors.email} helperText={errors.email} fullWidth size="small" autoComplete="email" />
+            </motion.div>
 
-            <TextField
-              label={t(language, 'password')}
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              error={!!errors.password} helperText={errors.password}
-              fullWidth size="small" autoComplete="new-password"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton size="small" onClick={() => setShowPassword(!showPassword)} edge="end">
-                      {showPassword ? <VisibilityOffIcon sx={{ fontSize: 18 }} /> : <VisibilityIcon sx={{ fontSize: 18 }} />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.35 }}
+            >
+              <TextField
+                label={t(language, 'password')}
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                error={!!errors.password} helperText={errors.password}
+                fullWidth size="small" autoComplete="new-password"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton size="small" onClick={() => setShowPassword(!showPassword)} edge="end">
+                        {showPassword ? <VisibilityOffIcon sx={{ fontSize: 18 }} /> : <VisibilityIcon sx={{ fontSize: 18 }} />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </motion.div>
 
             {/* Password strength */}
             {password.length > 0 && (
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                {pwChecks.map((c) => (
-                  <Chip
-                    key={c.label}
-                    label={c.label}
-                    size="small"
-                    icon={c.pass ? <CheckCircleIcon sx={{ fontSize: '14px !important' }} /> : undefined}
-                    sx={{
-                      fontSize: 11, height: 22,
-                      bgcolor: c.pass ? 'rgba(0,132,61,0.1)' : dk ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
-                      color: c.pass ? '#00843D' : dk ? '#888' : '#999',
-                      '& .MuiChip-icon': { color: '#00843D' },
-                    }}
-                  />
-                ))}
-              </Box>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.4 }}
+              >
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                  {pwChecks.map((c) => (
+                    <Chip
+                      key={c.label}
+                      label={c.label}
+                      size="small"
+                      icon={c.pass ? <CheckCircleIcon sx={{ fontSize: '14px !important' }} /> : undefined}
+                      sx={{
+                        fontSize: 11, height: 22,
+                        bgcolor: c.pass ? 'rgba(0,132,61,0.1)' : dk ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)',
+                        color: c.pass ? '#00843D' : dk ? '#888' : '#999',
+                        '& .MuiChip-icon': { color: '#00843D' },
+                      }}
+                    />
+                  ))}
+                </Box>
+              </motion.div>
             )}
 
-            <TextField
-              label={t(language, 'confirmPasswordLabel')}
-              type={showPassword ? 'text' : 'password'}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              error={!!errors.confirmPassword} helperText={errors.confirmPassword}
-              fullWidth size="small" autoComplete="new-password"
-            />
-
-            <Button
-              type="submit" variant="contained" fullWidth
-              disabled={registerLoading}
-              sx={{
-                mt: 1, py: 1.4, fontWeight: 700, borderRadius: 2.5,
-                background: dk ? 'linear-gradient(135deg, #C9A84C 0%, #E5B84E 100%)' : 'linear-gradient(135deg, #00843D 0%, #00A650 100%)',
-                color: dk ? '#0D1B2A' : '#fff', fontSize: 15,
-                boxShadow: dk ? '0 4px 20px rgba(201,168,76,0.3)' : '0 4px 20px rgba(0,132,61,0.3)',
-                '&:hover': {
-                  background: dk ? 'linear-gradient(135deg, #B08A32 0%, #C9A84C 100%)' : 'linear-gradient(135deg, #006B30 0%, #00843D 100%)',
-                  boxShadow: dk ? '0 6px 28px rgba(201,168,76,0.4)' : '0 6px 28px rgba(0,132,61,0.4)',
-                },
-                '&.Mui-disabled': { opacity: 0.7 },
-              }}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.45 }}
             >
-              {registerLoading ? <CircularProgress size={22} sx={{ color: dk ? '#0D1B2A' : '#fff' }} /> : t(language, 'createAccountBtn')}
-            </Button>
+              <TextField
+                label={t(language, 'confirmPasswordLabel')}
+                type={showPassword ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                error={!!errors.confirmPassword} helperText={errors.confirmPassword}
+                fullWidth size="small" autoComplete="new-password"
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              <Button
+                type="submit" variant="contained" fullWidth
+                disabled={registerLoading}
+                sx={{
+                  mt: 1, py: 1.4, fontWeight: 700, borderRadius: 2.5,
+                  background: dk ? 'linear-gradient(135deg, #C9A84C 0%, #E5B84E 100%)' : 'linear-gradient(135deg, #00843D 0%, #00A650 100%)',
+                  color: dk ? '#0D1B2A' : '#fff', fontSize: 15,
+                  boxShadow: dk ? '0 4px 20px rgba(201,168,76,0.3)' : '0 4px 20px rgba(0,132,61,0.3)',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  '&:hover:not(.Mui-disabled)': {
+                    background: dk ? 'linear-gradient(135deg, #B08A32 0%, #C9A84C 100%)' : 'linear-gradient(135deg, #006B30 0%, #00843D 100%)',
+                    boxShadow: dk ? '0 6px 28px rgba(201,168,76,0.4)' : '0 6px 28px rgba(0,132,61,0.4)',
+                    transform: 'translateY(-2px)',
+                  },
+                  '&.Mui-disabled': { opacity: 0.7 },
+                }}
+              >
+                {registerLoading ? <CircularProgress size={22} sx={{ color: dk ? '#0D1B2A' : '#fff' }} /> : t(language, 'createAccountBtn')}
+              </Button>
+            </motion.div>
           </Box>
 
           <Typography variant="body2" sx={{ color: dk ? '#B8C8D8' : '#4A5568', textAlign: 'center', mt: 3 }}>
@@ -351,7 +411,9 @@ export default function RegisterPage() {
             </Link>
           </Typography>
         </Paper>
+        </motion.div>
       </Box>
     </Box>
+    </AnimatedPage>
   )
 }

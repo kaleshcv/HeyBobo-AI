@@ -13,6 +13,8 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { motion } from 'framer-motion';
+import { AnimatedPage } from '@/components/animations';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
@@ -101,34 +103,38 @@ function StatCard({
   onClick?: () => void;
 }) {
   return (
-    <Paper
-      variant="outlined"
-      onClick={onClick}
-      sx={{
-        p: 2,
-        borderRadius: 3,
-        display: 'flex',
-        gap: 1.5,
-        alignItems: 'flex-start',
-        ...(onClick && {
-          cursor: 'pointer',
-          '&:hover': { bgcolor: 'action.hover' },
-        }),
-      }}
+    <motion.div
+      whileHover={{ y: -4, boxShadow: '0 12px 24px rgba(0,0,0,0.12)' }}
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
-      <Avatar sx={{ bgcolor: `${color}22`, color: color, width: 42, height: 42 }}>{icon}</Avatar>
-      <Box>
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
-          {label}
-        </Typography>
-        <Typography variant="h5" sx={{ fontWeight: 700, lineHeight: 1.1 }}>
-          {value}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          {sub}
-        </Typography>
-      </Box>
-    </Paper>
+      <Paper
+        variant="outlined"
+        onClick={onClick}
+        sx={{
+          p: 2,
+          borderRadius: 3,
+          display: 'flex',
+          gap: 1.5,
+          alignItems: 'flex-start',
+          ...(onClick && {
+            cursor: 'pointer',
+          }),
+        }}
+      >
+        <Avatar sx={{ bgcolor: `${color}22`, color: color, width: 42, height: 42 }}>{icon}</Avatar>
+        <Box>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+            {label}
+          </Typography>
+          <Typography variant="h5" sx={{ fontWeight: 700, lineHeight: 1.1 }}>
+            {value}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {sub}
+          </Typography>
+        </Box>
+      </Paper>
+    </motion.div>
   );
 }
 
@@ -274,8 +280,9 @@ export default function FitnessDashboardPage() {
   }, [activePlan, avgFormScore, customWorkouts.length, liveSessions.length, popularCustomWorkouts, recoverySignal, weeklyLogs.length]);
 
   return (
-    <Box sx={{ flex: 1, px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 3, flexWrap: 'wrap' }}>
+    <AnimatedPage>
+      <Box sx={{ flex: 1, px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
+        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 3, flexWrap: 'wrap' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Box sx={{ width: 44, height: 44, borderRadius: 2, bgcolor: '#10b98120', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <FitnessCenterIcon sx={{ fontSize: 24, color: '#10b981' }} />
@@ -305,43 +312,67 @@ export default function FitnessDashboardPage() {
 
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            icon={<FitnessCenterIcon sx={{ color: '#10b981', fontSize: 20 }} />}
-            label={t(language, 'trainingLoad')}
-            value={`${trainingLoadScore}%`}
-            sub={`${weeklyLogs.length} workouts · ${weeklyMinutes} min this week`}
-            color="#10b981"
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0 * 0.06, ease: 'easeOut' }}
+          >
+            <StatCard
+              icon={<FitnessCenterIcon sx={{ color: '#10b981', fontSize: 20 }} />}
+              label={t(language, 'trainingLoad')}
+              value={`${trainingLoadScore}%`}
+              sub={`${weeklyLogs.length} workouts · ${weeklyMinutes} min this week`}
+              color="#10b981"
+            />
+          </motion.div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            icon={<CalendarMonthIcon sx={{ color: '#38bdf8', fontSize: 20 }} />}
-            label={t(language, 'activePlanLabel')}
-            value={activePlan ? activePlan.daysPerWeek : 0}
-            sub={activePlan ? `${activePlan.name}` : t(language, 'noPlanSelected')}
-            color="#38bdf8"
-            onClick={() => navigate('/app/fitness/workouts')}
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 1 * 0.06, ease: 'easeOut' }}
+          >
+            <StatCard
+              icon={<CalendarMonthIcon sx={{ color: '#38bdf8', fontSize: 20 }} />}
+              label={t(language, 'activePlanLabel')}
+              value={activePlan ? activePlan.daysPerWeek : 0}
+              sub={activePlan ? `${activePlan.name}` : t(language, 'noPlanSelected')}
+              color="#38bdf8"
+              onClick={() => navigate('/app/fitness/workouts')}
+            />
+          </motion.div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            icon={<AutoFixHighIcon sx={{ color: '#a78bfa', fontSize: 20 }} />}
-            label={t(language, 'customWorkoutsLabel')}
-            value={customWorkouts.length}
-            sub={customWorkouts.length > 0 ? `${customWorkouts.reduce((sum, workout) => sum + workout.timesUsed, 0)} total uses` : t(language, 'buildYourOwn')}
-            color="#a78bfa"
-            onClick={() => navigate('/app/fitness/workouts')}
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 2 * 0.06, ease: 'easeOut' }}
+          >
+            <StatCard
+              icon={<AutoFixHighIcon sx={{ color: '#a78bfa', fontSize: 20 }} />}
+              label={t(language, 'customWorkoutsLabel')}
+              value={customWorkouts.length}
+              sub={customWorkouts.length > 0 ? `${customWorkouts.reduce((sum, workout) => sum + workout.timesUsed, 0)} total uses` : t(language, 'buildYourOwn')}
+              color="#a78bfa"
+              onClick={() => navigate('/app/fitness/workouts')}
+            />
+          </motion.div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            icon={<PlayArrowIcon sx={{ color: '#06b6d4', fontSize: 20 }} />}
-            label={t(language, 'liveSessionsLabel')}
-            value={liveSessions.length}
-            sub={`${totalReps} reps · ${Math.round(totalWorkoutSeconds / 60)} min total`}
-            color="#06b6d4"
-            onClick={() => navigate('/app/fitness/workouts')}
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 3 * 0.06, ease: 'easeOut' }}
+          >
+            <StatCard
+              icon={<PlayArrowIcon sx={{ color: '#06b6d4', fontSize: 20 }} />}
+              label={t(language, 'liveSessionsLabel')}
+              value={liveSessions.length}
+              sub={`${totalReps} reps · ${Math.round(totalWorkoutSeconds / 60)} min total`}
+              color="#06b6d4"
+              onClick={() => navigate('/app/fitness/workouts')}
+            />
+          </motion.div>
         </Grid>
       </Grid>
 
@@ -715,6 +746,7 @@ export default function FitnessDashboardPage() {
           </Grid>
         </Grid>
       </SectionCard>
-    </Box>
+      </Box>
+    </AnimatedPage>
   );
 }

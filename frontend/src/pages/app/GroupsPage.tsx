@@ -7,6 +7,8 @@ import {
   Tooltip, LinearProgress, Badge,
   useTheme,
 } from '@mui/material';
+import { motion } from 'framer-motion';
+import { AnimatedPage } from '@/components/animations';
 import AddIcon from '@mui/icons-material/Add';
 import GroupIcon from '@mui/icons-material/Group';
 import SearchIcon from '@mui/icons-material/Search';
@@ -135,8 +137,9 @@ export default function GroupsPage() {
   };
 
   return (
-    <Box sx={{ flex: 1, px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
-      {/* Header */}
+    <AnimatedPage>
+      <Box sx={{ flex: 1, px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
+        {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: '#ec489920', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -208,12 +211,17 @@ export default function GroupsPage() {
       {/* Group Cards */}
       {filtered.length > 0 ? (
         <Grid container spacing={2}>
-          {filtered.map((group) => {
-            const unread = group.notifications.filter((n) => !n.read).length;
-            const memberFill = Math.round((group.members.length / group.maxMembers) * 100);
-            return (
-              <Grid item xs={12} sm={6} md={4} key={group.id}>
-                <Card
+          {filtered.map((group, i) => {
+          const unread = group.notifications.filter((n) => !n.read).length;
+          const memberFill = Math.round((group.members.length / group.maxMembers) * 100);
+          return (
+            <Grid item xs={12} sm={6} md={4} key={group.id}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: i * 0.06, ease: 'easeOut' }}
+              >
+                  <Card
                   onClick={() => navigate(`/app/groups/${group.id}`)}
                   sx={{
                     cursor: 'pointer', border: '1px solid', borderColor: 'divider', boxShadow: 'none',
@@ -257,10 +265,11 @@ export default function GroupsPage() {
                       </Tooltip>
                     </Box>
                   </CardContent>
-                </Card>
-              </Grid>
-            );
-          })}
+                  </Card>
+              </motion.div>
+            </Grid>
+          );
+        })}
         </Grid>
       ) : groups.length === 0 ? (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', py: 8 }}>
@@ -277,6 +286,7 @@ export default function GroupsPage() {
       )}
 
       <CreateGroupDialog open={createOpen} onClose={() => setCreateOpen(false)} />
-    </Box>
+      </Box>
+    </AnimatedPage>
   );
 }

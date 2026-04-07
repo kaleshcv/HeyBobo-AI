@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DietaryController } from './dietary.controller';
 import { DietaryService } from './dietary.service';
+import { User, UserSchema } from '@/modules/users/schemas/user.schema';
 import {
   MealLog,
   MealLogSchema,
@@ -29,6 +30,7 @@ import {
       { name: SupplementLog.name, schema: SupplementLogSchema },
       { name: MealPlan.name, schema: MealPlanSchema },
       { name: GroceryList.name, schema: GroceryListSchema },
+      { name: User.name, schema: UserSchema },
     ]),
   ],
   controllers: [DietaryController],

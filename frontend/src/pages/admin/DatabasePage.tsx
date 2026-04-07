@@ -37,6 +37,7 @@ import StorageIcon from '@mui/icons-material/Storage';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import toast from 'react-hot-toast';
 import { dbBrowserApi } from '@/lib/api';
+import { AnimatedPage } from '@/components/animations';
 
 interface Collection {
   name: string;
@@ -197,9 +198,10 @@ export default function DatabasePage() {
   );
 
   return (
-    <Box sx={{ display: 'flex', height: 'calc(100vh - 80px)', gap: 0 }}>
-      {/* Sidebar: Collections list */}
-      <Paper
+    <AnimatedPage>
+      <Box sx={{ display: 'flex', height: 'calc(100vh - 80px)', gap: 0 }}>
+        {/* Sidebar: Collections list */}
+        <Paper
         elevation={0}
         variant="outlined"
         sx={{
@@ -462,6 +464,7 @@ export default function DatabasePage() {
           <Button onClick={() => setDocDialog({ open: false, doc: null })} size="small">Close</Button>
         </DialogActions>
       </Dialog>
-    </Box>
+      </Box>
+    </AnimatedPage>
   );
 }

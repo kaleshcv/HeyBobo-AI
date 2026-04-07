@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import {
   Box,
   Typography,
@@ -23,6 +24,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import SchoolIcon from '@mui/icons-material/School';
 import { useCourseStore, LocalCourse, VideoProgress } from '@/store/courseStore';
+import { AnimatedPage } from '@/components/animations';
 import toast from 'react-hot-toast';
 import { useUIStore } from '@/store/uiStore';
 import { t } from '@/lib/translations';
@@ -42,18 +44,22 @@ function CourseCard({
   const dk = useTheme().palette.mode === 'dark';
   const { language } = useUIStore();
   return (
-    <Card
-      sx={{
-        cursor: 'pointer',
-        border: '1px solid',
-        borderColor: 'divider',
-        boxShadow: 'none',
-        transition: 'all 0.2s',
-        position: 'relative',
-        '&:hover': { bgcolor: 'action.hover' },
-        '&:hover .delete-btn': { opacity: 1 },
-      }}
+    <motion.div
+      whileHover={{ y: -4, boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}
+      transition={{ type: 'spring', stiffness: 400, damping: 10 }}
     >
+      <Card
+        sx={{
+          cursor: 'pointer',
+          border: '1px solid',
+          borderColor: 'divider',
+          boxShadow: 'none',
+          transition: 'all 0.2s',
+          position: 'relative',
+          '&:hover': { bgcolor: 'action.hover' },
+          '&:hover .delete-btn': { opacity: 1 },
+        }}
+      >
       <Box onClick={onClick}>
         <CardMedia
           component="img"
@@ -93,7 +99,8 @@ function CourseCard({
           <DeleteIcon sx={{ fontSize: 16 }} />
         </IconButton>
       </Tooltip>
-    </Card>
+      </Card>
+    </motion.div>
   );
 }
 
@@ -131,7 +138,8 @@ export default function CoursesListPage() {
   };
 
   return (
-    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
+    <AnimatedPage>
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
         <Box sx={{ width: 36, height: 36, borderRadius: 2, bgcolor: '#38bdf820', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <SchoolIcon sx={{ fontSize: 20, color: '#38bdf8' }} />
@@ -179,18 +187,24 @@ export default function CoursesListPage() {
 
       {/* Course grid */}
       {filteredCourses.length > 0 ? (
-        <Grid container spacing={2}>
-          {filteredCourses.map((course) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={course.id}>
-              <CourseCard
-                course={course}
-                progress={getCourseProgress(course.id)}
-                onClick={() => navigate(`/app/education/${course.id}`)}
-                onDelete={() => handleDeleteCourse(course.id)}
-              />
-            </Grid>
-          ))}
-        </Grid>
+          <Grid container spacing={2}>
+            {filteredCourses.map((course, i) => (
+                <Grid item xs={12} sm={6} md={4} lg={3} key={course.id}>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: i * 0.06, ease: 'easeOut' }}
+                  >
+                    <CourseCard
+                      course={course}
+                      progress={getCourseProgress(course.id)}
+                      onClick={() => navigate(`/app/education/${course.id}`)}
+                      onDelete={() => handleDeleteCourse(course.id)}
+                    />
+                  </motion.div>
+                </Grid>
+            ))}
+          </Grid>
       ) : (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', py: 8 }}>
           <PlayCircleOutlineIcon sx={{ fontSize: 48, color: dk ? 'rgba(255,255,255,0.15)' : '#bdbdbd', mb: 2 }} />
@@ -204,6 +218,7 @@ export default function CoursesListPage() {
           )}
         </Box>
       )}
-    </Box>
+      </Box>
+    </AnimatedPage>
   );
 }

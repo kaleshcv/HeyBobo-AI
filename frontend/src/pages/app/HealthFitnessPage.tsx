@@ -14,6 +14,8 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
+import { motion } from 'framer-motion';
+import { AnimatedPage } from '@/components/animations';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 import DirectionsWalkIcon from '@mui/icons-material/DirectionsWalk';
@@ -426,8 +428,9 @@ export default function HealthFitnessPage() {
   ].filter((item) => item.value !== null);
 
   return (
-    <Box sx={{ flex: 1, px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 3, flexWrap: 'wrap' }}>
+    <AnimatedPage>
+      <Box sx={{ flex: 1, px: { xs: 2.5, md: 4, lg: 5 }, py: 3, overflow: 'auto' }}>
+        <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 2, mb: 3, flexWrap: 'wrap' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Box sx={{ width: 44, height: 44, borderRadius: 2, bgcolor: '#f43f5e20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <MonitorHeartIcon sx={{ fontSize: 24, color: '#f43f5e' }} />
@@ -466,12 +469,17 @@ export default function HealthFitnessPage() {
 
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            icon={<MonitorHeartIcon sx={{ fontSize: 24 }} />}
-            label={t(language, 'overallHealthScore')}
-            value={`${overallHealthScore}%`}
-            sub={`Activity ${activityScore}% · Recovery ${recoveryScore}%`}
-            color="#f43f5e"
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0 * 0.06, ease: 'easeOut' }}
+          >
+            <StatCard
+              icon={<MonitorHeartIcon sx={{ fontSize: 24 }} />}
+              label={t(language, 'overallHealthScore')}
+              value={`${overallHealthScore}%`}
+              sub={`Activity ${activityScore}% · Recovery ${recoveryScore}%`}
+              color="#f43f5e"
             detail={
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                 <Box>
@@ -502,15 +510,21 @@ export default function HealthFitnessPage() {
                 </Typography>
               </Box>
             }
-          />
+            />
+          </motion.div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            icon={<WatchIcon sx={{ fontSize: 24 }} />}
-            label={t(language, 'connectedDevices')}
-            value={devices.length}
-            sub={`${activeAlerts.length} active alert${activeAlerts.length !== 1 ? 's' : ''}`}
-            color="#22d3ee"
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 1 * 0.06, ease: 'easeOut' }}
+          >
+              <StatCard
+                icon={<WatchIcon sx={{ fontSize: 24 }} />}
+                label={t(language, 'connectedDevices')}
+                value={devices.length}
+                sub={`${activeAlerts.length} active alert${activeAlerts.length !== 1 ? 's' : ''}`}
+                color="#22d3ee"
             detail={
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                 {devices.length > 0 ? devices.map((device) => (
@@ -535,15 +549,21 @@ export default function HealthFitnessPage() {
                 </Button>
               </Box>
             }
-          />
+            />
+          </motion.div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            icon={<HealingIcon sx={{ fontSize: 24 }} />}
-            label={t(language, 'activeInjuriesLabel')}
-            value={activeInjuries.length}
-            sub={activeInjuries.length > 0 ? `Avg recovery ${recoveryScore}%` : 'No active injury load'}
-            color="#fb923c"
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 2 * 0.06, ease: 'easeOut' }}
+          >
+              <StatCard
+                icon={<HealingIcon sx={{ fontSize: 24 }} />}
+                label={t(language, 'activeInjuriesLabel')}
+                value={activeInjuries.length}
+                sub={activeInjuries.length > 0 ? `Avg recovery ${recoveryScore}%` : 'No active injury load'}
+                color="#fb923c"
             detail={
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                 {activeInjuries.length > 0 ? activeInjuries.slice(0, 3).map((injury) => (
@@ -562,15 +582,21 @@ export default function HealthFitnessPage() {
                 </Button>
               </Box>
             }
-          />
+            />
+          </motion.div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            icon={<DirectionsWalkIcon sx={{ fontSize: 24 }} />}
-            label={t(language, 'dailyActivityLabel')}
-            value={`${activityScore}%`}
-            sub={`${todayMetrics.steps.toLocaleString()} steps · ${todayMetrics.activeMinutes} active min`}
-            color="#10b981"
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 3 * 0.06, ease: 'easeOut' }}
+          >
+              <StatCard
+                icon={<DirectionsWalkIcon sx={{ fontSize: 24 }} />}
+                label={t(language, 'dailyActivityLabel')}
+                value={`${activityScore}%`}
+                sub={`${todayMetrics.steps.toLocaleString()} steps · ${todayMetrics.activeMinutes} active min`}
+                color="#10b981"
             detail={
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                 {[
@@ -590,7 +616,8 @@ export default function HealthFitnessPage() {
                 </Button>
               </Box>
             }
-          />
+            />
+          </motion.div>
         </Grid>
       </Grid>
 
@@ -1006,6 +1033,7 @@ export default function HealthFitnessPage() {
           </Grid>
         )}
       </SectionCard>
-    </Box>
+      </Box>
+    </AnimatedPage>
   );
 }

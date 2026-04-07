@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { FitnessController } from './fitness.controller';
 import { FitnessService } from './fitness.service';
+import { User, UserSchema } from '@/modules/users/schemas/user.schema';
 import {
   WorkoutSession,
   WorkoutSessionSchema,
@@ -20,6 +21,7 @@ import {
       { name: DailyMetric.name, schema: DailyMetricSchema },
       { name: FitnessProfile.name, schema: FitnessProfileSchema },
       { name: FitnessGoal.name, schema: FitnessGoalSchema },
+      { name: User.name, schema: UserSchema },
     ]),
   ],
   controllers: [FitnessController],

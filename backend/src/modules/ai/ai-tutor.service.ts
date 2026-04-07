@@ -1,14 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Quiz, QuizAttempt } from './schemas/quiz.schema';
+import { AIQuiz, AIQuizAttempt } from './schemas/quiz.schema';
 import { AILesson, RevisionPlan } from './schemas/lesson.schema';
 
 @Injectable()
 export class AITutorService {
   constructor(
-    @InjectModel(Quiz.name) private quizModel: Model<Quiz>,
-    @InjectModel(QuizAttempt.name) private attemptModel: Model<QuizAttempt>,
+    @InjectModel(AIQuiz.name) private quizModel: Model<AIQuiz>,
+    @InjectModel(AIQuizAttempt.name) private attemptModel: Model<AIQuizAttempt>,
     @InjectModel(AILesson.name) private lessonModel: Model<AILesson>,
     @InjectModel(RevisionPlan.name) private revisionModel: Model<RevisionPlan>,
   ) {}
@@ -18,13 +18,13 @@ export class AITutorService {
   async upsertQuiz(userId: string, dto: {
     clientId: string; textbookId: string; title: string;
     questions: Array<{ id: string; question: string; options: string[]; correctIndex: number; explanation: string }>;
-  }): Promise<Quiz> {
+  }): Promise<AIQuiz> {
     const existing = await this.quizModel.findOne({ userId, clientId: dto.clientId });
     if (existing) { Object.assign(existing, dto); return existing.save(); }
     return this.quizModel.create({ userId, ...dto });
   }
 
-  async getQuizzes(userId: string): Promise<Quiz[]> {
+  async getQuizzes(userId: string): Promise<AIQuiz[]> {
     return this.quizModel.find({ userId }).sort({ createdAt: -1 }).lean() as any;
   }
 
@@ -38,14 +38,14 @@ export class AITutorService {
   async saveAttempt(userId: string, dto: {
     clientId: string; quizId: string; textbookId: string;
     answers: Record<string, number>; score: number; total: number; completedAt: string;
-  }): Promise<QuizAttempt> {
+  }): Promise<AIQuizAttempt> {
     const answersArray = Object.entries(dto.answers).map(([questionId, answerIndex]) => ({ questionId, answerIndex }));
     const existing = await this.attemptModel.findOne({ userId, clientId: dto.clientId });
     if (existing) return existing;
     return this.attemptModel.create({ userId, ...dto, answersArray });
   }
 
-  async getAttempts(userId: string): Promise<QuizAttempt[]> {
+  async getAttempts(userId: string): Promise<AIQuizAttempt[]> {
     const docs = await this.attemptModel.find({ userId }).sort({ createdAt: -1 }).lean();
     return docs.map((d: any) => ({
       ...d,

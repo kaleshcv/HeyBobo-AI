@@ -73,6 +73,7 @@ import {
 } from '@/store/aiBrainStore';
 import { generateAIBrainDashboard } from '@/lib/gemini';
 import { useBrainData } from '@/hooks/useBrainData';
+import { AnimatedPage } from '@/components/animations';
 import HybridDashboard from './HybridDashboard';
 import GameDashboard from './GameDashboard';
 
@@ -735,7 +736,8 @@ export default function AIBrainPage() {
   // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
-    <Box sx={{ px: { xs: 2.5, md: 4, lg: 5 }, py: 3 }}>
+    <AnimatedPage>
+      <Box sx={{ px: { xs: 2.5, md: 4, lg: 5 }, py: 3 }}>
       {/* Header */}
       <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
@@ -1058,6 +1060,7 @@ export default function AIBrainPage() {
         </Box>
       )}
 
-    </Box>
+      </Box>
+    </AnimatedPage>
   );
 }

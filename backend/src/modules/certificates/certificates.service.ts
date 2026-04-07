@@ -72,6 +72,14 @@ export class CertificatesService {
       completionDate: enrollment.completedAt || new Date(),
     });
 
+    // Link certificate back to enrollment and update user stats
+    await Promise.all([
+      this.enrollmentModel.findByIdAndUpdate(enrollmentId, {
+        $set: { certificateId: certificate._id },
+      }),
+      this.userModel.findByIdAndUpdate(student._id, { $inc: { totalCertificates: 1 } }),
+    ]);
+
     this.logger.log(`Certificate generated: ${certificate._id}`);
     return certificate;
   }
