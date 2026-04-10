@@ -76,7 +76,7 @@ export default function CampusMarketplacePage() {
   const tabListings = tab === 0 ? filtered : tab === 1 ? wishlisted : myListings;
 
   const handleCreateListing = () => {
-    if (!sellTitle.trim() || !sellPrice) return;
+    if (!sellTitle.trim() || !sellPrice || isNaN(parseFloat(sellPrice)) || parseFloat(sellPrice) <= 0) return;
     createListing(
       {
         title: sellTitle.trim(),
@@ -375,7 +375,7 @@ export default function CampusMarketplacePage() {
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
           <Button onClick={() => setSellDialogOpen(false)} sx={{ textTransform: 'none', color: 'text.secondary' }}>Cancel</Button>
-          <Button variant="contained" onClick={handleCreateListing} disabled={!sellTitle.trim() || !sellPrice} sx={{ textTransform: 'none' }}>
+          <Button variant="contained" onClick={handleCreateListing} disabled={!sellTitle.trim() || !sellPrice || isNaN(parseFloat(sellPrice)) || parseFloat(sellPrice) <= 0} sx={{ textTransform: 'none' }}>
             List for Sale
           </Button>
         </DialogActions>

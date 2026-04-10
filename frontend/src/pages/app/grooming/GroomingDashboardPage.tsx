@@ -288,7 +288,7 @@ export default function GroomingDashboardPage() {
               value={stats.haircare}
               sub={t(language, 'hairScalpNote')}
               color="#f59e0b"
-              onClick={() => navigate('/app/grooming/recommendations')}
+              onClick={() => navigate('/app/grooming/recommendations?tab=1')}
             />
           </motion.div>
         </Grid>

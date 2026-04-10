@@ -11,6 +11,8 @@ import {
   DialogActions,
   LinearProgress,
   useTheme,
+  Divider,
+  Avatar,
 } from '@mui/material';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -19,6 +21,7 @@ import PauseIcon from '@mui/icons-material/Pause';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import CloseIcon from '@mui/icons-material/Close';
 import toast from 'react-hot-toast';
 import {
   LIVE_EXERCISES,
@@ -30,6 +33,7 @@ import {
   type Keypoint,
   KP,
 } from '@/store/liveWorkoutStore';
+import { useWorkoutSystemStore, CATEGORY_META } from '@/store/workoutSystemStore';
 
 // ─── Skeleton drawing ───────────────────────────────────
 const SKELETON_CONNECTIONS = [
@@ -547,8 +551,15 @@ function ResultsDialog({
 // ═══════════════════ MAIN EXPORT ═════════════════════════
 export default function LiveWorkoutTab() {
   const { logSession, sessions, totalReps } = useLiveWorkoutStore();
+  const { activeCustomWorkoutId, customWorkouts, getExercise, setActiveCustomWorkout } = useWorkoutSystemStore();
   const [selectedExercise, setSelectedExercise] = useState<LiveExercise | null>(null);
   const [result, setResult] = useState<{ exercise: LiveExercise; reps: number; duration: number; avgForm: number } | null>(null);
+  const [completedExercises, setCompletedExercises] = useState<Set<string>>(new Set());
+
+  const activeCustomWorkout = useMemo(
+    () => customWorkouts.find((w) => w.id === activeCustomWorkoutId) || null,
+    [activeCustomWorkoutId, customWorkouts],
+  );
 
   const handleEnd = useCallback(
     (reps: number, duration: number, avgForm: number) => {
@@ -570,9 +581,85 @@ export default function LiveWorkoutTab() {
 
   return (
     <Box>
-      {!selectedExercise ? (
+      {activeCustomWorkout ? (
+        // Custom Workout View
         <>
-          {/* Stats bar */}
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+            <Box>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.25 }}>{activeCustomWorkout.name}</Typography>
+              {activeCustomWorkout.description && (
+                <Typography variant="body2" color="text.secondary">{activeCustomWorkout.description}</Typography>
+              )}
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+                {completedExercises.size} of {activeCustomWorkout.exercises.length} completed
+              </Typography>
+            </Box>
+            <Button
+              size="small"
+              startIcon={<CloseIcon />}
+              onClick={() => {
+                setActiveCustomWorkout(null);
+                setCompletedExercises(new Set());
+              }}
+              sx={{ textTransform: 'none', fontSize: 12 }}
+            >
+              Exit
+            </Button>
+          </Box>
+          <LinearProgress variant="determinate" value={(completedExercises.size / activeCustomWorkout.exercises.length) * 100} sx={{ mb: 2, borderRadius: 2 }} />
+
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            {activeCustomWorkout.exercises.map((we, idx) => {
+              const dbEx = getExercise(we.exerciseId);
+              if (!dbEx) return null;
+              const cat = CATEGORY_META[dbEx.category];
+              const isCompleted = completedExercises.has(String(idx));
+              return (
+                <Paper
+                  key={idx}
+                  elevation={0}
+                  sx={{
+                    p: 1.5,
+                    borderRadius: 2,
+                    border: '1px solid',
+                    borderColor: isCompleted ? 'success.main' : 'divider',
+                    bgcolor: isCompleted ? 'success.light' : 'background.paper',
+                    opacity: isCompleted ? 0.6 : 1,
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Avatar sx={{ width: 32, height: 32, bgcolor: `${cat.color}20`, color: cat.color, fontSize: 14 }}>
+                      {cat.emoji}
+                    </Avatar>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.25 }}>{dbEx.name}</Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {we.sets}×{we.reps ? `${we.reps} reps` : `${we.durationSeconds}s`} • {cat.label}
+                      </Typography>
+                    </Box>
+                    {isCompleted ? (
+                      <CheckCircleIcon sx={{ color: 'success.main', fontSize: 22 }} />
+                    ) : (
+                      <Button
+                        size="small"
+                        onClick={() => setCompletedExercises(new Set([...completedExercises, String(idx)]))}
+                        sx={{ textTransform: 'none', fontSize: 11 }}
+                      >
+                        Mark Done
+                      </Button>
+                    )}
+                  </Box>
+                </Paper>
+              );
+            })}
+          </Box>
+        </>
+      ) : (
+        // Live Exercise Picker View
+        <>
+          {!selectedExercise ? (
+            <>
+              {/* Stats bar */}
           <Box sx={{ display: 'flex', gap: 2, mb: 1.5, flexWrap: 'wrap' }}>
             <Paper elevation={0} sx={{ px: 2, py: 1, borderRadius: 2, border: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center', gap: 1 }}>
               <VideocamIcon sx={{ fontSize: 18, color: '#00e676' }} />
@@ -620,6 +707,8 @@ export default function LiveWorkoutTab() {
         avgForm={result?.avgForm ?? 0}
         onClose={() => setResult(null)}
       />
+        </>
+      )}
     </Box>
   );
 }
