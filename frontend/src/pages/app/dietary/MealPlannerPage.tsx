@@ -567,6 +567,8 @@ export default function MealPlannerPage() {
               </Grid>
             </Grid>
 
+            {/* Category-specific fields */}
+            
             {/* Health conditions (shown only for health_condition category) */}
             {category === 'health_condition' && (
               <Box sx={{ mt: 2 }}>
@@ -580,6 +582,89 @@ export default function MealPlannerPage() {
                   renderInput={(params) => <TextField {...params} placeholder="Select or type conditions" />}
                   freeSolo
                 />
+              </Box>
+            )}
+
+            {/* Athlete Performance Options */}
+            {category === 'athlete_performance' && (
+              <Box sx={{ mt: 2, p: 2, borderRadius: 2, bgcolor: '#ff980815' }}>
+                <Typography variant="body2" sx={{ fontWeight: 600, mb: 1.5, color: '#ff9800' }}>
+                  Athletic Performance Settings
+                </Typography>
+                <Grid container spacing={1.5}>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth size="small">
+                      <InputLabel>Sport Focus</InputLabel>
+                      <Select value={fitnessGoal} onChange={(e) => setFitnessGoal(e.target.value)} label="Sport Focus">
+                        <MenuItem value="endurance">Endurance Sports</MenuItem>
+                        <MenuItem value="strength_power">Strength & Power</MenuItem>
+                        <MenuItem value="speed_agility">Speed & Agility</MenuItem>
+                        <MenuItem value="recovery">Recovery & Injury Prevention</MenuItem>
+                        <MenuItem value="general">General Athletic Performance</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth size="small">
+                      <InputLabel>Training Intensity</InputLabel>
+                      <Select value={activityLevel} onChange={(e) => setActivityLevel(e.target.value)} label="Training Intensity">
+                        <MenuItem value="very_active">High Intensity (Competitive)</MenuItem>
+                        <MenuItem value="very_active">Medium Intensity (Training)</MenuItem>
+                        <MenuItem value="moderately_active">Low Intensity (Maintenance)</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                </Grid>
+              </Box>
+            )}
+
+            {/* Gym & Fitness - Muscle Building Focus */}
+            {category === 'gym_nutrition' && (
+              <Box sx={{ mt: 2, p: 2, borderRadius: 2, bgcolor: '#2196f315' }}>
+                <Typography variant="body2" sx={{ fontWeight: 600, mb: 1.5, color: '#2196f3' }}>
+                  Muscle Building & Body Composition
+                </Typography>
+                <Grid container spacing={1.5}>
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth size="small">
+                      <InputLabel>Primary Goal</InputLabel>
+                      <Select value={fitnessGoal} onChange={(e) => setFitnessGoal(e.target.value)} label="Primary Goal">
+                        <MenuItem value="build_muscle">Build Muscle (Bulk)</MenuItem>
+                        <MenuItem value="lose_weight">Lose Fat (Cut)</MenuItem>
+                        <MenuItem value="gain_weight">Clean Bulk</MenuItem>
+                        <MenuItem value="maintain">Maintain & Tone</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Button
+                      fullWidth
+                      variant="outlined"
+                      size="small"
+                      onClick={() => {
+                        setTargetProtein(160);
+                        setTargetCarbs(200);
+                        setTargetFat(65);
+                        setTargetCalories(2800);
+                      }}
+                      sx={{ textTransform: 'none', fontWeight: 600 }}
+                    >
+                      Apply Muscle-Building Preset
+                    </Button>
+                  </Grid>
+                </Grid>
+              </Box>
+            )}
+
+            {/* Custom Plan - Full Customization */}
+            {category === 'custom' && (
+              <Box sx={{ mt: 2, p: 2, borderRadius: 2, bgcolor: '#9c27b015' }}>
+                <Typography variant="body2" sx={{ fontWeight: 600, mb: 1.5, color: '#9c27b0' }}>
+                  Full Customization Options
+                </Typography>
+                <Typography variant="caption" color="text.secondary" sx={{ mb: 1.5, display: 'block' }}>
+                  Set all parameters exactly how you want them
+                </Typography>
               </Box>
             )}
 
@@ -611,45 +696,48 @@ export default function MealPlannerPage() {
             </Box>
           </Paper>
 
-          {/* Calorie & Macro Targets */}
-          <Paper variant="outlined" sx={{ p: 2.5, borderRadius: 2 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Calorie & Macro Targets</Typography>
-              <Tooltip title="Leave at 0 to let AI calculate optimal values based on your goals">
-                <InfoOutlinedIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
-              </Tooltip>
-            </Box>
-            <Grid container spacing={2}>
-              <Grid item xs={6} sm={3}>
-                <TextField
-                  fullWidth size="small" type="number" label="Daily Calories"
-                  value={targetCalories} onChange={(e) => setTargetCalories(+e.target.value)}
-                  inputProps={{ min: 0, step: 50 }}
-                />
+          {/* Calorie & Macro Targets - shown for custom and gym_nutrition */}
+          {(category === 'custom' || category === 'gym_nutrition') && (
+            <Paper variant="outlined" sx={{ p: 2.5, borderRadius: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>Calorie & Macro Targets</Typography>
+                <Tooltip title={category === 'gym_nutrition' ? 'Higher protein for muscle building' : 'Leave at 0 to let AI calculate optimal values'}>
+                  <InfoOutlinedIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                </Tooltip>
+              </Box>
+              <Grid container spacing={2}>
+                <Grid item xs={6} sm={3}>
+                  <TextField
+                    fullWidth size="small" type="number" label="Daily Calories"
+                    value={targetCalories} onChange={(e) => setTargetCalories(+e.target.value)}
+                    inputProps={{ min: 0, step: 50 }}
+                  />
+                </Grid>
+                <Grid item xs={6} sm={3}>
+                  <TextField
+                    fullWidth size="small" type="number" label="Protein (g)"
+                    value={targetProtein} onChange={(e) => setTargetProtein(+e.target.value)}
+                    inputProps={{ min: 0 }}
+                    helperText={category === 'gym_nutrition' ? 'Aim for 0.8-1g per lb' : ''}
+                  />
+                </Grid>
+                <Grid item xs={6} sm={3}>
+                  <TextField
+                    fullWidth size="small" type="number" label="Carbs (g)"
+                    value={targetCarbs} onChange={(e) => setTargetCarbs(+e.target.value)}
+                    inputProps={{ min: 0 }}
+                  />
+                </Grid>
+                <Grid item xs={6} sm={3}>
+                  <TextField
+                    fullWidth size="small" type="number" label="Fat (g)"
+                    value={targetFat} onChange={(e) => setTargetFat(+e.target.value)}
+                    inputProps={{ min: 0 }}
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs={6} sm={3}>
-                <TextField
-                  fullWidth size="small" type="number" label="Protein (g)"
-                  value={targetProtein} onChange={(e) => setTargetProtein(+e.target.value)}
-                  inputProps={{ min: 0 }}
-                />
-              </Grid>
-              <Grid item xs={6} sm={3}>
-                <TextField
-                  fullWidth size="small" type="number" label="Carbs (g)"
-                  value={targetCarbs} onChange={(e) => setTargetCarbs(+e.target.value)}
-                  inputProps={{ min: 0 }}
-                />
-              </Grid>
-              <Grid item xs={6} sm={3}>
-                <TextField
-                  fullWidth size="small" type="number" label="Fat (g)"
-                  value={targetFat} onChange={(e) => setTargetFat(+e.target.value)}
-                  inputProps={{ min: 0 }}
-                />
-              </Grid>
-            </Grid>
-          </Paper>
+            </Paper>
+          )}
 
           {/* Generate button */}
           <Button

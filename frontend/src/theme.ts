@@ -100,10 +100,12 @@ export const darkTheme: Theme = createTheme({
       styleOverrides: {
         root: {
           backgroundImage: 'none',
-          background:      '#1A2B3C',
           border:          '1px solid rgba(201,168,76,0.13)',
           boxShadow:       '0 4px 24px rgba(0,0,0,0.35)',
           transition:      'box-shadow 0.2s ease, border-color 0.2s ease',
+          '&:not(.MuiAlert-root)': {
+            background:  '#1A2B3C',
+          },
           '&:hover': {
             borderColor: 'rgba(201,168,76,0.25)',
             boxShadow:   '0 6px 32px rgba(0,0,0,0.45)',
@@ -150,8 +152,59 @@ export const darkTheme: Theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius:    10,
-          border:          '1px solid rgba(201,168,76,0.2)',
+          border:          '1px solid #e5e7eb',
           backdropFilter:  'blur(8px)',
+          padding:         '12px 16px',
+          '&.MuiAlert-filledError':   { 
+            backgroundColor: '#ffffff', 
+            color: '#1f2937', 
+            fontWeight: 600,
+            border: '1px solid #f3f4f6',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+            '& .MuiAlert-icon': { color: '#1f2937' },
+            '& a': { color: '#1f2937', textDecoration: 'underline' },
+          },
+          '&.MuiAlert-filledSuccess': { 
+            backgroundColor: '#ffffff', 
+            color: '#1f2937', 
+            fontWeight: 500,
+            border: '1px solid #f3f4f6',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+            '& .MuiAlert-icon': { color: '#00843D' },
+          },
+          '&.MuiAlert-filledWarning': { 
+            backgroundColor: '#ffffff', 
+            color: '#1f2937', 
+            fontWeight: 500,
+            border: '1px solid #f3f4f6',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+            '& .MuiAlert-icon': { color: '#d97706' },
+          },
+          '&.MuiAlert-filledInfo':    { 
+            backgroundColor: '#ffffff', 
+            color: '#1f2937', 
+            fontWeight: 500,
+            border: '1px solid #f3f4f6',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+            '& .MuiAlert-icon': { color: '#0369a1' },
+          },
+        },
+      },
+    },
+    MuiSnackbar: {
+      styleOverrides: {
+        root: {
+          '& .MuiAlert-root': {
+            width: '100%',
+            minWidth: '300px',
+            '&.MuiAlert-filledError': {
+              backgroundColor: '#ffffff',
+              color: '#1f2937',
+              border: '1px solid #f3f4f6',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              fontWeight: 600,
+            },
+          },
         },
       },
     },
@@ -296,10 +349,12 @@ export const lightTheme: Theme = createTheme({
       styleOverrides: {
         root: {
           backgroundImage: 'none',
-          background:      '#FFFFFF',
           border:          '1px solid rgba(0,132,61,0.1)',
           boxShadow:       '0 2px 20px rgba(0,132,61,0.07)',
           transition:      'box-shadow 0.2s ease, border-color 0.2s ease',
+          '&:not(.MuiAlert-root)': {
+            background:  '#FFFFFF',
+          },
           '&:hover': {
             borderColor: 'rgba(0,132,61,0.2)',
             boxShadow:   '0 4px 28px rgba(0,132,61,0.12)',
@@ -346,6 +401,62 @@ export const lightTheme: Theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 10,
+          border: '1px solid #e5e7eb',
+          fontWeight: 500,
+          padding: '12px 16px',
+          '&.MuiAlert-filledError':   { 
+            backgroundColor: '#ffffff', 
+            color: '#1f2937', 
+            fontWeight: 600,
+            border: '1px solid #f3f4f6',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+            '& .MuiAlert-icon': { color: '#1f2937' },
+            '& a': { color: '#1f2937', textDecoration: 'underline' },
+          },
+          '&.MuiAlert-filledSuccess': { 
+            backgroundColor: '#ffffff', 
+            color: '#1f2937', 
+            fontWeight: 500,
+            border: '1px solid #f3f4f6',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+            '& .MuiAlert-icon': { color: '#00843D' },
+          },
+          '&.MuiAlert-filledWarning': { 
+            backgroundColor: '#ffffff', 
+            color: '#1f2937', 
+            fontWeight: 500,
+            border: '1px solid #f3f4f6',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+            '& .MuiAlert-icon': { color: '#d97706' },
+          },
+          '&.MuiAlert-filledInfo':    { 
+            backgroundColor: '#ffffff', 
+            color: '#1f2937', 
+            fontWeight: 500,
+            border: '1px solid #f3f4f6',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+            '& .MuiAlert-icon': { color: '#0369a1' },
+          },
+        },
+      },
+    },
+    MuiSnackbar: {
+      styleOverrides: {
+        root: {
+          '& .MuiAlert-root': {
+            width: '100%',
+            minWidth: '300px',
+            '&.MuiAlert-filledError': {
+              backgroundColor: '#ffffff',
+              color: '#1f2937',
+              border: '1px solid #f3f4f6',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              fontWeight: 600,
+              '& .MuiAlert-icon': { 
+                color: '#1f2937',
+              },
+            },
+          },
         },
       },
     },

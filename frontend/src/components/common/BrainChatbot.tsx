@@ -253,31 +253,57 @@ export default function BrainChatbot() {
                     <AutoAwesomeIcon sx={{ fontSize: 16 }} />
                   </Avatar>
                 )}
+                {msg.role === 'user' ? (
+                  <Box
+                    style={{
+                      backgroundColor: '#1a1a2e',
+                      color: '#ffffff',
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      maxWidth: '80%',
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      style={{ color: '#ffffff', whiteSpace: 'pre-wrap', lineHeight: 1.5, fontWeight: 500 }}
+                    >
+                      {renderContent(msg.content)}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      style={{ color: 'rgba(255,255,255,0.7)', display: 'block', marginTop: 4, fontSize: '0.65rem', textAlign: 'right' }}
+                    >
+                      {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </Typography>
+                  </Box>
+                ) : (
                 <Paper
-                  variant={msg.role === 'user' ? 'elevation' : 'outlined'}
-                  elevation={msg.role === 'user' ? 1 : 0}
+                  variant="outlined"
+                  elevation={0}
+                  style={{
+                    backgroundColor: dk ? '#1A2B3C' : '#f8f8f8',
+                    color: dk ? '#ffffff' : '#111111',
+                    border: !dk ? '1px solid #d0d0d0' : undefined,
+                  }}
                   sx={{
                     px: 1.5,
                     py: 1,
                     borderRadius: 2,
                     maxWidth: '80%',
-                    bgcolor: msg.role === 'user' ? '#1a1a2e' : (dk ? '#1A2B3C' : '#fff'),
-                    color: msg.role === 'user' ? '#fff' : 'text.primary',
                     '& strong': { fontWeight: 700 },
                   }}
                 >
-                  <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.5 }}>
+                  <Typography 
+                    variant="body2" 
+                    style={{ color: dk ? '#ffffff' : '#111111' }}
+                    sx={{ whiteSpace: 'pre-wrap', lineHeight: 1.5 }}
+                  >
                     {renderContent(msg.content)}
                   </Typography>
                   <Typography
                     variant="caption"
-                    sx={{
-                      display: 'block',
-                      mt: 0.5,
-                      opacity: 0.5,
-                      fontSize: '0.65rem',
-                      textAlign: msg.role === 'user' ? 'right' : 'left',
-                    }}
+                    style={{ color: dk ? 'rgba(255,255,255,0.6)' : '#666666' }}
+                    sx={{ display: 'block', mt: 0.5, fontSize: '0.65rem', textAlign: 'left' }}
                   >
                     {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </Typography>
@@ -292,6 +318,7 @@ export default function BrainChatbot() {
                     />
                   )}
                 </Paper>
+                )}
               </Box>
             ))}
 

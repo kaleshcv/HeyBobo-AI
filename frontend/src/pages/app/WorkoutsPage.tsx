@@ -1,4 +1,5 @@
 import { useState, useMemo, lazy, Suspense } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -738,7 +739,7 @@ function CustomWorkouts() {
                 <Button
                   size="small"
                   startIcon={<PlayArrowIcon />}
-                  onClick={() => { useCustomWorkout(cw.id); toast.success(`Starting: ${cw.name}`); }}
+                  onClick={() => { useCustomWorkout(cw.id); setTab(3); toast.success(`Starting: ${cw.name}`); }}
                   sx={{ textTransform: 'none', fontSize: 12, fontWeight: 600, borderRadius: 1.5, bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5' }}
                 >
                   Start
@@ -756,7 +757,10 @@ function CustomWorkouts() {
 
 // ═══════════════════ MAIN PAGE ═══════════════════════════
 export default function WorkoutsPage() {
-  const [tab, setTab] = useState(0);
+  const [searchParams] = useSearchParams();
+  const urlTab = searchParams.get('tab');
+  const initialTab = urlTab ? Math.max(0, Math.min(3, parseInt(urlTab))) : 0;
+  const [tab, setTab] = useState(initialTab);
   const { language } = useUIStore();
 
   return (

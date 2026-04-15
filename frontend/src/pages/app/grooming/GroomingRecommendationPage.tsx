@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -201,7 +202,10 @@ const getScoreColor = (score: number) => {
 };
 
 export default function GroomingRecommendationPage() {
-  const [tab, setTab] = useState(0);
+  const [searchParams] = useSearchParams();
+  const urlTab = searchParams.get('tab');
+  const initialTab = urlTab ? Math.max(0, Math.min(2, parseInt(urlTab))) : 0;
+  const [tab, setTab] = useState(initialTab);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [saveSuccess, setSaveSuccess] = useState('');

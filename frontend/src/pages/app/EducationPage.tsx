@@ -951,7 +951,7 @@ function DashboardTab() {
             value={`${overallPercent}%`}
             sub={`${videosWatched} of ${totalVideos} videos`}
             color={dk ? '#1A2B3C' : '#616161'}
-            onClick={() => navigate('/app/courses')}
+            onClick={() => navigate('/app/ai-tutor?tab=3')}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
@@ -961,7 +961,7 @@ function DashboardTab() {
             value={`${avgQuizPercent}%`}
             sub={`${quizzesTaken} quiz${quizzesTaken !== 1 ? 'zes' : ''} taken`}
             color="#ffa726"
-            onClick={() => navigate('/app/courses')}
+            onClick={() => navigate('/app/ai-tutor?tab=2')}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
@@ -971,7 +971,7 @@ function DashboardTab() {
             value={perfectQuizzes}
             sub={`of ${quizzesTaken} quizzes`}
             color="#ab47bc"
-            onClick={() => navigate('/app/courses')}
+            onClick={() => navigate('/app/ai-tutor?tab=2')}
           />
         </Grid>
       </Grid>
@@ -979,7 +979,7 @@ function DashboardTab() {
       {/* Progress breakdown */}
       <Grid container spacing={1.5} sx={{ mb: 2 }}>
         <Grid item xs={12} md={6}>
-          <Paper variant="outlined" onClick={() => navigate('/app/courses')} sx={{ p: 2, borderRadius: 3, borderColor: 'divider', cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}>
+          <Paper variant="outlined" sx={{ p: 2, borderRadius: 3, borderColor: 'divider' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
               <TrendingUpIcon sx={{ fontSize: 16, color: '#38bdf8' }} />
               <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>

@@ -213,6 +213,7 @@ function generateId(): string {
 interface WorkoutSystemState {
   customWorkouts: CustomWorkout[]
   activePlanId: string | null
+  activeCustomWorkoutId: string | null
   workoutLogs: WorkoutLog[]
 
   createCustomWorkout: (name: string, description: string, exercises: WorkoutExercise[]) => void
@@ -221,6 +222,7 @@ interface WorkoutSystemState {
   useCustomWorkout: (id: string) => void
 
   setActivePlan: (planId: string | null) => void
+  setActiveCustomWorkout: (id: string | null) => void
 
   logWorkout: (log: Omit<WorkoutLog, 'id' | 'createdAt'>) => void
   clearLogs: () => void
@@ -233,6 +235,7 @@ export const useWorkoutSystemStore = create<WorkoutSystemState>((set, get) => {
   return {
     customWorkouts: [],
     activePlanId: null,
+    activeCustomWorkoutId: null,
     workoutLogs: [],
 
     createCustomWorkout: (name, description, exercises) => {
@@ -263,11 +266,15 @@ export const useWorkoutSystemStore = create<WorkoutSystemState>((set, get) => {
       const customWorkouts = get().customWorkouts.map((w) =>
         w.id === id ? { ...w, lastUsedAt: new Date().toISOString(), timesUsed: w.timesUsed + 1 } : w,
       )
-      set({ customWorkouts })
+      set({ customWorkouts, activeCustomWorkoutId: id })
     },
 
     setActivePlan: (planId) => {
       set({ activePlanId: planId })
+    },
+
+    setActiveCustomWorkout: (id) => {
+      set({ activeCustomWorkoutId: id })
     },
 
     logWorkout: (log) => {

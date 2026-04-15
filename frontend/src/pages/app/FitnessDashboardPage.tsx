@@ -298,13 +298,13 @@ export default function FitnessDashboardPage() {
         </Box>
 
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-          <Button variant="outlined" startIcon={<SportsGymnasticsIcon />} onClick={() => navigate('/app/fitness/workouts')}>
+          <Button variant="outlined" startIcon={<SportsGymnasticsIcon />} onClick={() => navigate('/app/fitness/workouts?tab=0')}>
             {t(language, 'exerciseLibraryBtn')}
           </Button>
-          <Button variant="outlined" startIcon={<CalendarMonthIcon />} onClick={() => navigate('/app/fitness/workouts')}>
+          <Button variant="outlined" startIcon={<CalendarMonthIcon />} onClick={() => navigate('/app/fitness/workouts?tab=1')}>
             {t(language, 'workoutPlansBtn')}
           </Button>
-          <Button variant="contained" startIcon={<VideocamIcon />} sx={{ bgcolor: '#2e7d32' }} onClick={() => navigate('/app/fitness/workouts')}>
+          <Button variant="contained" startIcon={<VideocamIcon />} sx={{ bgcolor: '#2e7d32' }} onClick={() => navigate('/app/fitness/workouts?tab=3')}>
             {t(language, 'liveWorkoutBtn')}
           </Button>
         </Box>
@@ -338,7 +338,7 @@ export default function FitnessDashboardPage() {
               value={activePlan ? activePlan.daysPerWeek : 0}
               sub={activePlan ? `${activePlan.name}` : t(language, 'noPlanSelected')}
               color="#38bdf8"
-              onClick={() => navigate('/app/fitness/workouts')}
+              onClick={() => navigate('/app/fitness/workouts?tab=1')}
             />
           </motion.div>
         </Grid>
@@ -354,7 +354,7 @@ export default function FitnessDashboardPage() {
               value={customWorkouts.length}
               sub={customWorkouts.length > 0 ? `${customWorkouts.reduce((sum, workout) => sum + workout.timesUsed, 0)} total uses` : t(language, 'buildYourOwn')}
               color="#a78bfa"
-              onClick={() => navigate('/app/fitness/workouts')}
+              onClick={() => navigate('/app/fitness/workouts?tab=2')}
             />
           </motion.div>
         </Grid>
@@ -370,7 +370,7 @@ export default function FitnessDashboardPage() {
               value={liveSessions.length}
               sub={`${totalReps} reps · ${Math.round(totalWorkoutSeconds / 60)} min total`}
               color="#06b6d4"
-              onClick={() => navigate('/app/fitness/workouts')}
+              onClick={() => navigate('/app/fitness/workouts?tab=3')}
             />
           </motion.div>
         </Grid>
