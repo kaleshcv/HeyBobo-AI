@@ -659,7 +659,7 @@ function CreateWorkoutDialog({ open, onClose }: { open: boolean; onClose: () => 
   );
 }
 
-function CustomWorkouts() {
+function CustomWorkouts({ onStartWorkout }: { onStartWorkout?: () => void }) {
   const dk = useTheme().palette.mode === 'dark';
   const { customWorkouts, deleteCustomWorkout, useCustomWorkout, getExercise } = useWorkoutSystemStore();
   const [createOpen, setCreateOpen] = useState(false);
@@ -739,7 +739,7 @@ function CustomWorkouts() {
                 <Button
                   size="small"
                   startIcon={<PlayArrowIcon />}
-                  onClick={() => { useCustomWorkout(cw.id); setTab(3); toast.success(`Starting: ${cw.name}`); }}
+                  onClick={() => { useCustomWorkout(cw.id); onStartWorkout?.(); toast.success(`Starting: ${cw.name}`); }}
                   sx={{ textTransform: 'none', fontSize: 12, fontWeight: 600, borderRadius: 1.5, bgcolor: dk ? 'rgba(255,255,255,0.05)' : '#f5f5f5' }}
                 >
                   Start
@@ -796,7 +796,7 @@ export default function WorkoutsPage() {
         <Box sx={{ p: 1.5 }}>
           {tab === 0 && <WorkoutLibrary />}
           {tab === 1 && <WorkoutPlans />}
-          {tab === 2 && <CustomWorkouts />}
+          {tab === 2 && <CustomWorkouts onStartWorkout={() => setTab(3)} />}
           {tab === 3 && (
             <Suspense fallback={<Box sx={{ py: 4, textAlign: 'center' }}><LinearProgress sx={{ maxWidth: 300, mx: 'auto' }} /></Box>}>
               <LiveWorkoutTab />

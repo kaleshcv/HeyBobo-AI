@@ -11,7 +11,6 @@ import {
   DialogActions,
   LinearProgress,
   useTheme,
-  Divider,
   Avatar,
 } from '@mui/material';
 import VideocamIcon from '@mui/icons-material/Videocam';
