@@ -526,6 +526,24 @@ export default function HomePage() {
           }}>
             {language === 'ar' ? '🇦🇪 دبي، الإمارات العربية المتحدة' : '🇦🇪 Dubai, United Arab Emirates'}
           </div>
+
+          {/* Developer attribution */}
+          <div style={{
+            marginTop: 16,
+            paddingTop: 12,
+            borderTop: isDark ? '1px solid rgba(201,168,76,0.15)' : '1px solid #E2EBE8',
+            textAlign: 'center',
+            fontSize: 11,
+            color: textSecondary,
+            fontFamily: '"Cairo", "Inter", sans-serif',
+            letterSpacing: '0.04em',
+            lineHeight: 1.5,
+          }}>
+            {language === 'ar' ? 'تم تطويره بواسطة ' : 'Developed by '}
+            <span style={{ fontWeight: 700, color: accent }}>
+              ZESTORA ARTIFICIAL INTELLIGENCE DEVELOPING SERVICES LLC
+            </span>
+          </div>
         </div>
       </div>
     </div>

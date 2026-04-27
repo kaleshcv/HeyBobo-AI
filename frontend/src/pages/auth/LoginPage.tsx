@@ -295,6 +295,26 @@ export default function LoginPage() {
               {t(language, 'createOne')}
             </Link>
           </Typography>
+
+          <Typography
+            variant="caption"
+            sx={{
+              display: 'block',
+              textAlign: 'center',
+              mt: 3,
+              pt: 2,
+              borderTop: dk ? '1px solid rgba(201,168,76,0.15)' : '1px solid #E2EBE8',
+              color: dk ? '#8FA3B8' : '#6B7280',
+              fontSize: 11,
+              letterSpacing: '0.04em',
+              lineHeight: 1.5,
+            }}
+          >
+            Developed by{' '}
+            <Box component="span" sx={{ fontWeight: 700, color: dk ? '#C9A84C' : '#00843D' }}>
+              ZESTORA ARTIFICIAL INTELLIGENCE DEVELOPING SERVICES LLC
+            </Box>
+          </Typography>
         </Paper>
         </motion.div>
         </Box>
